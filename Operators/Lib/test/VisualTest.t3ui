@@ -1,0 +1,31 @@
+{
+  "Id": "ffce00b5-7883-4a80-81ae-e8229e531501"/*VisualTest*/,
+  "Description": "",
+  "InputUis": [
+    {
+      "InputId": "aa858ec9-07ed-4070-b7ac-8186715cee60"/*IsEnabled*/,
+      "Position": {
+        "X": 0.0,
+        "Y": 45.0
+      }
+    },
+    {
+      "InputId": "fab9f640-676b-4f27-a64f-0fcf4d7e9f1d"/*Command*/,
+      "Relevancy": "Required",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0
+      }
+    }
+  ],
+  "SymbolChildUis": [],
+  "OutputUis": [
+    {
+      "OutputId": "b314c791-9c7d-442d-9ba1-36069cb4938d"/*Output*/,
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0
+      }
+    }
+  ]
+}

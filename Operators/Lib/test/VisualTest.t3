@@ -1,0 +1,15 @@
+{
+  "Id": "ffce00b5-7883-4a80-81ae-e8229e531501"/*VisualTest*/,
+  "Inputs": [
+    {
+      "Id": "aa858ec9-07ed-4070-b7ac-8186715cee60"/*IsEnabled*/,
+      "DefaultValue": true
+    },
+    {
+      "Id": "fab9f640-676b-4f27-a64f-0fcf4d7e9f1d"/*Command*/,
+      "DefaultValue": null
+    }
+  ],
+  "Children": [],
+  "Connections": []
+}
