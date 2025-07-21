@@ -1,0 +1,15 @@
+{
+  "Id": "ee36ca64-0466-4aa0-991b-c09b9978b615"/*WebCom*/,
+  "Inputs": [
+    {
+      "Id": "be65a38a-503f-4a65-bd2f-64eabe2811f7"/*ModuloValue*/,
+      "DefaultValue": 1.0
+    },
+    {
+      "Id": "e6fd9c2e-c5be-4d14-aadf-284b8bc1a413"/*Value*/,
+      "DefaultValue": 0.0
+    }
+  ],
+  "Children": [],
+  "Connections": []
+}

@@ -1,0 +1,35 @@
+{
+  "Id": "ee36ca64-0466-4aa0-991b-c09b9978b615"/*WebCom*/,
+  "Description": "",
+  "InputUis": [
+    {
+      "InputId": "be65a38a-503f-4a65-bd2f-64eabe2811f7"/*ModuloValue*/,
+      "Position": {
+        "X": 197.0,
+        "Y": 328.0
+      },
+      "Min": -100.0,
+      "Max": 100.0,
+      "Scale": 0.01
+    },
+    {
+      "InputId": "e6fd9c2e-c5be-4d14-aadf-284b8bc1a413"/*Value*/,
+      "Position": {
+        "X": 36.0,
+        "Y": 334.0
+      },
+      "Min": -100.0,
+      "Max": 100.0
+    }
+  ],
+  "SymbolChildUis": [],
+  "OutputUis": [
+    {
+      "OutputId": "18035c59-5f46-403d-80d8-a13c5e713f4f"/*Result*/,
+      "Position": {
+        "X": 133.0,
+        "Y": 38.0
+      }
+    }
+  ]
+}
