@@ -26,6 +26,12 @@
       "DefaultValue": "127.0.0.1"
     },
     {
+      "Id": "b8651d7e-4efa-447f-b077-a73c46b01c2e"/*ValuesList*/,
+      "DefaultValue": {
+        "Values": []
+      }
+    },
+    {
       "Id": "d5e9e9be-093b-4d57-9070-9b2cf33aa45b"/*Strings*/,
       "DefaultValue": "Hello, my name is ..."
     },
