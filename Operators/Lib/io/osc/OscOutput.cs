@@ -12,13 +12,14 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
     {
         Result.UpdateAction += Update;
     }
-        
+
     private void Update(EvaluationContext context)
     {
         // We can't initialize this in constructor because parent is not set yet
         _valuesInput ??= GetSymbolInput(Values);
         _stringsInput ??= GetSymbolInput(Strings);
-            
+        _valuesListInput ??= GetSymbolInput(ValuesList);
+
         var oscAddress = Address.GetValue(context);
         var somethingHasChanged = false;
         var port = Port.GetValue(context);
@@ -56,7 +57,7 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
                 _connected = TryConnectOsc(_newIpAddress, port);
             }
         }
-        else if(_newIpAddress != null)
+        else if (_newIpAddress != null)
         {
             _connected = TryConnectOsc(_newIpAddress, port);
         }
@@ -67,15 +68,28 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
             return;
         }
 
-
+        // Handle ValuesList input
+        var valuesList = ValuesList.GetValue(context);
+        if (valuesList != null && valuesList.Count > 0)
         {
+            // If we have a ValuesList, use it instead of individual values
+            if (_values.Count != valuesList.Count || !_values.SequenceEqual(valuesList))
+            {
+                _values.Clear();
+                _values.AddRange(valuesList);
+                somethingHasChanged = true;
+            }
+        }
+        else
+        {
+            // Original values processing code
             var connectedValues = Values.GetCollectedTypedInputs();
             var connectedValueCount = connectedValues.Count;
             var isValueDefault = IsInputDefault(_valuesInput);
-                
-            var totalValueCount = connectedValueCount > 0 
-                                      ? connectedValueCount 
-                                      : isValueDefault ? 0 : 1;
+
+            var totalValueCount = connectedValueCount > 0
+                                    ? connectedValueCount
+                                    : isValueDefault ? 0 : 1;
 
             // Rebuild list
             if (totalValueCount != _values.Count)
@@ -83,7 +97,7 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
                 _values.Clear();
                 if (connectedValueCount == 0)
                 {
-                    if(!isValueDefault)
+                    if (!isValueDefault)
                         _values.Add(Values.GetValue(context));
                 }
                 else
@@ -93,7 +107,7 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
                         _values.Add(value.GetValue(context));
                     }
                 }
-                somethingHasChanged= true;
+                somethingHasChanged = true;
             }
             // Update existing values
             else
@@ -126,21 +140,22 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
             }
         }
 
+        // Rest of the original code remains the same...
         // Rebuild string list
         {
             var connectedStrings = Strings.GetCollectedTypedInputs();
             var connectedStringCount = connectedStrings.Count;
             var isStringDefault = IsInputDefault(_stringsInput);
-            var totalStringCount = connectedStringCount > 0 
-                                       ? connectedStringCount 
+            var totalStringCount = connectedStringCount > 0
+                                       ? connectedStringCount
                                        : isStringDefault ? 0 : 1;
-                
+
             if (totalStringCount != _strings.Count)
             {
                 _strings.Clear();
                 if (connectedStringCount == 0)
                 {
-                    if(!isStringDefault)
+                    if (!isStringDefault)
                         _strings.Add(Strings.GetValue(context));
                 }
                 else
@@ -150,7 +165,7 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
                         _strings.Add(value.GetValue(context));
                     }
                 }
-                somethingHasChanged= true;
+                somethingHasChanged = true;
             }
             // Update existing strings
             else
@@ -193,7 +208,7 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
                 {
                     parameters[i] = _values[i];
                 }
-                for(var i=0; i< _strings.Count; i++)
+                for (var i = 0; i < _strings.Count; i++)
                 {
                     parameters[i + _values.Count] = _strings[i];
                 }
@@ -221,7 +236,7 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
 
     protected override void Dispose(bool isDisposing)
     {
-        if (isDisposing && _connected) 
+        if (isDisposing && _connected)
             _sender.Dispose();
     }
 
@@ -241,7 +256,7 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
     {
         if (ipAddress == null)
             return false;
-            
+
         try
         {
             // The '0' picks a random available outbound (send) port
@@ -271,22 +286,22 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
         var symbolInput = symbolChild?.Inputs.FirstOrDefault(i => i.Id == inputSlot.Id);
         return symbolInput?.Input;
     }
-        
+
     private static bool IsInputDefault(Symbol.Child.Input symbolInput)
     {
         return symbolInput != null && symbolInput.IsDefault;
     }
-        
+
     private OscSender _sender;
     private string _lastIpAddressString;
     private bool _connected;
     private int _port;
-        
-    private  Symbol.Child.Input _valuesInput;
-    private  Symbol.Child.Input _stringsInput;
+
+    private Symbol.Child.Input _valuesInput;
+    private Symbol.Child.Input _stringsInput;
+    private Symbol.Child.Input _valuesListInput;
     private IPAddress _newIpAddress = null;
 
-        
     public IStatusProvider.StatusLevel GetStatusLevel()
     {
         return string.IsNullOrEmpty(_lastErrorMessage) ? IStatusProvider.StatusLevel.Success : IStatusProvider.StatusLevel.Warning;
@@ -295,27 +310,30 @@ internal sealed class OscOutput : Instance<OscOutput>, IStatusProvider
     string IStatusProvider.GetStatusMessage() => _lastErrorMessage;
     private string _lastErrorMessage;
 
-    [Input(Guid = "3CCA3654-2428-4526-8ED6-D1FA088C0BF9")]
-    public readonly InputSlot<bool> SendTrigger = new();
+        [Input(Guid = "3CCA3654-2428-4526-8ED6-D1FA088C0BF9")]
+        public readonly InputSlot<bool> SendTrigger = new InputSlot<bool>();
 
-    [Input(Guid = "98f38caa-4f79-425c-ab46-22d7dbe62978")]
-    public readonly InputSlot<string> IpAddress = new();
+        [Input(Guid = "98f38caa-4f79-425c-ab46-22d7dbe62978")]
+        public readonly InputSlot<string> IpAddress = new InputSlot<string>();
 
-    [Input(Guid = "6c0e07ba-7ea6-4dab-af0b-61cf9cb74ad7")]
-    public readonly InputSlot<int> Port = new();
-        
-    [Input(Guid = "9016e418-7761-4916-aafb-c95599f77f38")]
-    public readonly InputSlot<string> Address = new();
-        
-    [Input(Guid = "FDB1D27B-9A9D-47AB-8DBF-7E1BAB5B4A24")]
-    public readonly InputSlot<bool> Reconnect = new();
+        [Input(Guid = "6c0e07ba-7ea6-4dab-af0b-61cf9cb74ad7")]
+        public readonly InputSlot<int> Port = new InputSlot<int>();
 
-    [Input(Guid = "827c7ae2-c129-4d04-a715-328c0a86bf8a")]
-    public readonly MultiInputSlot<float> Values = new();
+        [Input(Guid = "9016e418-7761-4916-aafb-c95599f77f38")]
+        public readonly InputSlot<string> Address = new InputSlot<string>();
 
-    [Input(Guid = "d5e9e9be-093b-4d57-9070-9b2cf33aa45b")]
-    public readonly MultiInputSlot<string> Strings = new();
+        [Input(Guid = "FDB1D27B-9A9D-47AB-8DBF-7E1BAB5B4A24")]
+        public readonly InputSlot<bool> Reconnect = new InputSlot<bool>();
 
-    [Input(Guid = "13B11154-C8F0-453E-A64E-80D602319B73")]
-    public readonly InputSlot<bool> OnlySendChanges = new();
+        [Input(Guid = "827c7ae2-c129-4d04-a715-328c0a86bf8a")]
+        public readonly MultiInputSlot<float> Values = new MultiInputSlot<float>();
+
+        [Input(Guid = "b8651d7e-4efa-447f-b077-a73c46b01c2e")]
+        public readonly InputSlot<System.Collections.Generic.List<float>> ValuesList = new InputSlot<System.Collections.Generic.List<float>>();
+
+        [Input(Guid = "d5e9e9be-093b-4d57-9070-9b2cf33aa45b")]
+        public readonly MultiInputSlot<string> Strings = new MultiInputSlot<string>();
+
+        [Input(Guid = "13B11154-C8F0-453E-A64E-80D602319B73")]
+        public readonly InputSlot<bool> OnlySendChanges = new InputSlot<bool>();
 }
