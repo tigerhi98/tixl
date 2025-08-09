@@ -60,6 +60,14 @@
       "Usage": "Default"
     },
     {
+      "InputId": "b8651d7e-4efa-447f-b077-a73c46b01c2e"/*ValuesList*/,
+      "Relevancy": "Relevant",
+      "Position": {
+        "X": -200.0,
+        "Y": 345.0
+      }
+    },
+    {
       "InputId": "d5e9e9be-093b-4d57-9070-9b2cf33aa45b"/*Strings*/,
       "Position": {
         "X": -200.0,
