@@ -42,8 +42,9 @@ internal sealed class BoxSDF : Instance<BoxSDF>, ITransformable
     
     public void GetPreShaderCode(CodeAssembleContext c, int inputIndex)
     {
-        c.AppendCall($"f{c}.w = fRoundedRect(p{c}.xyz, {ShaderNode}Center, {ShaderNode}Size * {ShaderNode}UniformScale * 0.5, {ShaderNode}EdgeRadius);"); 
+        c.AppendCall($"f{c}.w = fRoundedRect(p{c}.xyz, {ShaderNode}Center, {ShaderNode}Size * {ShaderNode}UniformScale * 0.5, {ShaderNode}EdgeRadius);");
         //c.AppendCall($"f{c}.xyz = p{c}.xyz;");
+        c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
     }
 
     [GraphParam]

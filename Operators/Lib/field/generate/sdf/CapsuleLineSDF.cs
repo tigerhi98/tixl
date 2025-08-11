@@ -42,6 +42,7 @@ internal sealed class CapsuleLineSDF : Instance<CapsuleLineSDF>
                                 """;
 
         c.AppendCall($"f{c}.w = fCapsule(p{c} - {ShaderNode}Center, {ShaderNode}StartingPoint, {ShaderNode}EndPoint, {ShaderNode}Thickness);");
+        c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
     }
 
     public void GetPostShaderCode(CodeAssembleContext c, int inputIndex)

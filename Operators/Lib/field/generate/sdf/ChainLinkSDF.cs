@@ -35,6 +35,7 @@ internal sealed class ChainLinkSDF : Instance<ChainLinkSDF>
 
         var n = ShaderNode;
         c.AppendCall($"f{c}.w = fChainLink(p{c}.xyz - {n}Center, {n}Length, {n}Size, {n}Thickness);");
+        c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
     }
 
     public void GetPostShaderCode(CodeAssembleContext c, int inputIndex)

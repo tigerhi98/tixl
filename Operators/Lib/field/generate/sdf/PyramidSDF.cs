@@ -66,7 +66,8 @@ internal sealed class PyramidSDF : Instance<PyramidSDF>
                                       """;
         var a = _axisCodes0[(int)_axis];
         c.AppendCall($"f{c}.w = fPyramid(p{c}.{a}, {ShaderNode}Center.{a}, {ShaderNode}Scale.x * {ShaderNode}UniformScale, {ShaderNode}Scale.z * {ShaderNode}UniformScale, {ShaderNode}Scale.y * {ShaderNode}UniformScale, {ShaderNode}Rounding);"); 
-       // c.AppendCall($"f{c}.xyz = p{c}.xyz;");
+        //c.AppendCall($"f{c}.xyz = p{c}.xyz;");
+        c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
     }
     
     public void GetPostShaderCode(CodeAssembleContext cac, int inputIndex)
