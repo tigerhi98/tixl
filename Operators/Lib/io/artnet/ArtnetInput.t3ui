@@ -1,0 +1,23 @@
+{
+  "Id": "fc03dcd0-6f2f-4507-be06-1ed105607489"/*ArtnetInput*/,
+  "Description": "",
+  "InputUis": [
+    {
+      "InputId": "19bde769-3992-4cf0-a0b4-e3ae25c03c79"/*StartUniverse*/,
+      "Position": {
+        "X": -505.05722,
+        "Y": -259.4615
+      }
+    }
+  ],
+  "SymbolChildUis": [],
+  "OutputUis": [
+    {
+      "OutputId": "d3c09c87-c508-4621-a54d-f14d85c3f75f"/*Result*/,
+      "Position": {
+        "X": -211.71448,
+        "Y": -259.70978
+      }
+    }
+  ]
+}
