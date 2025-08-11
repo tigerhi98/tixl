@@ -1,0 +1,11 @@
+{
+  "Id": "fc03dcd0-6f2f-4507-be06-1ed105607489"/*ArtnetInput*/,
+  "Inputs": [
+    {
+      "Id": "19bde769-3992-4cf0-a0b4-e3ae25c03c79"/*StartUniverse*/,
+      "DefaultValue": 0
+    }
+  ],
+  "Children": [],
+  "Connections": []
+}
