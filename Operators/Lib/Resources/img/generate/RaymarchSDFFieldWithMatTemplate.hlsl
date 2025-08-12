@@ -148,10 +148,10 @@ float GetDistance(float3 p3)
 float3 GetNormal(float3 p, float offset)
 {
     return normalize(
-        GetDistance(p + float3(NormalSamplingDistance, -NormalSamplingDistance, -NormalSamplingDistance)) * float3(1, -1, -1) +
-        GetDistance(p + float3(-NormalSamplingDistance, NormalSamplingDistance, -NormalSamplingDistance)) * float3(-1, 1, -1) +
-        GetDistance(p + float3(-NormalSamplingDistance, -NormalSamplingDistance, NormalSamplingDistance)) * float3(-1, -1, 1) +
-        GetDistance(p + float3(NormalSamplingDistance, NormalSamplingDistance, NormalSamplingDistance)) * float3(1, 1, 1));
+        GetDistance(p + float3(offset, -offset, -offset)) * float3(1, -1, -1) +
+        GetDistance(p + float3(-offset, offset, -offset)) * float3(-1, 1, -1) +
+        GetDistance(p + float3(-offset, -offset, offset)) * float3(-1, -1, 1) +
+        GetDistance(p + float3(offset, offset, offset)) * float3(1, 1, 1));
 }
 
 float ComputeAO(float3 aoposition, float3 aonormal, float aodistance, float aoiterations, float aofactor)
@@ -217,7 +217,7 @@ PSOutput psMain(vsOutput input)
     // We've got a hit or we're not sure.
     if (D < MAX_DIST)
     {
-        normal = normalize(GetNormal(p, D));
+        normal = normalize(GetNormal(p, NormalSamplingDistance));
 
         // col = Color.rgb;
         //  We've gone through all steps, but we haven't hit anything.
