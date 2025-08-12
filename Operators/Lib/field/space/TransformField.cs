@@ -28,6 +28,12 @@ internal sealed class TransformField : Instance<TransformField>, IGraphNodeOp, I
     private void Update(EvaluationContext context)
     {
         TransformCallback?.Invoke(this, context);
+        var rotateFieldVecs = RotateFieldVecs.GetValue(context);
+        if (rotateFieldVecs != _rotateFieldVecs)
+        {
+            _rotateFieldVecs = rotateFieldVecs;
+            ShaderNode.FlagCodeChanged();
+        }
         
         ShaderNode.Update(context);
 
@@ -68,6 +74,16 @@ internal sealed class TransformField : Instance<TransformField>, IGraphNodeOp, I
         c.AppendCall($"p{c}.xyz = mul(float4(p{c}.xyz,1), {ShaderNode}Transform).xyz; ");
     }
     
+    public void GetPostShaderCode(CodeAssembleContext c, int inputIndex)
+    {
+        if (_rotateFieldVecs)
+        {
+            c.AppendCall($"f{c}.xyz = mul( {ShaderNode}Transform, float4(f{c}.xyz,0)).xyz; ");
+        }
+    }
+
+    private bool _rotateFieldVecs;
+    
     [Input(Guid = "7248C680-7279-4C1D-B968-3864CB849C77")]
     public readonly InputSlot<ShaderGraphNode> InputField = new();
 
@@ -88,4 +104,7 @@ internal sealed class TransformField : Instance<TransformField>, IGraphNodeOp, I
 
     [Input(Guid = "279730B7-C427-4924-9FDE-77EB65A3076C")]
     public readonly InputSlot<Vector3> Pivot = new();
+
+    [Input(Guid = "DD53654B-D2F9-4656-B26C-95927F059B31")]
+    public readonly InputSlot<bool> RotateFieldVecs = new();
 }
