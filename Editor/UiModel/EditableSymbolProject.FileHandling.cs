@@ -71,9 +71,9 @@ internal sealed partial class EditableSymbolProject
             Log.Debug($"{CsProjectFile.Name}: Saving {modifiedSymbolUis.Length} modified symbols...");
 
             WriteAllSymbolFilesOf(modifiedSymbolUis);
+            UpdateLastModifiedDate();
         }
 
-        UpdateLastModifiedDate();
         UnmarkAsSaving();
     }
 
