@@ -31,6 +31,9 @@ internal sealed class RandomizePoints : Instance<RandomizePoints>
         [Input(Guid = "DD46595E-01E5-4616-9682-3A4EB7F63016")]
         public readonly InputSlot<System.Numerics.Vector4> ColorHSB = new InputSlot<System.Numerics.Vector4>();
 
+        [Input(Guid = "b90a5025-41e0-4bcd-b8d5-764756877dd0")]
+        public readonly InputSlot<float> Scale = new InputSlot<float>();
+
         [Input(Guid = "1E2C9B94-B303-4454-BA08-5246C7336660")]
         public readonly InputSlot<System.Numerics.Vector3> Stretch = new InputSlot<System.Numerics.Vector3>();
 

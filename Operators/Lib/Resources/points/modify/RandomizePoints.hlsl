@@ -14,10 +14,11 @@ cbuffer Params : register(b0)
 
     float4 RandomizeColor;
 
-    float3 Scale;
+    float3 Stretch;
     float RandomSeed;
 
     float2 GainAndBias;
+    float Scale;
     float RandomizeF2;
 }
 
@@ -97,7 +98,7 @@ float3 rgb2hsb(float3 c)
                                   : biasedA.xyz * RandomizePosition);
 
     float4 rgba = p.Color;
-    if(length(RandomizeColor) > 0.001) 
+    if (length(RandomizeColor) > 0.001)
     {
         float4 HSBa = float4(rgb2hsb(p.Color.rgb), p.Color.a);
         HSBa += biasedB * RandomizeColor * strength;
@@ -105,9 +106,9 @@ float3 rgb2hsb(float3 c)
         float4 rgba = float4(hsb2rgb(HSBa.xyz), HSBa.a);
     }
 
-    p.Color = ClampColorsEtc 
-                ? clamp(rgba, 0, float4(1000,1000,1000,1)) 
-                : rgba;
+    p.Color = ClampColorsEtc
+                  ? clamp(rgba, 0, float4(1000, 1000, 1000, 1))
+                  : rgba;
 
     p.FX1 += biasedA.w * RandomizeF1 * strength;
     p.FX2 += biasedA.r * RandomizeF2 * strength;
@@ -117,7 +118,7 @@ float3 rgb2hsb(float3 c)
         p.FX1 = max(0, p.FX1);
         p.FX2 = max(0, p.FX2);
     }
-    p.Scale += float3(biasedB.w, biasedA.w, biasedA.z) * Scale * strength; // Not ideal... distribution overlap
+    p.Scale += ((float3(biasedB.w, biasedA.w, biasedA.z) * Stretch) + biasedA.r * Scale) * strength; // Not ideal... distribution overlap
 
     // Rotation
     float3 randomRotate = (RandomizeRotation / 180 * PI) * strength * biasedA.xyz;
