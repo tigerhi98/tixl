@@ -182,12 +182,12 @@ public static class T3Ui
             {
                 // Skip string inputs to prevent potential interference with resource file paths hooks
                 // I.e. Invalidating these every frame breaks shader recompiling if Shader-op is selected
-                if (i.ValueType == typeof(string))
+                if (i.ValueType != typeof(Vector3))
                 {
                     continue;
                 }
 
-                i.DirtyFlag.Invalidate();
+                i.DirtyFlag.ForceInvalidate();
             }
         }
     }
