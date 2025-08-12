@@ -344,7 +344,7 @@ public sealed class Resource<T> : IDisposable, IResource
     private readonly Action<IResourceConsumer> _onDispose;
     private readonly bool _allowDisposal;
     private const LazyThreadSafetyMode ThreadSafetyMode = LazyThreadSafetyMode.None;
-    internal event Action? Changed;
+    public event Action? Changed;
 
     private readonly List<ISlot> _dependentSlots = new();
 

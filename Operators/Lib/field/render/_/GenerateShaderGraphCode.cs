@@ -47,9 +47,15 @@ internal sealed class GenerateShaderGraphCode : Instance<GenerateShaderGraphCode
     {
         _fileContents = new Resource<string>(TemplateFilePath, TryLoadTemplate);
         _fileContents.AddDependentSlots(ShaderCode, FloatParams, Resources);
+        _fileContents.Changed += TemplateChanged;
         
         ShaderCode.UpdateAction += Update;
         _graphId = GetHashCode();
+    }
+
+    private void TemplateChanged()
+    {
+        _templateChanged = true;
     }
 
     private bool _templateChanged = false; 
