@@ -49,11 +49,11 @@ public static partial class ResourceManager
         
         
         // handle always-shared shaders
-        return !isFolder && filterAcceptsShaders
+        return (!isFolder && filterAcceptsShaders
                    ? allFiles.Concat(SharedShaderPackages
                                     .Except(_sharedResourcePackages)
                                     .SelectMany(x => AllMatchingPathsIn(x, false, pathMode, shaderFilters)))
-                   : allFiles;
+                   : allFiles).Distinct();
     }
     
     /// <summary>
