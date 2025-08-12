@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System.Collections.Generic;
 using System.Text;
+using T3.Core.Logging;
 
 namespace T3.Core.DataTypes.ShaderGraph;
 
@@ -31,7 +32,7 @@ public sealed class CodeAssembleContext
      * primary target CollectEmbeddedShaderCode is writing to.
      * Scopes are separated by introducing new local variables for positions and field results.
      */
-    public readonly StringBuilder Calls = new();
+    public StringBuilder Calls = new();
 
     public void PushContext(int subContextIndex, string fieldSuffix = "")
     {
@@ -55,6 +56,27 @@ public sealed class CodeAssembleContext
         Calls.AppendLine(code);
     }
 
+    public void PushMethod(string name)
+    {
+        _subMethodCalls.Push(Calls); // keep previous stacks.
+        _subMethodCallsLenght = _subMethodCalls.Count;
+        
+        Calls = new StringBuilder();
+    }
+
+    public string PopMethod()
+    {
+        if (_subMethodCalls.Count == 0 || _subMethodCalls.Count != _subMethodCallsLenght)
+        {
+            Log.Warning("Inconsistent shader graph nesting");
+            return string.Empty;
+        }
+
+        var completedCalls = Calls;
+        Calls = _subMethodCalls.Pop();
+        return completedCalls.ToString();
+    }
+
     public void Indent()
     {
         IndentCount++;
@@ -64,6 +86,9 @@ public sealed class CodeAssembleContext
     {
         IndentCount--;
     }
+
+    private readonly Stack<StringBuilder> _subMethodCalls = new();
+    private int _subMethodCallsLenght;
 
 
     //public Stack<ShaderGraphNode> NodeStack = [];
@@ -76,6 +101,7 @@ public sealed class CodeAssembleContext
         Globals.Clear();
         Definitions.Clear();
         Calls.Clear();
+        _subMethodCalls.Clear();
         ContextIdStack.Clear();
 
         IndentCount = 0;
