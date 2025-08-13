@@ -29,7 +29,7 @@ public enum TransformGizmoModes
     Scale = 4,
 }
 
-public class EvaluationContext
+public sealed class EvaluationContext
 {
     public EvaluationContext()
     {
@@ -136,9 +136,9 @@ public class EvaluationContext
     public TransformGizmoModes TransformGizmoMode { get; set; } = TransformGizmoModes.Move;
     
     #region context variables
-    public Dictionary<string, float> FloatVariables { get; } = new();
     public Dictionary<string, bool> BoolVariables { get; } = new();
     public Dictionary<string, int> IntVariables { get; } = new();
+    public Dictionary<string, float> FloatVariables { get; } = new();
     
     /// <summary>
     /// Used to store objects different from float and int
