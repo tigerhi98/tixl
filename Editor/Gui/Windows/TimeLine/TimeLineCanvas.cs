@@ -538,10 +538,10 @@ internal sealed class TimeLineCanvas : CurveEditCanvas
 
         private float CurrentHeight => UsingCustomTimelineHeight ? _customTimeLineHeight : ComputedTimelineHeight;
 
-        private float ComputedTimelineHeight => _timeline._selectedAnimationParameters.Count * DopeSheetArea.LayerHeight
+        private float ComputedTimelineHeight => MathF.Min( _timeline._selectedAnimationParameters.Count * DopeSheetArea.LayerHeight
                                                 + _timeline.LayersArea.LastHeight
                                                 + TimeLineDragHeight
-                                                + 10;
+                                                + 10, 200 * T3Ui.UiScaleFactor);
 
         public void Toggle()
         {
