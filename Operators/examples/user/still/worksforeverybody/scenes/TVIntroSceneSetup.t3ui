@@ -516,6 +516,13 @@
       }
     },
     {
+      "ChildId": "a633d8ac-e6a2-4e7d-910e-07e617cce413"/*LoadGltf*/,
+      "Position": {
+        "X": -258.78616,
+        "Y": 474.39597
+      }
+    },
+    {
       "ChildId": "a70b38a0-a25d-4dee-85e7-e7769cc2a4b8"/*PointLight*/,
       "Position": {
         "X": 2208.6697,

@@ -336,7 +336,7 @@
         {
           "Id": "c3c815fa-8672-4d99-99a7-986844f2fc45"/*UpdateLive*/,
           "Type": "System.Boolean",
-          "Value": false
+          "Value": true
         }
       ],
       "Outputs": []
@@ -1049,7 +1049,7 @@
         {
           "Id": "74d63ccb-7ae5-45d9-af69-ad91b8582407"/*Exposure*/,
           "Type": "System.Single",
-          "Value": 0.18
+          "Value": 1.01
         }
       ],
       "Outputs": []
@@ -1310,6 +1310,18 @@
       "Outputs": []
     },
     {
+      "Id": "a633d8ac-e6a2-4e7d-910e-07e617cce413"/*LoadGltf*/,
+      "SymbolId": "92b18d2b-1022-488f-ab8e-a4dcca346a23",
+      "InputValues": [
+        {
+          "Id": "6e0fa62a-a8e1-4d0b-a5b1-80876ff636c0"/*Path*/,
+          "Type": "System.String",
+          "Value": "/Examples/user/still/proj-worksforeverybody/geometry/classroom/chair-01.png"
+        }
+      ],
+      "Outputs": []
+    },
+    {
       "Id": "a70b38a0-a25d-4dee-85e7-e7769cc2a4b8"/*PointLight*/,
       "SymbolId": "9c67a8c8-839f-4f67-a949-08cb38b9dffd",
       "InputValues": [
@@ -1321,12 +1333,12 @@
         {
           "Id": "98155900-1bb9-427a-9c4e-0988fec806cd"/*Intensity*/,
           "Type": "System.Single",
-          "Value": 10.1
+          "Value": -0.0
         },
         {
           "Id": "d6f6838c-4b36-41a8-86c5-1b1fe5dcece1"/*Decay*/,
           "Type": "System.Single",
-          "Value": 4.2999983
+          "Value": 1.73
         },
         {
           "Id": "f3ca8d13-4e24-4718-a59c-6a1b9a2a3c04"/*IsEnabled*/,
@@ -2117,7 +2129,7 @@
         {
           "Id": "7773837e-104a-4b3d-a41f-cadbd9249af2"/*Float*/,
           "Type": "System.Single",
-          "Value": 0.46
+          "Value": 1.0540019
         }
       ],
       "Outputs": []
