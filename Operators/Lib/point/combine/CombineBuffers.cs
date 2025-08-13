@@ -9,7 +9,4 @@ internal sealed class CombineBuffers : Instance<CombineBuffers>
 
     [Input(Guid = "b5d25dfd-5d9f-4b5b-b3f5-36b93b13cba3")]
     public readonly MultiInputSlot<BufferWithViews> Input = new();
-
-    [Input(Guid = "a9fd34c5-2583-4014-ab36-ea6c33362d78")]
-    public readonly InputSlot<bool> IsEnabled = new();
 }
