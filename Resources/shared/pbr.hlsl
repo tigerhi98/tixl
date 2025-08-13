@@ -5,11 +5,11 @@
 // See: http://blog.selfshadow.com/publications/s2013-shading-course/karis/s2013_pbs_epic_notes_v2.pdf
 
 #ifndef PI
-  #define PI 3.141592
+#define PI 3.141592
 #endif
 
 #ifndef Epsilon
-  #define Epsilon 0.00001
+#define Epsilon 0.00001
 #endif
 
 struct PbrVertex
@@ -27,12 +27,11 @@ struct PbrVertex
 // Constant normal incidence Fresnel factor for all dielectrics.
 #define Fdielectric 0.04
 
-
 // GGX/Towbridge-Reitz normal distribution function.
 // Uses Disney's reparametrization of alpha = roughness^2.
 float ndfGGX(float cosLh, float roughness)
 {
-    float alpha   = roughness * roughness;
+    float alpha = roughness * roughness;
     float alphaSq = alpha * alpha;
 
     float denom = (cosLh * cosLh) * (alphaSq - 1.0) + 1.0;
@@ -66,3 +65,23 @@ uint querySpecularTextureLevels(Texture2D specularTexture)
     specularTexture.GetDimensions(0, width, height, levels);
     return levels;
 }
+
+#ifndef __frag_static
+
+struct FragmentMaterial
+{
+    float Roughness;
+    float Metalness;
+    float Occlusion;
+    float cosLo;
+    float3 worldPosition;
+    float4 albedo;
+    float2 uv;
+    float3 N;
+    float fog;
+    float3 Lo;
+};
+
+static FragmentMaterial frag;
+#define __frag_static
+#endif

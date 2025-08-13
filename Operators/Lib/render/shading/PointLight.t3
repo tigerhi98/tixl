@@ -15,7 +15,7 @@
     },
     {
       "Id": "98155900-1bb9-427a-9c4e-0988fec806cd"/*Intensity*/,
-      "DefaultValue": 5.0
+      "DefaultValue": 1.0
     },
     {
       "Id": "b5ee1e4b-3c8c-48df-bbcf-aac614de6ec9"/*ShowGizmo*/,
