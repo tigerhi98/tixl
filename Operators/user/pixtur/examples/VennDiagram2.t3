@@ -194,13 +194,7 @@
     {
       "Id": "887e1ca5-c02a-440b-b466-cee30e0dc562"/*CombineBuffers*/,
       "SymbolId": "4dd8a618-eb3b-40af-9851-89c50683d83e",
-      "InputValues": [
-        {
-          "Id": "a9fd34c5-2583-4014-ab36-ea6c33362d78"/*IsEnabled*/,
-          "Type": "System.Boolean",
-          "Value": true
-        }
-      ],
+      "InputValues": [],
       "Outputs": []
     },
     {
