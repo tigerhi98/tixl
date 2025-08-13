@@ -19,6 +19,7 @@ internal sealed class PickFloat : Instance<PickFloat>
         
         if (connections == null || connections.Count == 0)
         {
+            FloatValues.DirtyFlag.Clear();
             return;
         }
 
