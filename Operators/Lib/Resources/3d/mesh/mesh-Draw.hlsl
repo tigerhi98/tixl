@@ -21,7 +21,7 @@ cbuffer Params : register(b1)
 {
     float4 Color;
     float AlphaCutOff;
-    //float Debug;
+    // float Debug;
     float UseFlatShading;
 };
 
@@ -160,7 +160,6 @@ float4 psMain(psInput pin) : SV_TARGET
     // Sample input textures to get shading model params.
     float4 albedo = BaseColorMap.Sample(TexSampler, pin.texCoord);
 
-
     float4 roughnessMetallicOcclusion = RSMOMap.Sample(TexSampler, pin.texCoord);
     frag.Roughness = saturate(roughnessMetallicOcclusion.x + Roughness);
     frag.Metalness = saturate(roughnessMetallicOcclusion.y + Metal);
@@ -169,26 +168,27 @@ float4 psMain(psInput pin) : SV_TARGET
     // Outgoing light direction (vector from world-space fragment position to the "eye").
     float4 eyePosition = mul(float4(0, 0, 0, 1), CameraToWorld);
     float3 Lo = normalize(eyePosition.xyz - pin.worldPosition);
+    float3 V = normalize(eyePosition.xyz - pin.worldPosition);
 
     // Get current fragment's normal and transform to world space.
-       float3 N;
+    float3 N;
     if (UseFlatShading > 0.5)
     {
         // Flat shading: calculate geometric normal from world position derivatives
         float3 dpdx = ddx(pin.worldPosition);
         float3 dpdy = ddy(pin.worldPosition);
         float3 geometricNormal = normalize(cross(dpdy, dpdx));
-        
+
         // Apply normal map details on top of flat normal
         float4 normalMap = NormalMap.Sample(TexSampler, pin.texCoord);
         float3 normalDetail = normalize(2.0 * normalMap.rgb - 1.0);
-        
+
         // Create TBN basis using geometric normal and derivatives
         float3 T = normalize(dpdx);
         float3 B = normalize(cross(geometricNormal, T));
         T = cross(B, geometricNormal); // Reorthogonalize
         float3x3 flatTBN = float3x3(T, B, geometricNormal);
-        
+
         // Apply normal map in flat shading tangent space
         N = normalize(mul(normalDetail, flatTBN));
     }
@@ -201,10 +201,12 @@ float4 psMain(psInput pin) : SV_TARGET
     }
 
     // Angle between surface normal and outgoing light direction.
-    frag.cosLo = abs(dot(N, Lo));
+    // frag.cosLo = abs(dot(N, Lo));
+    frag.cosLo = saturate(dot(N, V)); // not abs
+    float3 Lr = 2.0 * frag.cosLo * N - V;
 
     // Specular reflection vector.
-    float3 Lr = 2.0 * frag.cosLo * N - Lo;
+    // float3 Lr = 2.0 * frag.cosLo * N - Lo;
     // return float4(Lr.xyz,1);
 
     // Fresnel reflectance at normal incidence (for metals use albedo color).
@@ -214,42 +216,67 @@ float4 psMain(psInput pin) : SV_TARGET
     float3 directLighting = 0.0;
     for (uint i = 0; i < (uint)ActiveLightCount; ++i)
     {
-        float3 Li = Lights[i].position - pin.worldPosition; //- Lights[i].direction;
-        float distance = length(Li);
-        float intensity = Lights[i].intensity / (pow(distance / Lights[i].range, Lights[i].decay) + 1);
-        float3 Lradiance = Lights[i].color.rgb * intensity; // Lights[i].radiance;
+        // float3 Li = Lights[i].position - pin.worldPosition; //- Lights[i].direction;
+        // float distance = length(Li);
+        // float intensity = Lights[i].intensity / (pow(distance / Lights[i].range, Lights[i].decay) + 1);
+        // float3 Lradiance = Lights[i].color.rgb * intensity; // Lights[i].radiance;
 
-        // Half-vector between Li and Lo.
-        float3 Lh = normalize(Li + Lo);
+        // // Half-vector between Li and Lo.
+        // float3 Lh = normalize(Li + Lo);
 
-        // Calculate angles between surface normal and various light vectors.
-        float cosLi = max(0.0, dot(N, Li));
-        float cosLh = max(0.0, dot(N, Lh));
+        // // Calculate angles between surface normal and various light vectors.
+        // float cosLi = max(0.0, dot(N, Li));
+        // float cosLh = max(0.0, dot(N, Lh));
 
-        // Calculate Fresnel term for direct lighting.
-        float3 F = fresnelSchlick(F0, max(0.0, dot(Lh, Lo)));
+        // // Calculate Fresnel term for direct lighting.
+        // float3 F = fresnelSchlick(F0, max(0.0, dot(Lh, Lo)));
 
-        // Calculate normal distribution for specular BRDF.
-        float D = ndfGGX(cosLh, frag.Roughness);
-        // Calculate geometric attenuation for specular BRDF.
-        float G = gaSchlickGGX(cosLi, frag.cosLo, frag.Roughness);
+        // // Calculate normal distribution for specular BRDF.
+        // float D = ndfGGX(cosLh, frag.Roughness);
+        // // Calculate geometric attenuation for specular BRDF.
+        // float G = gaSchlickGGX(cosLi, frag.cosLo, frag.Roughness);
 
-        // Diffuse scattering happens due to light being refracted multiple times by a dielectric medium.
-        // Metals on the other hand either reflect or absorb energy, so diffuse contribution is always zero.
-        // To be energy conserving we must scale diffuse BRDF contribution based on Fresnel factor & metalness.
-        float3 kd = lerp(float3(1, 1, 1), float3(0, 0, 0), frag.Metalness);
-        // return float4(F, 1);
+        // // Diffuse scattering happens due to light being refracted multiple times by a dielectric medium.
+        // // Metals on the other hand either reflect or absorb energy, so diffuse contribution is always zero.
+        // // To be energy conserving we must scale diffuse BRDF contribution based on Fresnel factor & metalness.
+        // float3 kd = lerp(float3(1, 1, 1), float3(0, 0, 0), frag.Metalness);
+        // // return float4(F, 1);
 
-        // Lambert diffuse BRDF.
-        // We don't scale by 1/PI for lighting & material units to be more convenient.
-        // See: https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
+        // // Lambert diffuse BRDF.
+        // // We don't scale by 1/PI for lighting & material units to be more convenient.
+        // // See: https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
+        // float3 diffuseBRDF = kd * albedo.rgb;
+
+        // // Cook-Torrance specular microfacet BRDF.
+        // float3 specularBRDF = ((F * D * G) / max(Epsilon, 4.0 * cosLi * frag.cosLo)) * Specular;
+
+        // // Total contribution for this light.
+        // directLighting += (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
+
+        float3 Lvec = Lights[i].position - pin.worldPosition;
+        float dist = length(Lvec);
+        float3 L = Lvec / max(dist, 1e-4); // normalize once
+
+        // (optional) use inverse-square or keep your attenuation
+        float intensity = Lights[i].intensity / (pow(dist / Lights[i].range, Lights[i].decay) + 1);
+        // float intensity = Lights[i].intensity / max(dist*dist, 1e-4); // classic
+
+        float3 Lradiance = Lights[i].color.rgb * intensity;
+
+        float NdotV = saturate(dot(N, V));
+        float NdotL = saturate(dot(N, L));
+        float3 H = normalize(L + V);
+        float NdotH = saturate(dot(N, H));
+
+        float3 F = fresnelSchlick(F0, saturate(dot(H, V)));
+        float D = ndfGGX(NdotH, frag.Roughness);
+        float G = gaSchlickGGX(NdotL, NdotV, frag.Roughness);
+
+        float3 kd = lerp(1.0 - F, 0.0, frag.Metalness);
         float3 diffuseBRDF = kd * albedo.rgb;
+        float3 specularBRDF = ((F * D * G) / max(Epsilon, 4.0 * NdotL * NdotV)) * Specular;
 
-        // Cook-Torrance specular microfacet BRDF.
-        float3 specularBRDF = ((F * D * G) / max(Epsilon, 4.0 * cosLi * frag.cosLo)) * Specular;
-
-        // Total contribution for this light.
-        directLighting += (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
+        directLighting += (diffuseBRDF + specularBRDF) * Lradiance * NdotL;
     }
 
     // Ambient lighting (IBL).
