@@ -19,13 +19,6 @@
       }
     },
     {
-      "InputId": "227aa9ea-5d88-4b68-ac79-2a81b271948d"/*Bounce*/,
-      "Position": {
-        "X": 295.22845,
-        "Y": 1973.9236
-      }
-    },
-    {
       "InputId": "2ab85ac3-819d-4e3e-891a-7f27af627fdf"/*InvertVolume*/,
       "Position": {
         "X": 292.86752,
