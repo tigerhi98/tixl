@@ -275,6 +275,19 @@ PSOutput psMain(vsOutput input)
     float4 litColor = ComputePbr();
     litColor *= fieldColor;
 
+    // Fog
+    float depth = dot(eye - p, -input.viewDir);
+    float fog = FogDistance <= 0 ? 0 : pow(saturate(depth / FogDistance), FogBias);
+
+    litColor.rgb = lerp(litColor.rgb * fieldColor.rgb, FogColor.rgb, fog * FogColor.a);
+
+    // litColor.rgb *= fieldColor.rgb;
+
+    litColor += float4(EmissiveColorMap.Sample(TexSampler, uv).rgb * EmissiveColor.rgb, 0);
+    litColor.a *= frag.albedo.a;
+
+    litColor.rgb = lerp(AmbientOcclusion.rgb, litColor.rgb, ComputeAO(p, normal, AODistance, 3, AmbientOcclusion.a * (1 - fog)));
+
     PSOutput result;
     result.color = clamp(litColor, 0, float4(1000, 1000, 1000, 1));
 
