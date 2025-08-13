@@ -45,7 +45,7 @@ public static class BeatTiming
         }
 
         // Fix BPM if completely out of control
-        if (double.IsNaN(Bpm) || Bpm < 20 || Bpm > 200)
+        if (double.IsNaN(Bpm) || Bpm < 20 || Bpm > 600)
         {
             Log.Warning($"BPM {Bpm:0.0} out of range. Reverting to 120");
             _beatDuration = 0.5; // 120bpm
