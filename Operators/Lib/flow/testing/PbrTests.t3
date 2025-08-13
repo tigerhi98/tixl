@@ -968,6 +968,33 @@
       "Outputs": []
     },
     {
+      "Id": "fa204952-9ebf-4bed-818f-224a389289eb"/*SetFog*/,
+      "SymbolId": "74cbfce0-f8b8-46a1-b5d6-38477d4eec99",
+      "InputValues": [
+        {
+          "Id": "53479387-1c04-4fbc-b093-043075495e10"/*Bias*/,
+          "Type": "System.Single",
+          "Value": 11.7
+        },
+        {
+          "Id": "7a331539-33ea-48b9-8930-daf93dd33d7c"/*Distance*/,
+          "Type": "System.Single",
+          "Value": 6.6
+        },
+        {
+          "Id": "ef8c86ee-16c0-446e-9ce0-c6342adbf32a"/*Color*/,
+          "Type": "System.Numerics.Vector4",
+          "Value": {
+            "X": 0.0,
+            "Y": 0.23294494,
+            "Z": 0.291866,
+            "W": 1.0
+          }
+        }
+      ],
+      "Outputs": []
+    },
+    {
       "Id": "fa955fe9-f4ac-4300-96fe-9394aa3872b5"/*SetEnvironment*/,
       "SymbolId": "f3b66187-34b2-4018-8380-279f9f296ded",
       "InputValues": [
@@ -1054,8 +1081,8 @@
       "TargetSlotId": "ed9887ca-5ee4-4fb7-a835-071de255a893"
     },
     {
-      "SourceParentOrChildId": "def3106c-7c27-4c13-bb5d-550dfc1c4a1d",
-      "SourceSlotId": "60c25429-be91-4552-b1fe-b08479793abe",
+      "SourceParentOrChildId": "fa204952-9ebf-4bed-818f-224a389289eb",
+      "SourceSlotId": "7c2134d1-45c6-4dc7-b591-a4a5113f5747",
       "TargetParentOrChildId": "23ebbb13-8807-444b-a2f6-2eee1feae9d4",
       "TargetSlotId": "047b8fae-468c-48a7-8f3a-5fac8dd5b3c6"
     },
@@ -1346,6 +1373,12 @@
       "SourceSlotId": "f8f17f87-56f2-4411-b9bf-b9193b9aa90d",
       "TargetParentOrChildId": "f5338a3d-365c-4082-809a-63c8e5ccb82d",
       "TargetSlotId": "97429e1f-3f30-4789-89a6-8e930e356ee6"
+    },
+    {
+      "SourceParentOrChildId": "def3106c-7c27-4c13-bb5d-550dfc1c4a1d",
+      "SourceSlotId": "60c25429-be91-4552-b1fe-b08479793abe",
+      "TargetParentOrChildId": "fa204952-9ebf-4bed-818f-224a389289eb",
+      "TargetSlotId": "afadb109-37b2-49aa-8c32-627cc35fd574"
     },
     {
       "SourceParentOrChildId": "9c1a6f51-c062-4830-baff-17edb85c5eb5",
