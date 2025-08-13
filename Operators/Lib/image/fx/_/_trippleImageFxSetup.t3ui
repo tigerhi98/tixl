@@ -47,7 +47,8 @@
         "X": -313.40988,
         "Y": 329.9937
       },
-      "Usage": "FilePath"
+      "Usage": "FilePath",
+      "FileFilter": "HLSL-Files|*.hlsl"
     },
     {
       "InputId": "85d0fe6a-145e-4b17-ad00-62ad7afe58e4"/*ImageB*/,
