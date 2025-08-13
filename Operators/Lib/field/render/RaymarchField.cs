@@ -47,6 +47,9 @@ public class RaymarchField : Instance<RaymarchField>
         [Input(Guid = "1251368b-f8f4-4210-be1e-4d05223caf21")]
         public readonly InputSlot<float> DistToColor = new InputSlot<float>();
 
+        [Input(Guid = "0700d5cb-6a1e-43ad-b7fb-b9b7b1415584")]
+        public readonly InputSlot<bool> WriteDepth = new InputSlot<bool>();
+
         private enum MappingModes
         {
             Global_Triplanar,
