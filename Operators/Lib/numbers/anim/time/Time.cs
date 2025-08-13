@@ -19,25 +19,41 @@ internal sealed class Time : Instance<Time>
         var contextLocalTime = (float)context.LocalTime;
         var contextLocalFxTime = (float)context.LocalFxTime;
 
-        var time = Mode.GetEnumValue<TimeModes>(context) switch
+        var timeMode = Mode.GetEnumValue<TimeModes>(context);
+        var speedFactor = SpeedFactor.GetValue(context);
+
+        // Disable dirty flagging
+        var isFrozen = timeMode != TimeModes.Frozen;
+        if (isFrozen != _isFrozen)
+        {
+            Timefloat.DirtyFlag.Trigger = timeMode != TimeModes.Frozen 
+                                              ? DirtyFlagTrigger.Animated 
+                                              : DirtyFlagTrigger.None;
+            _isFrozen = isFrozen;
+        }
+
+        
+        var time = timeMode switch
                        {
                            TimeModes.LocalIdleMotionFxTime => contextLocalFxTime,
                            TimeModes.LocalTime             => contextLocalTime,
-                           //TimeModes.LocalTimeInSecs    => contextLocalTime * 240 / (float)context.Playback.Bpm,
-                           TimeModes.PlaybackTime => (float)context.Playback.TimeInBars,
-                           TimeModes.Runtime      => context.Playback.BarsFromSeconds(Playback.RunTimeInSecs),
-                           _                      => throw new ArgumentOutOfRangeException()
+                           TimeModes.PlaybackTime          => (float)context.Playback.TimeInBars,
+                           TimeModes.Runtime               => context.Playback.BarsFromSeconds(Playback.RunTimeInSecs),
+                           TimeModes.Frozen                => 0,
+                           _                               => throw new ArgumentOutOfRangeException()
                        };
 
         if (Units.GetValue(context) == 1)
         {
-            Timefloat.Value = (float)context.Playback.SecondsFromBars(time * SpeedFactor.GetValue(context));
+            Timefloat.Value = (float)context.Playback.SecondsFromBars(time * speedFactor);
         }
         else
         {
-            Timefloat.Value = (float)(time * SpeedFactor.GetValue(context));
+            Timefloat.Value = (float)(time * speedFactor);
         }
     }
+
+    private bool _isFrozen;
 
     private enum TimeModes
     {
@@ -45,6 +61,7 @@ internal sealed class Time : Instance<Time>
         LocalTime,
         PlaybackTime,
         Runtime,
+        Frozen,
     }
 
     private enum TimeUnits
