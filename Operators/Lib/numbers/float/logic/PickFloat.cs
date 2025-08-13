@@ -16,10 +16,11 @@ internal sealed class PickFloat : Instance<PickFloat>
     private void Update(EvaluationContext context)
     {
         var connections = FloatValues.GetCollectedTypedInputs();
-        FloatValues.DirtyFlag.Clear();
-            
+        
         if (connections == null || connections.Count == 0)
+        {
             return;
+        }
 
         var index = Index.GetValue(context).Mod(connections.Count);
         Selected.Value = connections[index].GetValue(context);
@@ -30,10 +31,12 @@ internal sealed class PickFloat : Instance<PickFloat>
             foreach (var c in connections)
             {
                 c.GetValue(context);
+                c.DirtyFlag.Clear();
             }
-
+        
             _isFirstUpdate = false;
         }
+        FloatValues.DirtyFlag.Clear();
     }
 
     private bool _isFirstUpdate = true; 
