@@ -14,24 +14,8 @@
       "DefaultValue": 0.0
     },
     {
-      "Id": "d1ebfcaa-ce47-4064-9169-7afa64f942f5"/*ShowGizmo*/,
-      "DefaultValue": "Off"
-    },
-    {
-      "Id": "dfa6e67f-140b-4f96-bfb7-a8897edce28f"/*AmountDistribution*/,
-      "DefaultValue": {
-        "X": 1.0,
-        "Y": 1.0,
-        "Z": 1.0
-      }
-    },
-    {
       "Id": "e27a97ce-3d0f-41a9-93c3-a1691f4029aa"/*Amount*/,
       "DefaultValue": 1.0
-    },
-    {
-      "Id": "ebf8276f-2df8-4e70-ba57-30288fb184d1"/*UseCurlNoise*/,
-      "DefaultValue": true
     },
     {
       "Id": "f0345217-29f4-48f8-babd-8aed134cb0d5"/*Frequency*/,
@@ -68,35 +52,6 @@
       "Outputs": []
     },
     {
-      "Id": "506b0c26-f5b0-462a-8973-f294d77d5950"/*Execute*/,
-      "SymbolId": "936e4324-bea2-463a-b196-6064a2d8a6b2",
-      "InputValues": [
-        {
-          "Id": "d68b5569-b43d-4a0d-9524-35289ce08098"/*IsEnabled*/,
-          "Type": "System.Boolean",
-          "Value": true
-        }
-      ],
-      "Outputs": []
-    },
-    {
-      "Id": "591dd78a-61b5-4d2d-9b7b-493b13c7ec7e"/*ReadFile*/,
-      "SymbolId": "5f71d2f8-98c8-4502-8f40-2ea4a1e18cca",
-      "InputValues": [
-        {
-          "Id": "24b7e7e1-fe0b-46be-807e-0afacd4800f9"/*FilePath*/,
-          "Type": "System.String",
-          "Value": "Lib/img/generate/VisualizeSDFFieldTemplate.hlsl"
-        },
-        {
-          "Id": "5c6241f7-6a4f-4972-a314-98fd070f91dd"/*TriggerUpdate*/,
-          "Type": "System.Boolean",
-          "Value": true
-        }
-      ],
-      "Outputs": []
-    },
-    {
       "Id": "a4c4627d-93fd-4f5c-a5f7-b14a2b8b027f"/*ComputeShaderStage*/,
       "SymbolId": "8bef116d-7d1c-4c1b-b902-25c1d5e925a9",
       "InputValues": [
@@ -125,31 +80,6 @@
           "Id": "f6fb3be8-53f2-4d68-bf0f-3f519bc09ff4"/*AdditionalDefines*/,
           "Type": "System.String",
           "Value": "#define USE_WORLDSPACE2"
-        }
-      ],
-      "Outputs": []
-    },
-    {
-      "Id": "af05e7fd-b6b1-4d81-82c3-07b8cf833704"/*Source*/,
-      "SymbolId": "5880cbc3-a541-4484-a06a-0e6f77cdbe8e",
-      "Name": "Source",
-      "InputValues": [
-        {
-          "Id": "ceeae47b-d792-471d-a825-49e22749b7b9"/*InputString*/,
-          "Type": "System.String",
-          "Value": "Resources/lib/particles/TurbulanceForce.hlsl"
-        }
-      ],
-      "Outputs": []
-    },
-    {
-      "Id": "c1310b7e-5ad8-42ac-a283-ce67f2318210"/*ComputeShader*/,
-      "SymbolId": "a256d70f-adb3-481d-a926-caf35bd3e64c",
-      "InputValues": [
-        {
-          "Id": "afb69c81-5063-4cb9-9d42-841b994b5ec0"/*Source*/,
-          "Type": "System.String",
-          "Value": "Resources/lib/particles/TurbulanceForce.hlsl"
         }
       ],
       "Outputs": []
@@ -233,12 +163,6 @@
       "SourceSlotId": "671a04f9-0f40-45ea-a2df-4f06c08d9647",
       "TargetParentOrChildId": "4b251eee-05d5-4f46-b00b-cb89646b3455",
       "TargetSlotId": "49556d12-4cd1-4341-b9d8-c356668d296c"
-    },
-    {
-      "SourceParentOrChildId": "af05e7fd-b6b1-4d81-82c3-07b8cf833704",
-      "SourceSlotId": "dd9d8718-addc-49b1-bd33-aac22b366f94",
-      "TargetParentOrChildId": "591dd78a-61b5-4d2d-9b7b-493b13c7ec7e",
-      "TargetSlotId": "24b7e7e1-fe0b-46be-807e-0afacd4800f9"
     },
     {
       "SourceParentOrChildId": "12d8e577-9d3b-433a-bd27-7eca7d1bd30f",

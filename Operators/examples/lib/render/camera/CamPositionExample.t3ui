@@ -110,7 +110,7 @@
       }
     },
     {
-      "ChildId": "3b813218-2ea1-4ac1-adb1-4825bcbf9710"/*GridPoints*/,
+      "ChildId": "3b813218-2ea1-4ac1-adb1-4825bcbf9710"/*_GridPoints_Old*/,
       "Position": {
         "X": 1843.55,
         "Y": 855.95105
@@ -253,7 +253,7 @@
       }
     },
     {
-      "ChildId": "b15707dc-7227-4026-9656-5895ca66fce6"/*GridPoints*/,
+      "ChildId": "b15707dc-7227-4026-9656-5895ca66fce6"/*_GridPoints_Old*/,
       "Position": {
         "X": 1843.55,
         "Y": 729.951

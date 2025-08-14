@@ -2071,15 +2071,6 @@
           "Value": 0.044
         },
         {
-          "Id": "dfa6e67f-140b-4f96-bfb7-a8897edce28f"/*AmountDistribution*/,
-          "Type": "System.Numerics.Vector3",
-          "Value": {
-            "X": 1.0,
-            "Y": 0.25,
-            "Z": 1.0
-          }
-        },
-        {
           "Id": "e27a97ce-3d0f-41a9-93c3-a1691f4029aa"/*Amount*/,
           "Type": "System.Single",
           "Value": 0.28

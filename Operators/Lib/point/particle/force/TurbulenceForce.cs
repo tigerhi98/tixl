@@ -19,15 +19,6 @@ internal sealed class TurbulenceForce : Instance<TurbulenceForce>
     [Input(Guid = "56144ddb-9d4b-4e08-9169-7853a767f794")]
     public readonly InputSlot<float> Variation = new();
 
-    [Input(Guid = "dfa6e67f-140b-4f96-bfb7-a8897edce28f")]
-    public readonly InputSlot<Vector3> AmountDistribution = new();
-
-    [Input(Guid = "ebf8276f-2df8-4e70-ba57-30288fb184d1")]
-    public readonly InputSlot<bool> UseCurlNoise = new();
-
-    [Input(Guid = "d1ebfcaa-ce47-4064-9169-7afa64f942f5")]
-    public readonly InputSlot<GizmoVisibility> ShowGizmo = new();
-
     [Input(Guid = "671a04f9-0f40-45ea-a2df-4f06c08d9647")]
     public readonly InputSlot<float> AmountFromVelocity = new();
 

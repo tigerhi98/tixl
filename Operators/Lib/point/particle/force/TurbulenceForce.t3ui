@@ -32,26 +32,6 @@
       "AddPadding": "True"
     },
     {
-      "InputId": "d1ebfcaa-ce47-4064-9169-7afa64f942f5"/*ShowGizmo*/,
-      "Position": {
-        "X": -1614.8599,
-        "Y": 562.71277
-      },
-      "Description": "Defines whether and how a helper gizmo should be visible in the output window."
-    },
-    {
-      "InputId": "dfa6e67f-140b-4f96-bfb7-a8897edce28f"/*AmountDistribution*/,
-      "Position": {
-        "X": -1682.9531,
-        "Y": 346.31403
-      },
-      "Description": "Multiplier for the individual axes to amplify/attenuate the noise in certain directions.",
-      "AddPadding": "True",
-      "Min": 0.0,
-      "Max": 5.0,
-      "Format": "{0:0.000}"
-    },
-    {
       "InputId": "e27a97ce-3d0f-41a9-93c3-a1691f4029aa"/*Amount*/,
       "Position": {
         "X": 349.7188,
@@ -61,15 +41,6 @@
       "Min": 0.0,
       "Max": 5.0,
       "Format": "{0:0.000} ×"
-    },
-    {
-      "InputId": "ebf8276f-2df8-4e70-ba57-30288fb184d1"/*UseCurlNoise*/,
-      "Position": {
-        "X": -1657.1246,
-        "Y": 462.14246
-      },
-      "GroupTitle": "Additional options",
-      "Description": "Switches back and forth between different noise variants"
     },
     {
       "InputId": "f0345217-29f4-48f8-babd-8aed134cb0d5"/*Frequency*/,
@@ -83,8 +54,8 @@
     {
       "InputId": "f3d0c69e-3788-49e8-bd70-361c446b4d62"/*ValueField*/,
       "Position": {
-        "X": -249.08997,
-        "Y": -483.98523
+        "X": -62.761566,
+        "Y": -425.20306
       }
     }
   ],
@@ -123,20 +94,6 @@
       }
     },
     {
-      "ChildId": "506b0c26-f5b0-462a-8973-f294d77d5950"/*Execute*/,
-      "Position": {
-        "X": 1118.7731,
-        "Y": 0.85113525
-      }
-    },
-    {
-      "ChildId": "591dd78a-61b5-4d2d-9b7b-493b13c7ec7e"/*ReadFile*/,
-      "Position": {
-        "X": -209.48224,
-        "Y": -351.8487
-      }
-    },
-    {
       "ChildId": "a4c4627d-93fd-4f5c-a5f7-b14a2b8b027f"/*ComputeShaderStage*/,
       "Position": {
         "X": 839.1881,
@@ -148,25 +105,6 @@
       "Position": {
         "X": 77.238434,
         "Y": -425.20306
-      }
-    },
-    {
-      "ChildId": "af05e7fd-b6b1-4d81-82c3-07b8cf833704"/*Source*/,
-      "Style": "Resizable",
-      "Size": {
-        "X": 140.0,
-        "Y": 35.0
-      },
-      "Position": {
-        "X": -349.48224,
-        "Y": -351.8487
-      }
-    },
-    {
-      "ChildId": "c1310b7e-5ad8-42ac-a283-ce67f2318210"/*ComputeShader*/,
-      "Position": {
-        "X": 130.13611,
-        "Y": -129.67865
       }
     },
     {

@@ -28,6 +28,12 @@
   ],
   "Children": [
     {
+      "Id": "00136f4d-922b-4772-9a9b-f20f8a1ef8b4"/*SamplerState*/,
+      "SymbolId": "9515d59d-0bd5-406b-96da-6a5f60215700",
+      "InputValues": [],
+      "Outputs": []
+    },
+    {
       "Id": "015545f7-cf0c-4321-89ec-790d65a6ab49"/*GetParticleComponents*/,
       "SymbolId": "e62c1fa0-6fcd-49f5-9cf8-d3081c8a5917",
       "InputValues": [],
@@ -94,6 +100,29 @@
           "Id": "24b7e7e1-fe0b-46be-807e-0afacd4800f9"/*FilePath*/,
           "Type": "System.String",
           "Value": "/Lib/particles/FieldDistanceForce.hlsl"
+        }
+      ],
+      "Outputs": []
+    },
+    {
+      "Id": "4e80fb17-3331-41f1-a69a-c7ae1a19f812"/*Clamped*/,
+      "SymbolId": "9515d59d-0bd5-406b-96da-6a5f60215700",
+      "Name": "Clamped",
+      "InputValues": [
+        {
+          "Id": "93d8bf26-5067-4ccc-b4cb-e03970686462"/*AddressW*/,
+          "Type": "SharpDX.Direct3D11.TextureAddressMode",
+          "Value": "Clamp"
+        },
+        {
+          "Id": "e7c95fd5-14d1-434f-a140-f22ef69076ab"/*AddressU*/,
+          "Type": "SharpDX.Direct3D11.TextureAddressMode",
+          "Value": "Clamp"
+        },
+        {
+          "Id": "fdeb503f-09c6-48d1-8853-7426f68cdec3"/*AddressV*/,
+          "Type": "SharpDX.Direct3D11.TextureAddressMode",
+          "Value": "Clamp"
         }
       ],
       "Outputs": []
@@ -252,6 +281,18 @@
       "SourceSlotId": "f5531ffb-dbde-45d3-af2a-bd90bcbf3710",
       "TargetParentOrChildId": "b72f830c-2e42-45b9-bd88-4ea863526488",
       "TargetSlotId": "34cf06fe-8f63-4f14-9c59-35a2c021b817"
+    },
+    {
+      "SourceParentOrChildId": "4e80fb17-3331-41f1-a69a-c7ae1a19f812",
+      "SourceSlotId": "0e45c596-c80f-4927-941f-e3199401aa10",
+      "TargetParentOrChildId": "b72f830c-2e42-45b9-bd88-4ea863526488",
+      "TargetSlotId": "4047c9e7-1edb-4c71-b85c-c1b87058c81c"
+    },
+    {
+      "SourceParentOrChildId": "00136f4d-922b-4772-9a9b-f20f8a1ef8b4",
+      "SourceSlotId": "0e45c596-c80f-4927-941f-e3199401aa10",
+      "TargetParentOrChildId": "b72f830c-2e42-45b9-bd88-4ea863526488",
+      "TargetSlotId": "4047c9e7-1edb-4c71-b85c-c1b87058c81c"
     },
     {
       "SourceParentOrChildId": "015545f7-cf0c-4321-89ec-790d65a6ab49",

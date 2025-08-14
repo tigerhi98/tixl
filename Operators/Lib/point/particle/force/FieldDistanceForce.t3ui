@@ -54,6 +54,13 @@
   ],
   "SymbolChildUis": [
     {
+      "ChildId": "00136f4d-922b-4772-9a9b-f20f8a1ef8b4"/*SamplerState*/,
+      "Position": {
+        "X": 1067.2477,
+        "Y": 680.93774
+      }
+    },
+    {
       "ChildId": "015545f7-cf0c-4321-89ec-790d65a6ab49"/*GetParticleComponents*/,
       "Position": {
         "X": 723.8444,
@@ -78,14 +85,14 @@
       "ChildId": "299a8fd7-db02-46bb-9a48-198bf7f4db0f"/*_ExecuteParticleUpdate*/,
       "Position": {
         "X": 1207.2477,
-        "Y": 645.9377
+        "Y": 715.9377
       }
     },
     {
       "ChildId": "2d96af48-a019-4b08-a3b0-71466a6850d7"/*HasTimeChanged*/,
       "Position": {
         "X": 1067.2476,
-        "Y": 680.9377
+        "Y": 750.9377
       }
     },
     {
@@ -100,6 +107,13 @@
       "Position": {
         "X": 436.5757,
         "Y": 227.91666
+      }
+    },
+    {
+      "ChildId": "4e80fb17-3331-41f1-a69a-c7ae1a19f812"/*Clamped*/,
+      "Position": {
+        "X": 1067.2477,
+        "Y": 645.93774
       }
     },
     {
@@ -136,7 +150,7 @@
       "OutputId": "90e8bd09-857a-4de0-b7a6-ab2be17af8ae"/*Particles*/,
       "Position": {
         "X": 1207.2477,
-        "Y": 715.9377
+        "Y": 785.9377
       }
     }
   ]

@@ -15,7 +15,7 @@
     },
     {
       "Id": "d69efb70-71d7-4628-bd27-249f43f34676"/*ShowGizmo*/,
-      "DefaultValue": "Inherit"
+      "DefaultValue": "IfSelected"
     },
     {
       "Id": "fc7131da-a2d1-49c2-bcf7-ebc409347cb6"/*RandomAmount*/,
@@ -185,7 +185,7 @@
       "Outputs": []
     },
     {
-      "Id": "af8a1282-305d-4b99-ad15-6208b7472593"/*GridPoints*/,
+      "Id": "af8a1282-305d-4b99-ad15-6208b7472593"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
