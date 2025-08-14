@@ -43,7 +43,7 @@
     },
     {
       "Id": "b5f61cd0-ad6f-45fe-ad0f-8a7a716b7c8f"/*GizmoVisibility*/,
-      "DefaultValue": "Inherit"
+      "DefaultValue": "IfSelected"
     },
     {
       "Id": "def19ffe-41d3-44a3-9b32-2ae9bb2f2fe4"/*VolumeScale*/,

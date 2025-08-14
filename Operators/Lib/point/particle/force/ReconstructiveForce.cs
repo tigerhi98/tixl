@@ -24,6 +24,12 @@ internal sealed class ReconstructiveForce : Instance<ReconstructiveForce>
         [Input(Guid = "2a8f498f-b91e-41ad-a7d2-8082d5e72f39")]
         public readonly InputSlot<T3.Core.DataTypes.BufferWithViews> TargetPoints = new InputSlot<T3.Core.DataTypes.BufferWithViews>();
 
+        [Input(Guid = "5c3e885d-ba4c-4a8d-aaa0-f0d942e1457a")]
+        public readonly InputSlot<float> Strength = new InputSlot<float>();
+
+        [Input(Guid = "f6cb95fe-7079-4064-bac3-e36bc648da10", MappedType = typeof(DistanceModes))]
+        public readonly InputSlot<int> DistanceMode = new InputSlot<int>();
+
         [Input(Guid = "6be3ff09-439f-4506-86d9-27e70422bb41")]
         public readonly InputSlot<System.Numerics.Vector3> VolumeCenter = new InputSlot<System.Numerics.Vector3>();
 
@@ -41,12 +47,6 @@ internal sealed class ReconstructiveForce : Instance<ReconstructiveForce>
 
         [Input(Guid = "aa4f0f7c-0ccc-45e8-aaa4-a8a2cf0657ed")]
         public readonly InputSlot<float> Bias = new InputSlot<float>();
-
-        [Input(Guid = "5c3e885d-ba4c-4a8d-aaa0-f0d942e1457a")]
-        public readonly InputSlot<float> Strength = new InputSlot<float>();
-
-        [Input(Guid = "f6cb95fe-7079-4064-bac3-e36bc648da10", MappedType = typeof(DistanceModes))]
-        public readonly InputSlot<int> DistanceMode = new InputSlot<int>();
 
         [Input(Guid = "b5f61cd0-ad6f-45fe-ad0f-8a7a716b7c8f")]
         public readonly InputSlot<T3.Core.Operator.GizmoVisibility> GizmoVisibility = new InputSlot<T3.Core.Operator.GizmoVisibility>();

@@ -99,7 +99,13 @@
 - [ ] Clean up [SnapPointsToGrid] with amount
 - [ ] FIX: Filter returns a point with count 0 (with random-seed not applied)
 - [ ] Deprecate DrawPoints2
+- [ ] Fix [RandomizePointsColor]
+- [ ] Cleanup *-template.hlsl -> -gs.hlsl
     
+### Particles
+- [ ] Provide optional reference to points in [GetParticleComponents]
+- 
+
 
 ## SDF-Stuff
 

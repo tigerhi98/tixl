@@ -31,7 +31,7 @@ void main(uint3 i : SV_DispatchThreadID)
     float currentW = ResultPoints[i.x].W;
     float orgW = SourcePoints[i.x].W;
 
-    if(isnan(orgW) || isnan(currentW)) 
+    if(isnan(orgW) || isnan(currentW) || isnan(ResultPoints[i.x].Position.x)) 
     {
         ResultPoints[i.x] = SourcePoints[i.x];
         return;
