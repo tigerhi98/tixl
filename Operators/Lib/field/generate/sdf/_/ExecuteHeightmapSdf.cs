@@ -62,14 +62,14 @@ internal sealed class ExecuteHeightmapSdf : Instance<ExecuteHeightmapSdf>
     {
         c.AppendCall($"""
                        f{c}.w = sdHeightField{ShaderNode}(
-                                 p.xyz, 
+                                 p{c}.xyz, 
                                  {ShaderNode}Scale,
                                  {ShaderNode}UvScale,
                                  {ShaderNode}UvOffset,
                                  {ShaderNode}MaxSlope,
                                  {ShaderNode}MaxHeight
                                  );
-                             f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;     
+                             f{c}.xyz = p{c}.w < 0.5 ?  p{c}.xyz : 1;     
                        """);
         //c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
         return true;

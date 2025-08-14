@@ -60,8 +60,8 @@ internal sealed class ExecuteImage2dSdf : Instance<ExecuteImage2dSdf>
 
     bool IGraphNodeOp.TryBuildCustomCode(CodeAssembleContext c)
     {
-        c.AppendCall($"f{c}.w = (sdf2DColumn{ShaderNode}(p.xy, {ShaderNode}Size, {ShaderNode}Scale) + {ShaderNode}Offset); ");
-        c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
+        c.AppendCall($"f{c}.w = (sdf2DColumn{ShaderNode}(p{c}.xy, {ShaderNode}Size, {ShaderNode}Scale) + {ShaderNode}Offset); ");
+        c.AppendCall($"f{c}.xyz = p{c}.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
         return true;
     }
 
