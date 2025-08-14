@@ -283,9 +283,20 @@ public sealed class ShaderGraphNode
         // Update non input parameters
         foreach (var param in AdditionalParameters)
         {
-            if (param.Value is Matrix4x4 matrix4X4)
+            switch (param.Value)
             {
-                ShaderParamHandling.AddMatrixParameter(floatValues, codeParams, $"{_prefix}{param.Name}", matrix4X4);
+                case Matrix4x4 matrix4X4:
+                    ShaderParamHandling.AddMatrixParameter(floatValues, codeParams, $"{_prefix}{param.Name}", matrix4X4);
+                    break;
+                case Vector2 v2:
+                    ShaderParamHandling.AddVec2Parameter(floatValues, codeParams, $"{_prefix}{param.Name}", v2);
+                    break;                
+                case Vector3 v3:
+                    ShaderParamHandling.AddVec3Parameter(floatValues, codeParams, $"{_prefix}{param.Name}", v3);
+                    break;                
+                case float f:
+                    ShaderParamHandling.AddScalarParameter(floatValues, codeParams, $"{_prefix}{param.Name}", f);
+                    break;
             }
         }
     }

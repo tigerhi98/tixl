@@ -21,7 +21,10 @@ internal sealed class TransformField : Instance<TransformField>, IGraphNodeOp, I
         ShaderNode = new ShaderGraphNode(this, null, InputField);
 
         Result.Value = ShaderNode;
-        ShaderNode.AdditionalParameters = [new ShaderGraphNode.Parameter("float4x4", "Transform", Matrix4x4.Identity)];
+        ShaderNode.AdditionalParameters = [
+            new ShaderGraphNode.Parameter("float4x4", "Transform", Matrix4x4.Identity),
+            new ShaderGraphNode.Parameter("float", "UniformScale", 1),
+            ];
         Result.UpdateAction += Update;
     }
 
@@ -38,7 +41,8 @@ internal sealed class TransformField : Instance<TransformField>, IGraphNodeOp, I
         ShaderNode.Update(context);
 
         // Get parameters 
-        var s = Scale.GetValue(context) * UniformScale.GetValue(context);
+        var uniformScale = UniformScale.GetValue(context);
+        var s = Scale.GetValue(context) * uniformScale;
         var r = Rotation.GetValue(context);
         var yaw = r.Y.ToRadians();
         var pitch = r.X.ToRadians();
@@ -65,21 +69,29 @@ internal sealed class TransformField : Instance<TransformField>, IGraphNodeOp, I
         Matrix4x4.Invert(objectToParentObject, out var invertedMatrix);
 
         ShaderNode.AdditionalParameters[0].Value = invertedMatrix; // This looks ugly. Should be refactored eventually
+        ShaderNode.AdditionalParameters[1].Value = uniformScale; 
     }
 
     public ShaderGraphNode ShaderNode { get; }
 
     public void GetPreShaderCode(CodeAssembleContext c, int inputIndex)
     {
-        c.AppendCall($"p{c}.xyz = mul(float4(p{c}.xyz,1), {ShaderNode}Transform).xyz; ");
+        c.AppendCall($"""
+                      p{c}.xyz = mul(float4(p{c}.xyz,1), {ShaderNode}Transform).xyz;
+                       
+                      """);
     }
     
     public void GetPostShaderCode(CodeAssembleContext c, int inputIndex)
     {
         if (_rotateFieldVecs)
         {
-            c.AppendCall($"f{c}.xyz = mul( {ShaderNode}Transform, float4(f{c}.xyz,0)).xyz; ");
+            c.AppendCall($"""
+                          f{c}.xyz = mul( {ShaderNode}Transform, float4(f{c}.xyz,0)).xyz;
+                          """);
         }
+        c.AppendCall($"f{c}.w *= {ShaderNode}UniformScale; ");
+        
     }
 
     private bool _rotateFieldVecs;

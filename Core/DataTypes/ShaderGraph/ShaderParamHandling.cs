@@ -106,13 +106,13 @@ public static class ShaderParamHandling
         return inputSlots;
     }
 
-    private static void AddScalarParameter(List<float> floatValues, List<ShaderCodeParameter> codeParams, string name, float value)
+    internal static void AddScalarParameter(List<float> floatValues, List<ShaderCodeParameter> codeParams, string name, float value)
     {
         floatValues.Add(value);
         codeParams.Add(new ShaderCodeParameter("float", name));
     }
 
-    private static void AddVec2Parameter(List<float> floatValues, List<ShaderCodeParameter> codeParams, string name, Vector2 value)
+    internal static void AddVec2Parameter(List<float> floatValues, List<ShaderCodeParameter> codeParams, string name, Vector2 value)
     {
         PadFloatParametersToVectorComponentCount(floatValues, codeParams, 2);
         floatValues.Add(value.X);
@@ -120,7 +120,7 @@ public static class ShaderParamHandling
         codeParams.Add(new ShaderCodeParameter("float2", name));
     }
 
-    private static void AddVec3Parameter(List<float> floatValues, List<ShaderCodeParameter> codeParams, string name, Vector3 value)
+    internal static void AddVec3Parameter(List<float> floatValues, List<ShaderCodeParameter> codeParams, string name, Vector3 value)
     {
         PadFloatParametersToVectorComponentCount(floatValues, codeParams, 3);
         floatValues.Add(value.X);
