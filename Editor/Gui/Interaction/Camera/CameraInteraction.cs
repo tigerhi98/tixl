@@ -229,10 +229,12 @@ internal sealed class CameraInteraction
         var rotAroundY = Matrix4x4.CreateFromAxisAngle(_viewAxis.Up, factorX);
         var rotAroundX = Matrix4x4.CreateFromAxisAngle(_viewAxis.Left, factorY);
         var rot = Matrix4x4.Multiply(rotAroundX, rotAroundY);
-
-        var viewDir2 = new Vector4(_intendedSetup.Target - _intendedSetup.Position, 1);
+        
+        var viewDir2 = new Vector4(_intendedSetup.Target - _intendedSetup.Position, 0);
+        var length = viewDir2.Length();
+        
         var viewDirRotated = Vector4.Transform(viewDir2, rot);
-        viewDirRotated = Vector4.Normalize(viewDirRotated);
+        viewDirRotated = Vector4.Normalize(viewDirRotated) * length;
 
         var newTarget = _intendedSetup.Position + new Vector3(viewDirRotated.X, viewDirRotated.Y, viewDirRotated.Z);
         _intendedSetup.Target = newTarget;
