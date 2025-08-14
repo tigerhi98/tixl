@@ -592,20 +592,12 @@
         {
           "Id": "351eb848-829d-48cb-96c3-16c00366d34f"/*AgentCount*/,
           "Type": "System.Int32",
-          "Value": 10003
+          "Value": 10006
         },
         {
           "Id": "3b2e07ad-8218-4740-9e3e-17949ed5fca6"/*ShowAgents*/,
           "Type": "System.Boolean",
-          "Value": false
-        },
-        {
-          "Id": "693957bc-5364-404d-84cd-0248fc609eca"/*Resolution*/,
-          "Type": "T3.Core.DataTypes.Vector.Int2",
-          "Value": {
-            "X": 0,
-            "Y": 0
-          }
+          "Value": true
         },
         {
           "Id": "8ba49b49-8eee-461b-acd8-ba6bc21ba866"/*RestoreLayoutEnabled*/,
@@ -633,12 +625,12 @@
         {
           "Id": "b3c90262-6b98-476b-a2a1-f8b3d00d9bb5"/*AngleLockFactor*/,
           "Type": "System.Single",
-          "Value": 0.95
+          "Value": 0.9
         },
         {
           "Id": "f333dbce-cc54-43ba-99b0-065426820f36"/*RestoreLayout*/,
           "Type": "System.Single",
-          "Value": 0.0019999999
+          "Value": 1.6
         }
       ],
       "Outputs": []

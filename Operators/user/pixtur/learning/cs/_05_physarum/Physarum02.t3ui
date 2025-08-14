@@ -76,8 +76,8 @@
     {
       "ChildId": "2d8836cb-6bd4-4877-a04c-9c45915d8ddb"/*_SpeciesDefinition*/,
       "Position": {
-        "X": 1237.2754,
-        "Y": 1459.477
+        "X": 1247.2754,
+        "Y": 1451.477
       }
     },
     {
@@ -242,14 +242,14 @@
     {
       "ChildId": "d173cd52-1935-4cd3-bf4f-ed15723974ed"/*AdjustColors*/,
       "Position": {
-        "X": 1754.9169,
-        "Y": 1419.6448
+        "X": 1704.1744,
+        "Y": 1380.1128
       }
     },
     {
       "ChildId": "db822aaf-0697-4fbe-bf9e-eafa3a068212"/*_SpeciesDefinition*/,
       "Position": {
-        "X": 1237.2754,
+        "X": 1247.2754,
         "Y": 1416.477
       }
     },

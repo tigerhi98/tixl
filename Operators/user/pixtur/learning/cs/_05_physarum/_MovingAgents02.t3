@@ -199,6 +199,18 @@
       "Outputs": []
     },
     {
+      "Id": "60301699-fd37-41f8-a871-8ca1de2153bd"/*ComputeShader*/,
+      "SymbolId": "a256d70f-adb3-481d-a926-caf35bd3e64c",
+      "InputValues": [
+        {
+          "Id": "afb69c81-5063-4cb9-9d42-841b994b5ec0"/*Source*/,
+          "Type": "System.String",
+          "Value": "/user.pixtur/research/ComputeShaderCourse/04-ThreeSpeciesPhysarum/shaders/physarum-with-agents-cs.hlsl"
+        }
+      ],
+      "Outputs": []
+    },
+    {
       "Id": "72241608-a5f1-4fc0-ace9-7f81141c378d"/*PointSimulation*/,
       "SymbolId": "10507c42-1240-47cc-9569-5e3f1c733e99",
       "InputValues": [
@@ -292,7 +304,7 @@
         {
           "Id": "afb69c81-5063-4cb9-9d42-841b994b5ec0"/*Source*/,
           "Type": "System.String",
-          "Value": "Resources\\user\\pixtur\\research\\ComputeShaderCourse\\03-MovingAgents1\\shaders\\ca-update-grid.hlsl"
+          "Value": "/user.pixtur/research/ComputeShaderCourse/03-MovingAgents1/shaders/ca-update-grid.hlsl"
         }
       ],
       "Outputs": []
@@ -490,7 +502,7 @@
         {
           "Id": "afb69c81-5063-4cb9-9d42-841b994b5ec0"/*Source*/,
           "Type": "System.String",
-          "Value": "Resources\\user\\pixtur\\research\\ComputeShaderCourse\\04-ThreeSpeciesPhysarum\\shaders\\physarum-with-agents-cs.hlsl"
+          "Value": "/user.pixtur/research/ComputeShaderCourse/04-ThreeSpeciesPhysarum/shaders/physarum-with-agents-cs.hlsl"
         }
       ],
       "Outputs": []

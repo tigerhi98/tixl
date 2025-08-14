@@ -52,7 +52,13 @@
 - [ ] Panning/Zooming in CurveEdit-Popup opened from SampleCurveOp is broken 
 
 - [ ] Add hint message to hold shift for keeping connections
-- 
+- [ ] Raymarch UV spaces are not working
+- [ ] FractalSDF -> SDFToColor -> FieldToImage (with color mode) is not working
+- [ ] RandomizePoints HSB broken
+- [ ] Add Field support for DrawMeshAtPoints 
+
+
+
 ## Timeline
 
 - [x] Implement delete clips

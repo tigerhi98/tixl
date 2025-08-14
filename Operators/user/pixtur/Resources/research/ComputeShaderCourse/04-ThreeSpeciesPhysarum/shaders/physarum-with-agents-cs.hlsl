@@ -1,5 +1,6 @@
 #include "shared/hash-functions.hlsl"
 #include "shared/point.hlsl"
+#include "shared/quat-functions.hlsl"
 
 cbuffer ParamConstants : register(b0)
 {
@@ -46,7 +47,7 @@ sampler texSampler : register(s0);
 Texture2D<float4> InputTexture : register(t0);
 
 RWStructuredBuffer<Breed> Breeds : register(u0); 
-RWStructuredBuffer<LegacyPoint> Points : register(u1); 
+RWStructuredBuffer<Point> Points : register(u1); 
 RWTexture2D<float4> WriteOutput  : register(u2); 
 
 
@@ -125,7 +126,7 @@ void main(uint3 i : SV_DispatchThreadID)
     WriteOutput.GetDimensions(texWidth, texHeight);
 
     float3 pos = Points[i.x].Position;
-    float angle = Points[i.x].W;
+    float angle = Points[i.x].FX1;
 
     float hash =hash11(i.x * 123.1);
 
@@ -161,7 +162,7 @@ void main(uint3 i : SV_DispatchThreadID)
 
     float move = clamp(((leftComfort + rightComfort)/2 - frontComfort),-1,1) * CB.MoveToComfort + _baseMove;
     pos += float3(sin(angle),cos(angle),0) * move / TargetHeight;
-    Points[i.x].W = angle;
+    Points[i.x].FX2 = angle;
     
     float3 aspectRatio = float3(TargetWidth / BlockCount.x /((float)TargetHeight / BlockCount.y),1,1);
     pos = (mod((pos  / aspectRatio + 1),2) - 1) * aspectRatio; 
