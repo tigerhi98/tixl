@@ -19,7 +19,7 @@ internal static class FilePickingUi
 {
     public static InputEditStateFlags DrawTypeAheadSearch(FileOperations.FilePickerTypes type, string? fileFilter, ref string? value)
     {
-        ImGui.SetNextItemWidth(-70);
+        ImGui.SetNextItemWidth(-70 * T3Ui.UiScaleFactor);
 
         var nodeSelection = ProjectView.Focused?.NodeSelection;
         if (ProjectView.Focused?.CompositionInstance == null || nodeSelection == null)
