@@ -40,6 +40,9 @@ internal sealed class FieldVolumeForce : Instance<FieldVolumeForce>
 
         [Input(Guid = "637f406f-7cd2-496b-89b1-13945c14f637")]
         public readonly InputSlot<float> NormalSamplingDistance = new InputSlot<float>();
+
+        [Input(Guid = "64fb0a6f-8a7b-4121-ae71-3b028953df28")]
+        public readonly InputSlot<bool> ApplyColorOnCollision = new InputSlot<bool>();
         
         
     private enum Modes {

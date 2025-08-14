@@ -5,7 +5,13 @@
 
 /*{ADDITIONAL_INCLUDES}*/
 
+
 cbuffer Params : register(b0)
+{
+    /*{FLOAT_PARAMS}*/
+}
+
+cbuffer Params : register(b1)
 {
     float Amount;
     float Attraction;
@@ -21,24 +27,24 @@ cbuffer Params : register(b0)
     float SpeedFactor;
 }
 
-cbuffer Params : register(b1)
-{
-    /*{FLOAT_PARAMS}*/
-}
-
 cbuffer Params : register(b2)
 {
     uint ParticleCount;
     int EnableBounce;
+    int ApplyColorOnCollision;
 }
 
 RWStructuredBuffer<Particle> Particles : u0;
-StructuredBuffer<PbrVertex> Vertices : t0;
-StructuredBuffer<int3> Indices : t1;
+//StructuredBuffer<PbrVertex> Vertices : t0;
+
+//StructuredBuffer<int3> Indices : t1;
+
 sampler ClampedSampler : s0;
+sampler WrappedSampler : s1;
+
 
 //=== Additional Resources ==========================================
-/*{RESOURCES(t6)}*/
+/*{RESOURCES(t0)}*/
 
 //=== Global functions ==============================================
 /*{GLOBALS}*/
@@ -64,10 +70,10 @@ inline float GetDistance(float3 p3)
 float3 GetNormal(float3 p, float offset)
 {
     return normalize(
-        GetDistance(p + float3(NormalSamplingDistance, -NormalSamplingDistance, -NormalSamplingDistance)) * float3(1, -1, -1) +
-        GetDistance(p + float3(-NormalSamplingDistance, NormalSamplingDistance, -NormalSamplingDistance)) * float3(-1, 1, -1) +
-        GetDistance(p + float3(-NormalSamplingDistance, -NormalSamplingDistance, NormalSamplingDistance)) * float3(-1, -1, 1) +
-        GetDistance(p + float3(NormalSamplingDistance, NormalSamplingDistance, NormalSamplingDistance)) * float3(1, 1, 1));
+        GetDistance(p + float3(offset, -offset, -offset)) * float3(1, -1, -1) +
+        GetDistance(p + float3(-offset, offset, -offset)) * float3(-1, 1, -1) +
+        GetDistance(p + float3(-offset, -offset, offset)) * float3(-1, -1, 1) +
+        GetDistance(p + float3(offset, offset, offset)) * float3(1, 1, 1));
 }
 
 float4 q_from_tangentAndNormal(float3 dx, float3 dz)
@@ -106,6 +112,11 @@ float4 q_from_tangentAndNormal(float3 dx, float3 dz)
 
     float3 force = 0;
     surfaceN *= InvertVolumeFactor;
+
+    //force += -surfaceN * 0.1;
+
+    //Particles[gi].Velocity += force * Amount;
+    //return;
 
     // Reflect if distance changes
     if (sign(distance * distanceNext) < 0 && distance * InvertVolumeFactor > 0)

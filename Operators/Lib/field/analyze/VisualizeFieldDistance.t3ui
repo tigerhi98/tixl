@@ -132,6 +132,13 @@
       }
     },
     {
+      "ChildId": "5a29acc3-95ca-4e47-b0cc-5da3ab3c66b0"/*Clamped*/,
+      "Position": {
+        "X": 789.6644,
+        "Y": 696.1974
+      }
+    },
+    {
       "ChildId": "5ede328b-37d6-4481-ae04-25ee5c5ae2bd"/*FloatsToBuffer*/,
       "Style": "Resizable",
       "Size": {
@@ -204,6 +211,13 @@
       "Position": {
         "X": 401.02603,
         "Y": 879.378
+      }
+    },
+    {
+      "ChildId": "c07f686d-6e9e-4f03-8cae-f98ff66347de"/*Wrapped*/,
+      "Position": {
+        "X": 789.6644,
+        "Y": 731.1974
       }
     },
     {

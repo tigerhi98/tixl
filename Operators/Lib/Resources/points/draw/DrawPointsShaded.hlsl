@@ -79,10 +79,10 @@ struct psInput
     // float3x3 tbnToWorld : TBASIS;
 };
 
-sampler TexSampler : register(s0);
+sampler WrappedSampler : register(s0);
 sampler ClampedSampler : register(s1);
 
-static sampler LinearSampler = TexSampler;
+static sampler LinearSampler = WrappedSampler;
 
 StructuredBuffer<Point> Points : t0;
 // StructuredBuffer<float4> Colors : t1;
@@ -154,7 +154,7 @@ float4 psMain(psInput pin) : SV_TARGET
 
     // Sample input textures to get shading model params.
     float4 albedo = pin.color;
-    float4 roughnessMetallicOcclusion = RSMOMap.Sample(TexSampler, pin.texCoord);
+    float4 roughnessMetallicOcclusion = RSMOMap.Sample(WrappedSampler, pin.texCoord);
     // float roughness = saturate(roughnessMetallicOcclusion.x + Roughness);
     // float metalness = saturate(roughnessMetallicOcclusion.y + Metal);
     // float occlusion = roughnessMetallicOcclusion.z;
@@ -177,7 +177,7 @@ float4 psMain(psInput pin) : SV_TARGET
     // float3 Lo = normalize(eyePosition - pin.posInWorld);
 
     // // Get current fragment's normal and transform to world space.
-    // // float3 N = lerp(float3(0,0,1),  normalize(2.0 * NormalMap.Sample(TexSampler, pin.texCoord).rgb - 1.0), normalStrength);
+    // // float3 N = lerp(float3(0,0,1),  normalize(2.0 * NormalMap.Sample(WrappedSampler, pin.texCoord).rgb - 1.0), normalStrength);
     // float3 N = normal;
 
     // // N = normalize(mul(N,pin.tbnToWorld));
@@ -237,10 +237,10 @@ float4 psMain(psInput pin) : SV_TARGET
     // float3 ambientLighting = 0;
     // {
     //     // Sample diffuse irradiance at normal direction.
-    //     // float3 irradiance = 0;// irradianceTexture.Sample(TexSampler, N).rgb;
+    //     // float3 irradiance = 0;// irradianceTexture.Sample(WrappedSampler, N).rgb;
     //     uint width, height, levels;
     //     PrefilteredSpecular.GetDimensions(0, width, height, levels);
-    //     float3 irradiance = PrefilteredSpecular.SampleLevel(TexSampler, N, 0.6 * levels).rgb;
+    //     float3 irradiance = PrefilteredSpecular.SampleLevel(WrappedSampler, N, 0.6 * levels).rgb;
 
     //     // Calculate Fresnel term for ambient lighting.
     //     // Since we use pre-filtered cubemap(s) and irradiance is coming from many directions
@@ -255,7 +255,7 @@ float4 psMain(psInput pin) : SV_TARGET
     //     float3 diffuseIBL = kd * albedo.rgb * irradiance;
 
     //     // Sample pre-filtered specular reflection environment at correct mipmap level.
-    //     float3 specularIrradiance = PrefilteredSpecular.SampleLevel(TexSampler, Lr, roughness * levels).rgb;
+    //     float3 specularIrradiance = PrefilteredSpecular.SampleLevel(WrappedSampler, Lr, roughness * levels).rgb;
 
     //     // Split-sum approximation factors for Cook-Torrance specular BRDF.
     //     float2 specularBRDF = BRDFLookup.SampleLevel(ClampedSampler, float2(cosLo, roughness), 0).rg;
@@ -271,12 +271,12 @@ float4 psMain(psInput pin) : SV_TARGET
     float4 litColor = ComputePbr();
 
     // litColor.rgb = lerp(litColor.rgb, FogColor.rgb, pin.fog);
-    // litColor += float4(EmissiveColorMap.Sample(TexSampler, pin.texCoord).rgb * EmissiveColor.rgb, 0);
+    // litColor += float4(EmissiveColorMap.Sample(WrappedSampler, pin.texCoord).rgb * EmissiveColor.rgb, 0);
     // litColor.a *= albedo.a;
 
     return litColor;
 
-    // float4 textureCol = texture2.Sample(TexSampler, input.texCoord);
+    // float4 textureCol = texture2.Sample(WrappedSampler, input.texCoord);
     //  if(textureCol.a < CutOffTransparent)
     //      discard;
 

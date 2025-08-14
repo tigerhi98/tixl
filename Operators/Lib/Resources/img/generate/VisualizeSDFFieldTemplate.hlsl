@@ -56,6 +56,8 @@ vsOutput vsMain4(uint vertexId : SV_VertexID)
 }
 
 sampler ClampedSampler : register(s0);
+sampler WrappedSampler : register(s1);
+
 
 //=== Resources =====================================================
 /*{RESOURCES(t0)}*/

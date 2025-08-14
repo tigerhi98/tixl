@@ -4,19 +4,19 @@
     {
       "Id": "3045d688-05d6-4421-84be-a12bba5e30cb"/*UvStretch*/,
       "DefaultValue": {
-        "X": 0.0,
-        "Y": 0.0
+        "X": 1.0,
+        "Y": 1.0
       }
     },
     {
-      "Id": "82a63a92-1d49-473f-92a9-169cba2cf735"/*SdfScale*/,
+      "Id": "82a63a92-1d49-473f-92a9-169cba2cf735"/*DisplacementHeight*/,
       "DefaultValue": 0.5
     },
     {
       "Id": "a56d9a84-5f09-43e3-81bc-34eb888b8e1a"/*UvOffset*/,
       "DefaultValue": {
-        "X": 0.0,
-        "Y": 0.0
+        "X": 0.5,
+        "Y": 0.5
       }
     },
     {
@@ -25,11 +25,11 @@
     },
     {
       "Id": "b9b08796-9997-41e8-8eb7-8d5ca02e93c6"/*UvScale*/,
-      "DefaultValue": 0.0
+      "DefaultValue": 1.0
     },
     {
       "Id": "c82a8a96-e7f8-4ee1-874e-44ed7449f76f"/*MaxHeight*/,
-      "DefaultValue": 0.0
+      "DefaultValue": 10.0
     },
     {
       "Id": "f42f9439-38cc-4ff8-a3fc-51cc3d38f05e"/*MaxSlope*/,

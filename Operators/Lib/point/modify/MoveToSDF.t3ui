@@ -195,10 +195,24 @@
       }
     },
     {
+      "ChildId": "c4e89102-633a-4926-ae2d-4e9ed7c785b6"/*Clamped*/,
+      "Position": {
+        "X": 700.4629,
+        "Y": 1391.8485
+      }
+    },
+    {
       "ChildId": "e4dd6046-c4a6-4cc4-91ff-6953dd957b07"/*GenerateShaderGraphCode*/,
       "Position": {
         "X": 521.89795,
         "Y": 960.0759
+      }
+    },
+    {
+      "ChildId": "fce5214b-3e47-4d43-9517-918ecd96f9bb"/*Wrapped*/,
+      "Position": {
+        "X": 700.4629,
+        "Y": 1426.8485
       }
     }
   ],

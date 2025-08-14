@@ -47,7 +47,7 @@ internal sealed class ExecuteHeightmapSdf : Instance<ExecuteHeightmapSdf>
                                        float2 uv = p.xz * uvScale + uvOffset;
                                    
                                        // Sample height from texture and scale to world units
-                                       float heightValue = {{ShaderNode}}SdfImage.SampleLevel(TexSampler, uv, 0) * heightScale;
+                                       float heightValue = {{ShaderNode}}SdfImage.SampleLevel(WrappedSampler, uv, 0) * heightScale;
                                    
                                        // clamp to avoid artifacts above maxWorldY
                                        heightValue = min(heightValue, maxWorldY);

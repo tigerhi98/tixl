@@ -10,7 +10,7 @@
       }
     },
     {
-      "InputId": "82a63a92-1d49-473f-92a9-169cba2cf735"/*SdfScale*/,
+      "InputId": "82a63a92-1d49-473f-92a9-169cba2cf735"/*DisplacementHeight*/,
       "Position": {
         "X": 1005.6335,
         "Y": 1047.5734
@@ -36,14 +36,16 @@
       "Position": {
         "X": 534.1489,
         "Y": 1148.357
-      }
+      },
+      "GroupTitle": "Alignment"
     },
     {
       "InputId": "c82a8a96-e7f8-4ee1-874e-44ed7449f76f"/*MaxHeight*/,
       "Position": {
         "X": 1005.63354,
         "Y": 1187.5734
-      }
+      },
+      "GroupTitle": "Additional Options"
     },
     {
       "InputId": "f42f9439-38cc-4ff8-a3fc-51cc3d38f05e"/*MaxSlope*/,

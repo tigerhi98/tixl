@@ -72,8 +72,8 @@ struct Sprite
     float3 __padding;
 };
 
-sampler texSampler : register(s0);
-sampler clampedTexSampler : register(s1);
+sampler WrappedSampler : register(s0);
+sampler ClampedSampler : register(s1);
 
 StructuredBuffer<Sprite> Sprites : t0;
 Texture2D<float4> NoiseImage : register(t1);
@@ -156,14 +156,14 @@ float4 ComputeShimmer(float2 p, float spriteIndex) {
     float2 noiseAPos = float2(angleForFx * distributrionComplexity +  spriteIndex*0.1, 
                              angleForFx*0.2 + Time*0.1 + spriteIndex * 0.2);
 
-    float4 noiseA =  NoiseImage.SampleLevel(texSampler, noiseAPos, 0.0) * 1;
+    float4 noiseA =  NoiseImage.SampleLevel(WrappedSampler, noiseAPos, 0.0) * 1;
 
     float distributionOffset = (noiseA.r - 0.5) * ScatterDistribution / Complexity*2;
     angleForFx += distributionOffset;
     angleForFx %= 1;
 
     // Noise for other effects
-    float4 noiseB =  NoiseImage.SampleLevel(texSampler, float2(
+    float4 noiseB =  NoiseImage.SampleLevel(WrappedSampler, float2(
                         angleForFx * Complexity / SimmerComplexitFactor + spriteIndex * 0.2, 
                         angleForFx*0.3 + Time*-0.11 + spriteIndex * 0.13
                         ), 0.0);
@@ -188,7 +188,7 @@ float4 ComputeShimmer(float2 p, float spriteIndex) {
     float4 colorOut = float4(brightness.xxx * lerp(1,randomColor.rgb, Colorize),1);
 
     float2 uv = float2(d + (noiseB.g - 0.5) * ScatterLength, 0.75);
-    colorOut *= Gradient.Sample(clampedTexSampler, uv);
+    colorOut *= Gradient.Sample(ClampedSampler, uv);
 
     return clamp(colorOut,0,1000);
 }
@@ -204,7 +204,7 @@ float4 ComputeSparkle(float2 p, float spriteIndex) {
     float2 noisePos = float2(angle * Complexity/64 +  spriteIndex*0.1, 
                              angle*0.2 + Time*0.1 + spriteIndex * 0.2);
 
-    float4 noiseA =  NoiseImage.SampleLevel(texSampler, noisePos, 0.0) * 1;
+    float4 noiseA =  NoiseImage.SampleLevel(WrappedSampler, noisePos, 0.0) * 1;
     float noiseDistort = (noiseA.r - 0.5) * ScatterDistribution/Complexity;
     angle += noiseDistort;
     
@@ -231,7 +231,7 @@ float4 ComputeSparkle(float2 p, float spriteIndex) {
 
     float filled = smoothstep(mappedGamma + 0.4, mappedGamma, segmentFill);
 
-    float4 segmentNoise =  NoiseImage.SampleLevel(texSampler, float2(
+    float4 segmentNoise =  NoiseImage.SampleLevel(WrappedSampler, float2(
                          (segmentIndex / Complexity*173.1236) %1 + spriteIndex * 0.213 - Time*0.14, 
                          Time*0.2 + segmentIndex *0.14
                          ), 0.0);
@@ -239,7 +239,7 @@ float4 ComputeSparkle(float2 p, float spriteIndex) {
     float segmentD = (d + (segmentNoise.r-0.5) * ScatterLength) / lerp(1, cc, CompletionAffectsLength);
     
 
-    float4 gradient= Gradient.Sample(clampedTexSampler, float2(1-segmentD, 0.25));
+    float4 gradient= Gradient.Sample(ClampedSampler, float2(1-segmentD, 0.25));
     filled *= 1+ (segmentNoise.r - 0.5) * ScatterBrightness;
 
     // Colorize
@@ -284,7 +284,7 @@ float4 psMain(psInput input) : SV_TARGET
 
     if(Style < 0.5) 
     {
-        //float4 gradient= Gradient.SampleLevel(texSampler,1-d,0);
+        //float4 gradient= Gradient.SampleLevel(WrappedSampler,1-d,0);
         //d= gradient.r;
 
         if(UseRGSSMultiSampling) 
@@ -308,7 +308,7 @@ float4 psMain(psInput input) : SV_TARGET
         colorOut = ComputeShimmer(p, input.spriteIndex) * input.color;
     }
     else {
-        float4 gradient= Gradient.SampleLevel(texSampler,1-d,0);
+        float4 gradient= Gradient.SampleLevel(WrappedSampler,1-d,0);
         d= gradient.r;
 
         if(UseRGSSMultiSampling) 

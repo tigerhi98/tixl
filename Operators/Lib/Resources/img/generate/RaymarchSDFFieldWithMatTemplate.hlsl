@@ -44,7 +44,7 @@ cbuffer FogParams : register(b3)
     float4 FogColor;
     float FogDistance;
     float FogBias;
-}
+} 
 
 cbuffer PointLights : register(b4)
 {
@@ -68,9 +68,9 @@ Texture2D<float4> NormalMap : register(t3);
 Texture2D<float4> BRDFLookup : register(t4);
 TextureCube<float4> PrefilteredSpecular : register(t5);
 
-sampler TexSampler : register(s0);
-static sampler LinearSampler = TexSampler;
-sampler ClampedSampler : register(s1);
+sampler ClampedSampler : register(s0);
+sampler WrappedSampler : register(s1);
+//static sampler LinearSampler = TexSampler;
 //--------------------
 
 struct vsOutput
@@ -262,11 +262,11 @@ PSOutput psMain(vsOutput input)
 
     float4 fieldColor = float4(GetField(float4(p, 1)).rgb, 1);
 
-    float4 roughnessMetallicOcclusion = RSMOMap.Sample(TexSampler, uv);
+    float4 roughnessMetallicOcclusion = RSMOMap.Sample(WrappedSampler, uv);
     frag.Roughness = saturate(roughnessMetallicOcclusion.x + Roughness);
     frag.Metalness = saturate(roughnessMetallicOcclusion.y + Metal);
     frag.Occlusion = roughnessMetallicOcclusion.z;
-    frag.albedo = BaseColorMap.Sample(TexSampler, uv);
+    frag.albedo = BaseColorMap.Sample(WrappedSampler, uv);
     frag.uv = uv;
     frag.N = normal;
     frag.Lo = -dp;
@@ -283,7 +283,7 @@ PSOutput psMain(vsOutput input)
 
     // litColor.rgb *= fieldColor.rgb;
 
-    litColor += float4(EmissiveColorMap.Sample(TexSampler, uv).rgb * EmissiveColor.rgb, 0);
+    litColor += float4(EmissiveColorMap.Sample(WrappedSampler, uv).rgb * EmissiveColor.rgb, 0);
     litColor.a *= frag.albedo.a;
 
     litColor.rgb = lerp(AmbientOcclusion.rgb, litColor.rgb, ComputeAO(p, normal, AODistance, 3, AmbientOcclusion.a * (1 - fog)));
@@ -295,3 +295,4 @@ PSOutput psMain(vsOutput input)
     result.depth = ComputeDepthFromViewZ(viewZ);
     return result;
 }
+

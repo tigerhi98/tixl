@@ -54,7 +54,7 @@ float4 ComputePbr()
         // float3 irradiance = 0;// irradianceTexture.Sample(TexSampler, N).rgb;
         uint width, height, levels;
         PrefilteredSpecular.GetDimensions(0, width, height, levels);
-        float3 irradiance = PrefilteredSpecular.SampleLevel(LinearSampler, N, 0.6 * levels).rgb;
+        float3 irradiance = PrefilteredSpecular.SampleLevel(WrappedSampler, N, 0.6 * levels).rgb;
 
         // Calculate Fresnel term for ambient lighting.
         // Since we use pre-filtered cubemap(s) and irradiance is coming from many directions
@@ -69,7 +69,7 @@ float4 ComputePbr()
         float3 diffuseIBL = kd * frag.albedo.rgb * irradiance;
 
         // Sample pre-filtered specular reflection environment at correct mipmap level.
-        float3 specularIrradiance = PrefilteredSpecular.SampleLevel(LinearSampler, Lr, frag.Roughness * levels).rgb;
+        float3 specularIrradiance = PrefilteredSpecular.SampleLevel(WrappedSampler, Lr, frag.Roughness * levels).rgb;
 
         // Split-sum approximation factors for Cook-Torrance specular BRDF.
         float2 specularBRDF = BRDFLookup.SampleLevel(ClampedSampler, float2(frag.cosLo, frag.Roughness), 0).rg;
@@ -82,7 +82,7 @@ float4 ComputePbr()
     // Final fragment color.
     float4 litColor = float4(directLighting + ambientLighting, 1.0) * BaseColor * Color;
 
-    litColor += float4(EmissiveColorMap.Sample(TexSampler, frag.uv).rgb * EmissiveColor.rgb, 0);
+    litColor += float4(EmissiveColorMap.Sample(WrappedSampler, frag.uv).rgb * EmissiveColor.rgb, 0);
     litColor.rgb = lerp(litColor.rgb, FogColor.rgb, frag.fog * FogColor.a);
     litColor.a *= frag.albedo.a;
 

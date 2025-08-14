@@ -9,7 +9,7 @@ We’re using [Inno Setup](https://jrsoftware.org/isinfo.php) to generate a feat
 ### Build Project
 
 1. Clone `git@github.com:tixl3d/tixl.git` and switch to the `main` branch.
-2. Open the project in Rider or Visual Studio.
+2. Open the  solution `t3.sln` in Rider or Visual Studio.
 3. Make sure you're in Release mode.
 4. Rebuild the Player project first.
 5. Publish the Player as a standalone folder with the following settings:

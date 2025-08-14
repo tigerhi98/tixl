@@ -61,7 +61,7 @@ struct psInput
     float fog : VPOS;
 };
 
-sampler TexSampler : register(s0);
+sampler WrappedSampler : register(s0);
 sampler LinearSampler : register(s1);
 sampler ClampedSampler : register(s2);
 
@@ -158,7 +158,7 @@ float3 ComputeNormal(psInput pin, float3x3 tbnToWorld)
         float3 geometricNormal = normalize(cross(dpdy, dpdx));
 
         // Apply normal map details on top of flat normal
-        float4 normalMap = NormalMap.Sample(TexSampler, frag.uv);
+        float4 normalMap = NormalMap.Sample(WrappedSampler, frag.uv);
         float3 normalDetail = normalize(2.0 * normalMap.rgb - 1.0);
 
         // Create TBN basis using geometric normal and derivatives
@@ -173,7 +173,7 @@ float3 ComputeNormal(psInput pin, float3x3 tbnToWorld)
     else
     {
         // Standard shading: use interpolated normals with normal mapping
-        float4 normalMap = NormalMap.Sample(TexSampler, frag.uv);
+        float4 normalMap = NormalMap.Sample(WrappedSampler, frag.uv);
         N = normalize(2.0 * normalMap.rgb - 1.0);
         N = normalize(mul(N, tbnToWorld));
     }
@@ -182,12 +182,12 @@ float3 ComputeNormal(psInput pin, float3x3 tbnToWorld)
 
 float4 psMain(psInput pin) : SV_TARGET
 {
-    float4 roughnessMetallicOcclusion = RSMOMap.Sample(TexSampler, pin.texCoord);
+    float4 roughnessMetallicOcclusion = RSMOMap.Sample(WrappedSampler, pin.texCoord);
 
     frag.Roughness = saturate(roughnessMetallicOcclusion.x + Roughness);
     frag.Metalness = saturate(roughnessMetallicOcclusion.y + Metal);
     frag.Occlusion = roughnessMetallicOcclusion.z;
-    frag.albedo = BaseColorMap.Sample(TexSampler, pin.texCoord);
+    frag.albedo = BaseColorMap.Sample(WrappedSampler, pin.texCoord);
     frag.uv = pin.texCoord;
     frag.N = ComputeNormal(pin, pin.tbnToWorld);
     frag.fog = pin.fog;
