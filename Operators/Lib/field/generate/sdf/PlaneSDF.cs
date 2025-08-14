@@ -46,7 +46,7 @@ internal sealed class PlaneSDF : Instance<PlaneSDF>
     {
         var a = _axisCodes0[(int)_axis];
         var sign = _axisSigns[(int)_axis];
-        c.AppendCall($"f{c}.w = {sign}p{c}.{a} - {ShaderNode}Center.{a};");
+        c.AppendCall($"f{c}.w = {sign}(p{c}.{a} - {ShaderNode}Center.{a});");
     }
 
     private readonly string[] _axisCodes0 =
