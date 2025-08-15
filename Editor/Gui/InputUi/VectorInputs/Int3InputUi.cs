@@ -38,7 +38,9 @@ internal sealed class Int3InputUi : IntVectorInputValueUi<Int3>
         if (inputValue is not InputValue<Int3> typedInputValue)
             return;
 
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+            return;
+        
         IntComponents[0] = typedInputValue.Value.X;
         IntComponents[1] = typedInputValue.Value.Y;
         IntComponents[2] = typedInputValue.Value.Z;

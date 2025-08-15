@@ -1,4 +1,6 @@
-﻿using T3.Core.DataTypes;
+﻿#nullable enable
+
+using T3.Core.DataTypes;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
 using T3.Editor.Gui.Interaction;
@@ -30,8 +32,13 @@ internal sealed class Vector3InputUi : FloatVectorInputValueUi<Vector3>
     {
         if (inputValue is not InputValue<Vector3> typedInputValue)
             return;
-            
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
+        
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+        {
+            Log.Warning("Can't find vec3 animation curves?");
+            return;
+        }
+        
         typedInputValue.Value.CopyTo(FloatComponents);
         Curve.UpdateCurveValues(curves, time, FloatComponents);
     }

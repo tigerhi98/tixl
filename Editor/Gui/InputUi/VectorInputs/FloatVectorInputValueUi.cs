@@ -38,8 +38,9 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
     protected override InputEditStateFlags DrawAnimatedValue(string name, InputSlot<T> inputSlot, Animator animator)
     {
         var time = Playback.Current.TimeInBars;
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
-        if (curves.Length < FloatComponents.Length)
+
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves)
+            || curves.Length < FloatComponents.Length)
         {
             ImGui.PushID(inputSlot.Parent.SymbolChildId.GetHashCode() + inputSlot.Id.GetHashCode());
             DrawReadOnlyControl(name, ref inputSlot.Value);
@@ -67,7 +68,7 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
     protected override void DrawReadOnlyControl(string name, ref T float2Value)
     {
         ImGui.PushStyleColor(ImGuiCol.Text, UiColors.StatusAutomated.Rgba);
-        DrawEditControl(name, null, ref float2Value, true);
+        DrawEditControl(name, null!, ref float2Value, true);
         ImGui.PopStyleColor();
     }
 
@@ -141,20 +142,21 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
                     MaxValue = 1,
                     CustomFormat = "{0:0.000}",
                     ClampRange = true,
-                },                
+                },
         };
 
     public override bool DrawSettings()
     {
         var modified = false;
         var keepPosition = ImGui.GetCursorPos();
-        ImGui.SetCursorPos(new Vector2(ImGui.GetWindowContentRegionMax().X - ImGui.GetFrameHeight() - ImGui.GetStyle().FramePadding.X, 
+        ImGui.SetCursorPos(new Vector2(ImGui.GetWindowContentRegionMax().X - ImGui.GetFrameHeight() - ImGui.GetStyle().FramePadding.X,
                                        ImGui.GetWindowContentRegionMin().Y));
-            
+
         if (CustomComponents.IconButton(Icon.Settings2, Vector2.One * ImGui.GetFrameHeight()))
         {
             ImGui.OpenPopup("customFormats");
         }
+
         ImGui.SetCursorPos(keepPosition);
 
         if (ImGui.BeginPopup("customFormats", ImGuiWindowFlags.Popup))
@@ -177,26 +179,26 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
 
             ImGui.EndPopup();
         }
-            
+
         modified |= base.DrawSettings();
-            
+
         FormInputs.DrawFieldSetHeader("Value Range");
-        if (FormInputs.DrawValueRangeControl(ref Min, ref Max, ref _scale,  ref Clamp, DefaultMin, DefaultMax, DefaultScale))
+        if (FormInputs.DrawValueRangeControl(ref Min, ref Max, ref _scale, ref Clamp, DefaultMin, DefaultMax, DefaultScale))
         {
             modified = true;
         }
-            
+
         FormInputs.DrawFieldSetHeader("Custom Value format");
-            
+
         if (
-            FormInputs.AddStringInput("##valueFormat", 
+            FormInputs.AddStringInput("##valueFormat",
                                       ref Format,
                                       "Custom format like {0:0.0}",
                                       null,
-                                      "Defines custom value format. Here are some examples:\n\n"+
-                                      "{0:0.00000} - High precision\n"+
+                                      "Defines custom value format. Here are some examples:\n\n" +
+                                      "{0:0.00000} - High precision\n" +
                                       "{0:0}× - With a suffix\n" +
-                                      "{0:G5} - scientific notation", 
+                                      "{0:G5} - scientific notation",
                                       null)
             )
         {

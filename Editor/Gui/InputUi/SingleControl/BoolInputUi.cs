@@ -9,8 +9,8 @@ namespace T3.Editor.Gui.InputUi.SingleControl;
 
 public sealed class BoolInputUi : SingleControlInputUi<bool>
 {
-    public override bool IsAnimatable => true;        
-        
+    public override bool IsAnimatable => true;
+
     public override IInputUi Clone()
     {
         return new BoolInputUi()
@@ -31,43 +31,43 @@ public sealed class BoolInputUi : SingleControlInputUi<bool>
     {
         ImGui.TextUnformatted(value.ToString());
     }
-        
 
     protected override InputEditStateFlags DrawAnimatedValue(string name, InputSlot<bool> inputSlot, Animator animator)
     {
         var time = Playback.Current.TimeInBars;
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
-        if (curves.Length != 1)
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves)
+            || curves.Length != 1)
         {
-            Log.Assert($"Animated bool requires a singe animation curve (got {curves.Length})");
+            Log.Assert($"Animated bool requires a singe animation curve.");
             return InputEditStateFlags.Nothing;
         }
 
         var curve = curves[0];
         var value = curve.GetSampledValue(time) > 0.5f;
-            
+
         var modified = DrawSingleEditControl(name, ref value);
         if (!modified)
             return InputEditStateFlags.Nothing;
-            
+
         inputSlot.SetTypedInputValue(value);
 
         return InputEditStateFlags.ModifiedAndFinished;
+    }
 
-    }        
-        
     public override void ApplyValueToAnimation(IInputSlot inputSlot, InputValue inputValue, Animator animator, double time)
     {
         if (inputValue is not InputValue<bool> boolInputValue)
             return;
-            
+
         var value = boolInputValue.Value;
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
-        if (curves.Length != 1)
+
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves)
+            || curves.Length != 1)
         {
             Log.Error("Expected 1 curve for bool animation");
             return;
-        } 
-        Curve.UpdateCurveBoolValue(curves[0], time, value );
-    }        
+        }
+
+        Curve.UpdateCurveBoolValue(curves[0], time, value);
+    }
 }

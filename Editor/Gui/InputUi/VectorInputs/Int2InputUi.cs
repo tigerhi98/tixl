@@ -38,7 +38,9 @@ internal sealed class Int2InputUi : IntVectorInputValueUi<Int2>
         if (inputValue is not InputValue<Int2> typedInputValue)
             return;
 
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+            return;
+
         IntComponents[0] = typedInputValue.Value.Width;
         IntComponents[1] = typedInputValue.Value.Height;
         Curve.UpdateCurveValues(curves, time, IntComponents);

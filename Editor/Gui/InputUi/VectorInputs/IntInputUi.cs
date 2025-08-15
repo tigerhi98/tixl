@@ -57,13 +57,15 @@ internal sealed class IntInputUi : IntVectorInputValueUi<int>
     {
         if (inputValue is not InputValue<int> typedInputValue)
             return;
-            
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
+
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+            return;
+        
         IntComponents[0] = typedInputValue.Value;
         Curve.UpdateCurveValues(curves, time, IntComponents);
-    }    
-        
-    public static InputEditStateFlags DrawEnumInputEdit(ref int value, Type enumType)
+    }
+
+    private static InputEditStateFlags DrawEnumInputEdit(ref int value, Type enumType)
     {
         var enumInfo = EnumCache.Instance.GetEnumEntry(enumType);
 

@@ -49,7 +49,7 @@ public abstract class InputValueUi<T> : IInputUi
     public bool AddPadding { get; set; }
 
     public string? Description { get; set; }
-    
+
     public bool ExcludedFromPresets { get; set; }
     #endregion
 
@@ -148,12 +148,11 @@ public abstract class InputValueUi<T> : IInputUi
 
         var name = inputSlot.Input.Name;
 
-        
         if (inputSlot.HasInputConnections)
         {
             editState = DrawConnectedParameter();
         }
-        else if (isAnimated && animationCurve !=null)
+        else if (isAnimated && animationCurve != null)
         {
             editState = DrawAnimatedParameter(animationCurve);
         }
@@ -264,11 +263,13 @@ public abstract class InputValueUi<T> : IInputUi
                                                             ProjectView.Focused?.GraphCanvas.ExtractAsConnectedOperator(typedInputSlot, symbolChildUi, input);
                                                         }
 
-                                                        if (ImGui.MenuItem("Publish as Input", null,false,false))
+                                                        if (ImGui.MenuItem("Publish as Input", null, false, false))
                                                         {
                                                             InputArea.PublishAsInput(nodeSelection, inputSlot, symbolChildUi, input);
                                                         }
-                                                        CustomComponents.TooltipForLastItem("Publishing as input is not yet implemented. Please create a input of that type and connect manually.");
+
+                                                        CustomComponents
+                                                           .TooltipForLastItem("Publishing as input is not yet implemented. Please create a input of that type and connect manually.");
 
                                                         if (ImGui.MenuItem("Parameters settings"))
                                                             editState = InputEditStateFlags.ShowOptions;
@@ -320,16 +321,17 @@ public abstract class InputValueUi<T> : IInputUi
 
             if (CustomComponents.RoundedButton("##icon", InputArea.ConnectionAreaWidth, ImDrawFlags.RoundCornersLeft))
             {
-                // TODO: this should use Undo/Redo commands
-                if (hasKeyframeAtCurrentTime)
+                if (animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
                 {
-                    AnimationOperations.RemoveKeyframeFromCurves(animator.GetCurvesForInput(inputSlot),
-                                                                 Playback.Current.TimeInBars);
-                }
-                else
-                {
-                    AnimationOperations.InsertKeyframeToCurves(animator.GetCurvesForInput(inputSlot),
-                                                               Playback.Current.TimeInBars);
+                    // TODO: this should use Undo/Redo commands
+                    if (hasKeyframeAtCurrentTime)
+                    {
+                        AnimationOperations.RemoveKeyframeFromCurves(curves, Playback.Current.TimeInBars);
+                    }
+                    else
+                    {
+                        AnimationOperations.InsertKeyframeToCurves(curves, Playback.Current.TimeInBars);
+                    }
                 }
             }
 
@@ -340,50 +342,53 @@ public abstract class InputValueUi<T> : IInputUi
             // Draw Name
             ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(1.0f, 0.5f));
             var isClicked = ImGui.Button(input.Name + "##ParamName", new Vector2(ParameterNameWidth, 0.0f));
-            CustomComponents.ContextMenuForItem(() =>
-                                                {
-                                                    if (ImGui.MenuItem("Jump To Previous Keyframe", hasKeyframeBefore))
-                                                    {
-                                                        UserActionRegistry.QueueAction(UserActions.PlaybackJumpToPreviousKeyframe);
-                                                    }
+            CustomComponents.ContextMenuForItem
+                (() =>
+                 {
+                     if (ImGui.MenuItem("Jump To Previous Keyframe", hasKeyframeBefore))
+                     {
+                         UserActionRegistry.QueueAction(UserActions.PlaybackJumpToPreviousKeyframe);
+                     }
 
-                                                    if (ImGui.MenuItem("Jump To Next Keyframe", hasKeyframeBefore))
-                                                    {
-                                                        UserActionRegistry.QueueAction(UserActions.PlaybackJumpToNextKeyframe);
-                                                    }
+                     if (ImGui.MenuItem("Jump To Next Keyframe", hasKeyframeBefore))
+                     {
+                         UserActionRegistry.QueueAction(UserActions.PlaybackJumpToNextKeyframe);
+                     }
 
-                                                    if (hasKeyframeAtCurrentTime)
-                                                    {
-                                                        if (ImGui.MenuItem("Remove keyframe"))
-                                                        {
-                                                            AnimationOperations.RemoveKeyframeFromCurves(animator.GetCurvesForInput(inputSlot),
-                                                                                                         Playback.Current.TimeInBars);
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        if (ImGui.MenuItem("Insert keyframe"))
-                                                        {
-                                                            AnimationOperations.InsertKeyframeToCurves(animator.GetCurvesForInput(inputSlot),
-                                                                                                       Playback.Current.TimeInBars);
-                                                        }
-                                                    }
+                     if (hasKeyframeAtCurrentTime)
+                     {
+                         if (ImGui.MenuItem("Remove keyframe")
+                             && animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+                         {
+                             AnimationOperations.RemoveKeyframeFromCurves(curves,
+                                                                          Playback.Current.TimeInBars);
+                         }
+                     }
+                     else
+                     {
+                         if (ImGui.MenuItem("Insert keyframe")
+                             && animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+                         {
+                             AnimationOperations.InsertKeyframeToCurves(curves,
+                                                                        Playback.Current.TimeInBars);
+                         }
+                     }
 
-                                                    ImGui.Separator();
+                     ImGui.Separator();
 
-                                                    if (ImGui.MenuItem("Remove Animation"))
-                                                    {
-                                                        UndoRedoStack.AddAndExecute(new RemoveAnimationsCommand(animator, new[] { inputSlot }));
-                                                    }
-                                                    
-                                                    if (ParameterWindow.IsAnyInstanceVisible() && ImGui.MenuItem("Rename input"))
-                                                    {
-                                                        ParameterWindow.RenameInputDialog.ShowNextFrame(symbolChildUi.SymbolChild.Symbol, input.InputDefinition.Id);
-                                                    }
-                                                    
-                                                    if (ImGui.MenuItem("Parameters settings"))
-                                                        editState = InputEditStateFlags.ShowOptions;
-                                                });
+                     if (ImGui.MenuItem("Remove Animation"))
+                     {
+                         UndoRedoStack.AddAndExecute(new RemoveAnimationsCommand(animator, new[] { inputSlot }));
+                     }
+
+                     if (ParameterWindow.IsAnyInstanceVisible() && ImGui.MenuItem("Rename input"))
+                     {
+                         ParameterWindow.RenameInputDialog.ShowNextFrame(symbolChildUi.SymbolChild.Symbol, input.InputDefinition.Id);
+                     }
+
+                     if (ImGui.MenuItem("Parameters settings"))
+                         editState = InputEditStateFlags.ShowOptions;
+                 });
             ImGui.PopStyleVar();
 
             if (ImGui.IsItemHovered())
@@ -417,7 +422,7 @@ public abstract class InputValueUi<T> : IInputUi
         {
             // Connection area...
             InputArea.DrawNormalInputArea(typedInputSlot, compositionUi, symbolChildUi, input,
-                                             IsAnimatable, typeColor, tempConnections);
+                                          IsAnimatable, typeColor, tempConnections);
 
             ImGui.SameLine();
 
@@ -479,32 +484,33 @@ public abstract class InputValueUi<T> : IInputUi
                              symbolUi.FlagAsModified();
                          }
                      }
-                     
+
                      if (ImGui.MenuItem("Reset to default", !input.IsDefault))
                      {
                          UndoRedoStack.AddAndExecute(new ResetInputToDefault(compositionSymbol, symbolChildUi.Id,
                                                                              input));
                      }
-                     
+
                      if (ImGui.MenuItem("Extract as connection operator"))
                      {
                          ProjectView.Focused?.GraphCanvas.ExtractAsConnectedOperator(typedInputSlot, symbolChildUi, input);
                      }
-                     
-                     if (ImGui.MenuItem("Publish as Input", null,false,false))
+
+                     if (ImGui.MenuItem("Publish as Input", null, false, false))
                      {
                          InputArea.PublishAsInput(nodeSelection, inputSlot, symbolChildUi, input);
                      }
-                     CustomComponents.TooltipForLastItem("Publishing as input is not yet implemented. Please create a input of that type and connect manually.");
-                     
+
+                     CustomComponents
+                        .TooltipForLastItem("Publishing as input is not yet implemented. Please create a input of that type and connect manually.");
+
                      if (ParameterWindow.IsAnyInstanceVisible() && ImGui.MenuItem("Rename input"))
                      {
                          ParameterWindow.RenameInputDialog.ShowNextFrame(symbolChildUi.SymbolChild.Symbol, input.InputDefinition.Id);
                      }
-                     
+
                      if (ImGui.MenuItem("Parameters settings"))
                          editState = InputEditStateFlags.ShowOptions;
-                     
                  });
             ImGui.PopStyleVar();
 
@@ -535,7 +541,6 @@ public abstract class InputValueUi<T> : IInputUi
             return editState;
         }
         #endregion
-
     }
 
     public virtual bool DrawSettings()
@@ -551,10 +556,10 @@ public abstract class InputValueUi<T> : IInputUi
         var vec2Writer = TypeValueToJsonConverters.Entries[typeof(Vector2)];
         writer.WritePropertyName("Position");
         vec2Writer(writer, PosOnCanvas);
-        
+
         if (ExcludedFromPresets)
             writer.WriteObject(nameof(ExcludedFromPresets), ExcludedFromPresets);
-        
+
         if (!string.IsNullOrEmpty(GroupTitle))
             writer.WriteObject(nameof(GroupTitle), GroupTitle);
 
@@ -570,15 +575,15 @@ public abstract class InputValueUi<T> : IInputUi
         if (inputToken == null)
             return;
 
-        Relevancy = JsonUtils.TryGetEnumValue<Relevancy>(inputToken["Relevancy"], out var relevancy) 
-                        ? relevancy 
+        Relevancy = JsonUtils.TryGetEnumValue<Relevancy>(inputToken["Relevancy"], out var relevancy)
+                        ? relevancy
                         : DefaultRelevancy;
-        
+
         // Keeping for reference...
         // Relevancy = (inputToken[nameof(Relevancy)] == null)
         //                 ? DefaultRelevancy
         //                 : (Relevancy)Enum.Parse(typeof(Relevancy), inputToken["Relevancy"].ToString());
-        
+
         var positionToken = inputToken["Position"];
         if (positionToken != null)
             PosOnCanvas = new Vector2((positionToken["X"] ?? 0).Value<float>(),
@@ -600,7 +605,7 @@ internal static class InputArea
 {
     internal const float ConnectionAreaWidth = 25.0f;
 
-    internal static void DrawNormalInputArea<T>( InputSlot<T> inputSlot,
+    internal static void DrawNormalInputArea<T>(InputSlot<T> inputSlot,
                                                 SymbolUi compositionUi,
                                                 SymbolUi.Child symbolChildUi,
                                                 Symbol.Child.Input input,
@@ -646,7 +651,7 @@ internal static class InputArea
                 case InputOperations.Extract:
                     ProjectView.Focused?.GraphCanvas.ExtractAsConnectedOperator(inputSlot, symbolChildUi, input);
                     break;
-                
+
                 case InputOperations.ConnectWithSearch:
                 {
                     ProjectView.Focused?.GraphCanvas.CreatePlaceHolderConnectedToInput(symbolChildUi, input.InputDefinition);
@@ -740,7 +745,7 @@ internal static class InputArea
         // FIXME: Adding the input will trigger a recompile and thus discard the previous composition
         // This would only be available after reloading with the next frame update. I currently have
         // no idea how to create the connection line without this.
-        
+
         var updatedComposition = selection.GetSelectedComposition();
         if (updatedComposition == null)
         {
@@ -819,7 +824,7 @@ internal static class InputArea
         ImGui.PushFont(Fonts.FontBold);
         CustomComponents.RoundedButton("##paramName", ConnectionAreaWidth, ImDrawFlags.RoundCornersTopLeft);
         ImGui.SameLine();
-        
+
         var wasClicked = ImGui.Button($"{name.AddSpacesForImGuiOutput()}...##paramName", new Vector2(parameterNameWidth, 0));
         ImGui.PopFont();
         ImGui.PopStyleColor();

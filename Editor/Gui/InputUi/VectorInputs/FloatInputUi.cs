@@ -35,8 +35,10 @@ internal sealed class FloatInputUi : FloatVectorInputValueUi<float>
     {
         if (inputValue is not InputValue<float> typedInputValue)
             return;
-            
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
+
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+            return;
+        
         FloatComponents[0] = typedInputValue.Value;
         Curve.UpdateCurveValues(curves, time, FloatComponents);
     }        

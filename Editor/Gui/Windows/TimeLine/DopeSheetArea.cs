@@ -747,6 +747,9 @@ internal sealed class DopeSheetArea : AnimationParameterEditing, ITimeObjectMani
 
     private IEnumerable<VDefinition> FindParameterKeysAtPosition(double u)
     {
+        if(_currentAnimationParameter == null)
+            yield break;
+        
         foreach (var curve in _currentAnimationParameter.Curves)
         {
             var matchingKey = curve.GetVDefinitions().FirstOrDefault(vDef2 => Math.Abs(vDef2.U - u) < 1 / 120f);

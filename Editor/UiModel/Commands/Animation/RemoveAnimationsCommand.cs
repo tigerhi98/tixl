@@ -30,12 +30,17 @@ internal sealed class RemoveAnimationsCommand : ICommand
         
         foreach (var input in _inputSlots)
         {
-            var curveSet = new List<Curve>();
-            foreach (var curve in _animator.GetCurvesForInput(input))
+            var newCurveSet = new List<Curve>();
+            _curveSets.Add(newCurveSet);    
+            
+            if (!_animator.TryGetCurvesForInputSlot(input, out var curves))
+                continue;
+            
+            foreach (var curve in curves)
             {
-                curveSet.Add(curve.TypedClone());
+                newCurveSet.Add(curve.TypedClone());
             }
-            _curveSets.Add(curveSet);
+            
             _animator.RemoveAnimationFrom(input);
         }
         composition.Symbol.CreateOrUpdateActionsForAnimatedChildren();

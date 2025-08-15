@@ -26,8 +26,13 @@ internal sealed class Vector4InputUi : FloatVectorInputValueUi<Vector4>
     {
         if (inputValue is not InputValue<Vector4> typedInputValue)
             return;
-            
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
+
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+        {
+            Log.Warning("Can't find Vec4 animation curve?");
+            return;
+        }
+        
         typedInputValue.Value.CopyTo(FloatComponents);
         Curve.UpdateCurveValues(curves, time, FloatComponents);
     }

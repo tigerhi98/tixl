@@ -94,7 +94,9 @@ internal sealed class SetKeyframes : Instance<SetKeyframes>
             if (!animator.IsAnimated(target.SymbolChildId, p.Id))
                 continue;
 
-            var curves = animator.GetCurvesForInput(p);
+            if (!animator.TryGetCurvesForInputSlot(p, out var curves))
+                continue;
+            
             foreach (var c in curves)
             {
                 if (curveIndex == requestCurveIndex)

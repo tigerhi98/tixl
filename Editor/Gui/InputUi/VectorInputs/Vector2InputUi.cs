@@ -1,4 +1,6 @@
-﻿using ImGuiNET;
+﻿#nullable enable
+
+using ImGuiNET;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using T3.Core.DataTypes;
@@ -176,7 +178,12 @@ internal sealed class Vector2InputUi : FloatVectorInputValueUi<Vector2>
         if (inputValue is not InputValue<Vector2> typedInputValue)
             return;
 
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves))
+        {
+            Log.Warning("Can't find Vec2 animation curves?");
+            return;
+        }
+        
         typedInputValue.Value.CopyTo(FloatComponents);
         Curve.UpdateCurveValues(curves, time, FloatComponents);
     }

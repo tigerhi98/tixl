@@ -407,11 +407,17 @@ internal sealed class TimeLineCanvas : CurveEditCanvas
 
                     if (!TryGetParamFromSpan(paramHash, out var param))
                     {
+                        if (!animator.TryGetCurvesForInputSlot(input, out var curves))
+                        {
+                            Log.Warning("Can't find curves for animated parameter?");
+                            continue;
+                        }
+
                         param = new AnimationParameter
                                     {
                                         Instance = child,
                                         Input = input,
-                                        Curves = animator.GetCurvesForInput(input),
+                                        Curves = curves,
                                         ChildUi = symbolUi.ChildUis[child.SymbolChildId],
                                         Hash = paramHash,
                                     };
@@ -421,15 +427,23 @@ internal sealed class TimeLineCanvas : CurveEditCanvas
                     isPinned = true;
                 }
 
-                if (!isPinned && isChildSelected == Selected.Yes)
+                if (isPinned || isChildSelected != Selected.Yes) 
+                    continue;
+                
                 {
                     if (!TryGetParamFromSpan(paramHash, out var param))
                     {
+                        if (!animator.TryGetCurvesForInputSlot(input, out var curves))
+                        {
+                            Log.Warning("Can't find curves for animated parameter?");
+                            continue;
+                        }
+                           
                         param = new AnimationParameter
                                     {
                                         Instance = child,
                                         Input = input,
-                                        Curves = animator.GetCurvesForInput(input),
+                                        Curves = curves,
                                         ChildUi = symbolUi.ChildUis[child.SymbolChildId],
                                         Hash = paramHash,
                                     };

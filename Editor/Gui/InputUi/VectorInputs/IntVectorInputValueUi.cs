@@ -36,8 +36,8 @@ internal abstract class IntVectorInputValueUi<T> : InputValueUi<T>
     protected override InputEditStateFlags DrawAnimatedValue(string name, InputSlot<T> inputSlot, Animator animator)
     {
         var time = Playback.Current.TimeInBars;
-        var curves = animator.GetCurvesForInput(inputSlot).ToArray();
-        if (curves.Length < IntComponents.Length)
+        if (!animator.TryGetCurvesForInputSlot(inputSlot, out var curves)
+                ||curves.Length < IntComponents.Length)
         {
             ImGui.PushID(inputSlot.Parent.SymbolChildId.GetHashCode() + inputSlot.Id.GetHashCode());
             DrawReadOnlyControl(name, ref inputSlot.Value);
@@ -109,10 +109,10 @@ internal abstract class IntVectorInputValueUi<T> : InputValueUi<T>
     {
         base.Read(inputToken);
 
-        Min = inputToken["Min"]?.Value<int>() ?? DefaultMin;
-        Max = inputToken["Max"]?.Value<int>() ?? DefaultMax;
-        _scale = inputToken["Scale"]?.Value<float>() ?? DefaultScale;
-        Clamp = inputToken["Clamp"]?.Value<bool>() ?? false;
+        Min = inputToken?["Min"]?.Value<int>() ?? DefaultMin;
+        Max = inputToken?["Max"]?.Value<int>() ?? DefaultMax;
+        _scale = inputToken?["Scale"]?.Value<float>() ?? DefaultScale;
+        Clamp = inputToken?["Clamp"]?.Value<bool>() ?? false;
     }
         
         

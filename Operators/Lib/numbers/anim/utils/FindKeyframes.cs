@@ -42,7 +42,7 @@ internal sealed class FindKeyframes : Instance<FindKeyframes>, IStatusProvider
         var opIndex = OpIndex.GetValue(context).Clamp(0, AnimatedOp.CollectedInputs.Count);
         _wrapIndex = WrapIndex.GetValue(context);
         var slot = AnimatedOp.CollectedInputs[opIndex];
-        var requestCurveIndex = (int)CurveIndex.GetValue(context);
+        var requestCurveIndex = CurveIndex.GetValue(context);
         if (TryFindCurveWithIndex(slot, requestCurveIndex, needsUpdate, out var curve))
         {
             _curve = curve;
@@ -110,6 +110,9 @@ internal sealed class FindKeyframes : Instance<FindKeyframes>, IStatusProvider
         }
             
         _lastAnimatedOp = target;
+        if (target.Parent == null)
+            return false;
+        
         var animator = target.Parent.Symbol.Animator;
         _keyframes.Clear();
 
@@ -118,7 +121,10 @@ internal sealed class FindKeyframes : Instance<FindKeyframes>, IStatusProvider
             if (!animator.IsAnimated(target.SymbolChildId, p.Id))
                 continue;
 
-            var curves = animator.GetCurvesForInput(p);
+            if (!animator.TryGetCurvesForInputSlot(p, out var curves))
+                continue;
+            
+            //var curves = animator.TryGetCurvesForChildInput(p);
             foreach (var c in curves)
             {
                 if (curveIndex == requestCurveIndex)
