@@ -14,7 +14,7 @@
     <IsEditorOnly>false</IsEditorOnly>
     <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <NoWarn>0108;9084</NoWarn>
+    <NoWarn>0108;9084;NU1900</NoWarn>
   </PropertyGroup>
   <ItemGroup>
     <Using Include="System" />

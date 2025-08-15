@@ -40,11 +40,6 @@ internal static class InputWithTypeAheadSearch
             
         searchString ??= string.Empty;  // ImGui will crash if null is passed
         var filterInputChanged = ImGui.InputText(label, ref searchString, 256, ImGuiInputTextFlags.AutoSelectAll);
-        if (filterInputChanged)
-        {
-            _lastTempSearch = searchString;
-            //Log.Debug("SearchString after: " + searchString);
-        }
         
         if (isSearchResultWindowOpen)
         {
@@ -231,13 +226,7 @@ internal static class InputWithTypeAheadSearch
         isInList = true;
         return wasSelected;
     }
-
-    /// <summary>
-    /// During type ahead search for string with null or string.Empty value, ImGui will use its internal buffer.
-    /// This is only returned _after_ rendering the input value. To pass it as return value, we capture it here.  
-    /// </summary>
-    private static string _lastTempSearch;
-
+    
     private static void FilterItems(IEnumerable<string?> allItems, string filter, ref List<string> filteredItems)
     {
         filteredItems.Clear();

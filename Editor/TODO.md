@@ -10,7 +10,6 @@
 - [x] Fix thumbnails rendering breaks defaults
 - [?] Connections from input are sometimes not correctly evaluated 
 - [x] Picking video files from resource does not work.
-
 - [x] In Parameter window bypassable button should be disabled if not available
 - [x] Prevent Keyboard Camera interaction while input field is active 
 - [x] Exit should ask before quit
@@ -18,12 +17,15 @@
 - [ ] Pre/Post Curve modes are applied to all (not just selected curves)
 - [ ] Indicate Pre/Post curve moves in timeline
 - [ ] Ask before removing inputs and outputs (can't be undone)
-- [ ] SequenceAnimUi should be visible before evaluation (Check AnimValue)
-- [ ] Fix Variations not saved to project folder but `Editor\bin\Debug\net9.0-windows\.tixl\variations`
-- [ ] Fix Multiinput connection editing
+- [x] SequenceAnimUi should be visible before evaluation (Check AnimValue)
+- [x] Fix Variations not saved to project folder but `Editor\bin\Debug\net9.0-windows\.tixl\variations`
+- [ ] Fix MultiInput connection editing
+- [ ] Indicated HDR colors
 
-- [ ] File-browser auto complete shows .hlsl file 3 times ?
-- [ ] Search search relevancy. Why is [DrawPoint2] on top?
+- [x] File-browser auto complete shows .hlsl file 3 times ?
+- [x] Search search relevancy. Why is [DrawPoint2] on top?
+- [ ] Combine into new Symbol should prefill current project and namespace
+- [ ]
 
 ## Project handling
 
@@ -50,13 +52,13 @@
 - [ ] Rewiring of vertical connection lines
 - [ ] LoadImage has no thumbnail
 - [ ] Panning/Zooming in CurveEdit-Popup opened from SampleCurveOp is broken 
-
+- [ ] Create connections from dragging out
 - [ ] Add hint message to hold shift for keeping connections
 - [ ] Raymarch UV spaces are not working
 - [ ] FractalSDF -> SDFToColor -> FieldToImage (with color mode) is not working
 - [ ] RandomizePoints HSB broken
 - [ ] Add Field support for DrawMeshAtPoints 
-
+- [ ] Ui Tweaks: Hide TabGroup close
 
 
 ## Timeline

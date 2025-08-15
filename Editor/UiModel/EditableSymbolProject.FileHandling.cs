@@ -77,7 +77,7 @@ internal sealed partial class EditableSymbolProject
         UnmarkAsSaving();
     }
 
-    protected void UpdateLastModifiedDate() {
+    public void UpdateLastModifiedDate() {
         CsProjectFile.UpdateLastModifiedDate();
         _allProjectsCache = null;
     }

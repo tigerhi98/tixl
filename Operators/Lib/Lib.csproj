@@ -15,6 +15,7 @@
     <IsEditorOnly>false</IsEditorOnly>
     <DisableTransitiveProjectReferences>true</DisableTransitiveProjectReferences>
     <Deterministic>true</Deterministic>
+      <NoWarn>NU1900</NoWarn>
     <!-- Set the output path based on the version and release mode -->
   </PropertyGroup>
   <ItemGroup>

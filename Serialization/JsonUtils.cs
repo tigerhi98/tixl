@@ -8,8 +8,11 @@ namespace T3.Serialization;
 
 public static class JsonUtils
 {
-    public static T ReadEnum<T>(JToken o, string name) where T : struct, Enum
+    public static T ReadEnum<T>(JToken? o, string name) where T : struct, Enum
     {
+        if (o == null)
+            return default;
+        
         var dirtyFlagJson = o[name];
         return dirtyFlagJson != null
                    ? Enum.Parse<T>(dirtyFlagJson.Value<string>() ?? string.Empty)

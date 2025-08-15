@@ -312,24 +312,24 @@ internal sealed class _SketchImpl : Instance<_SketchImpl>
                 return wasModified;
             }
             
-            {
-                if (_paging.ActivePage == null || CurrentPointList == null)
-                    return false;
-
-                var wasModified = false;
-                for (var index = 0; index < CurrentPointList.NumElements; index++)
-                {
-                    var distanceToPoint = Vector3.Distance(posInWorld, CurrentPointList.TypedElements[index].Position);
-                    if (!(distanceToPoint < visibleBrushSize * 0.02f))
-                        continue;
-
-                    CurrentPointList.TypedElements[index].Scale = Vector3.One* float.NaN;
-                    //CurrentPointList.TypedElements[index].F2 = 0.8f;
-                    wasModified = true;
-                }
-
-                return wasModified;
-            }
+            // {
+            //     if (_paging.ActivePage == null || CurrentPointList == null)
+            //         return false;
+            //
+            //     var wasModified = false;
+            //     for (var index = 0; index < CurrentPointList.NumElements; index++)
+            //     {
+            //         var distanceToPoint = Vector3.Distance(posInWorld, CurrentPointList.TypedElements[index].Position);
+            //         if (!(distanceToPoint < visibleBrushSize * 0.02f))
+            //             continue;
+            //
+            //         CurrentPointList.TypedElements[index].Scale = Vector3.One* float.NaN;
+            //         //CurrentPointList.TypedElements[index].F2 = 0.8f;
+            //         wasModified = true;
+            //     }
+            //
+            //     return wasModified;
+            // }
         }
 
         return false;

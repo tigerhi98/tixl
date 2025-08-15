@@ -211,12 +211,10 @@ internal sealed class Vector2InputUi : FloatVectorInputValueUi<Vector2>
             writer.WriteObject(nameof(UseVec2Control), UseVec2Control.ToString());
     }
 
-    public override void Read(JToken inputToken)
+    public override void Read(JToken? inputToken)
     {
         base.Read(inputToken);
-        UseVec2Control = (inputToken[nameof(UseVec2Control)] == null)
-                             ? Vec2Controls.None
-                             : (Vec2Controls)Enum.Parse(typeof(Vec2Controls), inputToken[nameof(UseVec2Control)].ToString());
+        UseVec2Control = JsonUtils.ReadEnum<Vec2Controls>(inputToken, nameof(UseVec2Control));
     }
 
     public Vec2Controls UseVec2Control;

@@ -529,7 +529,7 @@ public sealed class NdiInput : Instance<NdiInput>, IStatusProvider, ICustomDropd
 
     void ICustomDropdownHolder.HandleResultForInput(Guid inputId, string? selected, bool isAListItem)
     {
-        SourceName.SetTypedInputValue(selected);
+        SourceName.SetTypedInputValue(selected!);
     }
     #endregion
 
