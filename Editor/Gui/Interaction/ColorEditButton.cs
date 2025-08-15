@@ -15,6 +15,17 @@ public static class ColorEditButton
             
         var buttonPosition = ImGui.GetCursorScreenPos();
         ImGui.ColorButton("##thumbnail", color, ImGuiColorEditFlags.AlphaPreviewHalf, size);
+
+        if (MathUtils.HasHdrRange(color, out var intensity))
+        {
+            var min = ImGui.GetItemRectMin();
+            var max = ImGui.GetItemRectMax();
+            var center = (min + max) / 2;
+            ImGui.GetWindowDrawList().DrawTriangleUp(center, 
+                                    Color.Black, 
+                                    intensity *4);
+        }
+
         if (ImGui.IsItemHovered())
         {
             T3Ui.DragFieldHovered = true;

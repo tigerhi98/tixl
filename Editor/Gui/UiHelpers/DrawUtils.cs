@@ -27,12 +27,12 @@ public static class DrawUtils
 
     public static void DebugRect(ImRect screenRect, string label = "")
     {
-        DebugRect(screenRect.Min,screenRect.Max, Color.Green, label);
+        DebugRect(screenRect.Min, screenRect.Max, Color.Green, label);
     }
 
-    public static void DebugContentRegion(string title="")
+    public static void DebugContentRegion(string title = "")
     {
-        DebugRect(GetContentRegionArea(),title);
+        DebugRect(GetContentRegionArea(), title);
     }
 
     /// <summary>
@@ -40,7 +40,7 @@ public static class DrawUtils
     /// </summary>
     public static void DebugRect(Vector2 screenMin, Vector2 screenMax, string label = "")
     {
-        DebugRect(screenMin,screenMax, Color.Green, label);
+        DebugRect(screenMin, screenMax, Color.Green, label);
     }
 
     public static void DebugRect(Vector2 screenMin, Vector2 screenMax, Color color, string label = "")
@@ -49,7 +49,7 @@ public static class DrawUtils
         overlayDrawList.AddRect(screenMin, screenMax, color);
         if (string.IsNullOrEmpty(label))
             return;
-            
+
         overlayDrawList.AddText(new Vector2(screenMin.X, screenMax.Y), color, label);
     }
 
@@ -61,16 +61,13 @@ public static class DrawUtils
         if (T3Ui.ItemRegionsVisible)
             DebugRect(ImGui.GetItemRectMin(), ImGui.GetItemRectMax(), new Color(color), label);
     }
-        
 
     public static ImRect GetContentRegionArea()
     {
         return new ImRect(ImGui.GetWindowContentRegionMin() + ImGui.GetWindowPos(),
                           ImGui.GetWindowContentRegionMax() + ImGui.GetWindowPos());
     }
-        
-        
-        
+
     // This has to be called on open
     public static void DisableImGuiKeyboardNavigation()
     {
@@ -84,6 +81,7 @@ public static class DrawUtils
         if (_keepNavEnableKeyboard)
             ImGui.GetIO().ConfigFlags |= ImGuiConfigFlags.NavEnableKeyboard;
     }
+
     private static bool _keepNavEnableKeyboard;
 
     public static Color RandomColorForHash(int channelHash)
@@ -121,13 +119,21 @@ public static class DrawUtils
         return true;
     }
 
-    public static void DrawOverlayLine(ImDrawListPtr drawList, float opacity, Vector2 p1, Vector2 p2,  Vector2 pMin, Vector2 pMax)
+    public static void DrawOverlayLine(ImDrawListPtr drawList, float opacity, Vector2 p1, Vector2 p2, Vector2 pMin, Vector2 pMax)
     {
         var padding = new Vector2(3, 2);
         var size = pMax - pMin - padding;
         drawList.AddLine(pMin + p1 * size + padding,
                          pMin + p2 * size + padding,
                          UiColors.StatusWarning.Fade(opacity), 3);
+    }
 
+    public static void DrawTriangleUp(this ImDrawListPtr drawList, Vector2 center, Color color, float radius)
+    {
+        drawList.AddTriangleFilled(center + new Vector2(0, -0.75f) * radius,
+                                   center + new Vector2(1, 0.5f) * radius,
+                                   center + new Vector2(-1, 0.5f) * radius,
+                                   Color.Black
+                                  );
     }
 }

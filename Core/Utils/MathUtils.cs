@@ -568,6 +568,28 @@ public static class MathUtils
     {
         return Quaternion.CreateFromAxisAngle(new Vector3(0, 0, 1), (float)(Math.Atan2(p1.X - p2.X, -(p1.Y - p2.Y)) + Math.PI / 2));
     }
+    
+    public static float MaxComponent(this Vector4 vector4)
+    {
+        return   MathF.Max(
+                           MathF.Max(vector4.X, vector4.Y), 
+                           MathF.Max(vector4.Z, vector4.W));
+    }
+    
+
+    public static bool HasHdrRange(Vector4 color, out float intensity)
+    {
+        var maxColorBrightness = color.MaxComponent();
+        if (maxColorBrightness > 1)
+        {
+            intensity= 1f - MathF.Pow(1.5f, -maxColorBrightness);
+            return true;
+        }
+
+        intensity = 0;
+        return false;
+    }
+    
 }
 
 public static class EaseFunctions
@@ -629,4 +651,6 @@ public static class DampFunctions
                            MathUtils.SpringDamp(targetVec.Y, currentValue.Y, ref velocity.Y, 0.5f / (damping + 0.001f), dt),
                            MathUtils.SpringDamp(targetVec.Z, currentValue.Z, ref velocity.Z, 0.5f / (damping + 0.001f), dt));
     }
+
+
 }

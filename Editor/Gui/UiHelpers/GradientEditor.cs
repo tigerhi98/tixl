@@ -265,13 +265,13 @@ public static class GradientEditor
             drawList.AddConvexPolyFilled(ref points[0], 3, new Color(0.15f, 0.15f, 0.15f, 1));
             drawList.AddRectFilled(handleArea.Min, handleArea.Max, ImGui.ColorConvertFloat4ToU32(step.Color));
 
-            var maxColorBrightness = MathF.Max(MathF.Max(step.Color.X, step.Color.Y), step.Color.Z);
-            if (maxColorBrightness > 1)
+            if (MathUtils.HasHdrRange(step.Color, out var intensity))
             {
-                var intensitySize = (1f- MathF.Pow(1.5f, - maxColorBrightness))*4;
-                var center = handleArea.GetCenter();
-                drawList.AddCircleFilled(center, intensitySize, Color.Black,3);
+                drawList.DrawTriangleUp(handleArea.GetCenter(), 
+                                        Color.Black, 
+                                        intensity *4);
             }
+            
             drawList.AddRect(handleArea.Min, handleArea.Max, UiColors.BackgroundFull);
             drawList.AddRect(handleArea.Min + Vector2.One, handleArea.Max - Vector2.One, UiColors.ForegroundFull);
 
