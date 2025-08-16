@@ -12,14 +12,14 @@ internal static class ImageBackgroundFading
     /// </summary>
     public static void HandleImageBackgroundFading(GraphImageBackground imageBackground, out float backgroundImageOpacity)
     {
-        backgroundImageOpacity = ComputeFadeFactor(ImGui.GetMousePos().X);
+        backgroundImageOpacity = ComputeFadeFactor(ImGui.GetMousePos().X- ImGui.GetWindowPos().X);
 
         if (!imageBackground.IsActive || backgroundImageOpacity != 0) 
             return;
         
         if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
         {
-            imageBackground.ClearBackground();
+            //imageBackground.ClearBackground();
         }
     }
 
@@ -56,10 +56,15 @@ internal static class ImageBackgroundFading
                                    new Vector2(x + 2, windowPos.Y + appWindowSize.Y),
                                    UiColors.ForegroundFull.Fade((1 - graphOpacity)) * 0.5f);
         }
-
+        
         if (graphOpacity <= 0 && !ImGui.IsAnyItemActive() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
         {
             imageBackground.HasInteractionFocus = !imageBackground.HasInteractionFocus;
+        }
+
+        if (imageBackground.HasInteractionFocus)
+        {
+            graphOpacity *= 0.15f;
         }
     }
 }

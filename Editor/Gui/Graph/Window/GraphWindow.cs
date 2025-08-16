@@ -159,23 +159,31 @@ internal sealed class GraphWindow : Windows.Window
         if (ProjectView.InstView == null)
             return;
 
-        ImageBackgroundFading.HandleImageBackgroundFading(ProjectView.GraphImageBackground, out var backgroundImageOpacity);
 
-        ProjectView.GraphImageBackground.Draw(backgroundImageOpacity);
-
-        ImGui.SetCursorPos(Vector2.Zero);
-
-        var graphHiddenWhileInteractiveWithBackground = ProjectView.GraphImageBackground.IsActive && TransformGizmoHandling.IsDragging;
-        if (graphHiddenWhileInteractiveWithBackground)
-            return;
-
-        var drawList = ImGui.GetWindowDrawList();
+        
         var windowContentHeight = (int)ImGui.GetWindowHeight();
 
         if (UserSettings.Config.ShowTimeline)
         {
             ProjectView.TimeLineCanvas.FoldingHeight.DrawSplit(out windowContentHeight);
         }
+        
+        //ImageBackgroundFading.HandleImageBackgroundFading(ProjectView.GraphImageBackground, out var backgroundImageOpacity);
+        var backgroundImageOpacity = 1f;
+        ImGui.BeginChild("##graphbackground", new Vector2(0, windowContentHeight), false,
+                         ImGuiWindowFlags.NoScrollbar
+                         | ImGuiWindowFlags.NoMove
+                         | ImGuiWindowFlags.NoScrollWithMouse
+                         | ImGuiWindowFlags.NoDecoration
+                         | ImGuiWindowFlags.NoTitleBar
+                         | ImGuiWindowFlags.NoBackground
+                         | ImGuiWindowFlags.ChildWindow);
+        {
+
+            
+        }
+        ImGui.EndChild();
+        ImGui.SetCursorPos(Vector2.Zero);
 
         ImGui.BeginChild("##graph", new Vector2(0, windowContentHeight), false,
                          ImGuiWindowFlags.NoScrollbar
@@ -186,7 +194,18 @@ internal sealed class GraphWindow : Windows.Window
                          | ImGuiWindowFlags.NoBackground
                          | ImGuiWindowFlags.ChildWindow);
         {
-            DrawGraphContent(drawList);
+            // Imagebackground
+            {
+                ProjectView.GraphImageBackground.Draw(backgroundImageOpacity);
+                
+                var graphHiddenWhileInteractiveWithBackground = ProjectView.GraphImageBackground.IsActive && TransformGizmoHandling.IsDragging;
+                if (!graphHiddenWhileInteractiveWithBackground)
+                {
+                    var drawList = ImGui.GetWindowDrawList();
+                    DrawGraphContent(drawList);
+                }
+            }
+            
         }
         ImGui.EndChild();
 
