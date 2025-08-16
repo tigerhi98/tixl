@@ -25,7 +25,14 @@
 - [x] File-browser auto complete shows .hlsl file 3 times ?
 - [x] Search search relevancy. Why is [DrawPoint2] on top?
 - [ ] Combine into new Symbol should prefill current project and namespace
-- [ ]
+- [ ] Command bar shortcuts should work if UI is hidden
+- [ ] Maybe bookmarks should toggle pinning?
+- [ ] Inserting keyframes does not always use neighbour smoothing
+- [ ] Fix fade graph when background is interactive 
+- [ ] Looks like only last animated value edit to a vec3 can be undone?
+- [ ] Remove clear background image when clicking on left edge
+- [ ] Rethink bookmarks -> Add marker in Op with number / switch with numbers only. only bring to view if hidden
+- [ ] Export should use project folder and some prefix like _
 
 ## Project handling
 
