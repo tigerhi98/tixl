@@ -77,8 +77,8 @@ public sealed class UserSettings : Settings<UserSettings.ConfigData>
         public bool ResetTimeAfterPlayback;
         public float SnapStrength = 5;
         public ValueEditMethods ValueEditMethod;
-        public int ValueEditSmoothing = 0;
-        public float ScrollSmoothing = 0.075f;
+        public int ValueEditSmoothing = 6;
+        public float ScrollSmoothing = 0.06f;
         
         // Mag Graph
         public bool DisconnectOnUnsnap = true;
