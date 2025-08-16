@@ -19,9 +19,6 @@ namespace T3.Editor.UiModel;
 /// </summary>
 internal partial class EditableSymbolProject
 {
-    // FIXME: This is never invoked?
-    public static event Action? CompilationComplete;
-
     protected override ReleaseInfo ReleaseInfo
     {
         get

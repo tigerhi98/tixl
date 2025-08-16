@@ -27,7 +27,6 @@ internal sealed class SymbolLibrary : Window
         _libraryFiltering = new LibraryFiltering(this);
         Config.Title = "Symbol Library";
         _treeNode.PopulateCompleteTree();
-        EditableSymbolProject.CompilationComplete += _treeNode.PopulateCompleteTree;
     }
 
     protected override void DrawContent()
