@@ -725,7 +725,7 @@ internal sealed class GraphNode
 
     private void DrawIndicator(ImDrawListPtr drawList, Color color, float opacity, ref int indicatorCount)
     {
-        const int s = 4;
+        const int s = 10;
         var dx = (s + 1) * indicatorCount;
 
         var pMin = new Vector2(_usableScreenRect.Max.X - 2 - s - dx,
