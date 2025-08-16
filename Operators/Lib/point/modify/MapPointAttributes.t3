@@ -255,7 +255,13 @@
     {
       "Id": "e6858bcc-16ce-45dc-a878-0ebe319e7872"/*GradientsToTexture*/,
       "SymbolId": "2c53eee7-eb38-449b-ad2a-d7a674952e5b",
-      "InputValues": [],
+      "InputValues": [
+        {
+          "Id": "1f1838e4-8502-4ac4-a8df-dcb4cae57da4"/*Resolution*/,
+          "Type": "System.Int32",
+          "Value": 512
+        }
+      ],
       "Outputs": []
     },
     {
