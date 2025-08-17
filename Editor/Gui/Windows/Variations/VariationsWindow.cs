@@ -141,7 +141,7 @@ internal sealed class VariationsWindow : Window
                            .EmptyWindowMessage("No Snapshots yet.\n\nWith snapshots you can switch or blend\nbetween parameter sets in your composition.\n\n"
                                                + additionalHint, "Learn More"))
                         {
-                            var url = "https://github.com/tixl3d/tixl/wiki/PresetsAndSnapshots";
+                            var url = "https://github.com/tixl3d/tixl/wiki/help.PresetsAndSnapshots";
                             CoreUi.Instance.OpenWithDefaultApplication(url);
                         }
                         // }
