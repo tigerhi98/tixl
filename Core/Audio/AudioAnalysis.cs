@@ -134,7 +134,7 @@ public static class AudioAnalysis
     }
 
     //private const float AudioUpdatesPerFrame = (float)(60000.0 / 48000);
-    private const float EstimatedAudioUpdatePeriod = 0.003f;
+    private const float EstimatedAudioUpdatePeriod = 0.003f; // roughly 4 sec
     private const int FrequencyBandHistoryLength = (int)(1/EstimatedAudioUpdatePeriod);
     
     private static void UpdateSlidingWindowAverages()

@@ -30,14 +30,15 @@ namespace T3.Editor.Gui.Windows.TimeLine;
 /// </remarks>
 internal static class PlaybackSettingsPopup
 {
-    internal static void DrawPlaybackSettings(Instance? composition)
+    /// <returns>true if composition was modified</returns>
+    internal static bool DrawPlaybackSettings(Instance? composition)
     {
         ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(2, 2));
         ImGui.SetNextWindowSize(new Vector2(650, 500) * T3Ui.UiScaleFactor);
         if (!ImGui.BeginPopupContextItem(PlaybackSettingsPopupId))
         {
             ImGui.PopStyleVar(1);
-            return;
+            return false;
         }
 
         FrameStats.Current.OpenedPopUpName = PlaybackSettingsPopupId;
@@ -54,7 +55,7 @@ internal static class PlaybackSettingsPopup
             ImGui.EndPopup();
             ImGui.PopStyleVar(1);
 
-            return;
+            return false;
         }
 
         FormInputs.SetIndentToLeft();
@@ -64,10 +65,11 @@ internal static class PlaybackSettingsPopup
 
         // Main toggle with composition name 
         var isEnabledForCurrent = compositionWithSettings == composition && settings is { Enabled: true };
-        var wasEnabledForCurrent = isEnabledForCurrent;
+        var modified = false;
 
         if (FormInputs.AddCheckBox("Specify settings for", ref isEnabledForCurrent))
         {
+            modified = true;
             if (isEnabledForCurrent)
             {
                 settings = composition.Symbol.PlaybackSettings;
@@ -116,7 +118,7 @@ internal static class PlaybackSettingsPopup
             ImGui.EndPopup();
             ImGui.PopStyleVar(1);
             FormInputs.SetIndentToParameters();
-            return;
+            return modified;
         }
 
         FormInputs.SetIndentToParameters();
@@ -124,6 +126,7 @@ internal static class PlaybackSettingsPopup
 
         if (FormInputs.AddSegmentedButtonWithLabel(ref settings.AudioSource, "Audio Source"))
         {
+            modified = true;
             UpdatePlaybackAndTimeline(settings);
         }
 
@@ -131,251 +134,265 @@ internal static class PlaybackSettingsPopup
             
         ImGui.Separator();
 
-        if (settings.AudioSource == PlaybackSettings.AudioSources.ProjectSoundTrack)
+        switch (settings.AudioSource)
         {
-            if (!settings.TryGetMainSoundtrack(compositionWithSettings, out var soundtrackHandle))
+            case PlaybackSettings.AudioSources.ProjectSoundTrack:
             {
-                if (ImGui.Button("Add soundtrack to composition"))
+                if (!settings.TryGetMainSoundtrack(compositionWithSettings, out var soundtrackHandle))
                 {
-                    settings.AudioClips.Add(new AudioClipDefinition()
-                                                {
-                                                    IsSoundtrack = true,
-                                                });
-                    _tempSoundtrackFilepathForEdit = string.Empty;
-                }
-            }
-            else
-            {
-                if (string.IsNullOrEmpty(soundtrackHandle.Clip.FilePath))
-                {
-                    _tempSoundtrackFilepathForEdit = string.Empty;
+                    if (ImGui.Button("Add soundtrack to composition"))
+                    {
+                        modified = true;
+                        settings.AudioClips.Add(new AudioClipDefinition()
+                                                    {
+                                                        IsSoundtrack = true,
+                                                    });
+                        _tempSoundtrackFilepathForEdit = string.Empty;
+                    }
                 }
                 else
                 {
-                    var isSoundtrackFileValid = soundtrackHandle.TryGetFileResource(out _);
-                    if (isSoundtrackFileValid)
+                    if (string.IsNullOrEmpty(soundtrackHandle.Clip.FilePath))
                     {
-                        if (ImGui.IsWindowAppearing())
+                        _tempSoundtrackFilepathForEdit = string.Empty;
+                    }
+                    else
+                    {
+                        var isSoundtrackFileValid = soundtrackHandle.TryGetFileResource(out _);
+                        if (isSoundtrackFileValid)
                         {
-                            _tempSoundtrackFilepathForEdit = soundtrackHandle.Clip.FilePath;
+                            if (ImGui.IsWindowAppearing())
+                            {
+                                _tempSoundtrackFilepathForEdit = soundtrackHandle.Clip.FilePath;
+                            }
+                        }
+                        else
+                        {
+                            Log.Warning($"Removing invalid soundtrack file: {soundtrackHandle.Clip.FilePath}");
+                            soundtrackHandle.Clip.FilePath = string.Empty;
+                            modified = true;
                         }
                     }
-                    else
+
+                    var editResult = FilePickingUi.DrawTypeAheadSearch(FileOperations.FilePickerTypes.File, 
+                                                                       AllFilesAudioFilesMp3WavOggMp3WavOgg,
+                                                                       ref _tempSoundtrackFilepathForEdit);
+                
+                
+                    var filepathModified = (editResult & InputEditStateFlags.Modified) != 0;
+                    if (filepathModified)
                     {
-                        Log.Warning($"Removing invalid soundtrack file: {soundtrackHandle.Clip.FilePath}");
-                        soundtrackHandle.Clip.FilePath = string.Empty;
+                        modified = true;
+                        if (!string.IsNullOrEmpty(_tempSoundtrackFilepathForEdit))
+                        {
+                            _warningMessage = soundtrackHandle.TryToApplyFilePath(_tempSoundtrackFilepathForEdit, composition)
+                                                  ? string.Empty
+                                                  : "File not found?";
+                        }
+                        else
+                        {
+                            _warningMessage = string.Empty;
+                        }
+                    }
+                
+                    FormInputs.ApplyIndent();
+                    if (ImGui.Button("Reload"))
+                    {
+                        AudioEngine.ReloadClip(soundtrackHandle);
+                        AudioImageFactory.ResetImageCache();
+                        modified = true;
+                        filepathModified = true;
+                    }
+
+                    ImGui.SameLine();
+                    if (ImGui.Button("Remove"))
+                    {
+                        settings.AudioClips.Remove(soundtrackHandle.Clip);
+                        modified = true;
+                    }
+
+                    FormInputs.AddVerticalSpace();
+
+                    if (FormInputs.AddFloat("BPM",
+                                            ref soundtrackHandle.Clip.Bpm,
+                                            0,
+                                            1000,
+                                            0.02f,
+                                            true,
+                                            "In T3 animation units are in bars.\nThe BPM rate controls the animation speed of your project.",
+                                            120))
+                    {
+                        Playback.Current.Bpm = soundtrackHandle.Clip.Bpm;
+                        settings.Bpm = soundtrackHandle.Clip.Bpm;
+                        modified = true;
+                    }
+
+                    var soundtrackStartTime = (float)soundtrackHandle.Clip.StartTime;
+
+                    if (FormInputs.AddFloat("Offset",
+                                            ref soundtrackStartTime,
+                                            -100,
+                                            100,
+                                            0.02f,
+                                            false,
+                                            "Offsets the beginning of the soundtrack in seconds.",
+                                            0))
+                    {
+                        soundtrackHandle.Clip.StartTime = soundtrackStartTime;
+                        modified = true;
+                    }
+
+                    FormInputs.AddEnumDropdown(ref UserSettings.Config.TimeDisplayMode, "Display Timeline in");
+
+                    if (FormInputs.AddFloat("Resync Threshold",
+                                            ref ProjectSettings.Config.AudioResyncThreshold,
+                                            0.001f,
+                                            0.1f,
+                                            0.001f,
+                                            true,
+                                            "If audio playbacks drifts too far from the animation playback it will be resynced. If the threshold for this is too low you will encounter audio glitches. If the threshold is too large you will lose precision. A normal range is between 0.02s and 0.05s.",
+                                            ProjectSettings.Defaults.AudioResyncThreshold))
+
+                    {
+                        modified = true;
+                    }
+
+                    modified |= FormInputs.AddFloat("AudioDecay", ref settings.AudioDecayFactor,
+                                        0.001f,
+                                        1f,
+                                        0.01f,
+                                        true,
+                                        "The decay factors controls the impact of [AudioReaction] when AttackMode. Good values strongly depend on style, loudness and variation of input signal.",
+                                        0.9f);
+                    
+                    if (filepathModified)
+                    {
+                        composition.Symbol.GetSymbolUi().FlagAsModified();
+                        AudioEngine.ReloadClip(soundtrackHandle);
+                        UpdateBpmFromSoundtrackConfig(soundtrackHandle.Clip);
+                        UpdatePlaybackAndTimeline(settings);
                     }
                 }
 
-                var editResult = FilePickingUi.DrawTypeAheadSearch(FileOperations.FilePickerTypes.File, 
-                                                                   AllFilesAudioFilesMp3WavOggMp3WavOgg,
-                                                                   ref _tempSoundtrackFilepathForEdit);
-                
-                
-                var filepathModified = (editResult & InputEditStateFlags.Modified) != 0;
-                if (filepathModified)
-                {
-                    if (!string.IsNullOrEmpty(_tempSoundtrackFilepathForEdit))
-                    {
-                        _warningMessage = soundtrackHandle.TryToApplyFilePath(_tempSoundtrackFilepathForEdit, composition)
-                                              ? string.Empty
-                                              : "File not found?";
-                    }
-                    else
-                    {
-                        _warningMessage = string.Empty;
-                    }
-                }
-                
-                FormInputs.ApplyIndent();
-                if (ImGui.Button("Reload"))
-                {
-                    AudioEngine.ReloadClip(soundtrackHandle);
-                    AudioImageFactory.ResetImageCache();
-                    filepathModified = true;
-                }
-
-                ImGui.SameLine();
-                if (ImGui.Button("Remove"))
-                {
-                    settings.AudioClips.Remove(soundtrackHandle.Clip);
-                }
-
+                break;
+            }
+            case PlaybackSettings.AudioSources.ExternalDevice:
+            {
                 FormInputs.AddVerticalSpace();
 
-                if (FormInputs.AddFloat("BPM",
-                                        ref soundtrackHandle.Clip.Bpm,
-                                        0,
-                                        1000,
-                                        0.02f,
-                                        true,
-                                        "In T3 animation units are in bars.\nThe BPM rate controls the animation speed of your project.",
-                                        120))
+                if (FormInputs.AddSegmentedButtonWithLabel(ref settings.Syncing, "Sync Mode"))
                 {
-                    Playback.Current.Bpm = soundtrackHandle.Clip.Bpm;
-                    settings.Bpm = soundtrackHandle.Clip.Bpm;
+                    UpdatePlaybackAndTimeline(settings);
+                    modified = true;
                 }
 
-                var soundtrackStartTime = (float)soundtrackHandle.Clip.StartTime;
-
-                if (FormInputs.AddFloat("Offset",
-                                        ref soundtrackStartTime,
-                                        -100,
-                                        100,
-                                        0.02f,
-                                        false,
-                                        "Offsets the beginning of the soundtrack in seconds.",
-                                        0))
+                if (settings.Syncing == PlaybackSettings.SyncModes.Tapping)
                 {
-                    soundtrackHandle.Clip.StartTime = soundtrackStartTime;
+                    FormInputs.SetIndentToParameters();
+                    FormInputs.AddHint("Tap the [Sync] button on every beat.\nThe right click on measure to resync and refine.");
                 }
+                
 
-                FormInputs.AddEnumDropdown(ref UserSettings.Config.TimeDisplayMode, "Display Timeline in");
+                modified |= FormInputs.AddFloat("BPM",
+                                              ref settings.Bpm,
+                                              0,
+                                              1000,
+                                              0.02f,
+                                              true,
+                                              "In T3 animation units are in bars.\nThe BPM rate controls the animation speed of your project.",
+                                              120);
 
-                if (FormInputs.AddFloat("Resync Threshold",
-                                        ref ProjectSettings.Config.AudioResyncThreshold,
-                                        0.001f,
-                                        0.1f,
-                                        0.001f,
-                                        true,
-                                        "If audio playbacks drifts too far from the animation playback it will be resynced. If the threshold for this is too low you will encounter audio glitches. If the threshold is too large you will lose precision. A normal range is between 0.02s and 0.05s.",
-                                        ProjectSettings.Defaults.AudioResyncThreshold))
+                
+                // var isInitialized = playback is BeatTimingPlayback;
+                // if (!isInitialized)
+                // {
+                //     playback = new BeatTimingPlayback();
+                // }
 
-                {
-                    UserSettings.Save();
-                }
+                modified |= FormInputs.AddFloat("AudioGain", ref settings.AudioGainFactor , 0.01f, 100, 0.01f, true,
+                                    "Can be used to adjust the input signal (e.g. in live situation where the input level might vary.",
+                                    1);
 
-                FormInputs.AddFloat("AudioDecay", ref settings.AudioDecayFactor,
+                modified |= FormInputs.AddFloat("AudioDecay", ref settings.AudioDecayFactor,
                                     0.001f,
                                     1f,
                                     0.01f,
                                     true,
                                     "The decay factors controls the impact of [AudioReaction] when AttackMode. Good values strongly depend on style, loudness and variation of input signal.",
                                     0.9f);
-                    
-                if (filepathModified)
+                
+
+                // Input meter
+                ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f * ImGui.GetStyle().Alpha);
+                FormInputs.DrawInputLabel("Input Level");
+                ImGui.PopStyleVar();
+                ImGui.InvisibleButton("##gainMeter", new Vector2(-1, ImGui.GetFrameHeight()));
+                var min = ImGui.GetItemRectMin();
+                var max = ImGui.GetItemRectMax();
+                var dl = ImGui.GetWindowDrawList();
+
+                var level = settings.AudioGainFactor * WasapiAudioInput.DecayingAudioLevel * 0.03f;
+
+                dl.AddRectFilled(min, new Vector2(min.X + level, max.Y), UiColors.BackgroundHover);
+
+                FormInputs.DrawInputLabel("Input Device");
+                ImGui.BeginGroup();
+
+                if (ImGui.BeginCombo("##SelectDevice", settings.AudioInputDeviceName, ImGuiComboFlags.HeightLarge))
                 {
-                    composition.Symbol.GetSymbolUi().FlagAsModified();
-                    AudioEngine.ReloadClip(soundtrackHandle);
-                    UpdateBpmFromSoundtrackConfig(soundtrackHandle.Clip);
-                    UpdatePlaybackAndTimeline(settings);
-                }
-            }
-        }
-        else if (settings.AudioSource == PlaybackSettings.AudioSources.ExternalDevice)
-        {
-            FormInputs.AddVerticalSpace();
-
-            if (FormInputs.AddSegmentedButtonWithLabel(ref settings.Syncing, "Sync Mode"))
-            {
-                UpdatePlaybackAndTimeline(settings);
-            }
-
-            if (settings.Syncing == PlaybackSettings.SyncModes.Tapping)
-            {
-                FormInputs.SetIndentToParameters();
-                FormInputs.AddHint("Tap the [Sync] button on every beat.\nThe right click on measure to resync and refine.");
-            }
-                
-
-            if (FormInputs.AddFloat("BPM",
-                                    ref settings.Bpm,
-                                    0,
-                                    1000,
-                                    0.02f,
-                                    true,
-                                    "In T3 animation units are in bars.\nThe BPM rate controls the animation speed of your project.",
-                                    120))
-            {
-            }
-
-                
-            // var isInitialized = playback is BeatTimingPlayback;
-            // if (!isInitialized)
-            // {
-            //     playback = new BeatTimingPlayback();
-            // }
-
-            FormInputs.AddFloat("AudioGain", ref settings.AudioGainFactor , 0.01f, 100, 0.01f, true,
-                                "Can be used to adjust the input signal (e.g. in live situation where the input level might vary.",
-                                1);
-
-            FormInputs.AddFloat("AudioDecay", ref settings.AudioDecayFactor,
-                                0.001f,
-                                1f,
-                                0.01f,
-                                true,
-                                "The decay factors controls the impact of [AudioReaction] when AttackMode. Good values strongly depend on style, loudness and variation of input signal.",
-                                0.9f);
-                
-
-            // Input meter
-            ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f * ImGui.GetStyle().Alpha);
-            FormInputs.DrawInputLabel("Input Level");
-            ImGui.PopStyleVar();
-            ImGui.InvisibleButton("##gainMeter", new Vector2(-1, ImGui.GetFrameHeight()));
-            var min = ImGui.GetItemRectMin();
-            var max = ImGui.GetItemRectMax();
-            var dl = ImGui.GetWindowDrawList();
-
-            var level = settings.AudioGainFactor * WasapiAudioInput.DecayingAudioLevel * 0.03f;
-
-            dl.AddRectFilled(min, new Vector2(min.X + level, max.Y), UiColors.BackgroundHover);
-
-            FormInputs.DrawInputLabel("Input Device");
-            ImGui.BeginGroup();
-
-            if (ImGui.BeginCombo("##SelectDevice", settings.AudioInputDeviceName, ImGuiComboFlags.HeightLarge))
-            {
-                foreach (var d in WasapiAudioInput.InputDevices)
-                {
-                    var isSelected = d.DeviceInfo.Name == settings.AudioInputDeviceName;
-                    if (ImGui.Selectable($"{d.DeviceInfo.Name}", isSelected, ImGuiSelectableFlags.DontClosePopups))
+                    foreach (var d in WasapiAudioInput.InputDevices)
                     {
-                        Bass.Configure(Configuration.UpdateThreads, false);
-
-                        settings.AudioInputDeviceName = d.DeviceInfo.Name;
-                        ProjectSettings.Save();
-                        //WasapiAudioInput.StartInputCapture(d);
-                    }
-
-                    if (ImGui.IsItemHovered())
-                    {
-                        ImGui.BeginTooltip();
-                        ImGui.PushFont(Fonts.FontSmall);
-                        var sb = new StringBuilder();
-                        var di = d.DeviceInfo;
-
-                        var fields = typeof(WasapiDeviceInfo).GetProperties();
-                        foreach (var f in fields)
+                        var isSelected = d.DeviceInfo.Name == settings.AudioInputDeviceName;
+                        if (ImGui.Selectable($"{d.DeviceInfo.Name}", isSelected, ImGuiSelectableFlags.DontClosePopups))
                         {
-                            sb.Append(f.Name);
-                            sb.Append(": ");
-                            sb.Append(f.GetValue(di));
-                            sb.Append("\n");
+                            Bass.Configure(Configuration.UpdateThreads, false);
+
+                            settings.AudioInputDeviceName = d.DeviceInfo.Name;
+                            modified = true;
+                            ProjectSettings.Save();
+                            //WasapiAudioInput.StartInputCapture(d);
                         }
 
-                        ImGui.TextUnformatted(sb.ToString());
-                        ImGui.PopFont();
-                        ImGui.EndTooltip();
+                        if (ImGui.IsItemHovered())
+                        {
+                            ImGui.BeginTooltip();
+                            ImGui.PushFont(Fonts.FontSmall);
+                            var sb = new StringBuilder();
+                            var di = d.DeviceInfo;
+
+                            var fields = typeof(WasapiDeviceInfo).GetProperties();
+                            foreach (var f in fields)
+                            {
+                                sb.Append(f.Name);
+                                sb.Append(": ");
+                                sb.Append(f.GetValue(di));
+                                sb.Append("\n");
+                            }
+
+                            ImGui.TextUnformatted(sb.ToString());
+                            ImGui.PopFont();
+                            ImGui.EndTooltip();
+                        }
                     }
+                    ImGui.EndCombo();
                 }
-                ImGui.EndCombo();
-            }
                 
-            if (!string.IsNullOrEmpty(settings.AudioInputDeviceName)
-                &&settings.AudioInputDeviceName != WasapiAudioInput.ActiveInputDeviceName)
-            {
-                ImGui.PushStyleColor(ImGuiCol.Text, UiColors.StatusWarning.Rgba);
-                ImGui.TextUnformatted(settings.AudioInputDeviceName + " (NOT FOUND)");
-                ImGui.PopStyleColor();
-            }
+                if (!string.IsNullOrEmpty(settings.AudioInputDeviceName)
+                    &&settings.AudioInputDeviceName != WasapiAudioInput.ActiveInputDeviceName)
+                {
+                    ImGui.PushStyleColor(ImGuiCol.Text, UiColors.StatusWarning.Rgba);
+                    ImGui.TextUnformatted(settings.AudioInputDeviceName + " (NOT FOUND)");
+                    ImGui.PopStyleColor();
+                }
                 
-            ImGui.EndGroup();
+                ImGui.EndGroup();
+                break;
+            }
         }
 
         ImGui.EndPopup();
         ImGui.PopStyleVar(1);
+        return modified;
     }
 
     private static void UpdatePlaybackAndTimeline(PlaybackSettings settings)

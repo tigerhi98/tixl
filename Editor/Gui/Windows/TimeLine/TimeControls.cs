@@ -12,6 +12,7 @@ using T3.Editor.Gui.OutputUi;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.Gui.Windows.Layouts;
+using T3.Editor.UiModel;
 using T3.Editor.UiModel.InputsAndTypes;
 using Icon = T3.Editor.Gui.Styling.Icon;
 using Vector2 = System.Numerics.Vector2;
@@ -27,19 +28,19 @@ internal static class TimeControls
     {
         var playback = Playback.Current; // TODO, this should be non-static eventually
 
-        if (KeyActionHandling.Triggered(UserActions.TapBeatSync))
+        if (UserActions.TapBeatSync.Triggered())
             BeatTiming.TriggerSyncTap();
 
-        if (KeyActionHandling.Triggered(UserActions.TapBeatSyncMeasure))
+        if (UserActions.TapBeatSyncMeasure.Triggered())
             BeatTiming.TriggerResyncMeasure();
 
-        if (KeyActionHandling.Triggered(UserActions.PlaybackJumpToPreviousKeyframe))
+        if (UserActions.PlaybackJumpToPreviousKeyframe.Triggered())
             UserActionRegistry.QueueAction(UserActions.PlaybackJumpToPreviousKeyframe);
 
-        if (KeyActionHandling.Triggered(UserActions.PlaybackJumpToStartTime))
+        if (UserActions.PlaybackJumpToStartTime.Triggered())
             playback.TimeInBars = playback.IsLooping ? playback.LoopRange.Start : 0;
 
-        if (KeyActionHandling.Triggered(UserActions.PlaybackJumpToPreviousKeyframe))
+        if (UserActions.PlaybackJumpToPreviousKeyframe.Triggered())
             UserActionRegistry.QueueAction(UserActions.PlaybackJumpToPreviousKeyframe);
 
         {
@@ -59,19 +60,19 @@ internal static class TimeControls
             var editFrameRate = 1 / frameDuration;
 
             // Step to previous frame
-            if (KeyActionHandling.Triggered(UserActions.PlaybackPreviousFrame))
+            if (UserActions.PlaybackPreviousFrame.Triggered())
             {
                 var rounded = Math.Round(playback.TimeInSecs * editFrameRate) / editFrameRate;
                 playback.TimeInSecs = rounded - frameDuration;
             }
 
-            if (KeyActionHandling.Triggered(UserActions.PlaybackJumpBack))
+            if (UserActions.PlaybackJumpBack.Triggered())
             {
                 playback.TimeInBars -= 1;
             }
 
             // Step to next frame
-            if (KeyActionHandling.Triggered(UserActions.PlaybackNextFrame))
+            if (UserActions.PlaybackNextFrame.Triggered())
             {
                 var rounded = Math.Round(playback.TimeInSecs * editFrameRate) / editFrameRate;
                 playback.TimeInSecs = rounded + frameDuration;
@@ -79,7 +80,7 @@ internal static class TimeControls
         }
 
         // Play backwards with increasing speed
-        if (KeyActionHandling.Triggered(UserActions.PlaybackBackwards))
+        if (UserActions.PlaybackBackwards.Triggered())
         {
             Log.Debug("Backwards triggered with speed " + playback.PlaybackSpeed);
             if (playback.PlaybackSpeed >= 0)
@@ -93,7 +94,7 @@ internal static class TimeControls
         }
 
         // Play forward with increasing speed
-        if (KeyActionHandling.Triggered(UserActions.PlaybackForward))
+        if (UserActions.PlaybackForward.Triggered())
         {
             if (playback.PlaybackSpeed <= 0)
             {
@@ -106,23 +107,23 @@ internal static class TimeControls
             }
         }
 
-        if (KeyActionHandling.Triggered(UserActions.PlaybackForwardHalfSpeed))
+        if (UserActions.PlaybackForwardHalfSpeed.Triggered())
         {
-            if (playback.PlaybackSpeed > 0 && playback.PlaybackSpeed < 1f)
+            if (playback.PlaybackSpeed is > 0 and < 1f)
                 playback.PlaybackSpeed *= 0.5f;
             else
                 playback.PlaybackSpeed = 0.5f;
         }
 
         // Stop as separate keyboard action 
-        if (KeyActionHandling.Triggered(UserActions.PlaybackStop))
+        if (UserActions.PlaybackStop.Triggered())
         {
             playback.PlaybackSpeed = 0;
             if (UserSettings.Config.ResetTimeAfterPlayback)
                 playback.TimeInBars = _lastPlaybackStartTime;
         }
 
-        if (KeyActionHandling.Triggered(UserActions.PlaybackToggle))
+        if (UserActions.PlaybackToggle.Triggered())
         {
             if (playback.PlaybackSpeed == 0)
             {
@@ -137,7 +138,7 @@ internal static class TimeControls
             }
         }
 
-        if (KeyActionHandling.Triggered(UserActions.SetStartTime))
+        if (UserActions.SetStartTime.Triggered())
         {
             Playback.Current.IsLooping = true;
             Playback.Current.LoopRange.Start = (float)Playback.Current.TimeInBars;
@@ -145,7 +146,7 @@ internal static class TimeControls
                 Playback.Current.LoopRange.End = Playback.Current.LoopRange.Start + 4;
         }
 
-        if (KeyActionHandling.Triggered(UserActions.SetEndTime))
+        if (UserActions.SetEndTime.Triggered())
         {
             Playback.Current.IsLooping = true;
             Playback.Current.LoopRange.End = (float)Playback.Current.TimeInBars;
@@ -153,10 +154,10 @@ internal static class TimeControls
                 Playback.Current.LoopRange.Start = Playback.Current.LoopRange.End - 4;
         }
 
-        if (KeyActionHandling.Triggered(UserActions.PlaybackJumpToNextKeyframe))
+        if (UserActions.PlaybackJumpToNextKeyframe.Triggered())
             UserActionRegistry.QueueAction(UserActions.PlaybackJumpToNextKeyframe);
 
-        if (KeyActionHandling.Triggered(UserActions.PlaybackJumpToPreviousKeyframe))
+        if (UserActions.PlaybackJumpToPreviousKeyframe.Triggered())
             UserActionRegistry.QueueAction(UserActions.PlaybackJumpToPreviousKeyframe);
 
 
@@ -164,7 +165,7 @@ internal static class TimeControls
 
     internal static void DrawTimeControls(TimeLineCanvas timeLineCanvas, Instance composition)
     {
-        var playback = Playback.Current; // TODO, this should be non-static eventually
+        var playback = Playback.Current;
 
         // Settings
         PlaybackUtils.FindPlaybackSettingsForInstance(composition, out var compositionWithSettings, out var settings);
@@ -178,7 +179,10 @@ internal static class TimeControls
             ImGui.OpenPopup(PlaybackSettingsPopup.PlaybackSettingsPopupId);
         }
 
-        PlaybackSettingsPopup.DrawPlaybackSettings(composition);
+        if (PlaybackSettingsPopup.DrawPlaybackSettings(composition))
+        {
+            composition.Symbol.GetSymbolUi().FlagAsModified();
+        }
 
         CustomComponents.TooltipForLastItem("Timeline Settings",
                                             "Switch between soundtrack and VJ modes. Control BPM and other inputs.");
@@ -349,7 +353,7 @@ internal static class TimeControls
             if (SingleValueEdit.Draw(ref bpm, new Vector2(StandardWidth, ControlSize.Y), 1, 360, true, 0.01f, "{0:0.00 BPM}") ==
                 InputEditStateFlags.Modified)
             {
-                BeatTiming.SetBpmRate(bpm);
+                composition.Symbol.GetSymbolUi().FlagAsModified();
             }
 
             ImGui.SameLine();
@@ -377,8 +381,8 @@ internal static class TimeControls
 
             CustomComponents.TooltipForLastItem("Click on beat to sync. Tap later once to refine. Click right to sync measure.\n"
                                                 + "Ctrl+Click to round BPM",
-                                                $"Tap: {KeyActionHandling.ListShortcuts(UserActions.TapBeatSync)}\n"
-                                                + $"Resync: {KeyActionHandling.ListShortcuts(UserActions.TapBeatSyncMeasure)}");
+                                                $"Tap: {UserActions.TapBeatSync.ListShortcuts()}\n"
+                                                + $"Resync: {UserActions.TapBeatSyncMeasure.ListShortcuts()}");
 
             ImGui.SameLine();
 
@@ -409,14 +413,14 @@ internal static class TimeControls
                                                 ? CustomComponents.ButtonStates.Dimmed
                                                 : CustomComponents.ButtonStates.Disabled
                                            )
-                || KeyActionHandling.Triggered(UserActions.PlaybackJumpToStartTime)
+                || UserActions.PlaybackJumpToStartTime.Triggered()
                )
             {
                 playback.TimeInBars = playback.IsLooping ? playback.LoopRange.Start : 0;
             }
 
             CustomComponents.TooltipForLastItem("Jump to beginning",
-                                                KeyActionHandling.ListShortcuts(UserActions.PlaybackJumpToStartTime));
+                                                UserActions.PlaybackJumpToStartTime.ListShortcuts());
 
             ImGui.SameLine();
 
@@ -432,7 +436,7 @@ internal static class TimeControls
             }
 
             CustomComponents.TooltipForLastItem("Jump to previous keyframe",
-                                                KeyActionHandling.ListShortcuts(UserActions.PlaybackJumpToPreviousKeyframe));
+                                                UserActions.PlaybackJumpToPreviousKeyframe.ListShortcuts());
 
             ImGui.SameLine();
 
@@ -604,7 +608,7 @@ internal static class TimeControls
                             ? CustomComponents.ButtonStates.Activated
                             : CustomComponents.ButtonStates.Dimmed;
 
-            if (CustomComponents.IconButton(Icon.PinParams, ControlSize, state, KeyActionHandling.Triggered(UserActions.ToggleAnimationPinning)))
+            if (CustomComponents.IconButton(Icon.PinParams, ControlSize, state, UserActions.ToggleAnimationPinning.Triggered()))
             {
                 UserSettings.Config.AutoPinAllAnimations = !UserSettings.Config.AutoPinAllAnimations;
 
@@ -617,12 +621,12 @@ internal static class TimeControls
 
         CustomComponents.TooltipForLastItem("Keep animated parameters visible",
                                             "This can be useful when align animations between multiple operators. Toggle again to clear the visible animations.\n\n"
-                                            + KeyActionHandling.ListShortcuts(UserActions.ToggleAnimationPinning)
+                                            + UserActions.ToggleAnimationPinning.ListShortcuts()
                                            );
         ImGui.SameLine();
     }
 
-    public static double _lastPlaybackStartTime;
+    private static double _lastPlaybackStartTime;
     // beat grid optimizations
     private static float _lastUiScaleFactor = -1f;
     private static float _cachedCellSize;
@@ -632,12 +636,12 @@ internal static class TimeControls
     {
         get
         {
-            if (Math.Abs(_lastUiScaleFactor - T3Ui.UiScaleFactor) > 0.001f)
-            {
-                _lastUiScaleFactor = T3Ui.UiScaleFactor;
-                _cachedCellSize = 4f * T3Ui.UiScaleFactor;
-                _cachedGridSize = new Vector2(_cachedCellSize * 4 * 0.5f);
-            }
+            if (!(Math.Abs(_lastUiScaleFactor - T3Ui.UiScaleFactor) > 0.001f)) 
+                return _cachedCellSize;
+            
+            _lastUiScaleFactor = T3Ui.UiScaleFactor;
+            _cachedCellSize = 4f * T3Ui.UiScaleFactor;
+            _cachedGridSize = new Vector2(_cachedCellSize * 4 * 0.5f);
             return _cachedCellSize;
         }
     }
@@ -655,7 +659,7 @@ internal static class TimeControls
 
     private static float StandardWidth => 100f * T3Ui.UiScaleFactor;
     public static Vector2 ControlSize => new Vector2(45, 28) * T3Ui.UiScaleFactor;
-    public static Vector2 DopeCurve => new Vector2(95, 28) * T3Ui.UiScaleFactor;
+    private static Vector2 DopeCurve => new Vector2(95, 28) * T3Ui.UiScaleFactor;
 
     private static readonly DataSetViewCanvas _dataSetView = new()
                                                                  {
