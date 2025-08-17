@@ -1,6 +1,6 @@
-﻿using T3.Core.Animation;
+﻿#nullable enable
+using T3.Core.Animation;
 using T3.Core.Audio;
-using T3.Core.IO;
 
 namespace T3.Editor.Gui.Interaction.Timing;
 
@@ -10,22 +10,30 @@ namespace T3.Editor.Gui.Interaction.Timing;
 ///
 /// Its result is used by <see cref="BeatTimingPlayback"/> to drive playback. 
 /// </summary>
-public static class BeatTiming
+internal static class BeatTiming
 {
-    public static double BeatTime { get; private set; }
-    public static float Bpm => (float)(60f / _beatDuration);
+    internal static double BeatTime { get; private set; }
+    internal static float Bpm => (float)(60f / _beatDuration);
 
-    public static void SetBpmRate(float bpm)
+    internal static void SetBpmRate(float bpm)
     {
         _beatDuration = 60f / bpm;
         _tapTimes.Clear();
     }
 
-    public static void TriggerSyncTap() => _tapTriggeredLastFrame = true;
-    public static void TriggerResyncMeasure() => _syncMeasureTriggeredLastFrame = true;
+    internal static void TriggerSyncTap() => _tapTriggeredLastFrame = true;
+    internal static void TriggerResyncMeasure() => _syncMeasureTriggeredLastFrame = true;
 
-    public static void Update()
+    internal static void Update()
     {
+        var playback = Playback.Current;
+        var playbackSettings = playback.Settings;
+        if (playbackSettings == null)
+        {
+            Log.Warning("Can't BeatTiming.Update() without playback settings");   
+            return;
+        }
+        
         var runTime = Playback.RunTimeInSecs;
         var distanceToMeasure = 1 - (float)Math.Abs((BeatTime % 4) / 4 - 0.5) * 2;
         BeatTimingDetails.DistanceToMeasure = distanceToMeasure;
@@ -150,7 +158,9 @@ public static class BeatTiming
 
             if (_resynced)
             {
-                BeatTime = _barTimeAverage.UpdateAndCompute(BeatSynchronizer.BarProgress) + ProjectSettings.Config.BeatSyncOffsetMs / 1000;
+                BeatTime = _barTimeAverage.UpdateAndCompute(BeatSynchronizer.BarProgress) 
+                           + playback.BarsFromSeconds(playbackSettings.BeatLockAudioOffsetSec);
+                
                 _beatDuration =   (float)(60f / BeatSynchronizer.CurrentBpm);
             }
             else

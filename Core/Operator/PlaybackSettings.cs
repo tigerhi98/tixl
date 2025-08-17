@@ -26,10 +26,9 @@ public sealed class PlaybackSettings
     public string AudioInputDeviceName = string.Empty;
     public float AudioGainFactor = 1;
     public float AudioDecayFactor = 0.9f;
-
-    public PlaybackSettings()
-    {
-    }
+    
+    public bool EnableAudioBeatLocking = false;
+    public float BeatLockAudioOffsetSec;
 
     public bool TryGetMainSoundtrack(IResourceConsumer? instance, [NotNullWhen(true)] out AudioClipResourceHandle? soundtrack)
     {
@@ -83,6 +82,8 @@ public sealed class PlaybackSettings
             writer.WriteValue(nameof(AudioDecayFactor), AudioDecayFactor);
             writer.WriteValue(nameof(AudioGainFactor), AudioGainFactor);
             writer.WriteObject(nameof(AudioInputDeviceName), AudioInputDeviceName);
+            writer.WriteObject(nameof(EnableAudioBeatLocking), EnableAudioBeatLocking);
+            writer.WriteObject(nameof(BeatLockAudioOffsetSec), BeatLockAudioOffsetSec);
 
             // Write audio clips
             if (AudioClips.Count != 0)
@@ -122,7 +123,9 @@ public sealed class PlaybackSettings
                                   Syncing = JsonUtils.ReadEnum<SyncModes>(settingsToken, nameof(Syncing)),
                                   AudioDecayFactor = JsonUtils.ReadToken(settingsToken, nameof(AudioDecayFactor), 0.5f),
                                   AudioGainFactor = JsonUtils.ReadToken(settingsToken, nameof(AudioGainFactor), 1f),
-                                  AudioInputDeviceName = JsonUtils.ReadToken<string>(settingsToken, nameof(AudioInputDeviceName), null)?? string.Empty
+                                  AudioInputDeviceName = JsonUtils.ReadToken<string>(settingsToken, nameof(AudioInputDeviceName))?? string.Empty,
+                                  EnableAudioBeatLocking = JsonUtils.ReadToken(settingsToken, nameof(EnableAudioBeatLocking), false),
+                                  BeatLockAudioOffsetSec = JsonUtils.ReadToken(settingsToken, nameof(BeatLockAudioOffsetSec), 0),
                               };
 
         newSettings.AudioClips.AddRange(GetClips(settingsToken)); // Support correct format

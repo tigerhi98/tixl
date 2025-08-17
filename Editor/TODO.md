@@ -33,6 +33,9 @@
 - [ ] Remove clear background image when clicking on left edge
 - [ ] Rethink bookmarks -> Add marker in Op with number / switch with numbers only. only bring to view if hidden
 - [ ] Export should use project folder and some prefix like _
+- [x] Add playback option to enable/disable bpm detection
+
+
 
 ## Project handling
 

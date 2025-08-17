@@ -20,8 +20,6 @@ public static class WasapiAudioInput
     /// </summary>
     public static void StartFrame(PlaybackSettings settings)
     {
-        _fftUpdatesSinceLastFrame = 0;
-            
         if (settings == null)
             return;
                     
@@ -169,25 +167,7 @@ public static class WasapiAudioInput
         TimeSinceLastUpdate = time - LastUpdateTime;
         LastUpdateTime = time;
 
-        int resultCode;
-        //if (_fftUpdatesSinceLastFrame == 0)
-        //{
-            resultCode = BassWasapi.GetData(AudioAnalysis.FftGainBuffer, (int)(AudioAnalysis.BassFlagForFftBufferSize | DataFlags.FFTRemoveDC));
-            //Log.Debug("Wasapi.Process() Result code after first update:" +resultCode);
-        //}
-        // else
-        // {
-        //     resultCode = BassWasapi.GetData(_fftIntermediate, (int)(AudioAnalysis.BassFlagForFftBufferSize | DataFlags.FFTRemoveDC));
-        //     //Log.Debug("Wasapi.Process() Result code after another update:" +resultCode);
-        //     if (resultCode >= 0)
-        //     {
-        //         for (var i = 0; i < AudioAnalysis.FftBufferSize; i++)
-        //         {
-        //             AudioAnalysis.FftGainBuffer[i] = MathF.Max(_fftIntermediate[i], AudioAnalysis.FftGainBuffer[i]);
-        //         }
-        //     }
-        // }
-
+        var resultCode = BassWasapi.GetData(AudioAnalysis.FftGainBuffer, (int)(AudioAnalysis.BassFlagForFftBufferSize | DataFlags.FFTRemoveDC));
         _failedToGetLastFffData = resultCode < 0;
         if (_failedToGetLastFffData)
         {
@@ -195,20 +175,24 @@ public static class WasapiAudioInput
             return length;
         }
         
-        AudioAnalysis.ProcessUpdate(Playback.Current?.Settings?.AudioGainFactor?? 1,
-                                    Playback.Current?.Settings?.AudioDecayFactor?? 0.9f);
-        
-        BeatSynchronizer.UpdateBeatTimer();
-
         var level = BassWasapi.GetLevel();
         _lastAudioLevel = (float)(level * 0.00001);
+
+        var playbackSettings = Playback.Current?.Settings;
+        if (playbackSettings == null) 
+            return length;
         
-        _fftUpdatesSinceLastFrame++;
+        
+        AudioAnalysis.ProcessUpdate(playbackSettings?.AudioGainFactor?? 1,
+                                    playbackSettings?.AudioDecayFactor?? 0.9f);
+            
+        if(playbackSettings.EnableAudioBeatLocking)
+            BeatSynchronizer.UpdateBeatTimer();
+
         //Log.Debug($"Process with {length} #{_fftUpdatesSinceLastFrame}  L:{audioLevel:0.0}  DevBufLen:{BassWasapi.Info.BufferLength}");
         return length;
     }
 
-    private static int _fftUpdatesSinceLastFrame;
     private static bool _failedToGetLastFffData;
 
     public sealed class WasapiInputDevice

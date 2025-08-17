@@ -289,18 +289,53 @@ internal static class PlaybackSettingsPopup
                 if (settings.Syncing == PlaybackSettings.SyncModes.Tapping)
                 {
                     FormInputs.SetIndentToParameters();
-                    FormInputs.AddHint("Tap the [Sync] button on every beat.\nThe right click on measure to resync and refine.");
-                }
-                
+                    FormInputs.AddHint("""
+                                       Tap the [Sync] button on every beat.
+                                       The right click on measure to resync and refine.
+                                       """);
 
-                modified |= FormInputs.AddFloat("BPM",
-                                              ref settings.Bpm,
-                                              0,
-                                              1000,
-                                              0.02f,
-                                              true,
-                                              "In T3 animation units are in bars.\nThe BPM rate controls the animation speed of your project.",
-                                              120);
+
+                    modified |= FormInputs.AddCheckBox("Enable audio beat lock",
+                                           ref settings.EnableAudioBeatLocking,
+                                           """
+                                           If enabled, the editor will look for transient bass, hihats and snares and attempt to look the playback onto the incoming audio signal.
+                                           To use this, start by tapping the base beat (e.g. with X) then tap the beginning of the bar with (e.g. with X).
+                                           From now on, you will see the BPM be constantly sliding to look onto the beat).
+                                           """,
+                                           true
+                                          );
+                    FormInputs.AddVerticalSpace();
+                }
+
+                if (!settings.EnableAudioBeatLocking)
+                {
+                    modified |= FormInputs.AddFloat("BPM",
+                                                  ref settings.Bpm,
+                                                  0,
+                                                  1000,
+                                                  0.02f,
+                                                  true,
+                                                  """
+                                                  In T3 animation units are in bars.
+                                                  The BPM rate controls the animation speed of your project.
+                                                  """,
+                                                  120);
+                }
+
+                FormInputs.SetIndentToParameters();
+                modified |= FormInputs.AddFloat("Beat Sync Offset (ms)",
+                                                ref settings.BeatLockAudioOffsetSec,
+                                                -1f, 1f, 0.001f, 
+                                                true,
+                                                """
+                                                When using beat lock through audio analysis, you can slightly offset the phase. 
+
+                                                This might be useful to tighten the sync between audio and video, e.g. if the visual output is delayed by video-processing devices.
+                                                """,
+                                                0);
+
+                
+                FormInputs.AddVerticalSpace();
 
                 
                 // var isInitialized = playback is BeatTimingPlayback;
@@ -310,7 +345,7 @@ internal static class PlaybackSettingsPopup
                 // }
 
                 modified |= FormInputs.AddFloat("AudioGain", ref settings.AudioGainFactor , 0.01f, 100, 0.01f, true,
-                                    "Can be used to adjust the input signal (e.g. in live situation where the input level might vary.",
+                                    """Can be used to adjust the input signal (e.g. in live situation where the input level might vary.""",
                                     1);
 
                 modified |= FormInputs.AddFloat("AudioDecay", ref settings.AudioDecayFactor,

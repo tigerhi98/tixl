@@ -310,17 +310,6 @@ internal sealed class SettingsWindow : Window
                                                                      ProjectSettings.Config.EnableDirectXDebug);
                     
                     FormInputs.AddSectionSubHeader("Audio Sync");
-                    FormInputs.SetIndentToParameters();
-                    changed |= FormInputs.AddFloat("Beat Sync Offset (ms)",
-                                                   ref ProjectSettings.Config.BeatSyncOffsetMs,
-                                                   -200f, 200f, 0.01f, 
-                                                   true,
-                                                   """
-                                                   When using beat lock through audio analysis, you can slightly offset the phase. 
-
-                                                   This might be useful to tighten the sync between audio and video, e.g. if the visual output is delayed by video-processing devices.
-                                                   """,
-                                                   ProjectSettings.Defaults.BeatSyncOffsetMs);
                     
                     FormInputs.SetIndentToParameters();
 
