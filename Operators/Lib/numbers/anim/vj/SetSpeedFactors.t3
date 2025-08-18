@@ -42,7 +42,7 @@
         {
           "Id": "6ee64d39-855a-4b20-a8f5-39b4f98e8036"/*VariableName*/,
           "Type": "System.String",
-          "Value": "SpeedFactorB"
+          "Value": "SpeedFactorA"
         }
       ],
       "Outputs": []
@@ -54,7 +54,7 @@
         {
           "Id": "6ee64d39-855a-4b20-a8f5-39b4f98e8036"/*VariableName*/,
           "Type": "System.String",
-          "Value": "SpeedFactorA"
+          "Value": "SpeedFactorB"
         }
       ],
       "Outputs": []

@@ -19,6 +19,7 @@ public sealed class ApcMiniMk2 : CompatibleMidiDevice
                   {
                       new(SnapshotActions.ActivateOrCreateSnapshotAtIndex, InputModes.Default, new[] { SceneTrigger1To64 },
                           CommandTriggerCombination.ExecutesAt.SingleRangeButtonPressed),
+                      
                       new(SnapshotActions.SaveSnapshotAtIndex, InputModes.Save, new[] { SceneTrigger1To64 },
                           CommandTriggerCombination.ExecutesAt.SingleRangeButtonPressed),
 
