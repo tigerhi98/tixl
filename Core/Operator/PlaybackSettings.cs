@@ -125,7 +125,7 @@ public sealed class PlaybackSettings
                                   AudioGainFactor = JsonUtils.ReadToken(settingsToken, nameof(AudioGainFactor), 1f),
                                   AudioInputDeviceName = JsonUtils.ReadToken<string>(settingsToken, nameof(AudioInputDeviceName))?? string.Empty,
                                   EnableAudioBeatLocking = JsonUtils.ReadToken(settingsToken, nameof(EnableAudioBeatLocking), false),
-                                  BeatLockAudioOffsetSec = JsonUtils.ReadToken(settingsToken, nameof(BeatLockAudioOffsetSec), 0),
+                                  BeatLockAudioOffsetSec = JsonUtils.ReadToken(settingsToken, nameof(BeatLockAudioOffsetSec), 0f),
                               };
 
         newSettings.AudioClips.AddRange(GetClips(settingsToken)); // Support correct format
