@@ -137,6 +137,13 @@
       }
     },
     {
+      "ChildId": "e888447c-34ff-40a3-9040-0645d193e209"/*Boolean*/,
+      "Position": {
+        "X": 1180.9945,
+        "Y": 158.84607
+      }
+    },
+    {
       "ChildId": "ecd66ca4-cb9c-46e6-bdc5-eb353bcbcf75"/*LoadGltfScene*/,
       "Position": {
         "X": 383.414,

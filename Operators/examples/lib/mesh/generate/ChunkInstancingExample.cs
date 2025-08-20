@@ -1,4 +1,4 @@
-namespace Lib.point.draw;
+namespace Examples.Lib.mesh.generate;
 
 [Guid("76cd7578-0f97-49a6-938a-caeaa98deaac")]
 internal sealed class ChunkInstancingExample : Instance<ChunkInstancingExample>
