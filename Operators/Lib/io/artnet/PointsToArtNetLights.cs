@@ -300,11 +300,11 @@ public sealed class PointsToArtNetLights : Instance<PointsToArtNetLights>
     private void SetDmxCoarseFine(float value, int coarseChannel, int fineChannel, float inMin, float inMax, float maxDegrees)
     {
         //Input Validation
-        if (coarseChannel < 1 || (fineChannel > 0 && fineChannel < 1))
-        {
-            Log.Warning("Pan or Tilt channel number can't be less than 1", this);
-            return;
-        }
+        //if (coarseChannel < 1 || (fineChannel > 0 && fineChannel < 1))
+        //{
+        //    Log.Warning("Pan or Tilt channel number can't be less than 1", this);
+        //    return;
+        //}
 
         var dmx16 = MapToDmx16(value, inMin, inMax, maxDegrees);
 
@@ -318,9 +318,12 @@ public sealed class PointsToArtNetLights : Instance<PointsToArtNetLights>
         }
         else
         {
-            // 8-bit mode
-            var coarse = (int)Math.Round((dmx16 / 65535.0f) * 255.0f);
-            InsertOrSet(coarseChannel - 1, coarse);
+            if (coarseChannel > 0)
+            {
+                // 8-bit mode
+                var coarse = (int)Math.Round((dmx16 / 65535.0f) * 255.0f);
+                InsertOrSet(coarseChannel - 1, coarse);
+            }
         }
     }
 
@@ -340,16 +343,29 @@ public sealed class PointsToArtNetLights : Instance<PointsToArtNetLights>
     {
         float r, g, b;
 
-        if (float.IsNaN(point.Color.X) || float.IsNaN(point.Color.Y) || float.IsNaN(point.Color.Z))
+        if (float.IsNaN(point.Color.X))
         {
-            Log.Warning("Invalid color value", this);
-            r = b = g = 0;
+            r = 0f;
+        } else {
+            r = Math.Clamp(point.Color.X, 0f, 1f);
+        }
+
+        if (float.IsNaN(point.Color.Y))
+        {
+            g = 0f;
         }
         else
         {
-            r = point.Color.X;
-            g = point.Color.Y;
-            b = point.Color.Z;
+            g = Math.Clamp(point.Color.Y, 0f, 1f);
+        }
+
+        if (float.IsNaN(point.Color.Z))
+        {
+            b = 0f;
+        }
+        else
+        {
+            b = Math.Clamp(point.Color.Z, 0f, 1f);
         }
 
         if (RGBToCMY.GetValue(context))
@@ -360,9 +376,10 @@ public sealed class PointsToArtNetLights : Instance<PointsToArtNetLights>
             b = 1f - b;
         }
 
-        var vR = Math.Clamp(r, 0f, 1f) * 255.0f;
-        var vG = Math.Clamp(g, 0f, 1f) * 255.0f;
-        var vB = Math.Clamp(b, 0f, 1f) * 255.0f;
+        var vR = r * 255.0f;
+        var vG = g * 255.0f;
+        var vB = b * 255.0f;
+        var vW = Math.Min(vR, Math.Min(vG, vB));
 
         InsertOrSet(RedChannel.GetValue(context) - 1, (int)Math.Round(vR));
         InsertOrSet(GreenChannel.GetValue(context) - 1, (int)Math.Round(vG));
@@ -371,6 +388,11 @@ public sealed class PointsToArtNetLights : Instance<PointsToArtNetLights>
         if (AlphaChannel.GetValue(context) > 0)
         {
             InsertOrSet(AlphaChannel.GetValue(context) - 1, (int)Math.Round(point.Color.W * 255.0f));
+        }
+
+        if (WhiteChannel.GetValue(context) > 0)
+        {
+            InsertOrSet(WhiteChannel.GetValue(context) - 1, (int)Math.Round(vW));
         }
     }
 
@@ -510,6 +532,9 @@ public sealed class PointsToArtNetLights : Instance<PointsToArtNetLights>
 
     [Input(Guid = "f13edebd-b44f-49e9-985e-7e3feb886fea")]
     public readonly InputSlot<int> AlphaChannel = new();
+
+    [Input(Guid = "8ceece78-9a08-4c7b-8fea-740e8e5929a6")]
+    public readonly InputSlot<int> WhiteChannel = new();
 
     [Input(Guid = "91c78090-be10-4203-827e-d2ef1b93317e")]
     public readonly InputSlot<bool> GetF1 = new();

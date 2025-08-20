@@ -3,6 +3,14 @@
   "Description": "",
   "InputUis": [
     {
+      "InputId": "0fc76369-788a-4ffe-9dde-8eea5f10cf32"/*TargetIpAddress*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 405.0
+      },
+      "Usage": "Default"
+    },
+    {
       "InputId": "168d0023-554f-46cd-9e62-8f3d1f564b8d"/*SendTrigger*/,
       "Position": {
         "X": -200.0,
@@ -36,10 +44,24 @@
       }
     },
     {
+      "InputId": "7c15da5f-cfa1-4339-aceb-4ed0099ea041"/*SendUnicast*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 330.0
+      }
+    },
+    {
+      "InputId": "d293bb33-2fba-4048-99b8-86aa15a478f2"/*SendSync*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 255.0
+      }
+    },
+    {
       "InputId": "f7520a37-c2d4-41fa-a6ba-a6ed0423a4ec"/*InputsValues*/,
       "Position": {
         "X": -200.0,
-        "Y": 0.0
+        "Y": 45.0
       }
     },
     {
