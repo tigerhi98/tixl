@@ -238,7 +238,7 @@ PSOutput psMain(vsOutput input)
         discard;
 
     float4 f = float4(GetField(float4(p, 0)).rgb, 1);
-    float3 pObject = f.xyz;
+    float3 fieldPos = f.xyz;
 
     // PBR shading -------------------------------------------------------------------------
 
@@ -249,15 +249,15 @@ PSOutput psMain(vsOutput input)
     float2 uv = (absN.x > absN.y && absN.x > absN.z) ? p.yz / TextureScale : (absN.y > absN.z) ? p.zx / TextureScale
                                                                                                : p.xy / TextureScale;
 #elif MAPPING_LOCAL_TRIPLANAR
-    float2 uv = (absN.x > absN.y && absN.x > absN.z) ? pObject.yz / TextureScale : (absN.y > absN.z) ? pObject.zx / TextureScale
-                                                                                                     : pObject.xy / TextureScale;
+    float2 uv = (absN.x > absN.y && absN.x > absN.z) ? fieldPos.yz / TextureScale : (absN.y > absN.z) ? fieldPos.zx / TextureScale
+                                                                                                     : fieldPos.xy / TextureScale;
 
 #elif MAPPING_XY
-    float2 uv = pObject.xy / TextureScale;
+    float2 uv = fieldPos.xy / TextureScale;
 #elif MAPPING_XZ
-    float2 uv = pObject.xz / TextureScale;
+    float2 uv = fieldPos.xz / TextureScale;
 #else
-    float2 uv = pObject.yz / TextureScale;
+    float2 uv = fieldPos.yz / TextureScale;
 #endif
 
     float4 fieldColor = float4(GetField(float4(p, 1)).rgb, 1);
@@ -270,7 +270,7 @@ PSOutput psMain(vsOutput input)
     frag.uv = uv;
     frag.N = normal;
     frag.Lo = -dp;
-    frag.worldPosition = mul(float4(pObject, 1), ObjectToWorld);
+    frag.worldPosition = mul(float4(p, 1), ObjectToWorld);
 
     float4 litColor = ComputePbr();
     litColor *= fieldColor;
