@@ -17,13 +17,21 @@ internal sealed class BoxSDF : Instance<BoxSDF>, ITransformable
     public BoxSDF()
     {
         ShaderNode = new ShaderGraphNode(this);
+        
+        ShaderNode.AdditionalParameters = [
+                new ShaderGraphNode.Parameter("float3", "CombinedScale", Vector3.One),
+            ];        
+        
         Result.Value = ShaderNode;
         Result.UpdateAction += Update;
     }
 
     private void Update(EvaluationContext context)
     {
-        TransformCallback?.Invoke(this, context); // this this is stupid stupid
+        var combinedScale = Size.GetValue(context) * UniformScale.GetValue(context) /2;
+        ShaderNode.AdditionalParameters[0].Value = combinedScale;
+        
+        TransformCallback?.Invoke(this, context);
         ShaderNode.Update(context);
     }
 
@@ -42,8 +50,7 @@ internal sealed class BoxSDF : Instance<BoxSDF>, ITransformable
     
     public void GetPreShaderCode(CodeAssembleContext c, int inputIndex)
     {
-        c.AppendCall($"f{c}.w = fRoundedRect(p{c}.xyz, {ShaderNode}Center, {ShaderNode}Size * {ShaderNode}UniformScale * 0.5, {ShaderNode}EdgeRadius);");
-        //c.AppendCall($"f{c}.xyz = p{c}.xyz;");
+        c.AppendCall($"f{c}.w = fRoundedRect(p{c}.xyz, {ShaderNode}Center, {ShaderNode}CombinedScale, {ShaderNode}EdgeRadius);");
         c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
     }
 
@@ -51,11 +58,9 @@ internal sealed class BoxSDF : Instance<BoxSDF>, ITransformable
     [Input(Guid = "951b2983-1359-41e4-8fb0-8d97c50ed8d6")]
     public readonly InputSlot<Vector3> Center = new();
 
-    [GraphParam]
     [Input(Guid = "C4EF07B4-853B-48D4-9ADE-C93EE849071A")]
     public readonly InputSlot<Vector3> Size = new();
 
-    [GraphParam]
     [Input(Guid = "734179fa-aaf8-46d0-b827-e71555dad6a0")]
     public readonly InputSlot<float> UniformScale = new();
 
