@@ -401,7 +401,7 @@ internal sealed class ParameterWindow : Window
         if (OperatorHelp.DrawHelpSummary(symbolUi))
             _viewMode = ViewModes.Help;
 
-        OperatorHelp.SymbolUiRenderer.DrawLinksAndExamples(symbolUi);
+        OperatorHelp.DocumentationRenderer.DrawLinksAndExamples(symbolUi);
         ImGui.EndChild();
         ImGui.PopStyleVar();
     }

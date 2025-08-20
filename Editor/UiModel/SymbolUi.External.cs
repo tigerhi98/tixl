@@ -64,12 +64,14 @@ public sealed partial class SymbolUi
 
     internal void FlagAsModified()
     {
-        //var stackTrace = new StackTrace();
-        //var method = stackTrace.GetFrame(1)?.GetMethod();        
-        
-        //Log.Debug($" SymbolUi FlagAsModified called by {method}");
         _hasBeenModified = true;
+        VersionCounter++;
     }
+
+    /// <summary>
+    /// Can be used for invalidating display caching
+    /// </summary>
+    internal int VersionCounter { get;private set; }
 
     internal SymbolUi CloneForNewSymbol(Symbol newSymbol, Dictionary<Guid, Guid> oldToNewIds = null)
     {

@@ -56,6 +56,7 @@ public sealed partial class SymbolUi : ISelectionContainer
     {
         if (package == null)
             throw new ArgumentException("Symbol must have a package");
+        
         _package = package;
         foreach (var childUi in ChildUis.Values)
         {

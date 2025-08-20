@@ -91,6 +91,7 @@ internal sealed class OperatorHelp
             {
                 EditDescriptionDialog.ShowNextFrame();
             }
+            CustomComponents.TooltipForLastItem("Click to edit descriptions and links");
         }
 
         ImGui.PopStyleColor();
@@ -203,7 +204,7 @@ internal sealed class OperatorHelp
 
         ImGui.Dummy(Vector2.One);
 
-        SymbolUiRenderer.DrawLinksAndExamples(symbolUi);
+        DocumentationRenderer.DrawLinksAndExamples(symbolUi);
 
         ImGui.PopStyleVar();
         ImGui.Unindent();
@@ -211,19 +212,21 @@ internal sealed class OperatorHelp
         ImGui.PopFont();
     }
 
-    public static class SymbolUiRenderer
+    public static class DocumentationRenderer
     {
         private static SymbolUi? _cachedSymbolUi;
         private static Guid _cachedSymbolId;
 
-        private static readonly List<(string Title, string Url, Icon? Icon)> _cachedLinks = new();
-        private static readonly List<(SymbolUi SymbolUi, string Name)> _cachedReferencedSymbols = new();
+        private static readonly List<(string Title, string Url, Icon? Icon)> _cachedLinks = [];
+        private static readonly List<(SymbolUi SymbolUi, string Name)> _cachedReferencedSymbols = [];
+        private static int _cachedSymbolUiVersion = -1;
 
         public static void DrawLinksAndExamples(SymbolUi symbolUi)
         {
             // Check if symbolUi changed
-            if (symbolUi != _cachedSymbolUi || symbolUi.Symbol.Id != _cachedSymbolId)
+            if (symbolUi != _cachedSymbolUi || symbolUi.Symbol.Id != _cachedSymbolId || symbolUi.VersionCounter != _cachedSymbolUiVersion)
             {
+                _cachedSymbolUiVersion = symbolUi.VersionCounter;
                 _cachedSymbolUi = symbolUi;
                 _cachedSymbolId = symbolUi.Symbol.Id;
                 CacheSymbolData(symbolUi);

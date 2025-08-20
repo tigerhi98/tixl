@@ -49,6 +49,7 @@ public sealed class EditSymbolDescriptionDialog : ModalDialog
                 ImGui.SameLine();
                 if (CustomComponents.IconButton(Icon.Trash, Vector2.One * ImGui.GetFrameHeight()))
                 {
+                    modified = true;
                     symbolUi.Links.Remove(l.Id);
                     ImGui.PopID();
                     break; // prevent further iteration on dict
