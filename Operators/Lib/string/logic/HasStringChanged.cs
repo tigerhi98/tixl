@@ -17,7 +17,6 @@ internal sealed class HasStringChanged : Instance<HasStringChanged>
         var newString = Value.GetValue(context);
             
         var hasChanged = newString != _lastString;
-        Log.Debug("changed: " + hasChanged, SymbolChildId);
         HasChanged.Value = hasChanged;
         _lastString = newString;
             
