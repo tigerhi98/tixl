@@ -90,6 +90,7 @@ internal sealed class PrismSDF : Instance<PrismSDF>
                 c.AppendCall($"f{c}.w = fHexPrism(p{c}.{a} - {n}Center.{a}, {n}Radius *0.5, {n}Length * 0.5, {n}EdgeRadius);");
                 break;
         }
+        c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
     }
     
 

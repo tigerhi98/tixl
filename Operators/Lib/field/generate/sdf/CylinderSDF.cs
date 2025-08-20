@@ -51,8 +51,9 @@ internal sealed class CylinderSDF : Instance<CylinderSDF>
                                       }
                                       """;
         var a = _axisCodes0[(int)_axis];
-        c.AppendCall($"f{c}.w = fRoundedCyl(p{c}.{a}, {ShaderNode}Center.{a}, {ShaderNode}Radius *0.5, {ShaderNode}Rounding, {ShaderNode}Height *0.5 );"); 
-       // c.AppendCall($"f{c}.xyz = p{c}.xyz;");
+        c.AppendCall($"f{c}.w = fRoundedCyl(p{c}.{a}, {ShaderNode}Center.{a}, {ShaderNode}Radius *0.5, {ShaderNode}Rounding, {ShaderNode}Height *0.5 );");
+        // c.AppendCall($"f{c}.xyz = p{c}.xyz;");
+        c.AppendCall($"f{c}.xyz = p.w < 0.5 ?  p{c}.xyz : 1;"); // save local space
     }
     
     public void GetPostShaderCode(CodeAssembleContext cac, int inputIndex)
