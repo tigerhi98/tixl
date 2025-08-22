@@ -75,7 +75,9 @@ struct psInput
     float4 color : COLOR;
     float2 texCoord : TEXCOORD;
     float fog : FOG;
-    float3 posInWorld : POSITION2;
+    float3 centerPosInWorld : POSITION2;
+    float radius : RADIUS;
+
     // float3x3 tbnToWorld : TBASIS;
 };
 
@@ -114,12 +116,10 @@ psInput vsMain(uint id : SV_VertexID)
     float4 quadPosInCamera = mul(posInObject, ObjectToCamera);
 
     uint colorCount, stride;
-    // Colors.GetDimensions(colorCount, stride);
-    // uint colorIndex = (float)particleId/SegmentCount * colorCount;
-    // float4 dynaColor = colorCount > 0 ? Colors[colorIndex] : 1;
     output.color = pointDef.Color * Color;
 
-    output.posInWorld = mul(quadPosInCamera, CameraToWorld).xyz;
+    float3 posInWorld = mul(quadPosInCamera, CameraToWorld).xyz;
+    output.centerPosInWorld = posInWorld;
 
     // Shrink too close particles
     float4 posInCamera = mul(posInObject, ObjectToCamera);
@@ -133,9 +133,9 @@ psInput vsMain(uint id : SV_VertexID)
                                                 : pointDef.FX2;
 
     float2 s = PointSize * sizeFactor * (UsePointScale ? pointDef.Scale.xy : 1);
+    output.radius = s;
     quadPosInCamera.xy += quadPos.xy * 0.050 * s; // sizeFactor * Size * tooCloseFactor;
     output.position = mul(quadPosInCamera, CameraToClipSpace);
-    float4 posInWorld = mul(posInObject, ObjectToWorld);
 
     // Fog
     output.fog = pow(saturate(-posInCamera.z / FogDistance), FogBias);
@@ -154,137 +154,25 @@ float4 psMain(psInput pin) : SV_TARGET
 
     // Sample input textures to get shading model params.
     float4 albedo = pin.color;
+    
     float4 roughnessMetallicOcclusion = RSMOMap.Sample(WrappedSampler, pin.texCoord);
-    // float roughness = saturate(roughnessMetallicOcclusion.x + Roughness);
-    // float metalness = saturate(roughnessMetallicOcclusion.y + Metal);
-    // float occlusion = roughnessMetallicOcclusion.z;
-
-    float z = sqrt(1 - d * d) * 1.2;
-    float3 normal = normalize(float3(p, z));
-    // normal = mul(float4(normal, 0), CameraToWorld).xyz;
-    frag.N = mul(float4(normal, 0), CameraToWorld).xyz;
-
     frag.Roughness = saturate(roughnessMetallicOcclusion.x + Roughness);
     frag.Metalness = saturate(roughnessMetallicOcclusion.y + Metal);
     frag.Occlusion = roughnessMetallicOcclusion.z;
     frag.albedo = albedo;
+
+    float z = sqrt(1 - d * d);
+    float3 normal = normalize(float3(p, z));
+    frag.N = mul(float4(normal, 0), CameraToWorld).xyz;
+
+    frag.worldPosition = pin.centerPosInWorld + normal * pin.radius *0.01;
+        
     frag.uv = pin.texCoord;
+    frag.fog = pin.fog;
 
-    // float3 lightDir = normalize(LightPosition - pin.posInWorld.xyz);
-
-    // // Outgoing light direction (vector from world-space fragment position to the "eye").
-    // float3 eyePosition = mul(float4(0, 0, 0, 1), CameraToWorld);
-    // float3 Lo = normalize(eyePosition - pin.posInWorld);
-
-    // // Get current fragment's normal and transform to world space.
-    // // float3 N = lerp(float3(0,0,1),  normalize(2.0 * NormalMap.Sample(WrappedSampler, pin.texCoord).rgb - 1.0), normalStrength);
-    // float3 N = normal;
-
-    // // N = normalize(mul(N,pin.tbnToWorld));
-
-    // // Angle between surface normal and outgoing light direction.
-    // float cosLo = max(0.0, dot(N, Lo));
-
-    // // Specular reflection vector.
-    // float3 Lr = 2.0 * cosLo * N - Lo;
-
-    // // Fresnel reflectance at normal incidence (for metals use albedo color).
-    // float3 F0 = lerp(Fdielectric, albedo, metalness);
-
-    // // Direct lighting calculation for analytical lights.
-    // float3 directLighting = 0.0;
-    // for (uint i = 0; i < ActiveLightCount; ++i)
-    // {
-    //     float3 Li = Lights[i].position - pin.posInWorld; //- Lights[i].direction;
-    //     float distance = length(Li);
-    //     float intensity = Lights[i].intensity / (pow(distance / Lights[i].range, Lights[i].decay) + 1);
-    //     float3 Lradiance = Lights[i].color * intensity; // Lights[i].radiance;
-
-    //     // Half-vector between Li and Lo.
-    //     float3 Lh = normalize(Li + Lo);
-
-    //     // Calculate angles between surface normal and various light vectors.
-    //     float cosLi = max(0.0, dot(N, Li));
-    //     float cosLh = max(0.0, dot(N, Lh));
-
-    //     // Calculate Fresnel term for direct lighting.
-    //     float3 F = fresnelSchlick(F0, max(0.0, dot(Lh, Lo)));
-
-    //     // Calculate normal distribution for specular BRDF.
-    //     float D = ndfGGX(cosLh, roughness);
-    //     // Calculate geometric attenuation for specular BRDF.
-    //     float G = gaSchlickGGX(cosLi, cosLo, roughness);
-
-    //     // Diffuse scattering happens due to light being refracted multiple times by a dielectric medium.
-    //     // Metals on the other hand either reflect or absorb energy, so diffuse contribution is always zero.
-    //     // To be energy conserving we must scale diffuse BRDF contribution based on Fresnel factor & metalness.
-    //     float3 kd = lerp(float3(1, 1, 1), float3(0, 0, 0), metalness);
-    //     // return float4(F, 1);
-
-    //     // Lambert diffuse BRDF.
-    //     // We don't scale by 1/PI for lighting & material units to be more convenient.
-    //     // See: https://seblagarde.wordpress.com/2012/01/08/pi-or-not-to-pi-in-game-lighting-equation/
-    //     float3 diffuseBRDF = kd * albedo.rgb;
-
-    //     // Cook-Torrance specular microfacet BRDF.
-    //     float3 specularBRDF = ((F * D * G) / max(Epsilon, 4.0 * cosLi * cosLo)) * Specular;
-
-    //     // Total contribution for this light.
-    //     directLighting += (diffuseBRDF + specularBRDF) * Lradiance * cosLi;
-    // }
-
-    // // Ambient lighting (IBL).
-    // float3 ambientLighting = 0;
-    // {
-    //     // Sample diffuse irradiance at normal direction.
-    //     // float3 irradiance = 0;// irradianceTexture.Sample(WrappedSampler, N).rgb;
-    //     uint width, height, levels;
-    //     PrefilteredSpecular.GetDimensions(0, width, height, levels);
-    //     float3 irradiance = PrefilteredSpecular.SampleLevel(WrappedSampler, N, 0.6 * levels).rgb;
-
-    //     // Calculate Fresnel term for ambient lighting.
-    //     // Since we use pre-filtered cubemap(s) and irradiance is coming from many directions
-    //     // use cosLo instead of angle with light's half-vector (cosLh above).
-    //     // See: https://seblagarde.wordpress.com/2011/08/17/hello-world/
-    //     float3 F = fresnelSchlick(F0, cosLo);
-
-    //     // Get diffuse contribution factor (as with direct lighting).
-    //     float3 kd = lerp(1.0 - F, 0.0, metalness);
-
-    //     // Irradiance map contains exitant radiance assuming Lambertian BRDF, no need to scale by 1/PI here either.
-    //     float3 diffuseIBL = kd * albedo.rgb * irradiance;
-
-    //     // Sample pre-filtered specular reflection environment at correct mipmap level.
-    //     float3 specularIrradiance = PrefilteredSpecular.SampleLevel(WrappedSampler, Lr, roughness * levels).rgb;
-
-    //     // Split-sum approximation factors for Cook-Torrance specular BRDF.
-    //     float2 specularBRDF = BRDFLookup.SampleLevel(ClampedSampler, float2(cosLo, roughness), 0).rg;
-
-    //     // Total specular IBL contribution.
-    //     float3 specularIBL = (F0 * specularBRDF.x + specularBRDF.y) * specularIrradiance;
-    //     ambientLighting = (diffuseIBL + specularIBL) * occlusion;
-    // }
-
-    // // Final fragment color.
-    // float4 litColor = float4(directLighting + ambientLighting, 1.0) * BaseColor * Color;
+    float3 eyePosition = mul(float4(0, 0, 0, 1), CameraToWorld);
+    frag.Lo = normalize(eyePosition - frag.worldPosition);
 
     float4 litColor = ComputePbr();
-
-    // litColor.rgb = lerp(litColor.rgb, FogColor.rgb, pin.fog);
-    // litColor += float4(EmissiveColorMap.Sample(WrappedSampler, pin.texCoord).rgb * EmissiveColor.rgb, 0);
-    // litColor.a *= albedo.a;
-
     return litColor;
-
-    // float4 textureCol = texture2.Sample(WrappedSampler, input.texCoord);
-    //  if(textureCol.a < CutOffTransparent)
-    //      discard;
-
-    // float diffuse = lerp(1, saturate(dot(normal, lightDir)), RoundShading);
-
-    // return float4(diffuse.xxx,1);
-
-    // float4 col = pin.color;
-    // col.rgb = lerp(col.rgb, FogColor.rgb, pin.fog);
-    // return clamp(col, float4(0,0,0,0), float4(1000,1000,1000,1));
 }
