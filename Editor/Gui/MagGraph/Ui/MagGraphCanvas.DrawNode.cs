@@ -1105,7 +1105,7 @@ internal sealed partial class MagGraphCanvas
         snapPosOnCanvas.Y = snapPosOnCanvas.Y.Clamp(item.PosOnCanvas.Y + padding, item.PosOnCanvas.Y + item.Size.Y - padding);
 
         if (snapType != InputSnapper.InputSnapTypes.ReplaceMultiInput)
-            drawList.AddCircleFilled(TransformPosition(snapPosOnCanvas), 2 * CanvasScale, color.Fade(0.5f), 8);
+            drawList.AddCircleFilled(TransformPosition(snapPosOnCanvas), 2 * CanvasScale, color.Fade(0.5f + 0.5f * Blink), 8);
 
         var pOnScreen = TransformPosition(snapPosOnCanvas);
         InputSnapper.RegisterAsPotentialTargetInput(item, pOnScreen, slotId, snapType, multiInputIndex);
