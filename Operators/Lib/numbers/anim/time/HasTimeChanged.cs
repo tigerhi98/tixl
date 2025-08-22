@@ -1,3 +1,5 @@
+using T3.Core.Animation;
+
 namespace Lib.numbers.anim.time;
 
 [Guid("2443b2fd-c397-4ea6-9588-b595f918cf01")]
@@ -14,8 +16,17 @@ internal sealed class HasTimeChanged : Instance<HasTimeChanged>
         HasChanged.UpdateAction += Update;
     }
 
+    private int _lastFrameUpdate;
+
     private void Update(EvaluationContext context)
     {
+        // Support double evaluation of animated outputs 
+        if (Playback.FrameCount == _lastFrameUpdate)
+        {
+            return;
+        }
+        _lastFrameUpdate = Playback.FrameCount;
+        
         var threshold = Threshold.GetValue(context);
         var mode = (Modes)Mode.GetValue(context);
         var whichTime = (Times)WhichTime.GetValue(context);
@@ -90,7 +101,7 @@ internal sealed class HasTimeChanged : Instance<HasTimeChanged>
             _lastTime = time;
             
         HasChanged.Value = hasChanged;
-        HasChanged.DirtyFlag.Clear(); // FIXME: is this necessary?
+        //HasChanged.DirtyFlag.Clear(); // FIXME: is this necessary?
     }
 
     private enum Modes
