@@ -242,13 +242,6 @@
       }
     },
     {
-      "ChildId": "96ffe7c3-ae65-4c89-a850-9687292b354c"/*PixelShader*/,
-      "Position": {
-        "X": 2229.7905,
-        "Y": 3145.446
-      }
-    },
-    {
       "ChildId": "977451f3-27d6-4d5b-a33a-2fde63cfdc90"/*GetForegroundColor*/,
       "Position": {
         "X": 1777.5143,

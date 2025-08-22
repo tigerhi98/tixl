@@ -35,11 +35,8 @@ internal sealed class DrawPointsShaded : Instance<DrawPointsShaded>
         [Input(Guid = "247d1fed-9897-486b-bcf0-39e6c98ccbd1")]
         public readonly InputSlot<float> FadeNearest = new InputSlot<float>();
 
-        [Input(Guid = "b575d027-fd84-4a51-bf8a-6f3437e347f4")]
-        public readonly InputSlot<bool> UseWForSize = new InputSlot<bool>();
-
-        [Input(Guid = "ef476073-0796-4e6d-bf8b-d0ab92e92296")]
-        public readonly InputSlot<T3.Core.DataTypes.BufferWithViews> Colors = new InputSlot<T3.Core.DataTypes.BufferWithViews>();
+        [Input(Guid = "3472e004-210f-4cb7-aaab-dee0c5eab6eb")]
+        public readonly InputSlot<T3.Core.DataTypes.ShaderGraphNode> ColorField = new InputSlot<T3.Core.DataTypes.ShaderGraphNode>();
     
     private enum ScaleFXModes
     {

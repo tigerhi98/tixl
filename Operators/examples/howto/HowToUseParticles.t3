@@ -1394,11 +1394,6 @@
           "Id": "68ebd395-5e00-4aeb-acfb-312899c4907c"/*PointSize*/,
           "Type": "System.Single",
           "Value": 0.082
-        },
-        {
-          "Id": "b575d027-fd84-4a51-bf8a-6f3437e347f4"/*UseWForSize*/,
-          "Type": "System.Boolean",
-          "Value": false
         }
       ],
       "Outputs": []
@@ -2270,6 +2265,8 @@
     "Syncing": 0,
     "AudioDecayFactor": 0.9,
     "AudioGainFactor": 1.0,
-    "AudioInputDeviceName": "t-Bone (USB MICROPHONE )"
+    "AudioInputDeviceName": "t-Bone (USB MICROPHONE )",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0"
   }
 }

@@ -18,6 +18,13 @@
       }
     },
     {
+      "InputId": "3472e004-210f-4cb7-aaab-dee0c5eab6eb"/*ColorField*/,
+      "Position": {
+        "X": 1892.6211,
+        "Y": 3079.6196
+      }
+    },
+    {
       "InputId": "4ca3418c-9542-4158-8a72-ba14c9c199ee"/*UsePointScale*/,
       "Position": {
         "X": 2205.8533,
@@ -50,14 +57,6 @@
       "GroupTitle": "Draw Options"
     },
     {
-      "InputId": "b575d027-fd84-4a51-bf8a-6f3437e347f4"/*UseWForSize*/,
-      "Position": {
-        "X": 1885.7046,
-        "Y": 4752.44
-      },
-      "GroupTitle": "Obsolete Parameters"
-    },
-    {
       "InputId": "bb8e9be9-1371-45fd-be67-93d183b1355e"/*BlendMode*/,
       "Position": {
         "X": 2637.971,
@@ -69,13 +68,6 @@
       "Position": {
         "X": 2345.8533,
         "Y": 3733.3735
-      }
-    },
-    {
-      "InputId": "ef476073-0796-4e6d-bf8b-d0ab92e92296"/*Colors*/,
-      "Position": {
-        "X": 1882.4622,
-        "Y": 4682.172
       }
     },
     {
@@ -99,7 +91,7 @@
       "ChildId": "06e26f7d-0066-4b54-87d9-f8a79d413721"/*clampedSampler*/,
       "Position": {
         "X": 2770.4138,
-        "Y": 4184.658
+        "Y": 4289.658
       }
     },
     {
@@ -165,7 +157,14 @@
       "ChildId": "52770ecd-fc72-482c-b8eb-aae9e6079d3a"/*SamplerState*/,
       "Position": {
         "X": 2770.4138,
-        "Y": 4149.658
+        "Y": 4254.658
+      }
+    },
+    {
+      "ChildId": "55136ed8-aee5-403f-b47d-ecf67eda5a55"/*GenerateShaderGraphCode*/,
+      "Position": {
+        "X": 2032.6211,
+        "Y": 3079.6196
       }
     },
     {
@@ -244,6 +243,13 @@
       }
     },
     {
+      "ChildId": "c8f7f17e-edcb-4bb2-a063-ee7d1f5bab97"/*PixelShaderFromSource*/,
+      "Position": {
+        "X": 2172.621,
+        "Y": 3079.6196
+      }
+    },
+    {
       "ChildId": "cec700a2-0a4d-4b0d-8d5a-a5deb10cd3ac"/*RasterizerState*/,
       "Position": {
         "X": 2777.971,
@@ -253,8 +259,8 @@
     {
       "ChildId": "d09fc6ab-2da3-4f05-ab33-333d24bc7ec8"/*PixelShader*/,
       "Position": {
-        "X": 2770.4138,
-        "Y": 3659.658
+        "X": 2400.202,
+        "Y": 3396.6125
       }
     },
     {
@@ -285,26 +291,6 @@
       "Position": {
         "X": 3199.1582,
         "Y": 3690.2517
-      }
-    }
-  ],
-  "Annotations": [
-    {
-      "Id": "6f0c744d-edb7-480b-9f4f-25949c49009b",
-      "Title": "Obsolete parameters",
-      "Color": {
-        "X": 0.6,
-        "Y": 0.6,
-        "Z": 0.6,
-        "W": 1.0
-      },
-      "Position": {
-        "X": 1854.0717,
-        "Y": 4655.9224
-      },
-      "Size": {
-        "X": 230.0,
-        "Y": 190.0
       }
     }
   ]

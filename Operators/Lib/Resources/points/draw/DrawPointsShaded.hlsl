@@ -32,11 +32,8 @@ cbuffer Params : register(b1)
     float4 Color;
 
     float PointSize;
-    // float SegmentCount;
     float CutOffTransparent;
     float FadeNearest;
-
-    // float UseWForSize;
 };
 
 cbuffer Params : register(b2)
@@ -46,7 +43,6 @@ cbuffer Params : register(b2)
     int UsePointScale;
 };
 
-// Context C Buffers
 cbuffer FogParams : register(b3)
 {
     float4 FogColor;
@@ -69,6 +65,11 @@ cbuffer PbrParams : register(b5)
     float Metal;
 }
 
+cbuffer Params : register(b6)
+{
+    /*{FLOAT_PARAMS}*/
+}
+
 struct psInput
 {
     float4 position : SV_POSITION;
@@ -87,7 +88,6 @@ sampler ClampedSampler : register(s1);
 static sampler LinearSampler = WrappedSampler;
 
 StructuredBuffer<Point> Points : t0;
-// StructuredBuffer<float4> Colors : t1;
 
 Texture2D<float4> BaseColorMap : register(t1);
 Texture2D<float4> EmissiveColorMap : register(t2);
@@ -97,7 +97,37 @@ Texture2D<float4> NormalMap : register(t4);
 TextureCube<float4> PrefilteredSpecular : register(t5);
 Texture2D<float4> BRDFLookup : register(t6);
 
-static int UseFlatShading = 1;
+
+//=== Global functions ==============================================
+/*{GLOBALS}*/
+
+//=== Additional Resources ==========================================
+/*{RESOURCES(t7)}*/
+
+//=== Field functions ===============================================
+/*{FIELD_FUNCTIONS}*/
+
+//-------------------------------------------------------------------
+
+//-------------------------------------------------------------------
+inline float4 GetField(float4 p)
+{
+#ifndef USE_WORLDSPACE
+    //p.xyz = mul(float4(p.xyz, 1), WorldToObject).xyz;
+#endif
+    float4 f = 1;
+    /*{FIELD_CALL}*/
+
+    return f;
+}
+
+float GetDistance(float3 p3)
+{
+    return GetField(float4(p3.xyz, 0)).w;
+}
+//===================================================================
+
+
 
 #include "shared/pbr-render.hlsl"
 
@@ -174,5 +204,9 @@ float4 psMain(psInput pin) : SV_TARGET
     frag.Lo = normalize(eyePosition - frag.worldPosition);
 
     float4 litColor = ComputePbr();
+    litColor.rgba *= GetField(float4(frag.worldPosition.xyz, 0)).rgba;
+    if (litColor.a < 0.04)
+        discard;
+
     return litColor;
 }

@@ -63,7 +63,7 @@
       "ChildId": "2cdd8f02-ce60-4fd7-93d9-e14346c7495d"/*TorusSDF*/,
       "Position": {
         "X": -531.21356,
-        "Y": 76.34955
+        "Y": 111.34955
       }
     },
     {
@@ -91,28 +91,35 @@
       "ChildId": "46b295ab-6e2c-4ee8-80ec-e74945d79138"/*TorusMesh*/,
       "Position": {
         "X": -391.21353,
-        "Y": 41.34955
+        "Y": 76.34955
       }
     },
     {
       "ChildId": "48defafe-2b22-4504-a62c-b9bed98b4e48"/*DrawMesh*/,
       "Position": {
-        "X": -279.12646,
-        "Y": 262.17297
+        "X": -302.58322,
+        "Y": -173.08017
       }
     },
     {
       "ChildId": "4c865751-79d9-4d22-8923-b229e8793541"/*RaymarchField*/,
       "Position": {
         "X": -251.2135,
-        "Y": 76.34955
+        "Y": 111.34955
       }
     },
     {
       "ChildId": "51b5682a-87ce-4c0b-9b44-d6b1381407ed"/*DrawMesh*/,
       "Position": {
         "X": -251.2135,
-        "Y": 41.34955
+        "Y": 76.34955
+      }
+    },
+    {
+      "ChildId": "534d6f1b-05d7-40ee-a643-e411e03417b2"/*DrawMeshAtPoints*/,
+      "Position": {
+        "X": -361.03827,
+        "Y": 174.89949
       }
     },
     {
@@ -174,8 +181,15 @@
     {
       "ChildId": "755f4277-ff06-41ef-9d9b-87311a3de322"/*RadialPoints*/,
       "Position": {
-        "X": -391.21353,
-        "Y": 6.3495483
+        "X": -681.3823,
+        "Y": 5.480789
+      }
+    },
+    {
+      "ChildId": "7a004c24-5aec-4c16-b81e-0f5f79bc6ebd"/*SphereMesh*/,
+      "Position": {
+        "X": -501.03827,
+        "Y": 209.89949
       }
     },
     {
@@ -342,8 +356,8 @@
     {
       "ChildId": "d7b11c53-daf6-4a24-a898-97c45854a830"/*SubDivPattern3d*/,
       "Position": {
-        "X": -594.9484,
-        "Y": 155.68689
+        "X": -577.4282,
+        "Y": 266.06885
       }
     },
     {
@@ -356,8 +370,8 @@
     {
       "ChildId": "d8c4faab-c30b-4577-bcf9-7675ddce39b9"/*QuadMesh*/,
       "Position": {
-        "X": -419.12646,
-        "Y": 262.17297
+        "X": -442.58328,
+        "Y": -173.08017
       }
     },
     {
@@ -378,7 +392,7 @@
       "ChildId": "df4198be-ebf7-4c25-972f-a46739a2ecec"/*SetSDFMaterial*/,
       "Position": {
         "X": -391.21353,
-        "Y": 76.34955
+        "Y": 111.34955
       }
     },
     {

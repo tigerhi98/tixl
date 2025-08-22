@@ -190,28 +190,6 @@
       "Outputs": []
     },
     {
-      "Id": "96ffe7c3-ae65-4c89-a850-9687292b354c"/*PixelShader*/,
-      "SymbolId": "f7c625da-fede-4993-976c-e259e0ee4985",
-      "InputValues": [
-        {
-          "Id": "24646f06-1509-43ce-94c6-eeb608ad97cd"/*Source*/,
-          "Type": "System.String",
-          "Value": "Resources/lib/3d/mesh/mesh-DrawAtPoints.hlsl"
-        },
-        {
-          "Id": "501338b3-f432-49a5-bdbd-bcf209671305"/*EntryPoint*/,
-          "Type": "System.String",
-          "Value": "psMain"
-        },
-        {
-          "Id": "be9b3dc1-7122-4b3d-b936-cccf2581b69e"/*DebugName*/,
-          "Type": "System.String",
-          "Value": ""
-        }
-      ],
-      "Outputs": []
-    },
-    {
       "Id": "977451f3-27d6-4d5b-a33a-2fde63cfdc90"/*GetForegroundColor*/,
       "SymbolId": "6c1271a0-058f-4ff0-940b-f196e5debdf7",
       "InputValues": [],

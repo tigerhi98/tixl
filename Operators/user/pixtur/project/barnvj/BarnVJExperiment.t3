@@ -8280,6 +8280,8 @@
     "Syncing": 1,
     "AudioDecayFactor": 0.59,
     "AudioGainFactor": 1.11,
-    "AudioInputDeviceName": "Microphone Builtin (Realtek(R) Audio)"
+    "AudioInputDeviceName": "Microphone Builtin (Realtek(R) Audio)",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0"
   }
 }

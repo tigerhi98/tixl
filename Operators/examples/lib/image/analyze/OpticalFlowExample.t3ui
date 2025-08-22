@@ -220,7 +220,7 @@
       }
     },
     {
-      "ChildId": "cba7d7aa-dc89-48be-b1f0-f4362b802c92"/*GridPoints*/,
+      "ChildId": "cba7d7aa-dc89-48be-b1f0-f4362b802c92"/*_GridPoints_Old*/,
       "Comment": "We create an XY grid of points.",
       "Position": {
         "X": 600.0,
@@ -228,7 +228,7 @@
       }
     },
     {
-      "ChildId": "cbc9f786-19e2-43f5-90f9-2beaf2b050ab"/*GridPoints*/,
+      "ChildId": "cbc9f786-19e2-43f5-90f9-2beaf2b050ab"/*_GridPoints_Old*/,
       "Position": {
         "X": 693.7776,
         "Y": 1014.17413
