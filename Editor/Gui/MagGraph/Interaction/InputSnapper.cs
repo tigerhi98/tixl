@@ -64,6 +64,14 @@ internal static class InputSnapper
         // Create connection
         var sourceParentOrChildId = tempConnection.SourceItem.Variant == MagGraphItem.Variants.Input ? Guid.Empty : tempConnection.SourceItem.Id;
         var targetParentOrChildId = BestInputMatch.Item.Variant == MagGraphItem.Variants.Output ? Guid.Empty : BestInputMatch.Item.Id;
+
+        var existingConnection = context.CompositionInstance.Symbol.Connections.FirstOrDefault(c => c.TargetParentOrChildId == targetParentOrChildId
+                                                                                                    && c.TargetSlotId == BestInputMatch.SlotId);
+        if (existingConnection != null && (BestInputMatch.InputSnapType == InputSnapTypes.Normal || BestInputMatch.InputSnapType == InputSnapTypes.ReplaceMultiInput))
+        {
+            context.MacroCommand?.AddAndExecCommand(new DeleteConnectionCommand(context.CompositionInstance.Symbol, existingConnection, BestInputMatch.MultiInputIndex));
+        }
+        
         var connectionToAdd = new Symbol.Connection(sourceParentOrChildId,
                                                     tempConnection.SourceOutput.Id,
                                                     targetParentOrChildId,
@@ -80,9 +88,9 @@ internal static class InputSnapper
         
         if (BestInputMatch.InputSnapType == InputSnapTypes.ReplaceMultiInput)
         {
-            context.MacroCommand!.AddAndExecCommand(new DeleteConnectionCommand(context.CompositionInstance.Symbol,
-                                                                                connectionToAdd,
-                                                                                adjustedMultiInputIndex));
+            // context.MacroCommand!.AddAndExecCommand(new DeleteConnectionCommand(context.CompositionInstance.Symbol,
+            //                                                                     connectionToAdd,
+            //                                                                     adjustedMultiInputIndex));
 
             context.MacroCommand!.AddAndExecCommand(new AddConnectionCommand(context.CompositionInstance.Symbol,
                                                                              connectionToAdd,
