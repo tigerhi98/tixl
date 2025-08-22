@@ -85,7 +85,7 @@ public sealed class UserSettings : Settings<UserSettings.ConfigData>
         public bool DisconnectOnUnsnap = true;
         public float MaxCurveRadius = 350;
         public int MaxSegmentCount = 32;
-        public bool EnableHorizontalSnapping = false;
+        public bool EnableHorizontalSnapping = true;
         
         public bool AddSpacesToParameterNames = true;
 
