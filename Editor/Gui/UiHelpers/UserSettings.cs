@@ -55,6 +55,7 @@ public sealed class UserSettings : Settings<UserSettings.ConfigData>
         public bool ShowTimeline = true;
         public bool ShowMiniMap = false;
         public bool ShowInteractionOverlay = false;
+        public float LayerHeight = 28;
             
         // UI-State
         public float UiScaleFactor = 1;

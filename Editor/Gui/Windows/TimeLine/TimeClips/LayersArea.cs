@@ -28,7 +28,7 @@ internal sealed class LayersArea : ITimeObjectManipulation, IValueSnapAttractor
                       ValueSnapHandler snapHandlerForU)
     {
         _getCompositionOp = getCompositionOp;
-        _context = new LayersArea.LayerContext(new ClipSelection(timeLineCanvas.NodeSelection),
+        _context = new LayerContext(new ClipSelection(timeLineCanvas.NodeSelection),
                                                requestChildCompositionFunc,
                                                timeLineCanvas,
                                                snapHandlerForU);
@@ -43,7 +43,7 @@ internal sealed class LayersArea : ITimeObjectManipulation, IValueSnapAttractor
         TimeLineCanvas TimeCanvas,
         ValueSnapHandler SnapHandler);
 
-    private readonly LayersArea.LayerContext _context;
+    private readonly LayerContext _context;
 
     public void Draw(Instance compositionOp, Playback playback, ValueSnapHandler snapHandler)
     {
@@ -63,11 +63,32 @@ internal sealed class LayersArea : ITimeObjectManipulation, IValueSnapAttractor
             if (_context.ClipSelection.AllClipIds.Count > 0)
             {
                 FormInputs.AddVerticalSpace(1);
-                //ImGui.TextUnformatted(""); // Enforce application of space. Not sure why imgui requires that
             }
         }
         ImGui.EndGroup();
+
+        // Drag Layer area height
+        if (_context.ClipSelection.AllClipIds.Count > 0)
+        {
+            ImGui.SetCursorPosY( ImGui.GetCursorPosY() - 2);
+            ImGui.Button("##layerHeight", new Vector2(20, 3) * T3Ui.UiScaleFactor);
+            if (ImGui.IsItemActivated())
+            {
+                _layerHeightOnDragStart = UserSettings.Config.LayerHeight;
+                _mouseYOnDragStart = ImGui.GetMousePos().Y;
+            }
+            if (ImGui.IsItemActive())
+            {
+                var layerCount = (_maxLayerIndex - _minLayerIndex + 1).Clamp(1,999999);
+                var mouseDeltaY = ImGui.GetMousePos().Y - _mouseYOnDragStart;
+                var heightDelta = mouseDeltaY / layerCount;
+                UserSettings.Config.LayerHeight = (_layerHeightOnDragStart + heightDelta).Clamp(4,50);
+            }
+        }
     }
+
+    private static float _layerHeightOnDragStart;
+    private static float _mouseYOnDragStart;
 
     private void HandleKeyboardActions(Instance compositionOp)
     {
@@ -122,22 +143,50 @@ internal sealed class LayersArea : ITimeObjectManipulation, IValueSnapAttractor
                                                                     _drawList
                                                                    );
 
+        // Cleanup on changes
+        if (compositionSymbolUi.VersionCounter != _lastOpVersion)
+        {
+            _lastOpVersion = compositionSymbolUi.VersionCounter;
+            
+            // Avoid overlaps of selected clips (probably newly created or duplicated) first
+            foreach(var clip in clips)
+            {
+                if (!_context.ClipSelection.SelectedClipsIds.Contains(clip.Id))
+                    continue;
+                
+                while (clip.IsClipOverlappingOthers(clips))
+                {
+                    clip.LayerIndex--;
+                }
+            }
+            
+            // All clips in all layers
+            foreach (var clip in clips)
+            {
+                if (clip.MakeConform())
+                {
+                    Log.Debug($"Corrected malformed timing for {clip.Id}");
+                }
+            }
+        }
+        
         // All clips in all layers
         foreach (var clip in clips)
         {
-            if (clip.MakeConform())
-            {
-                Log.Debug($"Corrected malformed timing for {clip.Id}");
-            }
             TimeClipItem.DrawClip(clip, ref drawAttributes);
         }
 
         ImGui.SetCursorScreenPos(min + new Vector2(0, LayerHeight));
     }
 
+    
+    private void AvoidOverlaps()
+    {
 
-
+    }
+    
     private bool _contextMenuIsOpen;
+    private int _lastOpVersion = -1;
 
     private void DrawContextMenuItems(Instance compositionOp)
     {
@@ -563,7 +612,7 @@ internal sealed class LayersArea : ITimeObjectManipulation, IValueSnapAttractor
     private Vector2 _minScreenPos;
 
     private static MoveTimeClipsCommand? _moveClipsCommand;
-    internal const int LayerHeight = 28;
+    internal static float LayerHeight => UserSettings.Config.LayerHeight.Clamp(4,40);
 
     private ImDrawListPtr _drawList;
 

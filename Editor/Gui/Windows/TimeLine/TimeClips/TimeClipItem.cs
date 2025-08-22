@@ -72,7 +72,7 @@ internal static class TimeClipItem
 
 
         // Label
-        {
+        if(LayersArea.LayerHeight > Fonts.FontSmall.FontSize){
             var label = timeStretched
                             ? symbolChildUi.SymbolChild.ReadableName + $" ({timeClip.Speed*100:0.0}%)"
                             : symbolChildUi.SymbolChild.ReadableName;
