@@ -121,7 +121,7 @@ public static class T3Ui
         FrameStats.CompleteFrame();
         TriggerGlobalActionsFromKeyBindings();
 
-        if (UserSettings.Config.ShowMainMenu || ImGui.GetMousePos().Y < 20)
+        if (UserSettings.Config.ShowMainMenu || ImGui.GetMousePos().Y < 3)
         {
             AppMenuBar.DrawAppMenuBar();
         }
