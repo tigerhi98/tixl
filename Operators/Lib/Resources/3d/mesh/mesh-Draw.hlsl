@@ -20,8 +20,8 @@ cbuffer Transforms : register(b0)
 cbuffer Params : register(b1)
 {
     float4 Color;
+
     float AlphaCutOff;
-    // float Debug;
     float UseFlatShading;
 };
 
@@ -62,8 +62,8 @@ struct psInput
 };
 
 sampler WrappedSampler : register(s0);
-sampler LinearSampler : register(s1);
-sampler ClampedSampler : register(s2);
+//sampler LinearSampler : register(s1);
+sampler ClampedSampler : register(s1);
 
 StructuredBuffer<PbrVertex> PbrVertices : register(t0);
 StructuredBuffer<int3> FaceIndices : register(t1);
@@ -130,7 +130,7 @@ psInput vsMain(uint id : SV_VertexID)
 inline float4 GetField(float4 p)
 {
 #ifndef USE_WORLDSPACE
-    p.xyz = mul(float4(p.xyz, 1), WorldToObject).xyz;
+    //p.xyz = mul(float4(p.xyz, 1), WorldToObject).xyz;
 #endif
     float4 f = 1;
     /*{FIELD_CALL}*/
@@ -145,7 +145,6 @@ float GetDistance(float3 p3)
 //===================================================================
 
 #include "shared/pbr-render.hlsl"
-//
 
 float3 ComputeNormal(psInput pin, float3x3 tbnToWorld)
 {

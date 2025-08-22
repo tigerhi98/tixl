@@ -14,8 +14,8 @@
     {
       "InputId": "155c2396-0e05-4437-8171-288048b1158a"/*Filter*/,
       "Position": {
-        "X": 2404.7104,
-        "Y": 3916.748
+        "X": 2089.872,
+        "Y": 3905.177
       },
       "GroupTitle": "Texture Options",
       "Description": "Defines the mode for texture filtering"
@@ -58,8 +58,8 @@
     {
       "InputId": "96df9e72-189f-4efc-82a6-b2f482166e34"/*ShaderDefines*/,
       "Position": {
-        "X": 1691.3807,
-        "Y": 3174.3455
+        "X": 1673.7191,
+        "Y": 3193.2686
       },
       "Description": "Additional shader code that can be injected before rendering. \nUsing this requirese knowledge about the internal implementation. Passing invalid code will break the rendering.\nThis is similar to shader flags but most powerful because it also allows to define methods that are applied before rendering the fragment.\n\nOptions are...\n\n#define USE_WORLDSPACE",
       "Usage": "Multiline"
@@ -101,8 +101,8 @@
     {
       "InputId": "d1db33ea-1739-4323-9105-7b236a0e240f"/*WrapMode*/,
       "Position": {
-        "X": 2081.8616,
-        "Y": 4017.1936
+        "X": 2089.872,
+        "Y": 3997.612
       },
       "Description": "Defines how the texture behaves when repeated.\n\nWrap: The texture repeats itself continuously\nMirror: The texture is mirrored and repeats infinitely.\nClamp: The texture is cut off at the edge\nBorder: Unclear\nMirrOnce: The texture is mirrored once, then cut off"
     },
@@ -134,8 +134,8 @@
     {
       "ChildId": "036bd517-a749-4fc7-bdf1-3845d2e51166"/*linearSampler*/,
       "Position": {
-        "X": 2221.8616,
-        "Y": 3982.1936
+        "X": 2229.872,
+        "Y": 3962.612
       }
     },
     {
@@ -160,8 +160,8 @@
     {
       "ChildId": "159b164f-1700-409b-95d7-d91d82b59f13"/*texSampler*/,
       "Position": {
-        "X": 2544.7104,
-        "Y": 3916.748
+        "X": 2481.5154,
+        "Y": 3902.5068
       }
     },
     {
@@ -220,7 +220,7 @@
       "ChildId": "6483c4a0-43f8-46c3-83b7-62cc38db958c"/*clampedSampler*/,
       "Position": {
         "X": 2544.7104,
-        "Y": 3986.748
+        "Y": 3951.748
       }
     },
     {
