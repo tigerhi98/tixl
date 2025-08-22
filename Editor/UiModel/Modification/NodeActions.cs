@@ -126,7 +126,7 @@ internal static class NodeActions
                 }
             }
 
-            area.Expand(60);
+            area.Expand(new Vector2(60,120));
         }
 
         var annotation = new Annotation
@@ -154,16 +154,26 @@ internal static class NodeActions
         }
 
         var selection = nodeSelection.GetSelectedChildUis().ToList();
-        if (selection.Count() != 1)
+        if (selection.Count > 1)
         {
             Log.Info("Please select only one operator to pin to output window");
             return;
         }
 
-        if (compositionOp.Children.TryGetChildInstance(selection[0].Id, out var child))
+        if (selection.Count == 0)
         {
-            outputWindow.Pinning.PinInstance(child, components);
+            outputWindow.Pinning.PinInstance(compositionOp, components);
+            return;
         }
+        
+        if (selection.Count == 1)
+        {
+            if (compositionOp.Children.TryGetChildInstance(selection[0].Id, out var child))
+            {
+                outputWindow.Pinning.PinInstance(child, components);
+            }
+        }
+
     }
 
     #region Copy and paste
