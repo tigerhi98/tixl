@@ -5,7 +5,16 @@
 
 cbuffer Params : register(b0)
 {
-    float VertexCount;
+    float3 Stretch;
+    float UseWForSize;
+    float Size;
+    float UseStretch;
+}
+
+cbuffer Params : register(b1)
+{
+    int VertexCount;
+    int PointCount;
 }
 
 StructuredBuffer<int3> SourceFaces : t0;       
@@ -27,8 +36,8 @@ void main(uint3 i : SV_DispatchThreadID)
         return;
     }
     
-    uint vertexCount = (int)(VertexCount + 0.5);
+    //uint vertexCount = (int)(VertexCount + 0.5);
     int targetFaceIndex = pointIndex * sourceFaceCount + faceIndex;
-    ResultFaces[targetFaceIndex] = SourceFaces[faceIndex] + vertexCount * pointIndex;
+    ResultFaces[targetFaceIndex] = SourceFaces[faceIndex] + VertexCount * pointIndex;
 }
 

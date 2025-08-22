@@ -41,8 +41,8 @@ internal sealed class DrawPoints : Instance<DrawPoints>
         [Input(Guid = "850e3a32-11ba-4ad2-a2b1-6164f077ddd6")]
         public readonly InputSlot<T3.Core.DataTypes.Texture2D> Texture_ = new InputSlot<T3.Core.DataTypes.Texture2D>();
 
-        [Input(Guid = "d0a58cde-d292-4ceb-ba50-6965eb3ee3dd")]
-        public readonly InputSlot<bool> UseWForSize = new InputSlot<bool>();
+        [Input(Guid = "fe99f40a-607a-4f62-9949-17f4715db859")]
+        public readonly InputSlot<T3.Core.DataTypes.ShaderGraphNode> ColorField = new InputSlot<T3.Core.DataTypes.ShaderGraphNode>();
         
         private enum ScaleFXModes
         {

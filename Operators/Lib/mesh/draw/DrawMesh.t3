@@ -19,7 +19,7 @@
     },
     {
       "Id": "4748d9ab-58a4-41d7-a2ee-6f7dfed86211"/*AlphaCutOff*/,
-      "DefaultValue": 0.0
+      "DefaultValue": 0.01
     },
     {
       "Id": "8c9dee45-d165-48c8-b8dd-b7f47e77fd00"/*Color*/,

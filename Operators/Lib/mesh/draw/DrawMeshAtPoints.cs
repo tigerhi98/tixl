@@ -44,9 +44,6 @@ internal sealed class DrawMeshAtPoints : Instance<DrawMeshAtPoints>
         [Input(Guid = "a8590e4f-2edf-42c9-8bc2-e7b521f8cafc")]
         public readonly InputSlot<float> AlphaCutOff = new InputSlot<float>();
 
-        [Input(Guid = "f5ec8952-01e0-42db-8c8d-29db44cc3151")]
-        public readonly InputSlot<bool> UseWForSize = new InputSlot<bool>();
-
         [Input(Guid = "a7cb95c4-fb81-49c7-9503-a45589713415")]
         public readonly InputSlot<T3.Core.DataTypes.ShaderGraphNode> ColrField = new InputSlot<T3.Core.DataTypes.ShaderGraphNode>();
         

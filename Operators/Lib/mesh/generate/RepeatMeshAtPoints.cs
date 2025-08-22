@@ -23,5 +23,14 @@ internal sealed class RepeatMeshAtPoints : Instance<RepeatMeshAtPoints>
 
         [Input(Guid = "631a4691-0774-40c7-a8fa-4b9ee76854d6")]
         public readonly InputSlot<bool> UseStretch = new InputSlot<bool>();
+
+        [Input(Guid = "42fc43a2-c06c-466b-833f-e8bc28615553", MappedType = typeof(ScaleFXModes))]
+        public readonly InputSlot<int> ScaleFactor = new InputSlot<int>();
         
+        private enum ScaleFXModes
+        {
+            None = 0,
+            F1 = 1,
+            F2 = 2,
+        }
 }

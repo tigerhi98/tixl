@@ -6,22 +6,22 @@
     {
       "InputId": "2154f238-02d7-4635-aa26-17421352dca5"/*EnableZTest*/,
       "Position": {
-        "X": 2637.971,
-        "Y": 4387.724
+        "X": 2630.4138,
+        "Y": 4424.199
       }
     },
     {
       "InputId": "247d1fed-9897-486b-bcf0-39e6c98ccbd1"/*FadeNearest*/,
       "Position": {
-        "X": 1604.1526,
-        "Y": 3812.6448
+        "X": 1619.0709,
+        "Y": 3719.4053
       }
     },
     {
       "InputId": "3472e004-210f-4cb7-aaab-dee0c5eab6eb"/*ColorField*/,
       "Position": {
-        "X": 1892.6211,
-        "Y": 3079.6196
+        "X": 2205.8533,
+        "Y": 3590.6753
       }
     },
     {
@@ -35,8 +35,8 @@
     {
       "InputId": "68ebd395-5e00-4aeb-acfb-312899c4907c"/*PointSize*/,
       "Position": {
-        "X": 1604.1526,
-        "Y": 3777.6448
+        "X": 1619.0709,
+        "Y": 3684.4053
       },
       "AddPadding": "True"
     },
@@ -44,23 +44,23 @@
       "InputId": "92e069cf-d136-4a13-8bcd-243731f77a54"/*GPoints*/,
       "Relevancy": "Required",
       "Position": {
-        "X": 2137.3643,
-        "Y": 4381.3247
+        "X": 2339.4011,
+        "Y": 4189.2515
       }
     },
     {
       "InputId": "9435c9b2-5237-4199-ac9c-93e9ddc5f8b3"/*EnableZWrite*/,
       "Position": {
-        "X": 2637.971,
-        "Y": 4422.724
+        "X": 2630.4138,
+        "Y": 4459.199
       },
       "GroupTitle": "Draw Options"
     },
     {
       "InputId": "bb8e9be9-1371-45fd-be67-93d183b1355e"/*BlendMode*/,
       "Position": {
-        "X": 2637.971,
-        "Y": 4352.724
+        "X": 2630.4138,
+        "Y": 4389.199
       }
     },
     {
@@ -73,8 +73,8 @@
     {
       "InputId": "f5b4e08b-a49a-47ac-838d-577b621005b2"/*Color*/,
       "Position": {
-        "X": 1324.1526,
-        "Y": 3637.6448
+        "X": 1339.0709,
+        "Y": 3544.4053
       },
       "AddPadding": "True"
     }
@@ -88,10 +88,10 @@
       }
     },
     {
-      "ChildId": "06e26f7d-0066-4b54-87d9-f8a79d413721"/*clampedSampler*/,
+      "ChildId": "06e26f7d-0066-4b54-87d9-f8a79d413721"/*ClampedSampler*/,
       "Position": {
         "X": 2770.4138,
-        "Y": 4289.658
+        "Y": 4254.658
       }
     },
     {
@@ -116,15 +116,15 @@
     {
       "ChildId": "1e35bd30-1112-4dee-8cb2-b448567e5acc"/*DepthStencilState*/,
       "Position": {
-        "X": 2777.971,
-        "Y": 4387.724
+        "X": 2770.4138,
+        "Y": 4424.199
       }
     },
     {
       "ChildId": "27295b17-c9f0-4d77-a191-60fb1cb94279"/*MultiplyInt*/,
       "Position": {
-        "X": 2782.8003,
-        "Y": 4497.6084
+        "X": 2770.4138,
+        "Y": 4564.948
       }
     },
     {
@@ -142,29 +142,29 @@
         "Y": 890.9817
       },
       "Position": {
-        "X": 3199.1582,
-        "Y": 3515.2517
+        "X": 3415.4734,
+        "Y": 3582.3838
       }
     },
     {
       "ChildId": "4edc453d-89be-4375-944e-d169d14c735a"/*OutputMergerStage*/,
       "Position": {
-        "X": 2917.971,
-        "Y": 4352.724
+        "X": 2910.4138,
+        "Y": 4389.199
       }
     },
     {
-      "ChildId": "52770ecd-fc72-482c-b8eb-aae9e6079d3a"/*SamplerState*/,
+      "ChildId": "52770ecd-fc72-482c-b8eb-aae9e6079d3a"/*WrappedSampler*/,
       "Position": {
         "X": 2770.4138,
-        "Y": 4254.658
+        "Y": 4219.658
       }
     },
     {
       "ChildId": "55136ed8-aee5-403f-b47d-ecf67eda5a55"/*GenerateShaderGraphCode*/,
       "Position": {
-        "X": 2032.6211,
-        "Y": 3079.6196
+        "X": 2345.8533,
+        "Y": 3590.6753
       }
     },
     {
@@ -177,15 +177,15 @@
     {
       "ChildId": "641a1971-2f32-40c5-b199-11f0e62fe5ed"/*Draw*/,
       "Position": {
-        "X": 2922.8003,
-        "Y": 4497.6084
+        "X": 2910.4138,
+        "Y": 4564.948
       }
     },
     {
       "ChildId": "69f9ed06-149f-49dd-89a8-0f8fae0b9051"/*Rasterizer*/,
       "Position": {
-        "X": 2917.971,
-        "Y": 4274.404
+        "X": 2910.4138,
+        "Y": 4328.973
       }
     },
     {
@@ -205,15 +205,15 @@
     {
       "ChildId": "9f6ec1ec-fd36-4978-8437-a3ec8cfe0931"/*InputAssemblerStage*/,
       "Position": {
-        "X": 2902.8794,
-        "Y": 3514.6025
+        "X": 3275.4734,
+        "Y": 3582.3838
       }
     },
     {
       "ChildId": "a247f2e4-a675-456b-b457-fdc8897fdbe7"/*BlendColors*/,
       "Position": {
-        "X": 1464.1526,
-        "Y": 3637.6448
+        "X": 1479.0709,
+        "Y": 3544.4053
       }
     },
     {
@@ -231,57 +231,50 @@
         "Y": 59.905018
       },
       "Position": {
-        "X": 1604.1526,
-        "Y": 3637.6448
+        "X": 1619.0709,
+        "Y": 3544.4053
       }
     },
     {
       "ChildId": "bf3e7f5a-7504-49b6-813d-958d826373f6"/*GetBufferComponents*/,
       "Position": {
-        "X": 2137.3643,
-        "Y": 4416.3247
+        "X": 2339.4011,
+        "Y": 4224.2515
       }
     },
     {
       "ChildId": "c8f7f17e-edcb-4bb2-a063-ee7d1f5bab97"/*PixelShaderFromSource*/,
       "Position": {
-        "X": 2172.621,
-        "Y": 3079.6196
+        "X": 2485.8533,
+        "Y": 3590.6753
       }
     },
     {
       "ChildId": "cec700a2-0a4d-4b0d-8d5a-a5deb10cd3ac"/*RasterizerState*/,
       "Position": {
-        "X": 2777.971,
-        "Y": 4274.404
-      }
-    },
-    {
-      "ChildId": "d09fc6ab-2da3-4f05-ab33-333d24bc7ec8"/*PixelShader*/,
-      "Position": {
-        "X": 2400.202,
-        "Y": 3396.6125
+        "X": 2770.4138,
+        "Y": 4328.973
       }
     },
     {
       "ChildId": "d34a7cb6-5d1b-4cfd-b1db-fc6935d1d3fe"/*PickBlendMode*/,
       "Position": {
-        "X": 2777.971,
-        "Y": 4352.724
+        "X": 2770.4138,
+        "Y": 4389.199
       }
     },
     {
       "ChildId": "ed1cba1c-c3e6-4f9f-97fe-c4d23c8576a5"/*GetForegroundColor*/,
       "Position": {
-        "X": 1324.1527,
-        "Y": 3672.6448
+        "X": 1339.071,
+        "Y": 3579.4053
       }
     },
     {
       "ChildId": "f8071616-dd23-4aa9-8f8e-13dad781ac31"/*FloatsToBuffer*/,
       "Position": {
-        "X": 1744.1526,
-        "Y": 3602.6448
+        "X": 1759.0709,
+        "Y": 3509.4053
       }
     }
   ],
@@ -289,8 +282,8 @@
     {
       "OutputId": "037f6608-c1c8-417c-8a35-04e1357110fe"/*Output*/,
       "Position": {
-        "X": 3199.1582,
-        "Y": 3690.2517
+        "X": 3415.4734,
+        "Y": 3757.3838
       }
     }
   ]

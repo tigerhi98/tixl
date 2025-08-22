@@ -8,11 +8,18 @@ cbuffer Params : register(b0)
     float3 Stretch;
     float UseWForSize;
     float Size;
-    float UseStretch;
+    float ApplyScale;
 }
 
+cbuffer Params : register(b1)
+{
+    int PointCount;
+    int ScaleFX;
+}
+
+
 StructuredBuffer<PbrVertex> SourceVertices : t0;       
-StructuredBuffer<LegacyPoint> Points : t1;       
+StructuredBuffer<Point> Points : t1;       
 
 RWStructuredBuffer<PbrVertex> ResultVertices : u0;   
 
@@ -35,22 +42,23 @@ void main(uint3 i : SV_DispatchThreadID)
 
     PbrVertex v = SourceVertices[vertexIndex];
     
-    LegacyPoint p = Points[pointIndex];
+    Point p = Points[pointIndex];
 
     // Apply point transform
     float4 posInObject = float4( v.Position,1);
 
     float4x4 orientationMatrix = transpose(qToMatrix(p.Rotation));
 
-    //posInObject.xyz *= Size;
-    
-    //posInObject.xyz *= UseWForSize ?  Size * p.W +  Stretch :1;
-    //posInObject.xyz *= UseStretch ? Size * p.Stretch : 1;
-    //posInObject.xyz *= (UseWForSize ? (lerp(Size, Size + p.w,  Stretch) ) : Size);
+    float sizeFxFactor = ScaleFX == 0
+                            ? 1
+                        : (ScaleFX == 1) ? p.FX1
+                                        : p.FX2;
 
-    float3 resizeFromW = UseWForSize ?  p.W *  Stretch :1;
-    float3 resizeFromStretch = UseStretch ?  p.Stretch : 1;
-    posInObject.xyz *= max(0, resizeFromW) * Size * resizeFromStretch;
+    //float3 resizeFromW = UseWForSize ?  (p.FX1 *  p.Scale) :1;
+    float3 resizeFromScale = ApplyScale ?   p.Scale : 1;
+
+
+    posInObject.xyz *= max(0, resizeFromScale) * Size * sizeFxFactor;
 
     posInObject = mul( float4(posInObject.xyz, 1), orientationMatrix) ;
 

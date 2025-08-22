@@ -63,7 +63,8 @@ struct psInput
     float fog : FOG;
 };
 
-sampler texSampler : register(s0);
+sampler WrappedSampler : register(s0);
+sampler ClampedSampler : register(s1);
 
 StructuredBuffer<Point> Points : register(t0);
 Texture2D<float4> texture2 : register(t1);
@@ -72,7 +73,7 @@ Texture2D<float4> texture2 : register(t1);
 /*{GLOBALS}*/
 
 //=== Additional Resources ==========================================
-/*{RESOURCES(t6)}*/
+/*{RESOURCES(t2)}*/
 
 //=== Field functions ===============================================
 /*{FIELD_FUNCTIONS}*/
@@ -80,7 +81,7 @@ Texture2D<float4> texture2 : register(t1);
 //-------------------------------------------------------------------
 float4 GetField(float4 p)
 {
-    p.xyz = mul(float4(p.xyz, 1), WorldToObject).xyz;
+    //p.xyz = mul(float4(p.xyz, 1), WorldToObject).xyz;
     float4 f = 1;
     /*{FIELD_CALL}*/
     return f;
@@ -123,19 +124,21 @@ psInput vsMain(uint id : SV_VertexID)
     output.position = mul(quadPosInCamera, CameraToClipSpace);
     float4 posInWorld = mul(posInObject, ObjectToWorld);
 
+    output.color *= GetField(posInWorld);
+
     // Fog
     output.fog = pow(saturate(-posInCamera.z / FogDistance), FogBias);
     return output;
 }
 
 float4 psMain(psInput input) : SV_TARGET
-{
-    float4 textureCol = texture2.Sample(texSampler, input.texCoord);
-
-    if (textureCol.a < CutOffTransparent)
-        discard;
+{    
+    float4 textureCol = texture2.Sample(WrappedSampler, input.texCoord);
 
     float4 col = input.color * textureCol;
+    if (col.a < CutOffTransparent)
+        discard;
+
     col.rgb = lerp(col.rgb, FogColor.rgb, input.fog * FogColor.a);
     return clamp(col, float4(0, 0, 0, 0), float4(1000, 1000, 1000, 1));
 }
