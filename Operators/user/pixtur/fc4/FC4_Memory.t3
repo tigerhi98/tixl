@@ -1770,6 +1770,8 @@
     "AudioDecayFactor": 0.9,
     "AudioGainFactor": 1.0,
     "AudioInputDeviceName": "",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0",
     "AudioClips": [
       {
         "Id": "00000000-0000-0000-0000-000000000000",

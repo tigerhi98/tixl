@@ -1105,6 +1105,8 @@
     "Syncing": 0,
     "AudioDecayFactor": 0.98,
     "AudioGainFactor": 0.99,
-    "AudioInputDeviceName": "Speakers (Realtek(R) Audio)"
+    "AudioInputDeviceName": "Speakers (Realtek(R) Audio)",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0"
   }
 }

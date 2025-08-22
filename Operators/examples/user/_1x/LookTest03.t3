@@ -42,11 +42,6 @@
             "Z": 1.8561122,
             "W": 0.09
           }
-        },
-        {
-          "Id": "d0a58cde-d292-4ceb-ba50-6965eb3ee3dd"/*UseWForSize*/,
-          "Type": "System.Boolean",
-          "Value": true
         }
       ],
       "Outputs": []
@@ -157,7 +152,7 @@
       "Outputs": []
     },
     {
-      "Id": "6c8ba904-bad8-4f94-b78c-4716c6655c9c"/*GridPoints*/,
+      "Id": "6c8ba904-bad8-4f94-b78c-4716c6655c9c"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {

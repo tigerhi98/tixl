@@ -1305,7 +1305,7 @@
       "Outputs": []
     },
     {
-      "Id": "df225e36-c6f2-410f-b7bd-e7254f197593"/*GridPoints*/,
+      "Id": "df225e36-c6f2-410f-b7bd-e7254f197593"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -1928,6 +1928,8 @@
     "AudioDecayFactor": 0.98,
     "AudioGainFactor": 1.0,
     "AudioInputDeviceName": "",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0",
     "AudioClips": [
       {
         "Id": "00000000-0000-0000-0000-000000000000",

@@ -412,7 +412,7 @@
       "Outputs": []
     },
     {
-      "Id": "3dafab0c-8681-4a37-8e88-08640705f221"/*GridPoints*/,
+      "Id": "3dafab0c-8681-4a37-8e88-08640705f221"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -1148,7 +1148,7 @@
       "Outputs": []
     },
     {
-      "Id": "956564ac-2ef5-4331-9a08-59bf56fb4e70"/*GridPoints*/,
+      "Id": "956564ac-2ef5-4331-9a08-59bf56fb4e70"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -2204,6 +2204,8 @@
     "AudioDecayFactor": 0.9,
     "AudioGainFactor": 1.0,
     "AudioInputDeviceName": "Speakers (Realtek(R) Audio)",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0",
     "AudioClips": [
       {
         "Id": "00000000-0000-0000-0000-000000000000",

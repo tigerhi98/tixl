@@ -148,11 +148,6 @@
             "Z": 0.0,
             "W": 0.52
           }
-        },
-        {
-          "Id": "d0a58cde-d292-4ceb-ba50-6965eb3ee3dd"/*UseWForSize*/,
-          "Type": "System.Boolean",
-          "Value": false
         }
       ],
       "Outputs": []

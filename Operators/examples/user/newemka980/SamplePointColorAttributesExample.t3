@@ -189,7 +189,7 @@
       "Outputs": []
     },
     {
-      "Id": "7b5ad32f-cd07-43bd-b8ad-329e9ac4bee9"/*GridPoints*/,
+      "Id": "7b5ad32f-cd07-43bd-b8ad-329e9ac4bee9"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -228,11 +228,6 @@
           "Id": "414c8045-5086-4449-9d9a-03f28c3966b3"/*PointSize*/,
           "Type": "System.Single",
           "Value": 0.045
-        },
-        {
-          "Id": "d0a58cde-d292-4ceb-ba50-6965eb3ee3dd"/*UseWForSize*/,
-          "Type": "System.Boolean",
-          "Value": false
         }
       ],
       "Outputs": []

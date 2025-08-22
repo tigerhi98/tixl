@@ -4,7 +4,7 @@
   "InputUis": [],
   "SymbolChildUis": [
     {
-      "ChildId": "01839875-3e38-4228-82a2-a86e499a1e54"/*GridPoints*/,
+      "ChildId": "01839875-3e38-4228-82a2-a86e499a1e54"/*_GridPoints_Old*/,
       "Position": {
         "X": -346.6825,
         "Y": -57.17639
@@ -46,7 +46,7 @@
       }
     },
     {
-      "ChildId": "2548f4ab-ae37-4fac-93bf-8d079d9b71bf"/*GridPoints*/,
+      "ChildId": "2548f4ab-ae37-4fac-93bf-8d079d9b71bf"/*_GridPoints_Old*/,
       "Position": {
         "X": 661.6743,
         "Y": 325.30865

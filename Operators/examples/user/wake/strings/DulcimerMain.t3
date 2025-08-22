@@ -136,7 +136,7 @@
       "Outputs": []
     },
     {
-      "Id": "0540bf84-cef4-460c-9437-721ec4ebde6f"/*GridPoints*/,
+      "Id": "0540bf84-cef4-460c-9437-721ec4ebde6f"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -291,7 +291,7 @@
       "Outputs": []
     },
     {
-      "Id": "0a6137e6-951a-442f-b06c-e639594d7a1f"/*GridPoints*/,
+      "Id": "0a6137e6-951a-442f-b06c-e639594d7a1f"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -1629,7 +1629,7 @@
       "Outputs": []
     },
     {
-      "Id": "5150c14e-2ce0-4b48-87ae-103e21a1a954"/*GridPoints*/,
+      "Id": "5150c14e-2ce0-4b48-87ae-103e21a1a954"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -2503,7 +2503,7 @@
       "Outputs": []
     },
     {
-      "Id": "80c228ed-5939-4928-bba6-a5ea659b76d1"/*GridPoints*/,
+      "Id": "80c228ed-5939-4928-bba6-a5ea659b76d1"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -3092,7 +3092,7 @@
       "Outputs": []
     },
     {
-      "Id": "94d30dc0-a9a6-4eba-86c6-a37ddeed3d50"/*GridPoints*/,
+      "Id": "94d30dc0-a9a6-4eba-86c6-a37ddeed3d50"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -3189,7 +3189,7 @@
       "Outputs": []
     },
     {
-      "Id": "97e9638b-1909-4701-a49c-8656bd9b57dc"/*GridPoints*/,
+      "Id": "97e9638b-1909-4701-a49c-8656bd9b57dc"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -3502,7 +3502,7 @@
       "Outputs": []
     },
     {
-      "Id": "acd9c230-e3da-40b7-a7ea-582fa4b84be3"/*GridPoints*/,
+      "Id": "acd9c230-e3da-40b7-a7ea-582fa4b84be3"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -5066,7 +5066,7 @@
       "Outputs": []
     },
     {
-      "Id": "fc3b053b-f4b0-4300-8058-6420d05e3626"/*GridPoints*/,
+      "Id": "fc3b053b-f4b0-4300-8058-6420d05e3626"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -7006,6 +7006,8 @@
     "AudioDecayFactor": 0.9,
     "AudioGainFactor": 1.0,
     "AudioInputDeviceName": "",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0",
     "AudioClips": [
       {
         "Id": "00000000-0000-0000-0000-000000000000",

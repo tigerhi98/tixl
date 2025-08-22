@@ -486,7 +486,7 @@
       "Outputs": []
     },
     {
-      "Id": "154e2845-dac5-43f9-9c62-0c34e727efc4"/*GridPoints*/,
+      "Id": "154e2845-dac5-43f9-9c62-0c34e727efc4"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -1233,7 +1233,7 @@
       "Outputs": []
     },
     {
-      "Id": "2eb21334-0f23-4a00-a04f-996dd5b6475f"/*GridPoints*/,
+      "Id": "2eb21334-0f23-4a00-a04f-996dd5b6475f"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -4484,7 +4484,7 @@
       "Outputs": []
     },
     {
-      "Id": "855c0a4a-8c92-4b62-b73e-8773bfe4e768"/*GridPoints*/,
+      "Id": "855c0a4a-8c92-4b62-b73e-8773bfe4e768"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -5202,7 +5202,7 @@
       "Outputs": []
     },
     {
-      "Id": "94275cf6-419e-44b1-9cb5-697d482fb71b"/*GridPoints*/,
+      "Id": "94275cf6-419e-44b1-9cb5-697d482fb71b"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -5691,7 +5691,7 @@
       "Outputs": []
     },
     {
-      "Id": "a2bd718a-a51b-4526-acad-db21c0cd6fc1"/*GridPoints*/,
+      "Id": "a2bd718a-a51b-4526-acad-db21c0cd6fc1"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -7410,7 +7410,7 @@
       "Outputs": []
     },
     {
-      "Id": "c8ad82ed-5b2b-4416-8b41-61edcef4026d"/*GridPoints*/,
+      "Id": "c8ad82ed-5b2b-4416-8b41-61edcef4026d"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -7487,7 +7487,7 @@
       "Outputs": []
     },
     {
-      "Id": "cb51d78c-b0d1-4735-816e-beda99d7cb02"/*GridPoints*/,
+      "Id": "cb51d78c-b0d1-4735-816e-beda99d7cb02"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -8111,7 +8111,7 @@
       "Outputs": []
     },
     {
-      "Id": "df5fb485-0ffc-4d46-9dde-774960be6cd9"/*GridPoints*/,
+      "Id": "df5fb485-0ffc-4d46-9dde-774960be6cd9"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -8525,7 +8525,7 @@
       "Outputs": []
     },
     {
-      "Id": "e67725e7-2556-4f5d-9103-88b7649de6ac"/*GridPoints*/,
+      "Id": "e67725e7-2556-4f5d-9103-88b7649de6ac"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -8597,7 +8597,7 @@
       "Outputs": []
     },
     {
-      "Id": "ebde8b03-9f8a-4007-922e-4cfe88e6c8a7"/*GridPoints*/,
+      "Id": "ebde8b03-9f8a-4007-922e-4cfe88e6c8a7"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -8940,7 +8940,7 @@
       "Outputs": []
     },
     {
-      "Id": "f7768fed-58b8-45e4-8cc9-889ff352e07a"/*GridPoints*/,
+      "Id": "f7768fed-58b8-45e4-8cc9-889ff352e07a"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -11843,6 +11843,8 @@
     "AudioDecayFactor": 0.98,
     "AudioGainFactor": 1.0,
     "AudioInputDeviceName": "",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0",
     "AudioClips": [
       {
         "Id": "00000000-0000-0000-0000-000000000000",

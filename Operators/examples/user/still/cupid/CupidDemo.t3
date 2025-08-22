@@ -124,7 +124,7 @@
       "Outputs": []
     },
     {
-      "Id": "1faa1b08-5ea8-46ee-b547-18aa2673d1d4"/*GridPoints*/,
+      "Id": "1faa1b08-5ea8-46ee-b547-18aa2673d1d4"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -754,17 +754,12 @@
             "Z": 0.92352176,
             "W": 1.0
           }
-        },
-        {
-          "Id": "d0a58cde-d292-4ceb-ba50-6965eb3ee3dd"/*UseWForSize*/,
-          "Type": "System.Boolean",
-          "Value": true
         }
       ],
       "Outputs": []
     },
     {
-      "Id": "76d098c9-0b88-423e-b2f9-731a6aecfd31"/*GridPoints*/,
+      "Id": "76d098c9-0b88-423e-b2f9-731a6aecfd31"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -1374,7 +1369,7 @@
       "Outputs": []
     },
     {
-      "Id": "bd17d0d8-af6f-4ad5-8029-8eb65424db6f"/*GridPoints*/,
+      "Id": "bd17d0d8-af6f-4ad5-8029-8eb65424db6f"/*_GridPoints_Old*/,
       "SymbolId": "3ee8f66d-68df-43c1-b0eb-407259bf7e86",
       "InputValues": [
         {
@@ -2593,6 +2588,8 @@
     "AudioDecayFactor": 0.98,
     "AudioGainFactor": 1.0,
     "AudioInputDeviceName": "",
+    "EnableAudioBeatLocking": "False",
+    "BeatLockAudioOffsetSec": "0",
     "AudioClips": [
       {
         "Id": "00000000-0000-0000-0000-000000000000",
