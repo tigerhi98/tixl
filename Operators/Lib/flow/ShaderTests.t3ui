@@ -340,7 +340,7 @@
       }
     },
     {
-      "ChildId": "9d233319-1dac-45e5-8b2e-46fbb9f14154"/*GridPoints*/,
+      "ChildId": "9d233319-1dac-45e5-8b2e-46fbb9f14154"/*_GridPoints_Old*/,
       "Position": {
         "X": -1275.394,
         "Y": 1830.1056
