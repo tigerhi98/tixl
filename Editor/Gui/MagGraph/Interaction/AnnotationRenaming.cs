@@ -1,4 +1,5 @@
 ﻿#nullable enable
+using System.Drawing;
 using ImGuiNET;
 using T3.Editor.Gui.MagGraph.States;
 using T3.Editor.Gui.Styling;
@@ -6,6 +7,7 @@ using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel.Commands;
 using T3.Editor.UiModel.Commands.Annotations;
 using T3.SystemUi;
+using Color = T3.Core.DataTypes.Vector.Color;
 
 namespace T3.Editor.Gui.MagGraph.Interaction;
 
@@ -40,12 +42,16 @@ internal static class AnnotationRenaming
         // Edit label
         var positionInScreen = screenArea.Min;
         {
-            var labelPos = positionInScreen + new Vector2(2, 2); // - new Vector2(2, Fonts.FontNormal.FontSize + 8);
+            var labelPos = positionInScreen; // - new Vector2(2, Fonts.FontNormal.FontSize + 8);
             ImGui.SetCursorScreenPos(labelPos);
+            ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(4,4));
 
-            ImGui.SetNextItemWidth(200);
+            ImGui.SetNextItemWidth(350);
             ImGui.InputText("##renameAnnotationLabel", ref annotation.Label, 256, ImGuiInputTextFlags.AutoSelectAll);
+            ImGui.PopStyleVar();
 
+            ImGui.GetWindowDrawList().AddRect(ImGui.GetItemRectMin(), ImGui.GetItemRectMax(), UiColors.ForegroundFull.Fade(0.1f));
+            
             if (ImGui.IsItemDeactivated() && ImGui.IsKeyPressed((ImGuiKey)Key.Return))
             {
                 shouldClose = true;
@@ -56,7 +62,7 @@ internal static class AnnotationRenaming
             {
                 ImGui.GetWindowDrawList().AddText(Fonts.FontNormal,
                                                   Fonts.FontNormal.FontSize,
-                                                  ImGui.GetItemRectMin() + new Vector2(7, 7),
+                                                  ImGui.GetItemRectMin() + new Vector2(3, 4),
                                                   UiColors.ForegroundFull.Fade(0.3f),
                                                   "Label...");
             }
