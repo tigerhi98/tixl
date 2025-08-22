@@ -101,7 +101,7 @@ internal sealed class MoveTimeClipsCommand : ICommand
 
             while (clip.IsClipOverlappingOthers(allTimeClips))
             {
-                clip.LayerIndex++;
+                clip.LayerIndex--; // Move up
             }
                 
             changed = true;
