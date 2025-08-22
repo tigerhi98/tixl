@@ -59,10 +59,11 @@ internal static class TimeClipItem
         var timeStretched = Math.Abs(timeClip.TimeRange.Duration - timeClip.SourceRange.Duration) > 0.001;
 
         // Body and outline
-        var isWithinPlaybackTime = timeClip.TimeRange.Contains(attr.LayerContext.TimeCanvas.Playback.TimeInBars);
-        var fadeIfInActive = isWithinPlaybackTime ? 1 : 0.4f;
-        
         var isConnected = attr.CompositionSymbolUi.Symbol.Connections.Any(c => c.SourceParentOrChildId == timeClip.Id);
+
+        var isWithinPlaybackTime = timeClip.TimeRange.Contains(attr.LayerContext.TimeCanvas.Playback.TimeInBars);
+        var fadeIfInActive = (isConnected && isWithinPlaybackTime) ? 1 : 0.4f;
+        
         var fadeIfNotConnected = isConnected ? 1f : 0.2f;
         attr.DrawList.AddRectFilled(position, itemRectMax, randomColor.Fade(0.4f * fadeIfNotConnected * fadeIfInActive), rounding);
 
