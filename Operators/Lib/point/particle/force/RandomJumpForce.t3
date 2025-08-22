@@ -24,9 +24,9 @@
     {
       "Id": "e5fc6af0-e70e-46b5-b19b-86cd21e76e89"/*DirectionDistribution*/,
       "DefaultValue": {
-        "X": 0.0,
-        "Y": 0.0,
-        "Z": 0.0
+        "X": 1.0,
+        "Y": 1.0,
+        "Z": 1.0
       }
     },
     {
