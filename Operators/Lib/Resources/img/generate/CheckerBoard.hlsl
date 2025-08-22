@@ -8,7 +8,7 @@ cbuffer ParamConstants : register(b0)
     float2 Offset;
 }
 
-cbuffer Resolution : register(b2)
+cbuffer Resolution : register(b1)
 {
     float TargetWidth;
     float TargetHeight;
