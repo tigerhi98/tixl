@@ -25,19 +25,21 @@ RWStructuredBuffer<Point> TrailPoints : u0; // output
     TrailPoints[targetIndex] = CyclePoints[sourceIndex];
 
     float fInBuffer = 1;
+
+    int indexInTrail = targetIndex % TrailLength;
     if (WriteLineSeparators)
     {
-        fInBuffer = TrailLength > 1 ? (1 - (targetIndex % TrailLength) / (float)(TrailLength - 1))
+        fInBuffer = TrailLength > 1 ? (1 - indexInTrail / (float)(TrailLength - 1))
                                     : 0.5;
 
-        if (fInBuffer <= 0 || isnan(CyclePoints[sourceIndex].Scale.x))
+        if (indexInTrail == TrailLength - 1)
         {
             TrailPoints[targetIndex].Scale = NAN;
         }
     }
     else
     {
-        fInBuffer = TrailLength > 2 ? (1 - (targetIndex % TrailLength) / (float)(TrailLength - 1))
+        fInBuffer = TrailLength > 2 ? (1 - (indexInTrail) / (float)(TrailLength - 1))
                                     : 0.5;
     }
 
