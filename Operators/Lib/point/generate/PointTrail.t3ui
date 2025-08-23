@@ -36,15 +36,6 @@
       "Description": "Defines the length of the trail by the amount of points added"
     },
     {
-      "InputId": "a5448c00-a6d4-476e-bf41-826fdff531cc"/*AddSeparatorThreshold*/,
-      "Position": {
-        "X": -231.61281,
-        "Y": 403.45074
-      },
-      "GroupTitle": "Options",
-      "Description": "Defines the threshold for the separator"
-    },
-    {
       "InputId": "aaad0484-2d4f-4936-880d-67cd3aaab1b6"/*WriteLineSeparators*/,
       "Position": {
         "X": -1069.6505,

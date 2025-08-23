@@ -18,10 +18,6 @@
       "DefaultValue": 100
     },
     {
-      "Id": "a5448c00-a6d4-476e-bf41-826fdff531cc"/*AddSeparatorThreshold*/,
-      "DefaultValue": 0.25
-    },
-    {
       "Id": "aaad0484-2d4f-4936-880d-67cd3aaab1b6"/*WriteLineSeparators*/,
       "DefaultValue": true
     },
