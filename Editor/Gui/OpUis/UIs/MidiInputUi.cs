@@ -6,6 +6,7 @@ using T3.Core.DataTypes.Vector;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
 using T3.Core.Utils;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 
@@ -48,7 +49,7 @@ internal static class MidiInputUi
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect screenRect,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);

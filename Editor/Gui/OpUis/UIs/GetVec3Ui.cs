@@ -2,6 +2,7 @@
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.UiHelpers;
 
@@ -26,7 +27,7 @@ internal static class GetVec3Ui
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect area,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);
@@ -42,14 +43,14 @@ internal static class GetVec3Ui
         var name = instance.SymbolChild.Name;
         if (!string.IsNullOrWhiteSpace(name))
         {
-            WidgetElements.DrawPrimaryTitle(drawList, area, name, canvasScale);
+            WidgetElements.DrawPrimaryTitle(drawList, area, name, canvas.Scale);
         }
         else
         {
-            WidgetElements.DrawPrimaryTitle(drawList, area, "Get " + data.VariableName.TypedInputValue.Value, canvasScale);
+            WidgetElements.DrawPrimaryTitle(drawList, area, "Get " + data.VariableName.TypedInputValue.Value, canvas.Scale);
         }
 
-        WidgetElements.DrawSmallValue(drawList, area, $"{value}", canvasScale);
+        WidgetElements.DrawSmallValue(drawList, area, $"{value}", canvas.Scale);
 
         drawList.PopClipRect();
         return OpUi.CustomUiResult.Rendered | OpUi.CustomUiResult.PreventInputLabels | OpUi.CustomUiResult.PreventOpenSubGraph;

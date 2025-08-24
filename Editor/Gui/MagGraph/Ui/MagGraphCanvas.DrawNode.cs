@@ -165,8 +165,7 @@ internal sealed partial class MagGraphCanvas
             var additionalRightPadding = item.Instance.Outputs.Count> 1 ? 6 * CanvasScale:0; 
             customUiResult = item.Instance.DrawCustomUi(drawList, 
                                                         new ImRect(pMinVisible + Vector2.One, 
-                                                                   pMaxVisible - Vector2.One - new Vector2(additionalRightPadding,0)), 
-                                                        Vector2.One * CanvasScale, ref item.OpUiBinding);
+                                                                   pMaxVisible - Vector2.One - new Vector2(additionalRightPadding,0)), this, ref item.OpUiBinding);
             if ((customUiResult & OpUi.CustomUiResult.IsActive) != 0)
             {
                 context.ItemWithActiveCustomUi = item;

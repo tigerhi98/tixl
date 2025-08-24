@@ -4,6 +4,7 @@ using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
 using T3.Core.Utils;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
@@ -55,7 +56,7 @@ internal static class AnimVec2Ui
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect screenRect,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);
@@ -67,7 +68,7 @@ internal static class AnimVec2Ui
         var isNodeActivated = false;
         ImGui.PushID(instance.SymbolChildId.GetHashCode());
         if (WidgetElements.DrawRateLabelWithTitle(data.RateFactor, screenRect, drawList, "Anim2 " + (AnimMath.Shapes)data.Shape,
-                                                  canvasScale))
+                                                  canvas.Scale))
         {
             isNodeActivated = true;
         }

@@ -3,6 +3,7 @@ using ImGuiNET;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.UiHelpers;
 
@@ -32,7 +33,7 @@ internal static class TriggerUi
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect screenRect,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);
@@ -41,7 +42,7 @@ internal static class TriggerUi
         if (!data.IsValid)
             return OpUi.CustomUiResult.None;
 
-        var dragWidth = WidgetElements.DrawOperatorDragHandle(screenRect, drawList, canvasScale);
+        var dragWidth = WidgetElements.DrawOperatorDragHandle(screenRect, drawList, canvas.Scale);
         var colorAsVec4 = data.ColorInGraph.TypedInputValue.Value;
         var color = new Color(colorAsVec4);
 
@@ -60,7 +61,7 @@ internal static class TriggerUi
                         : symbolChild.ReadableName;
 
         drawList.AddRectFilled(activeRect.Min, activeRect.Max, color.Fade(refValue ? 0.5f : 0.1f));
-        var canvasScaleY = canvasScale.Y;
+        var canvasScaleY = canvas.Scale.Y;
 
         var font = WidgetElements.GetPrimaryLabelFont(canvasScaleY);
         var labelColor = WidgetElements.GetPrimaryLabelColor(canvasScaleY);

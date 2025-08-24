@@ -3,6 +3,7 @@ using System.Reflection;
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using Vector2 = System.Numerics.Vector2;
@@ -25,7 +26,7 @@ internal static class IntValueUi
     internal static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                     ImDrawListPtr drawList,
                                                     ImRect selectableScreenRect,
-                                                    Vector2 canvasScale,
+                                                    ScalableCanvas canvas,
                                                     ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);

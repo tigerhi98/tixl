@@ -2,6 +2,7 @@
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.UiHelpers;
 
@@ -27,7 +28,7 @@ internal static class SetVec3Ui
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect area,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);
@@ -36,7 +37,15 @@ internal static class SetVec3Ui
         if (!data.IsValid)
             return OpUi.CustomUiResult.PreventOpenSubGraph;
 
-
+        // Draw reference lines on hover
+        if (area.Contains(ImGui.GetMousePos()))
+        {
+            OpUi.DrawVariableReferences(drawList, canvas, area.GetCenter(), instance, data.VariableName.Value, 
+                                        Guid.Parse("f21de2e1-6af8-4651-90a0-6c662bbb23af"), 
+                                        Guid.Parse("d8a9d923-232f-4cd4-9e24-fadbf40fe1d1"));
+        }
+        
+        
         var symbolChild = instance.SymbolChild;
         drawList.PushClipRect(area.Min, area.Max, true);
 
@@ -44,14 +53,14 @@ internal static class SetVec3Ui
 
         if (!string.IsNullOrWhiteSpace(symbolChild.Name))
         {
-            WidgetElements.DrawPrimaryTitle(drawList, area, symbolChild.Name, canvasScale);
+            WidgetElements.DrawPrimaryTitle(drawList, area, symbolChild.Name, canvas.Scale);
         }
         else
         {
-            WidgetElements.DrawPrimaryTitle(drawList, area, "Vec3 " + data.VariableName.TypedInputValue.Value + " =", canvasScale);
+            WidgetElements.DrawPrimaryTitle(drawList, area, "Vec3 " + data.VariableName.TypedInputValue.Value + " =", canvas.Scale);
         }
 
-        WidgetElements.DrawSmallValue(drawList, area, $"{value}", canvasScale);
+        WidgetElements.DrawSmallValue(drawList, area, $"{value}", canvas.Scale);
 
         drawList.PopClipRect();
         return OpUi.CustomUiResult.Rendered | OpUi.CustomUiResult.PreventInputLabels | OpUi.CustomUiResult.PreventOpenSubGraph;

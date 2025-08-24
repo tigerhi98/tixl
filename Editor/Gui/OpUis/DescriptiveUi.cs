@@ -3,6 +3,7 @@ using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Interfaces;
 using T3.Core.Utils;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel;
@@ -11,8 +12,10 @@ namespace T3.Editor.Gui.OpUis;
 
 internal static class DescriptiveUi
 {
-    internal static readonly DrawChildUiDelegate DrawChildUiDelegate = DrawChildUi;
-    public static OpUi.CustomUiResult DrawChildUi(Instance instance, ImDrawListPtr drawList, ImRect area, Vector2 canvasScale, ref OpUiBinding data1)
+    internal static readonly DrawChildUiDelegate DrawChildUiDelegate = (Instance instance, ImDrawListPtr drawList, ImRect area, ScalableCanvas canvas, ref OpUiBinding data1) 
+                                                                           => DrawChildUi(instance, drawList, area, canvas, ref data1);
+    
+    public static OpUi.CustomUiResult DrawChildUi(Instance instance, ImDrawListPtr drawList, ImRect area, ScalableCanvas canvas, ref OpUiBinding data1)
     {
         if(instance is not IDescriptiveFilename descriptiveGraphNode)
             return OpUi.CustomUiResult.None;
@@ -22,14 +25,14 @@ internal static class DescriptiveUi
         // Label if instance has title
         var symbolChild = instance.SymbolChild;
             
-        WidgetElements.DrawSmallTitle(drawList, area, !string.IsNullOrEmpty(symbolChild.Name) ? symbolChild.Name : symbolChild.Symbol.Name, canvasScale);
+        WidgetElements.DrawSmallTitle(drawList, area, !string.IsNullOrEmpty(symbolChild.Name) ? symbolChild.Name : symbolChild.Symbol.Name, canvas.Scale);
 
         var slot = descriptiveGraphNode.SourcePathSlot;
         var xxx = slot.GetCurrentValue();
         
         var filePath = xxx != null ?  Path.GetFileName(xxx) : "";
             
-        WidgetElements.DrawPrimaryValue(drawList, area, filePath, canvasScale);
+        WidgetElements.DrawPrimaryValue(drawList, area, filePath, canvas.Scale);
             
         drawList.PopClipRect();
         return OpUi.CustomUiResult.Rendered | OpUi.CustomUiResult.PreventInputLabels;

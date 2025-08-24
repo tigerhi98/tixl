@@ -2,6 +2,7 @@ using System.Reflection;
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.UiHelpers;
 
@@ -37,7 +38,7 @@ internal static class Jitter2dUi
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect screenRect,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding data1)
     {
         data1 ??= new Binding(instance);
@@ -46,7 +47,7 @@ internal static class Jitter2dUi
         if (!data.IsValid)
             return OpUi.CustomUiResult.None;
 
-        if (WidgetElements.DrawRateLabelWithTitle(data.Rate, screenRect, drawList, "Jitter2D", canvasScale))
+        if (WidgetElements.DrawRateLabelWithTitle(data.Rate, screenRect, drawList, "Jitter2D", canvas.Scale))
         {
             data.Rate.Input.IsDefault = false;
             data.Rate.DirtyFlag.Invalidate();

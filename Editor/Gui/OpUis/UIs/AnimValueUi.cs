@@ -4,6 +4,7 @@ using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
 using T3.Core.Utils;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
@@ -50,7 +51,7 @@ internal static class AnimValueUi
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect screenRect,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);
@@ -64,7 +65,7 @@ internal static class AnimValueUi
         if (WidgetElements.DrawRateLabelWithTitle(data.Rate,
                                                   screenRect,
                                                   drawList,
-                                                  "Anim " + (AnimMath.Shapes)data.Shape.TypedInputValue.Value, canvasScale))
+                                                  "Anim " + (AnimMath.Shapes)data.Shape.TypedInputValue.Value, canvas.Scale))
         {
             isNodeActivated = true;
             // animValue.Rate.Input.IsDefault = false;

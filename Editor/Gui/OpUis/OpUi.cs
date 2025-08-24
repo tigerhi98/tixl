@@ -2,15 +2,19 @@
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Interfaces;
+using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.UIs;
+using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
+using T3.Editor.UiModel;
 
 namespace T3.Editor.Gui.OpUis;
 
 internal delegate OpUi.CustomUiResult DrawChildUiDelegate(Instance instance,
                                                           ImDrawListPtr drawList,
                                                           ImRect area,
-                                                          Vector2 scale,
+                                                          ScalableCanvas canvas,
                                                           ref OpUiBinding? data);
 
 /// <summary>
@@ -19,21 +23,21 @@ internal delegate OpUi.CustomUiResult DrawChildUiDelegate(Instance instance,
 /// </summary>
 public static class OpUi
 {
-    internal static OpUi.CustomUiResult DrawCustomUi(this Instance instance, ImDrawListPtr drawList, ImRect selectableScreenRect, Vector2 canvasScale)
+    internal static OpUi.CustomUiResult DrawCustomUi(this Instance instance, ImDrawListPtr drawList, ImRect selectableScreenRect, ScalableCanvas canvas)
     {
         OpUiBinding? binding = null;
-        return DrawCustomUi(instance, drawList, selectableScreenRect, canvasScale, ref binding);
+        return DrawCustomUi(instance, drawList, selectableScreenRect, canvas, ref binding);
     }
 
-    internal static OpUi.CustomUiResult DrawCustomUi(this Instance instance, 
-                                                     ImDrawListPtr drawList, 
-                                                     ImRect selectableScreenRect, 
-                                                     Vector2 canvasScale, 
-                                                     ref OpUiBinding? binding)
+    internal static CustomUiResult DrawCustomUi(this Instance instance,
+                                                ImDrawListPtr drawList,
+                                                ImRect selectableScreenRect,
+                                                ScalableCanvas canvas,
+                                                ref OpUiBinding? binding)
     {
         if (instance is IDescriptiveFilename)
         {
-            return DescriptiveUi.DrawChildUi(instance, drawList, selectableScreenRect, canvasScale, ref binding);
+            return DescriptiveUi.DrawChildUi(instance, drawList, selectableScreenRect, canvas, ref binding);
         }
         
         if (!_drawFunctionsForSymbolIds.TryGetValue(instance.Symbol.Id, out var drawFunction))
@@ -47,7 +51,7 @@ public static class OpUi
         if (instance.IsDisposed || instance.Parent == null || !instance.Parent.Children.TryGetChildInstance(instance.SymbolChildId, out _))
             return OpUi.CustomUiResult.None;
 
-        return drawFunction(instance, drawList, selectableScreenRect, canvasScale, ref binding);
+        return drawFunction(instance, drawList, selectableScreenRect, canvas, ref binding);
     }
     
     /// <summary>
@@ -113,4 +117,34 @@ public static class OpUi
                   // { Guid.Parse("96b1e8f3-0b42-4a01-b82b-44ccbd857400"), SelectVec2FromDictUi.DrawChildUi },
                   // { Guid.Parse("05295c65-7dfd-4570-866e-9b5c4e735569"), SelectBoolFromFloatDictUi.DrawChildUi },
               };
+
+    internal static void DrawVariableReferences(ImDrawListPtr drawList, ScalableCanvas canvas,
+                                              Vector2 startCenter, Instance sourceInstance, string variableName,
+                                              Guid symbolId, 
+                                              Guid variableNameInputId)
+    {
+        if (sourceInstance.Parent == null)
+            return;
+        
+        foreach (var child in sourceInstance.Parent.Children.Values)
+        {
+            if (child.Symbol.Id != symbolId)
+                continue;
+
+            var input = child.GetInput(variableNameInputId);
+            if (input is not InputSlot<string> stringInput)
+                continue;
+
+            if (stringInput.Value != variableName)
+                continue;
+
+            var childUi = child.GetChildUi();
+            if (childUi == null)
+                continue;
+                
+            FrameStats.AddHoveredId(childUi.Id);
+            drawList.AddLine(startCenter, canvas.TransformPosition( childUi.PosOnCanvas), 
+                             UiColors.StatusAutomated);
+        }
+    }
 }

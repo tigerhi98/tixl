@@ -29,7 +29,7 @@ internal static class ValueUi
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect area,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);
@@ -38,7 +38,7 @@ internal static class ValueUi
         if (!data.IsValid)
             return OpUi.CustomUiResult.None;
 
-        var dragWidth = WidgetElements.DrawOperatorDragHandle(area, drawList, canvasScale);
+        var dragWidth = WidgetElements.DrawOperatorDragHandle(area, drawList, canvas.Scale);
         area.Min.X += dragWidth;
 
         drawList.AddRectFilled(area.Min, area.Max, UiColors.BackgroundFull.Fade(0.1f));
@@ -111,12 +111,12 @@ internal static class ValueUi
         // Label if instance has title
         if (!string.IsNullOrEmpty(symbolChild.Name))
         {
-            WidgetElements.DrawPrimaryTitle(drawList, area, symbolChild.Name, canvasScale);
-            WidgetElements.DrawSmallValue(drawList, area, $"{value:0.000}", canvasScale);
+            WidgetElements.DrawPrimaryTitle(drawList, area, symbolChild.Name, canvas.Scale);
+            WidgetElements.DrawSmallValue(drawList, area, $"{value:0.000}", canvas.Scale);
         }
         else
         {
-            WidgetElements.DrawPrimaryValue(drawList, area, $"{value:0.000}", canvasScale);
+            WidgetElements.DrawPrimaryValue(drawList, area, $"{value:0.000}", canvas.Scale);
         }
 
         drawList.PopClipRect();

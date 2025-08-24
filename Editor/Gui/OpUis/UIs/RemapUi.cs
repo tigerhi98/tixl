@@ -3,6 +3,7 @@ using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
 using T3.Core.Utils;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
@@ -47,7 +48,7 @@ internal static class RemapUi
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect screenRect,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);
@@ -75,7 +76,7 @@ internal static class RemapUi
 
         drawList.PushClipRect(biasGraphRect.Min, biasGraphRect.Max, true);
 
-        var canvasFade = canvasScale.X.RemapAndClamp(0.7f, 1.5f, 0, 1);
+        var canvasFade = canvas.Scale.X.RemapAndClamp(0.7f, 1.5f, 0, 1);
 
         var isGraphActive = false;
         if (ImGui.GetIO().KeyCtrl)

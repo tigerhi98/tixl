@@ -38,7 +38,7 @@ internal static class SampleCurveUi
     public static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                   ImDrawListPtr drawList,
                                                   ImRect selectableScreenRect,
-                                                  Vector2 canvasScale,
+                                                  ScalableCanvas canvas,
                                                   ref OpUiBinding? data1)
     {
         data1 ??= new Binding(instance);
@@ -47,7 +47,7 @@ internal static class SampleCurveUi
         if (!data.IsValid || instance.Parent == null)
             return OpUi.CustomUiResult.None;
 
-        var dragWidth = WidgetElements.DrawOperatorDragHandle(selectableScreenRect, drawList, canvasScale);
+        var dragWidth = WidgetElements.DrawOperatorDragHandle(selectableScreenRect, drawList, canvas.Scale);
         var innerRect = selectableScreenRect;
         innerRect.Min.X += dragWidth;
         innerRect.Min.Y += 1;

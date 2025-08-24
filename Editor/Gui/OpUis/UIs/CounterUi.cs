@@ -2,6 +2,7 @@ using System.Reflection;
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.UiHelpers;
 
@@ -39,7 +40,7 @@ internal static class CounterUi
     internal static OpUi.CustomUiResult DrawChildUi(Instance instance,
                                                     ImDrawListPtr drawList,
                                                     ImRect screenRect,
-                                                    Vector2 canvasScale,
+                                                    ScalableCanvas canvas,
                                                     ref OpUiBinding data1)
     {
         data1 ??= new Binding(instance);
@@ -51,7 +52,7 @@ internal static class CounterUi
         ImGui.PushID(instance.SymbolChildId.GetHashCode());
         var isEditActive = false;
 
-        if (WidgetElements.DrawRateLabelWithTitle(data.Rate, screenRect, drawList, "Counter", canvasScale))
+        if (WidgetElements.DrawRateLabelWithTitle(data.Rate, screenRect, drawList, "Counter", canvas.Scale))
         {
             isEditActive = true;
             data.Rate.Input.IsDefault = false;
