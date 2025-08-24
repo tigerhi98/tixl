@@ -165,7 +165,11 @@ public sealed class AudioClipStream
         var currentPosInSec = Bass.ChannelBytes2Seconds(StreamHandle, currentStreamBufferPos) - AudioSyncingOffset;
         var soundDelta = (currentPosInSec - localTargetTimeInSecs) * playback.PlaybackSpeed;
 
-        Bass.ChannelSetAttribute(StreamHandle, ChannelAttribute.Volume, clip.Volume * ProjectSettings.Config.PlaybackVolume);
+        Bass.ChannelSetAttribute(StreamHandle, ChannelAttribute.Volume, 
+                                 clip.Volume 
+                                 * ProjectSettings.Config.PlaybackVolume
+                                 * (ProjectSettings.Config.AudioMuted ? 0f:1f));
+        
 
         // We may not fall behind or skip ahead in playback
         var maxSoundDelta = ProjectSettings.Config.AudioResyncThreshold * Math.Abs(playback.PlaybackSpeed);

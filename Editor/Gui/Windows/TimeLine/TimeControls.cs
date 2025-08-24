@@ -3,6 +3,7 @@ using T3.Core.Animation;
 using T3.Core.Audio;
 using T3.Core.DataTypes.DataSet;
 using T3.Core.DataTypes.Vector;
+using T3.Core.IO;
 using T3.Core.Operator;
 using T3.Core.Utils;
 using T3.Editor.Gui.Interaction;
@@ -171,6 +172,18 @@ internal static class TimeControls
         PlaybackUtils.FindPlaybackSettingsForInstance(composition, out var compositionWithSettings, out var settings);
         var opHasSettings = compositionWithSettings == composition;
 
+        
+        // if (CustomComponents.IconButton(ProjectSettings.Config.AudioMuted ? Icon.ToggleAudioOff : Icon.ToggleAudioOn,
+        //                                 ControlSize,
+        //                                 ProjectSettings.Config.AudioMuted
+        //                                     ? CustomComponents.ButtonStates.NeedsAttention
+        //                                     : CustomComponents.ButtonStates.Dimmed
+        //                                ))
+        // {
+        //     ProjectSettings.Config.AudioMuted = !ProjectSettings.Config.AudioMuted;
+        //     AudioEngine.SetMute(ProjectSettings.Config.AudioMuted);
+        // }
+        
         if (CustomComponents.IconButton(Icon.Settings, ControlSize, opHasSettings
                                                                         ? CustomComponents.ButtonStates.Normal
                                                                         : CustomComponents.ButtonStates.Dimmed))
@@ -199,19 +212,25 @@ internal static class TimeControls
                 break;
 
             case TimeFormat.TimeDisplayModes.Secs:
-                formattedTime = TimeSpan.FromSeconds(playback.TimeInSecs).ToString(@"hh\:mm\:ss\:ff");
+                var ts = TimeSpan.FromSeconds(playback.TimeInSecs);
+
+                formattedTime = ts.Hours > 0
+                                           ? ts.ToString(@"hh\:mm\:ss\:ff")
+                                           : ts.ToString(@"mm\:ss\:ff");
                 break;
 
             case TimeFormat.TimeDisplayModes.F30:
                 var frames = playback.TimeInSecs * 30;
                 formattedTime = $"{frames:0}f ";
                 break;
+            
             case TimeFormat.TimeDisplayModes.F60:
                 var frames60 = playback.TimeInSecs * 60;
                 formattedTime = $"{frames60:0}f ";
                 break;
         }
 
+        ImGui.PushStyleColor(ImGuiCol.Text, UiColors.TextMuted.Rgba);
         if (CustomComponents.JogDial(formattedTime, ref delta, new Vector2(StandardWidth, ControlSize.Y)))
         {
             playback.PlaybackSpeed = 0;
@@ -221,6 +240,7 @@ internal static class TimeControls
                 playback.TimeInSecs = Math.Floor(playback.TimeInSecs * 30) / 30;
             }
         }
+        ImGui.PopStyleColor();
 
         if(ImGui.IsItemHovered())
             CustomComponents.TooltipForLastItem($"Current playtime at {settings.Bpm:0.0} BPM.", "Click mode button to toggle between timeline formats.");
@@ -229,7 +249,7 @@ internal static class TimeControls
 
         // Time Mode with context menu
         ImGui.PushStyleColor(ImGuiCol.Text, UiColors.TextMuted.Rgba);
-        if (ImGui.Button(UserSettings.Config.TimeDisplayMode.ToString(), ControlSize))
+        if (ImGui.Button(UserSettings.Config.TimeDisplayMode.ToString(), ControlSize * new Vector2(1.5f,1)))
         {
             UserSettings.Config.TimeDisplayMode =
                 (TimeFormat.TimeDisplayModes)(((int)UserSettings.Config.TimeDisplayMode + 1) % Enum.GetNames(typeof(TimeFormat.TimeDisplayModes)).Length);
@@ -272,14 +292,29 @@ internal static class TimeControls
             // Pre-calculate the cell size minus 1 for the rect size
             var rectSize = new Vector2(cellSize - 1, cellSize - 1);
 
+            var gridColor = UserSettings.Config.EnableIdleMotion ? UiColors.BackgroundFull.Fade(0.2f) : UiColors.ForegroundFull.Fade(0.1f);
             for (int x = 0; x < cellCount; x++)
             {
                 for (int y = 0; y < cellCount; y++)
                 {
                     var cellMin = gridOffset + new Vector2(x * cellSize, y * cellSize);
                     var cellMax = cellMin + rectSize;
-                    drawList.AddRectFilled(cellMin, cellMax, UiColors.Gray.Fade(0.2f));
+                    drawList.AddRectFilled(cellMin, cellMax, gridColor);
                 }
+            }
+
+            if (!UserSettings.Config.EnableIdleMotion)
+            {
+                var diagonal = new Vector2(CellSize, -CellSize) * 2.3f;
+                var lineStart = center + diagonal;
+                var lineEnd = center - diagonal;
+                drawList.AddLine(lineStart,
+                                 lineEnd, 
+                                 UiColors.BackgroundPopup.Fade(0.4f),5);
+                drawList.AddLine(lineStart,
+                                 lineEnd, 
+                                 UiColors.ForegroundFull.Fade(0.1f));
+                
             }
 
             // If idle motion is enabled, draw the animated indicator
@@ -300,7 +335,7 @@ internal static class TimeControls
 
                 drawList.AddRectFilled(indicatorMin, indicatorMax,
                                        Color.Mix(UiColors.StatusAnimated,
-                                                 UiColors.Gray,
+                                                 UiColors.BackgroundFull.Fade(0.3f),
                                                  (float)beatPulse));
             }
 
@@ -554,15 +589,15 @@ internal static class TimeControls
         }
 
         // ToggleAudio
-        if (CustomComponents.IconButton(UserSettings.Config.AudioMuted ? Icon.ToggleAudioOff : Icon.ToggleAudioOn,
+        if (CustomComponents.IconButton(ProjectSettings.Config.AudioMuted ? Icon.ToggleAudioOff : Icon.ToggleAudioOn,
                                         ControlSize,
-                                        UserSettings.Config.AudioMuted
-                                            ? CustomComponents.ButtonStates.Dimmed
-                                            : CustomComponents.ButtonStates.Normal
+                                        ProjectSettings.Config.AudioMuted
+                                            ? CustomComponents.ButtonStates.NeedsAttention
+                                            : CustomComponents.ButtonStates.Dimmed
                                        ))
         {
-            UserSettings.Config.AudioMuted = !UserSettings.Config.AudioMuted;
-            AudioEngine.SetMute(UserSettings.Config.AudioMuted);
+            ProjectSettings.Config.AudioMuted = !ProjectSettings.Config.AudioMuted;
+            AudioEngine.SetMute(ProjectSettings.Config.AudioMuted);
         }
 
         // ToggleHover
@@ -658,7 +693,7 @@ internal static class TimeControls
     // end of beat grid optimizations
 
     private static float StandardWidth => 100f * T3Ui.UiScaleFactor;
-    public static Vector2 ControlSize => new Vector2(45, 28) * T3Ui.UiScaleFactor;
+    public static Vector2 ControlSize => new Vector2(35, 28) * T3Ui.UiScaleFactor;
     private static Vector2 DopeCurve => new Vector2(95, 28) * T3Ui.UiScaleFactor;
 
     private static readonly DataSetViewCanvas _dataSetView = new()

@@ -179,11 +179,10 @@ internal sealed class UiElements
                            new Vector2(
                                        ImGui.GetWindowContentRegionMin().X+1,
                                        ImGui.GetWindowContentRegionMax().Y - TimeControls.ControlSize.Y-1));
-
         ImGui.BeginChild("TimeControls", Vector2.Zero, false, ImGuiWindowFlags.NoScrollWithMouse | ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground);
         {
             var icon = components.TimeLineCanvas.FoldingHeight.UsingCustomTimelineHeight ? Icon.ChevronDown : Icon.ChevronUp;
-            if (CustomComponents.IconButton(icon, TimeControls.ControlSize))
+            if (CustomComponents.IconButton(icon, TimeControls.ControlSize, CustomComponents.ButtonStates.Dimmed))
             {
                 components.TimeLineCanvas.FoldingHeight.Toggle();
                 UserSettings.Config.ShowTimeline = true;

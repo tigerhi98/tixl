@@ -45,7 +45,6 @@ public sealed class UserSettings : Settings<UserSettings.ConfigData>
 
         public string ProjectsFolder = FileLocations.DefaultProjectFolder;
         
-        public bool AudioMuted;
             
         // UI-Elements
         public bool ShowThumbnails = true;
