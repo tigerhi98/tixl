@@ -33,13 +33,15 @@ internal static class ImageBackgroundFading
     
     public static void HandleGraphFading(GraphImageBackground imageBackground, ImDrawListPtr drawList, out float graphOpacity)
     {
+        graphOpacity = 1;
         if (!imageBackground.IsActive)
         {
-            graphOpacity = 1;
             return;
         }
-            
 
+        if (!ImGui.IsWindowHovered())
+            return;
+        
         var windowPos = Vector2.Zero;
         var appWindowSize = ImGui.GetIO().DisplaySize;
         
