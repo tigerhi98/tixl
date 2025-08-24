@@ -3,10 +3,12 @@ using ImGuiNET;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Model;
 using T3.Core.Operator;
+using T3.Core.Operator.Slots;
 using T3.Core.Utils;
 using T3.Editor.Gui.Interaction.TransformGizmos;
 using T3.Editor.Gui.MagGraph.Model;
 using T3.Editor.Gui.MagGraph.States;
+using T3.Editor.Gui.OutputUi;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.Gui.Windows;
@@ -116,24 +118,13 @@ internal sealed class ConnectionHovering
                 var outputPosInScreen = context.Canvas.TransformPosition(firstHover.Connection.SourcePos);
                 drawList.AddCircle(outputPosInScreen, hoverIndicatorRadius, firstHover.Color, 24,2); 
             }            
-            // else if (region == LineRegions.Center)
-            // {
-            //     if (ImGui.IsMouseClicked(ImGuiMouseButton.Left))
-            //     {
-            //         ConnectionHoversWhenClicked.Clear();
-            //         ConnectionHoversWhenClicked.AddRange(_lastConnectionHovers);
-            //         context.StateMachine.SetState(GraphStates.HoldingConnectionBeginning, context);
-            //     }
-            // }
-
-
             
             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(5,5));
             ImGui.BeginTooltip();
             ImGui.PushFont(Fonts.FontSmall);
             ImGui.TextUnformatted("Click to insert operator or\ndrag to disconnect...");
             //ImGui.Spacing();
-            FormInputs.AddVerticalSpace(10);
+            FormInputs.AddVerticalSpace();
             ImGui.PopFont();
             ImGui.EndTooltip();
             ImGui.PopStyleVar();
@@ -141,7 +132,7 @@ internal sealed class ConnectionHovering
         }
         //else if (firstOutput != null)
         //{
-        DrawTooltipForSingleOutput(context, firstHover, drawList);
+        DrawTooltipForSingleOutput(context, firstHover);
             // Inconsistent connection types...
         //}
 
@@ -166,7 +157,7 @@ internal sealed class ConnectionHovering
         // _bestSnapSplitDistance = float.PositiveInfinity;
     }
 
-    private static void DrawTooltipForSingleOutput(GraphUiContext context, HoverPoint bestMatchLastFrame, ImDrawListPtr drawList)
+    private static void DrawTooltipForSingleOutput(GraphUiContext context, HoverPoint bestMatchLastFrame)
     {
         ImGui.BeginTooltip();
         {
@@ -182,29 +173,10 @@ internal sealed class ConnectionHovering
                 && targetOp != null
                 && connection.TargetItem.SymbolUi != null)
             {
-                var width = 160f;
+                //var width = 160f;
                 ImGui.SetNextWindowSizeConstraints(new Vector2(200, 200 * 9 / 16f), new Vector2(200, 200 * 9 / 16f));
 
-                var sourceOpUi = sourceOpInstance.GetSymbolUi();
-                var sourceOutputUi = sourceOpUi.OutputUis[connection.SourceOutput.Id];
-                ImGui.BeginChild("thumbnail", new Vector2(width, width * 9 / 16f));
-                {
-                    TransformGizmoHandling.SetDrawList(drawList);
-                    _imageCanvasForTooltips.Update();
-                    _imageCanvasForTooltips.SetAsCurrent();
-
-                    var outputUi = connection.SourceItem.SymbolUi.OutputUis[outputSlot.Id];
-                    _evaluationContext.Reset();
-                    _evaluationContext.RequestedResolution = new Int2(1280 / 2, 720 / 2);
-                    outputUi.DrawValue(outputSlot, 
-                                       _evaluationContext,
-                                       "connectionLineThumbnail",
-                                       recompute: UserSettings.Config.HoverMode == UserSettings.GraphHoverModes.Live);
-
-                    ImageOutputCanvas.Deactivate();
-                    TransformGizmoHandling.RestoreDrawList();
-                }
-                ImGui.EndChild();
+                var sourceOpUi = ToolTipContentDrawer.DrawForOutput( outputSlot, out var sourceOutputUi);
                 ImGui.PushFont(Fonts.FontSmall);
                 var connectionSource = sourceOpUi.Symbol.Name + "." + sourceOutputUi.OutputDefinition.Name;
                 
@@ -219,13 +191,14 @@ internal sealed class ConnectionHovering
                 ImGui.TextColored(UiColors.TextMuted, connectionTarget);
                 ImGui.PopFont();
 
-                var nodeSelection = context.Selector;
+                //var nodeSelection = context.Selector;
                 FrameStats.AddHoveredId(targetOp.SymbolChildId);
                 FrameStats.AddHoveredId(connection.SourceItem.Id);
             }
         }
         ImGui.EndTooltip();
     }
+
 
     private void StopHover()
     {
@@ -273,8 +246,7 @@ internal sealed class ConnectionHovering
 
     //internal MagGraphConnection? HoveredInputConnection;
     
-    private static readonly ImageOutputCanvas _imageCanvasForTooltips = new() { DisableDamping = true };
-    private static readonly EvaluationContext _evaluationContext = new();
+
 
     internal readonly List<HoverPoint> ConnectionHoversWhenClicked = [];
     private static List<HoverPoint> _lastConnectionHovers = [];
@@ -291,4 +263,37 @@ internal sealed class ConnectionHovering
         MagGraphConnection Connection,
         Color Color,
         LineRegions Region);
+}
+
+internal static class ToolTipContentDrawer
+{
+    internal static SymbolUi DrawForOutput(ISlot outputSlot, out IOutputUi sourceOutputUi)
+    {
+        var width = (int)(170 * T3Ui.UiScaleFactor);
+        var drawList = ImGui.GetWindowDrawList();
+        var sourceOpInstance = outputSlot.Parent;
+        var sourceOpUi = sourceOpInstance.GetSymbolUi();
+        sourceOutputUi = sourceOpUi.OutputUis[outputSlot.Id];
+        
+        ImGui.BeginChild("thumbnail", new Vector2(width, width * 9 / 16f));
+        {
+            TransformGizmoHandling.SetDrawList(drawList);
+            _imageCanvasForTooltips.Update();
+            _imageCanvasForTooltips.SetAsCurrent();
+            _evaluationContext.Reset();
+            _evaluationContext.RequestedResolution = new Int2(1280 / 2, 720 / 2);
+            sourceOutputUi.DrawValue(outputSlot, 
+                                     _evaluationContext,
+                                     "connectionLineThumbnail",
+                                     recompute: UserSettings.Config.HoverMode == UserSettings.GraphHoverModes.Live);
+
+            ImageOutputCanvas.Deactivate();
+            TransformGizmoHandling.RestoreDrawList();
+        }
+        ImGui.EndChild();
+        return sourceOpUi;
+    }
+    
+    private static readonly ImageOutputCanvas _imageCanvasForTooltips = new() { DisableDamping = true };
+    private static readonly EvaluationContext _evaluationContext = new();
 }

@@ -193,8 +193,8 @@ internal static class GraphContextMenu
                                enabled: isImage))
             {
                 var instance = context.CompositionInstance.Children[selectedChildUis[0].Id];
-                //context.GraphImageBackground.OutputInstance = instance;
-                // TODO: pin to imagebackground?
+                ProjectView.Focused.SetBackgroundOutput(instance);
+
             }
 
             // TODO: Implement

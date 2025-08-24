@@ -5,16 +5,16 @@ using T3.Editor.Gui.Windows.TimeLine.Raster;
 
 namespace T3.Editor.Gui.UiHelpers;
 
-public sealed class CurvePlotCanvas
+internal sealed class CurvePlotCanvas
 {
-    public CurvePlotCanvas(int resolution = 500)
+    internal CurvePlotCanvas(int resolution = 500)
     {
         _sampleCount = resolution;
         _graphValues = new float[_sampleCount];
         _graphPoints = new Vector2[_sampleCount];
     }
 
-    public void Draw(float value)
+    internal void Draw(float value)
     {
         var dl = ImGui.GetWindowDrawList();
         var min = float.PositiveInfinity;
@@ -63,9 +63,13 @@ public sealed class CurvePlotCanvas
             _sampleOffset = (_sampleOffset + 1) % _sampleCount;
         }
 
+        var maxLength = Math.Max((int)ImGui.GetWindowSize().X, 10);
+        var shownSampleCount = Math.Min(_sampleCount, maxLength);
+        var startIndex = Math.Max(0,_sampleCount - shownSampleCount);
+        
         var x = +_canvas.WindowPos.X;
-        var dx = (_canvas.WindowSize.X - 3) / _sampleCount;
-        for (var index = 0; index < _graphValues.Length; index++)
+        var dx = (_canvas.WindowSize.X - 20) / shownSampleCount;
+        for (var index = startIndex; index < _graphValues.Length; index++)
         {
             var v = _graphValues[(index + _sampleOffset) % _sampleCount];
             _graphPoints[index] = new Vector2(
@@ -74,19 +78,27 @@ public sealed class CurvePlotCanvas
             x += dx;
         }
             
-        dl.AddPolyline(ref _graphPoints[0], 
-                       _sampleCount - 1, 
+        dl.AddPolyline(ref _graphPoints[startIndex], 
+                       shownSampleCount , 
                        UiColors.Text.Fade(0.3f), 
                        ImDrawFlags.None, 
                        1);
         dl.AddCircleFilled(_graphPoints[_sampleCount - 1], 3, UiColors.Gray);
 
+        var windowHeight = ImGui.GetWindowSize().Y / T3Ui.UiScaleFactor;
+        var font = windowHeight switch
+                       {
+                           < 100 => Fonts.FontSmall,
+                           < 200 => Fonts.FontNormal,
+                           _     => Fonts.FontLarge,
+                       };
+        
         var valueAsString = $"{_lastValue:G5}";
-        dl.AddText(Fonts.FontLarge,
-                   Fonts.FontLarge.FontSize,
+        dl.AddText(font,
+                   font.FontSize,
                    _canvas.WindowPos
-                   + new Vector2(_canvas.WindowSize.X - 100f,
-                                 _canvas.WindowSize.Y * 0.5f - Fonts.FontLarge.FontSize / 2),
+                   + new Vector2(_canvas.WindowSize.X - font.FontSize*5,
+                                 _canvas.WindowSize.Y * 0.5f - font.FontSize / 2),
                    UiColors.Text,
                    valueAsString);
             

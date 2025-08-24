@@ -91,10 +91,14 @@ internal sealed class VectorCurvePlotCanvas<T>
             _graphValues[_sampleOffset] = value;
             _sampleOffset = (_sampleOffset + 1) % _sampleCount;
         }
+        
+        var maxLength = Math.Max((int)ImGui.GetWindowSize().X, 10);
+        var shownSampleCount = Math.Min(_sampleCount, maxLength);
+        var startIndex = Math.Max(0,_sampleCount - shownSampleCount);
 
-        var x = +_canvas.WindowPos.X;
-        var dx = (_canvas.WindowSize.X - 3) / _sampleCount;
-        for (var index = 0; index < _graphValues.Length; index++)
+        var x = _canvas.WindowPos.X;
+        var dx = (_canvas.WindowSize.X - 20) / shownSampleCount;
+        for (var index = startIndex; index < _graphValues.Length; index++)
         {
             var v = _graphValues[(index + _sampleOffset) % _sampleCount];
             var components = Utilities.GetFloatsFromVector(v);
@@ -106,16 +110,24 @@ internal sealed class VectorCurvePlotCanvas<T>
             }
             x += dx;
         }
-
+        
         for(int cIndex= 0; cIndex< _componentCount; cIndex ++)
         {
             var color = _componentCount == 1 ? CurveComponentColors.GrayCurveColor : CurveComponentColors.CurveColors[cIndex];
-            dl.AddPolyline(ref _graphPoints[cIndex,0], _sampleCount - 1, color, ImDrawFlags.None, 1);
+            dl.AddPolyline(ref _graphPoints[cIndex,startIndex], shownSampleCount, color, ImDrawFlags.None, 1);
             dl.AddCircleFilled(_graphPoints[cIndex, _sampleCount - 1], 3, color);
         }
 
+        var windowHeight = ImGui.GetWindowSize().Y / T3Ui.UiScaleFactor;
+        var font = windowHeight switch
+                            {
+                                < 100 => Fonts.FontSmall,
+                                < 200 => Fonts.FontNormal,
+                                _     => Fonts.FontLarge,
+                            };
             
-        var y = _canvas.WindowSize.Y * 0.5f - Fonts.FontLarge.FontSize * _componentCount / 2;
+        
+        var y = _canvas.WindowSize.Y * 0.5f - font.FontSize * _componentCount / 2;
 
         for (var cIndex = 0; cIndex < _lastValues.Length; cIndex++)
         {
@@ -124,14 +136,14 @@ internal sealed class VectorCurvePlotCanvas<T>
                 
             var lastValue = _lastValues[cIndex];
             var valueAsString = $"{lastValue:G4}";
-            dl.AddText(Fonts.FontLarge,
-                       Fonts.FontLarge.FontSize,
+            dl.AddText(font,
+                       font.FontSize,
                        _canvas.WindowPos
-                       + new Vector2(_canvas.WindowSize.X - 100f,
+                       + new Vector2(_canvas.WindowSize.X - font.FontSize*5,
                                      y),
                        color,
                        valueAsString);
-            y += Fonts.FontLarge.FontSize;
+            y += font.FontSize;
         }
 
         dl.PopClipRect();

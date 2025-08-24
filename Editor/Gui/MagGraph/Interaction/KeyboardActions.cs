@@ -78,25 +78,13 @@ internal static class KeyboardActions
                     NodeActions.PinSelectedToOutputWindow(ProjectView.Focused, context.Selector, compositionOp);
             }
         }
-
-        if (UserActions.DisplayImageAsBackground.Triggered())
-        {
-            var selectedImage = context.Selector.GetFirstSelectedInstance();
-            if (selectedImage != null)
-            {
-                // TODO: implement
-                //_window.GraphImageBackground.OutputInstance = selectedImage;
-                Log.Debug("Not implemented yet");
-            }
-        }
-
+        
         if (UserActions.DisplayImageAsBackground.Triggered())
         {
             var selectedImage = context.Selector.GetFirstSelectedInstance();
             if (selectedImage != null && ProjectView.Focused != null)
             {
                 ProjectView.Focused.SetBackgroundOutput(selectedImage);
-                //GraphWindow.Focused..SetBackgroundInstanceForCurrentGraph(selectedImage);
             }
         }
 
