@@ -134,7 +134,7 @@ public sealed class Variation : ISelectableCanvasObject
                 
                 if (input == null && inputId != Guid.Empty)
                 {
-                    Log.Warning($"Can't load presets: input {symbolChildIdString}/{inputId} not found");
+                    //Log.Warning($"Can't load presets: input {symbolChildIdString}/{inputId} not found");
                     continue;
                 }
 
