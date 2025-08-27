@@ -86,6 +86,9 @@ internal static class InputSnapper
         var multiInputIndex = BestInputMatch.MultiInputIndex;
         var adjustedMultiInputIndex = multiInputIndex + (BestInputMatch.InputSnapType == InputSnapTypes.InsertAfterMultiInput ? 1 : 0);
         
+        
+        
+        
         if (BestInputMatch.InputSnapType == InputSnapTypes.ReplaceMultiInput)
         {
             // context.MacroCommand!.AddAndExecCommand(new DeleteConnectionCommand(context.CompositionInstance.Symbol,
@@ -103,6 +106,9 @@ internal static class InputSnapper
                                                                              adjustedMultiInputIndex));
         }
 
+        
+            
+        
         // Push down other items
         {
             var lines = BestInputMatch.Item.InputLines;
@@ -112,9 +118,13 @@ internal static class InputSnapper
                 inputLineIndex++;
             }
 
-            var isInputLineNotConnected = lines[inputLineIndex].ConnectionIn == null;
+            var wasInputLineWasConnected = lines[inputLineIndex].ConnectionIn != null;
+
+            var hasHeightChanged = (BestInputMatch.InputSnapType == InputSnapTypes.InsertAfterMultiInput ||
+                                    BestInputMatch.InputSnapType == InputSnapTypes.InsertBeforeMultiInput)
+                                   || (BestInputMatch.InputSnapType == InputSnapTypes.Normal && !wasInputLineWasConnected && inputLineIndex > 0);
             
-            if (!isInputLineNotConnected && inputLineIndex < lines.Length)
+            if (  hasHeightChanged && inputLineIndex < lines.Length)
             {
                 var insertionIndex = inputLineIndex + adjustedMultiInputIndex;
                 var collectSnappedItems = MagItemMovement.CollectSnappedItems(BestInputMatch.Item);

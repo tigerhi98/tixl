@@ -291,7 +291,10 @@ internal sealed partial class MagGraphCanvas
             if (hasMatchingTypes && item != _context.ActiveItem)
             {
                 var indicatorPos = new Vector2(pMinVisible.X + 5 * CanvasScale, pMaxVisible.Y - 5 * CanvasScale);
-                if (!isItemHovered)
+
+                var isSnappedToAnInput = InputSnapper.BestInputMatch.Item != null; 
+                
+                if (!isItemHovered || isSnappedToAnInput)
                 {
                     drawList.AddCircle(indicatorPos, 3, UiColors.ForegroundFull.Fade(Blink));
                 }

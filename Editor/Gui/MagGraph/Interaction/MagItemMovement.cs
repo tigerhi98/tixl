@@ -46,14 +46,14 @@ internal sealed partial class MagItemMovement
 
     internal void PrepareFrame(GraphUiContext context)
     {
-        PrepareDragInteraction();
+        //PrepareDragInteraction();
         _snapHandlerX.DrawSnapIndicator(context.Canvas, UiColors.StatusActivated.Fade(0.3f));
     }
 
     internal void PrepareDragInteraction()
     {
-        UpdateBorderConnections(DraggedItems); // Sadly structure might change during drag...
-        UpdateSnappedBorderConnections();
+        UpdateConnectionsToDraggedItems(DraggedItems); // Sadly structure might change during drag...
+        UpdateSnappedConnectionsToDraggedItems();
     }
 
     internal void CompleteDragOperation(GraphUiContext context)
@@ -149,7 +149,7 @@ internal sealed partial class MagItemMovement
         }
         else
         {
-            TryCreateNewConnectionFromSnap(context);
+            TryCreateNewConnectionFromSnap(context); 
         }
     }
 
@@ -157,7 +157,7 @@ internal sealed partial class MagItemMovement
     {
         //Log.Debug("Shake it!");
         Debug.Assert(context.MacroCommand != null);
-        if (_borderConnections.Count == 0)
+        if (_connectionsToDraggedItems.Count == 0)
             return false;
 
         NodeActions.DisconnectDraggedNodes(context.CompositionInstance, DraggedItems.Select(i => i.Selectable).ToList());
@@ -356,9 +356,7 @@ internal sealed partial class MagItemMovement
     }
 
     private static readonly ValueSnapHandler _snapHandlerX = new(SnapResult.Orientations.Horizontal);
-    //private static readonly List<MagGraphAnnotation> _visibleAnnotationsForSnapping = [];
     private static readonly List<MagGraphItem> _visibleItemsForSnapping = [];
-    private Vector2 _mousePosWithinDraggedItem;
 
     public void StartDragOperation(GraphUiContext context)
     {
@@ -374,19 +372,15 @@ internal sealed partial class MagItemMovement
         _lastAppliedOffset = Vector2.Zero;
         _hasDragged = false;
 
-        UpdateBorderConnections(DraggedItems);
-        UpdateSnappedBorderConnections();
+        UpdateConnectionsToDraggedItems(DraggedItems);
+        UpdateSnappedConnectionsToDraggedItems();
         
         var mousePosInCanvas = context.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
-        
-        var firstDraggedItem = _draggedSelectables[0];
-        _mousePosWithinDraggedItem = mousePosInCanvas - firstDraggedItem.PosOnCanvas;
-            
         InitSpliceLinks(DraggedItems, mousePosInCanvas);
         InitPrimaryDraggedOutput();
 
         _unsnappedBorderConnectionsBeforeDrag.Clear();
-        foreach (var c in _borderConnections)
+        foreach (var c in _connectionsToDraggedItems)
         {
             if (!c.IsSnapped)
             {
@@ -408,19 +402,28 @@ internal sealed partial class MagItemMovement
 
         var unsnappedConnections = new List<MagGraphConnection>();
 
-        var enableDisconnected = UserSettings.Config.DisconnectOnUnsnap ^ ImGui.GetIO().KeyShift;
-        if (!enableDisconnected)
-            return;
-
+        //var enableDisconnected = UserSettings.Config.DisconnectOnUnsnap ^ ImGui.GetIO().KeyShift;
+        // if (!enableDisconnected)
+        //     return;
+        
         // Delete unsnapped connections
         foreach (var mc in _layout.MagConnections)
         {
-            if (!_snappedBorderConnectionHashes.Contains(mc.ConnectionHash))
+            if (!IsBorderConnection(mc, DraggedItems))
                 continue;
-
+            
             if (_unsnappedBorderConnectionsBeforeDrag.Contains(mc.ConnectionHash))
                 continue;
 
+            var existedBeforeDragStart = _connectionToDragItemHashes.Contains(mc.ConnectionHash);
+            if (existedBeforeDragStart)
+            {
+                var isVerticalStackDisconnect = FindVerticalCollapsableConnectionPairs(_connectionsToDraggedItems);
+                var isHorizontalStackDisconnect = FindHorizontalCollapsableConnectionPairs(_connectionsToDraggedItems);
+                if(isVerticalStackDisconnect.Count != 1 && isHorizontalStackDisconnect.Count != 1)
+                    continue;
+            }
+            
             unsnappedConnections.Add(mc);
 
             var targetItemInputLine = mc.TargetItem.InputLines[mc.InputLineIndex];
@@ -1011,32 +1014,42 @@ internal sealed partial class MagItemMovement
         MagGraphItem TargetItem,
         MagGraphItem.InputLine InputLine);
 
-    private void UpdateBorderConnections(HashSet<MagGraphItem> draggedItems)
+    private void UpdateConnectionsToDraggedItems(HashSet<MagGraphItem> draggedItems)
     {
-        _borderConnections.Clear();
+        _connectionsToDraggedItems.Clear();
+        _connectionToDragItemHashes.Clear();
+        
         // This could be optimized by only looking for dragged item connections
         foreach (var c in _layout.MagConnections)
         {
-            var targetDragged = draggedItems.Contains(c.TargetItem);
-            var sourceDragged = draggedItems.Contains(c.SourceItem);
-            if (targetDragged != sourceDragged)
-            {
-                _borderConnections.Add(c);
-            }
+            if (!IsBorderConnection(c, draggedItems))
+                continue;
+            
+            _connectionsToDraggedItems.Add(c);
+            _connectionToDragItemHashes.Add(c.ConnectionHash);
         }
     }
 
+    private static bool IsBorderConnection(MagGraphConnection c, HashSet<MagGraphItem> draggedItems)
+    {
+        var isTargetDragged = draggedItems.Contains(c.TargetItem);
+        var isSourceDragged = draggedItems.Contains(c.SourceItem);
+
+        return isTargetDragged != isSourceDragged;
+    }    
+    
+    
     /// <summary>
     /// This is updated every frame...
     /// </summary>
-    private void UpdateSnappedBorderConnections()
+    private void UpdateSnappedConnectionsToDraggedItems()
     {
-        _snappedBorderConnectionHashes.Clear();
+        _snappedConnectionToDragItemHashes.Clear();
 
-        foreach (var c in _borderConnections)
+        foreach (var c in _connectionsToDraggedItems)
         {
             if (c.IsSnapped)
-                _snappedBorderConnectionHashes.Add(c.ConnectionHash);
+                _snappedConnectionToDragItemHashes.Add(c.ConnectionHash);
         }
     }
 
@@ -1058,7 +1071,7 @@ internal sealed partial class MagItemMovement
                 inputItemA.GetInputAnchorAtIndex(inputAnchorIndex, ref inputAnchor);
                 // make sure it's a snapped border connection
                 if (inputAnchor.SnappedConnectionHash != MagGraphItem.FreeAnchor
-                    && !_snappedBorderConnectionHashes.Contains(inputAnchor.SnappedConnectionHash))
+                    && !_snappedConnectionToDragItemHashes.Contains(inputAnchor.SnappedConnectionHash))
                 {
                     continue;
                 }
@@ -1078,7 +1091,7 @@ internal sealed partial class MagItemMovement
                     {
                         outputItemB.GetOutputAnchorAtIndex(outputIndex, ref outputAnchor);
                         if (outputAnchor.SnappedConnectionHash != MagGraphItem.FreeAnchor
-                            && !_snappedBorderConnectionHashes.Contains(outputAnchor.SnappedConnectionHash))
+                            && !_snappedConnectionToDragItemHashes.Contains(outputAnchor.SnappedConnectionHash))
                         {
                             continue;
                         }
@@ -1429,7 +1442,14 @@ internal sealed partial class MagItemMovement
 
     private Vector2 _lastAppliedOffset;
     private const float SnapThreshold = 30;
-    private readonly List<MagGraphConnection> _borderConnections = [];
+    
+    /// <summary>
+    /// Connections between dragged and non-dragged items
+    /// </summary>
+    private readonly List<MagGraphConnection> _connectionsToDraggedItems = [];
+    private readonly HashSet<int> _connectionToDragItemHashes = [];
+    private readonly HashSet<int> _snappedConnectionToDragItemHashes = [];
+    
     private bool _wasSnapped;
     private static readonly MagItemMovement.Snapping _snapping = new();
 
@@ -1458,7 +1478,7 @@ internal sealed partial class MagItemMovement
         Vector2 DragPositionWithinBlock,
         Vector2 AnchorOffset);
 
-    private readonly HashSet<int> _snappedBorderConnectionHashes = [];
+    
 
     private readonly MagGraphCanvas _canvas;
     private readonly MagGraphLayout _layout;

@@ -94,13 +94,13 @@ internal sealed class SettingsWindow : Window
                     
                     if (UserSettings.Config.GraphStyle == UserSettings.GraphStyles.Magnetic)
                     {
-                        changed |= FormInputs.AddCheckBox("Disconnect on unsnap",
-                                                          ref UserSettings.Config.DisconnectOnUnsnap,
-                                                          """
-                                                          Defines if unsnapping operators from a block will automatically disconnect them.
-                                                          Ops dragged out between snapped blocks will always be disconnected.
-                                                          """,
-                                                          UserSettings.Defaults.DisconnectOnUnsnap);
+                        // changed |= FormInputs.AddCheckBox("Disconnect on unsnap",
+                        //                                   ref UserSettings.Config.DisconnectOnUnsnap,
+                        //                                   """
+                        //                                   Defines if unsnapping operators from a block will automatically disconnect them.
+                        //                                   Ops dragged out between snapped blocks will always be disconnected.
+                        //                                   """,
+                        //                                   UserSettings.Defaults.DisconnectOnUnsnap);
 
                         changed |= FormInputs.AddCheckBox("Snap horizontally",
                                                           ref UserSettings.Config.EnableHorizontalSnapping,
