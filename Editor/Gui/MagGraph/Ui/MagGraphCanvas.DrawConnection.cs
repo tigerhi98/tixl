@@ -117,18 +117,17 @@ internal sealed partial class MagGraphCanvas
         {
             var d = Vector2.Distance(sourcePosOnScreen, targetPosOnScreen) / 2;
 
+            if (InputSnapper.BestInputMatch.Item == connection.TargetItem 
+                && InputSnapper.BestInputMatch.SlotId == connection.TargetInput.Id
+                &&  InputSnapper.BestInputMatch.MultiInputIndex == connection.MultiInputIndex)
+            {
+                typeColor = UiColors.StatusAttention.Fade(0.3f + 0.1f * Blink);
+            }
+
             switch (connection.Style)
             {
                 case MagGraphConnection.ConnectionStyles.BottomToTop:
                 {
-                    
-                    // drawList.AddBezierCubic(sourcePosOnScreen,
-                    //                         sourcePosOnScreen + new Vector2(0, d),
-                    //                         targetPosOnScreen - new Vector2(0, d),
-                    //                         targetPosOnScreen,
-                    //                         typeColor.Fade(0.6f),
-                    //                         2);
-                    
                     if (VerticalConnectionDrawer.DrawConnection(CanvasScale,
                                                                 TransformRect(connection.SourceItem.Area),
                                                                 sourcePosOnScreen,
