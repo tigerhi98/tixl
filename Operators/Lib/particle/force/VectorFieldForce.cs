@@ -15,7 +15,7 @@ internal sealed class VectorFieldForce : Instance<VectorFieldForce>
         public readonly InputSlot<float> Amount = new InputSlot<float>();
 
         [Input(Guid = "fb9d4bfa-6a4e-4647-861a-b8b5a5ca690d")]
-        public readonly InputSlot<float> Randmize = new InputSlot<float>();
+        public readonly InputSlot<float> Randomize = new InputSlot<float>();
         
         
     private enum Modes {

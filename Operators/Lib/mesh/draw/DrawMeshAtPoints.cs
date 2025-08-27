@@ -45,7 +45,7 @@ internal sealed class DrawMeshAtPoints : Instance<DrawMeshAtPoints>
         public readonly InputSlot<float> AlphaCutOff = new InputSlot<float>();
 
         [Input(Guid = "a7cb95c4-fb81-49c7-9503-a45589713415")]
-        public readonly InputSlot<T3.Core.DataTypes.ShaderGraphNode> ColrField = new InputSlot<T3.Core.DataTypes.ShaderGraphNode>();
+        public readonly InputSlot<T3.Core.DataTypes.ShaderGraphNode> ColorField = new InputSlot<T3.Core.DataTypes.ShaderGraphNode>();
         
         private enum ScaleFXModes
         {

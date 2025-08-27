@@ -68,9 +68,8 @@ internal sealed class SelectPointsWithSDF : Instance<SelectPointsWithSDF>
     private enum MappingModes
     {
         Centered,
-        ForStart,
+        FromStart,
         PingPong,
         Repeat,
-        UseOriginalW,
     }
 }
