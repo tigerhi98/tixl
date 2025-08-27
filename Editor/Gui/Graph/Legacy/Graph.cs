@@ -253,7 +253,7 @@ internal sealed partial class Graph
 
             if (UserSettings.Config.UseArcConnections)
             {
-                var isHovering = ArcConnection.Draw(canvasScale, new ImRect(SourcePosition, SourcePosition + new Vector2(10, 10)),
+                var isHovering = LegacyConnectionDrawer.Draw(canvasScale, new ImRect(SourcePosition, SourcePosition + new Vector2(10, 10)),
                                                     SourcePosition,
                                                     TargetNodeArea,
                                                     TargetPosition,
