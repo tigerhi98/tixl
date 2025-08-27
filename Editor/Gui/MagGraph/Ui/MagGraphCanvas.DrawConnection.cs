@@ -120,12 +120,30 @@ internal sealed partial class MagGraphCanvas
             switch (connection.Style)
             {
                 case MagGraphConnection.ConnectionStyles.BottomToTop:
-                    drawList.AddBezierCubic(sourcePosOnScreen,
-                                            sourcePosOnScreen + new Vector2(0, d),
-                                            targetPosOnScreen - new Vector2(0, d),
-                                            targetPosOnScreen,
-                                            typeColor.Fade(0.6f),
-                                            2);
+                {
+                    
+                    // drawList.AddBezierCubic(sourcePosOnScreen,
+                    //                         sourcePosOnScreen + new Vector2(0, d),
+                    //                         targetPosOnScreen - new Vector2(0, d),
+                    //                         targetPosOnScreen,
+                    //                         typeColor.Fade(0.6f),
+                    //                         2);
+                    
+                    if (VerticalConnectionDrawer.DrawConnection(CanvasScale,
+                                                                TransformRect(connection.SourceItem.Area),
+                                                                sourcePosOnScreen,
+                                                                TransformRect(connection.TargetItem.VerticalStackArea),
+                                                                targetPosOnScreen,
+                                                                typeColor,
+                                                                MathUtils.Lerp(0.25f, 2f, idleFadeProgress) + (isSelected|wasHoveredLastFrame ? 2 : 0),
+                                                                out var hoverPositionOnLine,
+                                                                out var normalizedHoverPos))
+                    {
+                        if(context.StateMachine.CurrentState == GraphStates.Default)
+                            ConnectionHovering.RegisterHoverPoint(connection, typeColor, hoverPositionOnLine, normalizedHoverPos, sourcePosOnScreen);                        
+                    }
+
+                    
                     
                     drawList.AddTriangleFilled(
                                                targetPosOnScreen + new Vector2(-1, -1 + 1) * CanvasScale * 3,
@@ -133,6 +151,7 @@ internal sealed partial class MagGraphCanvas
                                                targetPosOnScreen + new Vector2(0, 1 + 1) * CanvasScale * 3,
                                                typeColor);                    
                     break;
+                }
                 case MagGraphConnection.ConnectionStyles.BottomToLeft:
                     drawList.AddBezierCubic(sourcePosOnScreen,
                                             sourcePosOnScreen + new Vector2(0, d),
@@ -156,35 +175,33 @@ internal sealed partial class MagGraphCanvas
                                                sourcePosOnScreen + new Vector2(0, 1) * CanvasScale * 5,
                                                typeColor);
                     break;
-                
-                
+
+
                 case MagGraphConnection.ConnectionStyles.RightToLeft:
-                    
-                    
-                    // TODO: Implement this also for vertical connections.
+
+                {
                     if (GraphConnectionDrawer.DrawConnection(CanvasScale,
                                                              TransformRect(connection.SourceItem.Area),
                                                              sourcePosOnScreen,
                                                              TransformRect(connection.TargetItem.VerticalStackArea),
                                                              targetPosOnScreen,
                                                              typeColor,
-                                                             MathUtils.Lerp(0.25f, 2f, idleFadeProgress) + (isSelected|wasHoveredLastFrame ? 2 : 0),
+                                                             MathUtils.Lerp(0.25f, 2f, idleFadeProgress) + (isSelected | wasHoveredLastFrame ? 2 : 0),
                                                              out var hoverPositionOnLine,
                                                              out var normalizedHoverPos))
                     {
-                        if(context.StateMachine.CurrentState == GraphStates.Default)
-                            ConnectionHovering.RegisterHoverPoint(connection, typeColor, hoverPositionOnLine, normalizedHoverPos, sourcePosOnScreen);                        
+                        if (context.StateMachine.CurrentState == GraphStates.Default)
+                            ConnectionHovering.RegisterHoverPoint(connection, typeColor, hoverPositionOnLine, normalizedHoverPos, sourcePosOnScreen);
                     }
-                    
+
                     // Draw triangle
-                    //drawList.AddCircleFilled(targetPosOnScreen + new Vector2(3 * CanvasScale,0) , anchorSize * 1.2f, typeColor, 3);
                     drawList.AddTriangleFilled(
-                                               targetPosOnScreen + new Vector2(0, -anchorWidth ) * CanvasScale * 1,
-                                               targetPosOnScreen + new Vector2(anchorHeight,0 ) * CanvasScale * 1,
+                                               targetPosOnScreen + new Vector2(0, -anchorWidth) * CanvasScale * 1,
+                                               targetPosOnScreen + new Vector2(anchorHeight, 0) * CanvasScale * 1,
                                                targetPosOnScreen + new Vector2(0, anchorWidth) * CanvasScale * 1,
-                                               typeColor);                    
+                                               typeColor);
                     break;
-                
+                }
                 case MagGraphConnection.ConnectionStyles.Unknown:
                     break;
                 case MagGraphConnection.ConnectionStyles.MainOutToMainInSnappedHorizontal:
