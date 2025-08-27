@@ -21,6 +21,21 @@ next:
 - [ ] Don't show hidden input popup on snap!!!
 
 
+## Todo / Meetup 2025-08-25:
+
+- AnimInt should have OpUi and Modulo parameter
+- Check if [ForwardBeatTap] still working
+- RadialPoints should have Color parameter
+- Improve radial point parameter pair documentation
+- AnimBool visualization should look less scary if not evaluated yet
+- Fix DrawPointsShaded fadeOutToo close parameter
+- Try improve searching with Ctrl+F focus into view behaviour
+- fix clamping of rounded numbers in infinity slider
+- Connected parameters names should be renamable
+- Check Gradient interpolation override caching with LInearGradient
+-
+
+
 # UI
 
 ## Feedback from UncleX
