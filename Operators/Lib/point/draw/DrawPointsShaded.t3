@@ -175,6 +175,13 @@
       "Outputs": []
     },
     {
+      "Id": "7ee56ac2-e055-4774-8c89-6f2470d0b131"/*CutOffTransparency*/,
+      "SymbolId": "5d7d61ae-0a41-4ffa-a51d-93bab665e7fe",
+      "Name": "CutOffTransparency",
+      "InputValues": [],
+      "Outputs": []
+    },
+    {
       "Id": "9f6ec1ec-fd36-4978-8437-a3ec8cfe0931"/*InputAssemblerStage*/,
       "SymbolId": "9d1266c5-23db-439f-a475-8000fdd1c318",
       "InputValues": [],
@@ -577,6 +584,12 @@
     {
       "SourceParentOrChildId": "00000000-0000-0000-0000-000000000000",
       "SourceSlotId": "68ebd395-5e00-4aeb-acfb-312899c4907c",
+      "TargetParentOrChildId": "f8071616-dd23-4aa9-8f8e-13dad781ac31",
+      "TargetSlotId": "49556d12-4cd1-4341-b9d8-c356668d296c"
+    },
+    {
+      "SourceParentOrChildId": "7ee56ac2-e055-4774-8c89-6f2470d0b131",
+      "SourceSlotId": "f83f1835-477e-4bb6-93f0-14bf273b8e94",
       "TargetParentOrChildId": "f8071616-dd23-4aa9-8f8e-13dad781ac31",
       "TargetSlotId": "49556d12-4cd1-4341-b9d8-c356668d296c"
     },

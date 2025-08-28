@@ -14,7 +14,7 @@
       "InputId": "247d1fed-9897-486b-bcf0-39e6c98ccbd1"/*FadeNearest*/,
       "Position": {
         "X": 1619.0709,
-        "Y": 3719.4053
+        "Y": 3754.4053
       }
     },
     {
@@ -200,6 +200,13 @@
       "Position": {
         "X": 2485.8533,
         "Y": 3733.3735
+      }
+    },
+    {
+      "ChildId": "7ee56ac2-e055-4774-8c89-6f2470d0b131"/*CutOffTransparency*/,
+      "Position": {
+        "X": 1619.0709,
+        "Y": 3719.4053
       }
     },
     {
