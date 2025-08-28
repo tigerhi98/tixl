@@ -29,7 +29,7 @@ using T3.Serialization;
 namespace T3.Editor.UiModel.InputsAndTypes;
 
 /// <summary>
-/// This abstract implementation for drawing and serializing parameters. 
+/// The abstract implementation for drawing and serializing parameters. 
 /// </summary>
 public abstract class InputValueUi<T> : IInputUi
 {
@@ -174,6 +174,9 @@ public abstract class InputValueUi<T> : IInputUi
 
                 if (ImGui.BeginPopupContextItem("##parameterOptions", 0))
                 {
+                    if (ParameterWindow.IsAnyInstanceVisible() && ImGui.MenuItem("Rename input"))
+                        ParameterWindow.RenameInputDialog.ShowNextFrame(symbolChildUi.SymbolChild.Symbol, input.InputDefinition.Id);
+                    
                     if (ImGui.MenuItem("Parameters settings"))
                         editState = InputEditStateFlags.ShowOptions;
 
@@ -271,6 +274,11 @@ public abstract class InputValueUi<T> : IInputUi
                                                         CustomComponents
                                                            .TooltipForLastItem("Publishing as input is not yet implemented. Please create a input of that type and connect manually.");
 
+                                                        if (ParameterWindow.IsAnyInstanceVisible() && ImGui.MenuItem("Rename input"))
+                                                        {
+                                                            ParameterWindow.RenameInputDialog.ShowNextFrame(symbolChildUi.SymbolChild.Symbol, input.InputDefinition.Id);
+                                                        }
+                                                        
                                                         if (ImGui.MenuItem("Parameters settings"))
                                                             editState = InputEditStateFlags.ShowOptions;
                                                     });

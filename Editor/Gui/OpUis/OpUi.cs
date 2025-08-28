@@ -91,6 +91,8 @@ public static class OpUi
                   { Guid.Parse("af79ee8c-d08d-4dca-b478-b4542ed69ad8"), AnimVec2Ui.DrawChildUi },
                   { Guid.Parse("7814fd81-b8d0-4edf-b828-5165f5657344"), AnimVec3Ui.DrawChildUi },
                   { Guid.Parse("1f85f846-0a59-44f3-8e3e-4c2357893494"), AnimBoolUi.DrawChildUi },
+                  { Guid.Parse("85b5a198-deb9-4bea-b760-dad211e16ee6"), AnimIntUi.DrawChildUi },
+                  
                   { Guid.Parse("94a392e6-3e03-4ccf-a114-e6fafa263b4f"), SequenceAnimUi.DrawChildUi },
                   { Guid.Parse("95d586a2-ee14-4ff5-a5bb-40c497efde95"), TriggerAnimUi.DrawChildUi },
                   { Guid.Parse("59a0458e-2f3a-4856-96cd-32936f783cc5"), MidiInputUi.DrawChildUi },

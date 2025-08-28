@@ -1,3 +1,4 @@
+using T3.Core.Animation;
 using T3.Core.Utils;
 
 namespace Lib.numbers.anim.animators;
@@ -22,6 +23,11 @@ public sealed class AnimInt : Instance<AnimInt>
 
     private void Update(EvaluationContext context)
     {
+        if (_lastUpdateFrame == Playback.FrameCount)
+            return;
+
+        _lastUpdateFrame = Playback.FrameCount;        
+        
         var phase = Phase.GetValue(context);
         var rate = Rate.GetValue(context);
         var rateFactorFromContext = AnimMath.GetSpeedOverrideFromContext(context, AllowSpeedFactor);
@@ -35,18 +41,21 @@ public sealed class AnimInt : Instance<AnimInt>
         var originalTime = _normalizedTime;
 
         _normalizedTime = (time) * rateFactorFromContext * rate + phase;
-        Result.Value = (int)(_normalizedTime );
 
-        // We need to use evaluation time because outputs flagged as animated and always dirty.
-        if (Math.Abs(context.LocalFxTime - _lastUpdateTime) > double.Epsilon)
-        {
-            _lastUpdateTime = context.LocalFxTime;
-            WasHit.Value = (int)originalTime != (int)_normalizedTime;
-        }
+        var result = (int)_normalizedTime;
+        var modulo = Modulo.GetValue(context);
+        
+        Result.Value = modulo != 0 ? result.Mod(Modulo.GetValue(context))
+                                                : result;
+        
+        WasHit.Value = (int)originalTime != (int)_normalizedTime;
     }
 
-    private double _lastUpdateTime = double.NegativeInfinity;
+    private int _lastUpdateFrame = -1;
 
+    [Input(Guid = "0D0A2C33-F3BB-4035-8F8D-D01524952B2E")]
+    public readonly InputSlot<int> Modulo = new();
+    
     [Input(Guid = "e037f3b2-c5eb-4d89-bcbc-ad80aca1cd36")]
     public readonly InputSlot<float> OverrideTime = new();
 
@@ -56,6 +65,8 @@ public sealed class AnimInt : Instance<AnimInt>
     [Input(Guid = "5b3d75c9-aac5-44d7-9e68-828cd87cdc0c")]
     public readonly InputSlot<float> Phase = new();
 
+    
+    
     [Input(Guid = "72da2976-f1a6-4b3e-a8f0-b43e278e5056", MappedType = typeof(AnimMath.SpeedFactors))]
     public readonly InputSlot<int> AllowSpeedFactor = new();
 }

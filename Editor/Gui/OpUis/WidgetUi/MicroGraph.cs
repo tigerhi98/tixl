@@ -72,7 +72,7 @@ public static class MicroGraph
         }
         else if (ImGui.IsItemDeactivated())
         {
-            Log.Debug("Deactivated");
+            //Log.Debug("Deactivated");
             _dragState = DragMode.Off;
         }
 
