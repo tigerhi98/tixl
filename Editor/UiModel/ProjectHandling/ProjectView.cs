@@ -239,6 +239,7 @@ internal sealed partial class ProjectView
     {
         var structure = OpenedProject.Structure;
         var newCompositionInstance = structure.GetInstanceFromIdPath(newIdPath);
+        var compositionChanged = false;
 
         if (newCompositionInstance == null)
         {
@@ -250,6 +251,7 @@ internal sealed partial class ProjectView
         // Save previous view for user
         if (CompositionInstance != null && CompositionInstance != newCompositionInstance)
         {
+            compositionChanged = true;
             SaveUsersViewForCurrentComposition();
         }
         
@@ -286,10 +288,9 @@ internal sealed partial class ProjectView
             {
                 var instance = InstView.Instance.Children[alsoSelectChildId.Value];
                 NodeSelection.SetSelection(instance.GetChildUi()!, instance);
-                var bounds = NodeSelection.GetSelectionBounds(NodeSelection, instance);
-                bounds.Expand(400);
+                var bounds = NodeSelection.GetSelectionBounds(NodeSelection, instance, 400);
                 var viewScope = ScalableCanvas.GetScopeForCanvasArea(bounds);
-                ScalableCanvas.SetScopeWithTransition(viewScope, ICanvas.Transition.JumpOut);
+                ScalableCanvas.SetScopeWithTransition(viewScope, compositionChanged ? transition : ICanvas.Transition.Smooth);
             }
             else
             {

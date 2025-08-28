@@ -327,7 +327,6 @@ internal abstract class ScalableCanvas : IScalableCanvas
 
     public CanvasScope GetScopeForCanvasArea(ImRect areaOnCanvas, bool flipY = false)
     {
-        UpdateWindowRect();
         var heightOnCanvas = areaOnCanvas.GetHeight();
         var widthOnCanvas = areaOnCanvas.GetWidth();
         var aspectOnCanvas = widthOnCanvas / heightOnCanvas;
@@ -340,14 +339,14 @@ internal abstract class ScalableCanvas : IScalableCanvas
             scale = WindowSize.X / widthOnCanvas;
             scrollTarget = new Vector2(
                                        areaOnCanvas.Min.X,
-                                       areaOnCanvas.Min.Y - (WindowSize.Y / scale - heightOnCanvas) / 2);
+                                       areaOnCanvas.Min.Y); 
         }
         else
         {
             // Center in a wide window... 
-            scale = WindowSize.Y / heightOnCanvas;
+            scale = WindowSize.Y / heightOnCanvas ;
             scrollTarget = new Vector2(
-                                       areaOnCanvas.Min.X - (WindowSize.X / scale - widthOnCanvas) / 2,
+                                       areaOnCanvas.Min.X,
                                        areaOnCanvas.Min.Y);
         }
 

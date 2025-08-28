@@ -242,7 +242,7 @@ internal sealed class NodeSelection : ISelection
         if(firstElement == null)
             return new ImRect();
             
-        var bounds = new ImRect(firstElement.PosOnCanvas, firstElement.PosOnCanvas + Vector2.One);
+        var bounds = new ImRect(firstElement.PosOnCanvas, firstElement.PosOnCanvas + firstElement.Size);
         foreach (var element in selectedOrAll)
         {
             if (element == null)

@@ -194,7 +194,7 @@ internal sealed class GraphWindow : Windows.Window
                          | ImGuiWindowFlags.NoBackground
                          | ImGuiWindowFlags.ChildWindow);
         {
-            // Imagebackground
+            // ImageBackground
             {
                 ProjectView.GraphImageBackground.Draw(backgroundImageOpacity);
                 
