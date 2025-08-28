@@ -35,7 +35,7 @@ internal static class CanvasHelpers
         if (hasSavedView && !requestedViewEmpty) 
             return newView;
         
-        contentBounds.Expand(100);
+        contentBounds.Expand(400);
         newView = contentBounds;
         return newView;
     }
