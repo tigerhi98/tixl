@@ -106,7 +106,7 @@ namespace T3.Editor.Gui.Windows.RenderExport
 
         private void DrawVideoSettings(Int2 size)
         {
-            FormInputs.AddInt("Bitrate", ref _bitrate, 0, 25000000, 1000);
+            FormInputs.AddInt("Bitrate", ref _bitrate, 0, 500000000, 1000);
             var duration = FrameCount / Fps;
             double bitsPerPixelSecond = _bitrate / (size.Width * size.Height * Fps);
             var q = GetQualityLevelFromRate((float)bitsPerPixelSecond);
