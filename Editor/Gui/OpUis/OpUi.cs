@@ -67,6 +67,7 @@ public static class OpUi
         PreventOpenSubGraph = 1 << 5,
         PreventOpenParameterPopUp = 1 << 6,
         PreventInputLabels = 1 << 7,
+        AllowThumbnail = 1 << 8,
     }
 
     /// <remarks>

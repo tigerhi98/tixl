@@ -185,12 +185,11 @@ internal sealed partial class MagGraphView
             && (customUiResult & OpUi.CustomUiResult.IsActive) == 0)
             _context.ActiveItem = item;
 
-        if ((customUiResult & OpUi.CustomUiResult.IsActive) != 0)
-        {
-            //context.StateMachine.SetState(GraphStates.Default, context);
-        }
-
-        //if (!justOpenedChild)
+        // if ((customUiResult & OpUi.CustomUiResult.IsActive) != 0)
+        // {
+        //     //context.StateMachine.SetState(GraphStates.Default, context);
+        // }
+        
         {
             ParameterPopUp.HandleOpenParameterPopUp(item.ChildUi, item.Instance, customUiResult, new ImRect(pMinVisible, pMaxVisible));
         }
@@ -206,66 +205,70 @@ internal sealed partial class MagGraphView
         //     item.Select(_nodeSelection);
         // }
 
-        // 8.5 -> 7.3ms ------------------
-        //return;
-        
-        if (customUiResult == OpUi.CustomUiResult.None && CanvasScale > 0.2f)
+        if ((customUiResult == OpUi.CustomUiResult.None 
+             || (customUiResult&OpUi.CustomUiResult.AllowThumbnail) != 0
+             ) && CanvasScale > 0.2f)
         {
             // Draw Texture thumbnail
             var hasPreview = TryDrawTexturePreview(item, pMinVisible, pMaxVisible, drawList, typeColor);
 
-            // Label...
-            var name = item.ReadableName;
-            if (item.Variant == MagGraphItem.Variants.Output)
+            if ((customUiResult & OpUi.CustomUiResult.AllowThumbnail) == 0)
             {
-                var height = pMaxVisible.Y - pMinVisible.Y;
-                var width = pMaxVisible.X - pMinVisible.X;
 
-                _inputIndicatorPoints[0] = pMinVisible;
-                _inputIndicatorPoints[1] = pMinVisible + new Vector2(0.9f* width , 0);
-                _inputIndicatorPoints[2] = pMinVisible + new Vector2(0.9f* width + height/4, height/2);
-                _inputIndicatorPoints[3] = pMinVisible + new Vector2(0.9f* width, height);
-                _inputIndicatorPoints[4] = pMinVisible + new Vector2(0, height);
-                
-                drawList.AddConvexPolyFilled(ref _inputIndicatorPoints[0], 5, ColorVariations.Highlight.Apply(typeColor).Fade(0.5f));
+                // Label...
+                var name = item.ReadableName;
+                if (item.Variant == MagGraphItem.Variants.Output)
+                {
+                    var height = pMaxVisible.Y - pMinVisible.Y;
+                    var width = pMaxVisible.X - pMinVisible.X;
+
+                    _inputIndicatorPoints[0] = pMinVisible;
+                    _inputIndicatorPoints[1] = pMinVisible + new Vector2(0.9f * width, 0);
+                    _inputIndicatorPoints[2] = pMinVisible + new Vector2(0.9f * width + height / 4, height / 2);
+                    _inputIndicatorPoints[3] = pMinVisible + new Vector2(0.9f * width, height);
+                    _inputIndicatorPoints[4] = pMinVisible + new Vector2(0, height);
+
+                    drawList.AddConvexPolyFilled(ref _inputIndicatorPoints[0], 5, ColorVariations.Highlight.Apply(typeColor).Fade(0.5f));
+                }
+                else if (item.Variant == MagGraphItem.Variants.Input)
+                {
+                    var t = pMaxVisible.Y - pMinVisible.Y;
+
+                    var framesSinceLastUpdate = (item.OutputLines.Length > 0)
+                                                    ? (float)(item.OutputLines[0].Output.DirtyFlag.FramesSinceLastUpdate)
+                                                    : 1000;
+                    var fade = framesSinceLastUpdate.RemapAndClamp(0, 120, 1f, 0.4f);
+                    if (framesSinceLastUpdate == 0)
+                        fade -= Blink * 0.2f;
+
+                    _inputIndicatorPoints[0] = pMinVisible;
+                    _inputIndicatorPoints[1] = pMinVisible + new Vector2(0.2f, 0) * t;
+                    _inputIndicatorPoints[2] = pMinVisible + new Vector2(0.5f, 0.5f) * t;
+                    _inputIndicatorPoints[3] = pMinVisible + new Vector2(0.2f, 1f) * t;
+                    _inputIndicatorPoints[4] = pMinVisible + new Vector2(0.0f, 1f) * t;
+                    drawList.AddConvexPolyFilled(ref _inputIndicatorPoints[0], 5, ColorVariations.Highlight.Apply(typeColor).Fade(fade));
+                    name = "   " + name;
+                }
+
+                ImGui.PushFont(Fonts.FontNormal);
+                var labelSize = ImGui.CalcTextSize(name);
+                ImGui.PopFont();
+
+                var paddingForPreview = hasPreview ? MagGraphItem.LineHeight + 10 : 0;
+                var downScale = MathF.Min(1f, (MagGraphItem.Width - paddingForPreview) * 0.9f / labelSize.X);
+
+                var fontSize = Fonts.FontNormal.FontSize * (1 / T3Ui.UiScaleFactor) * downScale * CanvasScale.Clamp(0.1f, 2f);
+                var visibleLineHeight = Math.Min((pMaxVisible.Y - pMinVisible.Y), MagGraphItem.LineHeight * CanvasScale);
+                var yCenter = pMin.Y + visibleLineHeight / 2 - fontSize / 2;
+                var labelPos = new Vector2(pMin.X + 8 * CanvasScale, yCenter);
+
+                labelPos = new Vector2(MathF.Round(labelPos.X), MathF.Round(labelPos.Y));
+                drawList.AddText(Fonts.FontNormal,
+                                 fontSize,
+                                 labelPos,
+                                 labelColor.Fade(CanvasScale.RemapAndClamp(0.3f, 0.7f, 0, 1)),
+                                 name);
             }
-            else if (item.Variant == MagGraphItem.Variants.Input)
-            {
-                var t = pMaxVisible.Y - pMinVisible.Y;
-                
-                var framesSinceLastUpdate = (item.OutputLines.Length > 0) ? (float)(item.OutputLines[0].Output.DirtyFlag.FramesSinceLastUpdate)
-                                            :1000;
-                var fade = framesSinceLastUpdate.RemapAndClamp(0, 120, 1f, 0.4f);
-                if (framesSinceLastUpdate == 0)
-                    fade -= Blink * 0.2f;
-                
-                _inputIndicatorPoints[0] = pMinVisible;
-                _inputIndicatorPoints[1] = pMinVisible + new Vector2(0.2f, 0) * t;
-                _inputIndicatorPoints[2] = pMinVisible + new Vector2(0.5f, 0.5f) * t;
-                _inputIndicatorPoints[3] = pMinVisible + new Vector2(0.2f, 1f) * t;
-                _inputIndicatorPoints[4] = pMinVisible + new Vector2(0.0f, 1f) * t;
-                drawList.AddConvexPolyFilled(ref _inputIndicatorPoints[0], 5, ColorVariations.Highlight.Apply(typeColor).Fade(fade));
-                name = "   " + name;
-            }
-
-            ImGui.PushFont(Fonts.FontNormal);
-            var labelSize = ImGui.CalcTextSize(name);
-            ImGui.PopFont();
-
-            var paddingForPreview = hasPreview ? MagGraphItem.LineHeight + 10 : 0;
-            var downScale = MathF.Min(1f, (MagGraphItem.Width - paddingForPreview) * 0.9f / labelSize.X);
-
-            var fontSize = Fonts.FontNormal.FontSize * (1/T3Ui.UiScaleFactor) * downScale * CanvasScale.Clamp(0.1f, 2f);
-            var visibleLineHeight = Math.Min((pMaxVisible.Y - pMinVisible.Y), MagGraphItem.LineHeight * CanvasScale);
-            var yCenter = pMin.Y + visibleLineHeight / 2 - fontSize / 2;
-            var labelPos = new Vector2(pMin.X + 8 * CanvasScale, yCenter);
-
-            labelPos = new Vector2(MathF.Round(labelPos.X), MathF.Round(labelPos.Y));
-            drawList.AddText(Fonts.FontNormal,
-                             fontSize,
-                             labelPos,
-                             labelColor.Fade(CanvasScale.RemapAndClamp(0.3f,0.7f, 0,1) ),
-                             name);
         }
 
         // Indicate hidden matching inputs...

@@ -35,6 +35,6 @@ internal static class DescriptiveUi
         WidgetElements.DrawPrimaryValue(drawList, area, filePath, canvas.Scale);
             
         drawList.PopClipRect();
-        return OpUi.CustomUiResult.Rendered | OpUi.CustomUiResult.PreventInputLabels;
+        return OpUi.CustomUiResult.Rendered | OpUi.CustomUiResult.PreventInputLabels | OpUi.CustomUiResult.AllowThumbnail;
     }
 }
