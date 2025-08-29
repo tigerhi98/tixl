@@ -119,7 +119,8 @@ internal sealed partial class MagGraphView
 
             if (InputSnapper.BestInputMatch.Item == connection.TargetItem 
                 && InputSnapper.BestInputMatch.SlotId == connection.TargetInput.Id
-                &&  InputSnapper.BestInputMatch.MultiInputIndex == connection.MultiInputIndex)
+                &&  InputSnapper.BestInputMatch.MultiInputIndex == connection.MultiInputIndex
+                && (InputSnapper.BestInputMatch.InputSnapType == InputSnapper.InputSnapTypes.Normal || InputSnapper.BestInputMatch.InputSnapType == InputSnapper.InputSnapTypes.ReplaceMultiInput))
             {
                 typeColor = UiColors.StatusAttention.Fade(0.3f + 0.1f * Blink);
             }
