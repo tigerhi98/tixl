@@ -5,36 +5,30 @@
 
 cbuffer Params : register(b0)
 {
-    float __padding;
     float Radius;
     float RadiusOffset;
+    float StartAngle;
+    float Cycles;
+
+    float CloseCircle;
+    float3 Center;
+
+    float3 CenterOffset;
     float __padding1;
 
-    float3 Center; // 4
-    float __padding2;
-
-    float3 CenterOffset; // 8
-    float __padding3;
-
-    float StartAngle; // 12
-    float Cycles;
-    float2 __padding4;
-
-    float3 Axis; // 16
-    float __paddingLegacyW;
-
-    float WOffset; // 20
-    float CloseCircle;
-    float2 __padding5;
-
-    float3 OrientationAxis; // 24
+    float3 Axis;
     float1 OrientationAngle;
 
-    float2 GainAndBias; // 28
-    float2 PointScale;  // 36
+    float3 OrientationAxis;
+    float __padding2;
+
+    float2 GainAndBias;
+    float2 PointScaleRange;
 
     float2 FX1;
     float2 FX2;
+
+    float4 Color;
 }
 
 RWStructuredBuffer<Point> ResultPoints : u0; // output
@@ -79,9 +73,9 @@ float3 RotatePointAroundAxis(float3 In, float3 Axis, float Rotation)
     float3 v = v2 + c;
 
     ResultPoints[index].Position = v;
-    ResultPoints[index].Scale = (closeCircle && index == pointCount - 1)
-                                    ? NAN
-                                    : PointScale.x + PointScale.y * f;
+    ResultPoints[index].Scale = ((closeCircle && index == pointCount - 1)
+                                     ? NAN
+                                     : PointScaleRange.x + PointScaleRange.y * f);
 
     float4 orientation = qFromAngleAxis(3.141578 / 2 * 1, normalize(OrientationAxis));
 
@@ -95,7 +89,7 @@ float3 RotatePointAroundAxis(float3 In, float3 Axis, float Rotation)
     float4 spin2 = qFromAngleAxis(angle, float3(Axis));
 
     ResultPoints[index].Rotation = qMul(normalize(qMul(spin2, lookat)), spin);
-    ResultPoints[index].Color = 1;
+    ResultPoints[index].Color = Color;
 
     ResultPoints[index].FX1 = FX1.x + FX1.y * f;
     ResultPoints[index].FX2 = FX2.x + FX2.y * f;

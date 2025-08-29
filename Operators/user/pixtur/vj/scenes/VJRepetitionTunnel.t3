@@ -1127,11 +1127,6 @@
       "SymbolId": "3352d3a1-ab04-4d0a-bb43-da69095b73fd",
       "InputValues": [
         {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 1.57
-        },
-        {
           "Id": "b654ffe2-d46e-4a62-89b3-a9692d5c6481"/*Count*/,
           "Type": "System.Int32",
           "Value": 75

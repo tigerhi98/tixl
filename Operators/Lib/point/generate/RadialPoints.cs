@@ -58,18 +58,12 @@ internal sealed class RadialPoints : Instance<RadialPoints>
         [Input(Guid = "5e0ff702-687e-4892-9a86-29f356d7f6bd")]
         public readonly InputSlot<System.Numerics.Vector2> F2 = new InputSlot<System.Numerics.Vector2>();
 
+        [Input(Guid = "5f5394b4-b23e-41bf-8089-b5c063623e66")]
+        public readonly InputSlot<System.Numerics.Vector4> Color = new InputSlot<System.Numerics.Vector4>();
+
         [Input(Guid = "01a62754-7629-487d-a43a-f0cd2fbfafce")]
         public readonly InputSlot<System.Numerics.Vector3> OrientationAxis = new InputSlot<System.Numerics.Vector3>();
 
         [Input(Guid = "cd917c3d-489e-4e4d-b5dc-eacc846d82ef")]
         public readonly InputSlot<float> OrientationAngle = new InputSlot<float>();
-
-        [Input(Guid = "3ee710be-8954-431b-8d3a-38f7f03f0f02")]
-        public readonly InputSlot<float> W = new InputSlot<float>();
-
-        [Input(Guid = "8fd178b9-877a-43ac-9e03-3fc1c98faf21")]
-        public readonly InputSlot<System.Numerics.Vector3> PointScale = new InputSlot<System.Numerics.Vector3>();
-
-        [Input(Guid = "526cf26b-6cf6-4cba-be2a-4819c2a422bf")]
-        public readonly InputSlot<float> WOffset = new InputSlot<float>();
 }

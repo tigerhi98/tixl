@@ -325,11 +325,6 @@
           }
         },
         {
-          "Id": "526cf26b-6cf6-4cba-be2a-4819c2a422bf"/*WOffset*/,
-          "Type": "System.Single",
-          "Value": 0.11
-        },
-        {
           "Id": "6df5829e-a534-4620-bcd5-9324f94b4f54"/*Axis*/,
           "Type": "System.Numerics.Vector3",
           "Value": {

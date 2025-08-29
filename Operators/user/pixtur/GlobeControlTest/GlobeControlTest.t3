@@ -898,16 +898,6 @@
           "Value": 1.8000001
         },
         {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 0.37
-        },
-        {
-          "Id": "526cf26b-6cf6-4cba-be2a-4819c2a422bf"/*WOffset*/,
-          "Type": "System.Single",
-          "Value": -0.24000001
-        },
-        {
           "Id": "5a3347a2-ba87-4b38-a1a8-94bd0ef70f48"/*StartAngle*/,
           "Type": "System.Single",
           "Value": 481.0
@@ -1055,16 +1045,6 @@
           "Id": "13cbb509-f90c-4ae7-a9d3-a8fc907794e3"/*OffsetRadius*/,
           "Type": "System.Single",
           "Value": 3.1999998
-        },
-        {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 2.1
-        },
-        {
-          "Id": "526cf26b-6cf6-4cba-be2a-4819c2a422bf"/*WOffset*/,
-          "Type": "System.Single",
-          "Value": -1.8199999
         },
         {
           "Id": "6df5829e-a534-4620-bcd5-9324f94b4f54"/*Axis*/,

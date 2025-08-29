@@ -410,18 +410,7 @@
     {
       "Id": "1e625405-88a7-4e10-a1d7-437dcd85f76b"/*RadialPoints*/,
       "SymbolId": "3352d3a1-ab04-4d0a-bb43-da69095b73fd",
-      "InputValues": [
-        {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 6.69
-        },
-        {
-          "Id": "526cf26b-6cf6-4cba-be2a-4819c2a422bf"/*WOffset*/,
-          "Type": "System.Single",
-          "Value": -7.0
-        }
-      ],
+      "InputValues": [],
       "Outputs": []
     },
     {
@@ -536,11 +525,6 @@
           "Value": -1.0
         },
         {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 1.01
-        },
-        {
           "Id": "76124db6-4b89-4d7c-bd25-2ebf95b1c141"/*CloseCircleLine*/,
           "Type": "System.Boolean",
           "Value": false
@@ -616,16 +600,6 @@
       "Id": "34e0f443-cb5c-4def-b00d-1f2e1990e725"/*RadialPoints*/,
       "SymbolId": "3352d3a1-ab04-4d0a-bb43-da69095b73fd",
       "InputValues": [
-        {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 1.2033333
-        },
-        {
-          "Id": "526cf26b-6cf6-4cba-be2a-4819c2a422bf"/*WOffset*/,
-          "Type": "System.Single",
-          "Value": 1.0133333
-        },
         {
           "Id": "6df5829e-a534-4620-bcd5-9324f94b4f54"/*Axis*/,
           "Type": "System.Numerics.Vector3",

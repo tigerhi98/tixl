@@ -12,16 +12,6 @@
           "Value": 3.3
         },
         {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 0.89
-        },
-        {
-          "Id": "526cf26b-6cf6-4cba-be2a-4819c2a422bf"/*WOffset*/,
-          "Type": "System.Single",
-          "Value": 0.55
-        },
-        {
           "Id": "94b2a118-f760-4043-933c-31283e6e7006"/*Rotations*/,
           "Type": "System.Single",
           "Value": 84.61

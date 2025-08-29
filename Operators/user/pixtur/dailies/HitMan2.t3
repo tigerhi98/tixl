@@ -686,18 +686,7 @@
     {
       "Id": "7948df9f-edac-4369-a93f-6f9e8621d990"/*RadialPoints*/,
       "SymbolId": "3352d3a1-ab04-4d0a-bb43-da69095b73fd",
-      "InputValues": [
-        {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 0.0
-        },
-        {
-          "Id": "526cf26b-6cf6-4cba-be2a-4819c2a422bf"/*WOffset*/,
-          "Type": "System.Single",
-          "Value": 1.0
-        }
-      ],
+      "InputValues": [],
       "Outputs": []
     },
     {

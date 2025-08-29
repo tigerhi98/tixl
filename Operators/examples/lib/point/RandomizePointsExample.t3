@@ -401,11 +401,6 @@
           "Value": -1.0
         },
         {
-          "Id": "3ee710be-8954-431b-8d3a-38f7f03f0f02"/*W*/,
-          "Type": "System.Single",
-          "Value": 2.33
-        },
-        {
           "Id": "5a3347a2-ba87-4b38-a1a8-94bd0ef70f48"/*StartAngle*/,
           "Type": "System.Single",
           "Value": 176.0

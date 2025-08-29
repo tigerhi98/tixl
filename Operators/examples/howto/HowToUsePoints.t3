@@ -442,11 +442,6 @@
           "Value": -1.0
         },
         {
-          "Id": "526cf26b-6cf6-4cba-be2a-4819c2a422bf"/*WOffset*/,
-          "Type": "System.Single",
-          "Value": 1.0
-        },
-        {
           "Id": "56b8aabc-2abf-49c7-ba1a-945a7bcf0c53"/*F1*/,
           "Type": "System.Numerics.Vector2",
           "Value": {

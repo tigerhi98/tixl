@@ -53,7 +53,9 @@
         "X": 202.45206,
         "Y": -144.3761
       },
-      "Description": "The lifetime of particles in bars (depending on the current BPM rate).\nA negative setting will compute the maximum lifetime from the MaxParticleCount and the number of currently emitted particles.\nThis will lead to flickering if changing the emit count during playback."
+      "Description": "The lifetime of particles in bars (depending on the current BPM rate).\nA negative setting will compute the maximum lifetime from the MaxParticleCount and the number of currently emitted particles.\nThis will lead to flickering if changing the emit count during playback.",
+      "Min": -1.0,
+      "ClampMin": true
     },
     {
       "InputId": "54b8bfc1-98b1-4cec-b008-8615c20ebb43"/*EmitVelocityFactor*/,
