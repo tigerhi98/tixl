@@ -98,8 +98,8 @@ internal static class GraphBookmarkNavigation
         }
 
         window.TrySetCompositionOp(bookmark.IdPath);
-        window.GraphView.Canvas.SetTargetView(bookmark.ViewScope.Scale, bookmark.ViewScope.Scroll);
-        //SelectionManager.SetSelection(bookmark.SelectedChildIds);
+        window.GraphView.Canvas.SetTargetScope(bookmark.ViewScope);
+
     }
 
     private static void SaveBookmark(ProjectView window, int index)

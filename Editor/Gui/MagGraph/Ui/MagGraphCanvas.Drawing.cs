@@ -19,7 +19,7 @@ internal sealed partial class MagGraphView
     public void DrawGraph(ImDrawListPtr drawList, float graphOpacity)
     {
         _context.GraphOpacity = graphOpacity;
-        
+
         IsFocused = ImGui.IsWindowFocused(ImGuiFocusedFlags.RootAndChildWindows);
         IsHovered = ImGui.IsWindowHovered();
 
@@ -29,221 +29,209 @@ internal sealed partial class MagGraphView
         {
             result |= KeyboardActions.HandleKeyboardActions(_context);
         }
-        
-        // General pre-update
-        //if ((result & ChangeSymbol.SymbolModificationResults.ProjectViewDiscarded) != 0)
+
+        if (_context.ProjectView.InstView is not { IsValid: true })
         {
-          //  Log.Debug("Skip graph draw after composition update...");
+            Log.Warning("Failed to draw graph view without valid composition instance");
         }
-        //else
+        else
         {
-            if (_context.ProjectView.InstView is not { IsValid: true })
+            HandleSymbolDropping(_context);
+
+            // Update view scope if required
+            if (FitViewToSelectionHandling.FitViewToSelectionRequested)
             {
-                Log.Warning("Failed to draw graph view without valid composition instance");
+                FocusViewToSelection(_context);
+            }
+
+            // Keep visible canvas area to cull non-visible objects later
+            _visibleCanvasArea = GetVisibleCanvasArea();
+
+            var editingFlags = T3Ui.EditingFlags.None;
+            if (T3Ui.IsAnyPopupOpen)
+            {
+                if (!ImGui.IsWindowHovered())
+                    editingFlags |= T3Ui.EditingFlags.PreventMouseInteractions;
+            }
+
+            if (!_context.PreventInteraction && !FrameStats.Last.OpenedPopupCapturedMouse)
+                UpdateCanvas(out _, editingFlags);
+
+            // Prepare UiModel for frame
+            _context.Layout.ComputeLayout(_context);
+            _context.ItemMovement.PrepareFrame(_context);
+
+            if (_context.StateMachine.CurrentState == GraphStates.Default)
+            {
+                _context.ActiveItem = null;
+                _context.ActiveSourceItem = null;
+                _context.ActiveTargetItem = null;
+
+                _context.ItemWithActiveCustomUi = null;
+                _context.ActiveSourceOutputId = Guid.Empty;
+                _context.ActiveTargetInputId = Guid.Empty;
+            }
+
+            if (!UserSettings.Config.FocusMode)
+            {
+                DrawBackgroundGrids(drawList);
+            }
+
+            // Selection fence...
+            if (!_context.PreventInteraction)
+            {
+                HandleFenceSelection(_context, _selectionFence);
+            }
+
+            // Draw annotations
+            foreach (var a in _context.Layout.Annotations.Values)
+            {
+                DrawAnnotation(a, drawList, _context);
+            }
+
+            // Draw items
+            foreach (var item in _context.Layout.Items.Values)
+            {
+                DrawNode(item, drawList, _context);
+
+                InvalidateSelectedGizmoProviders(item);
+            }
+
+            Fonts.FontSmall.Scale = 1; // WTF. Some of the drawNode seems to spill out fontSize
+
+            // Update active or hovered item
+            // Doing this after rendering will add slight frame delay but will
+            // keep drag operations more consistent.
+            if (_context.ActiveItem != null)
+            {
+                if (_context.ActiveItem.Id != _lastHoverId)
+                {
+                    _hoverStartTime = ImGui.GetTime();
+                    _lastHoverId = _context.ActiveItem.Id;
+                }
+
+                FrameStats.AddHoveredId(_context.ActiveItem.Id);
             }
             else
             {
-                HandleSymbolDropping(_context);
+                _hoverStartTime = ImGui.GetTime();
+                _lastHoverId = Guid.Empty;
+            }
 
-                // Update view scope if required
-                if (FitViewToSelectionHandling.FitViewToSelectionRequested)
+            if (!_context.PreventInteraction)
+                HighlightSplitInsertionPoints(drawList, _context);
+
+            // Draw connections
+            foreach (var connection in _context.Layout.MagConnections)
+            {
+                DrawConnection(connection, drawList, _context);
+            }
+
+            // Draw special overlays
+            if (_context.StateMachine.CurrentState == GraphStates.RenameChild)
+            {
+                RenamingOperator.Draw(_projectView);
+                if (!RenamingOperator.IsOpen)
                 {
-                    FocusViewToSelection(_context);
+                    _context.StateMachine.SetState(GraphStates.Default, _context);
                 }
-        
+            }
+            else if (_context.StateMachine.CurrentState == GraphStates.RenameAnnotation)
+            {
+                AnnotationRenaming.Draw(_context);
+            }
+            else if (_context.StateMachine.CurrentState == GraphStates.DragAnnotation)
+            {
+                AnnotationDragging.Draw(_context);
+            }
 
-                // Keep visible canvas area to cull non-visible objects later
-                _visibleCanvasArea = GetVisibleCanvasArea();
+            // Draw temp connections
+            foreach (var tc in _context.TempConnections)
+            {
+                var mousePos = ImGui.GetMousePos();
 
-                var editingFlags = T3Ui.EditingFlags.None;
-                if (T3Ui.IsAnyPopupOpen)
+                var sourcePosOnScreen = mousePos;
+                var targetPosOnScreen = mousePos;
+
+                // Dragging end to new target input...
+                if (tc.SourceItem != null)
                 {
-                    if(!ImGui.IsWindowHovered())
-                        editingFlags |= T3Ui.EditingFlags.PreventMouseInteractions;
-                }
-        
-                if(!_context.PreventInteraction && !FrameStats.Last.OpenedPopupCapturedMouse) 
-                    UpdateCanvas(out _, editingFlags);
+                    var sourcePos = new Vector2(tc.SourceItem.Area.Max.X,
+                                                tc.SourceItem.Area.Min.Y + MagGraphItem.GridSize.Y * (0.5f + tc.OutputLineIndex));
 
-                // Prepare UiModel for frame
-                _context.Layout.ComputeLayout(_context);
-                _context.ItemMovement.PrepareFrame(_context);
-        
-                if (_context.StateMachine.CurrentState == GraphStates.Default)
-                {
-                    _context.ActiveItem = null;
-                    _context.ActiveSourceItem = null;
-                    _context.ActiveTargetItem = null;
-            
-                    _context.ItemWithActiveCustomUi = null;
-                    _context.ActiveSourceOutputId = Guid.Empty;
-                    _context.ActiveTargetInputId = Guid.Empty;
-                }
+                    sourcePosOnScreen = TransformPosition(sourcePos);
 
-                if(!UserSettings.Config.FocusMode) 
-                {
-                    DrawBackgroundGrids(drawList);
-                }
-
-                // Selection fence...
-                if(!_context.PreventInteraction)
-                {
-                    HandleFenceSelection(_context, _selectionFence);
-                }
-        
-                // Draw annotations
-                foreach (var a in _context.Layout.Annotations.Values)
-                {
-                    DrawAnnotation(a, drawList, _context);
-                }
-
-                // Draw items
-                foreach (var item in _context.Layout.Items.Values)
-                {
-                    DrawNode(item, drawList, _context);
-
-                    InvalidateSelectedGizmoProviders(item);
-                }
-
-                Fonts.FontSmall.Scale = 1; // WTF. Some of the drawNode seems to spill out fontSize
-
-                // Update active or hovered item
-                // Doing this after rendering will add slight frame delay but will
-                // keep drag operations more consistent.
-                if (_context.ActiveItem != null)
-                {
-                    if (_context.ActiveItem.Id != _lastHoverId)
+                    if (_context.StateMachine.CurrentState == GraphStates.DragConnectionEnd
+                        && InputSnapper.BestInputMatch.Item != null)
                     {
-                        _hoverStartTime = ImGui.GetTime();
-                        _lastHoverId = _context.ActiveItem.Id;
+                        targetPosOnScreen = InputSnapper.BestInputMatch.PosOnScreen;
+                    }
+                }
+
+                // Dragging beginning to new source output...
+                if (tc.TargetItem != null)
+                {
+                    var targetPos = new Vector2(tc.TargetItem.Area.Min.X,
+                                                tc.TargetItem.Area.Min.Y + MagGraphItem.GridSize.Y * (0.5f + tc.InputLineIndex));
+                    targetPosOnScreen = TransformPosition(targetPos);
+
+                    if (_context.StateMachine.CurrentState == GraphStates.DragConnectionBeginning
+                        && OutputSnapper.BestOutputMatch.Item != null)
+                    {
+                        sourcePosOnScreen = TransformPosition(OutputSnapper.BestOutputMatch.Anchor.PositionOnCanvas);
                     }
 
-                    FrameStats.AddHoveredId(_context.ActiveItem.Id);
+                    var isDisconnectedMultiInput = tc.InputLineIndex >= tc.TargetItem.InputLines.Length;
+                    if (isDisconnectedMultiInput)
+                        continue;
                 }
                 else
                 {
-                    _hoverStartTime = ImGui.GetTime();
-                    _lastHoverId = Guid.Empty;
-                }
-
-                if(!_context.PreventInteraction)
-                    HighlightSplitInsertionPoints(drawList, _context);
-
-                // Draw connections
-                foreach (var connection in _context.Layout.MagConnections)
-                {
-                    DrawConnection(connection, drawList, _context);
-                }
-
-                // Draw special overlays
-                if (_context.StateMachine.CurrentState == GraphStates.RenameChild)
-                {
-                    RenamingOperator.Draw(_projectView);
-                    if (!RenamingOperator.IsOpen)
+                    if (_context.StateMachine.CurrentState == GraphStates.Placeholder)
                     {
-                        _context.StateMachine.SetState(GraphStates.Default, _context);
-                    }
-                }
-                else if (_context.StateMachine.CurrentState == GraphStates.RenameAnnotation)
-                {
-                    AnnotationRenaming.Draw(_context);
-                }
-                else if (_context.StateMachine.CurrentState == GraphStates.DragAnnotation)
-                {
-                    AnnotationDragging.Draw(_context);
-                }
-        
-        
-        
-                // Draw temp connections
-                foreach (var tc in _context.TempConnections)
-                {
-                    var mousePos = ImGui.GetMousePos();
-
-                    var sourcePosOnScreen = mousePos;
-                    var targetPosOnScreen = mousePos;
-
-                    // Dragging end to new target input...
-                    if (tc.SourceItem != null)
-                    {
-                        var sourcePos = new Vector2(tc.SourceItem.Area.Max.X,
-                                                    tc.SourceItem.Area.Min.Y + MagGraphItem.GridSize.Y * (0.5f + tc.OutputLineIndex));
-
-                        sourcePosOnScreen = TransformPosition(sourcePos);
-
-                        if (_context.StateMachine.CurrentState == GraphStates.DragConnectionEnd
-                            && InputSnapper.BestInputMatch.Item != null)
+                        if (_context.Placeholder.PlaceholderItem != null)
                         {
-                            targetPosOnScreen = InputSnapper.BestInputMatch.PosOnScreen;
+                            targetPosOnScreen = TransformPosition(_context.Placeholder.PlaceholderItem.PosOnCanvas);
                         }
                     }
-
-                    // Dragging beginning to new source output...
-                    if (tc.TargetItem != null)
-                    {
-                        var targetPos = new Vector2(tc.TargetItem.Area.Min.X,
-                                                    tc.TargetItem.Area.Min.Y + MagGraphItem.GridSize.Y * (0.5f + tc.InputLineIndex));
-                        targetPosOnScreen = TransformPosition(targetPos);
-
-                        if (_context.StateMachine.CurrentState == GraphStates.DragConnectionBeginning
-                            && OutputSnapper.BestOutputMatch.Item != null)
-                        {
-                            sourcePosOnScreen = TransformPosition(OutputSnapper.BestOutputMatch.Anchor.PositionOnCanvas);
-                        }
-
-                        var isDisconnectedMultiInput = tc.InputLineIndex >= tc.TargetItem.InputLines.Length;
-                        if (isDisconnectedMultiInput)
-                            continue;
-                    }
-                    else
-                    {
-                        if (_context.StateMachine.CurrentState == GraphStates.Placeholder)
-                        {
-                            if (_context.Placeholder.PlaceholderItem != null)
-                            {
-                                targetPosOnScreen = TransformPosition(_context.Placeholder.PlaceholderItem.PosOnCanvas);
-                            }
-                        }
-                    }
-
-                    var typeColor = TypeUiRegistry.GetPropertiesForType(tc.Type).Color;
-                    var d = Vector2.Distance(sourcePosOnScreen, targetPosOnScreen) / 2;
-
-                    drawList.AddBezierCubic(sourcePosOnScreen,
-                                            sourcePosOnScreen + new Vector2(d, 0),
-                                            targetPosOnScreen - new Vector2(d, 0),
-                                            targetPosOnScreen,
-                                            typeColor.Fade(0.6f),
-                                            2);
                 }
 
-                OutputSnapper.Update(_context);
-                InputSnapper.Update(_context);
+                var typeColor = TypeUiRegistry.GetPropertiesForType(tc.Type).Color;
+                var d = Vector2.Distance(sourcePosOnScreen, targetPosOnScreen) / 2;
 
-                _context.ConnectionHovering.PrepareNewFrame(_context);
-                _context.Placeholder.Update(_context);
-
-                // Draw animated Snap indicator
-                {
-                    var timeSinceSnap = ImGui.GetTime() - _context.ItemMovement.LastSnapTime;
-                    var progress = ((float)timeSinceSnap).RemapAndClamp(0, 0.4f, 1, 0);
-                    if (progress < 1)
-                    {
-                        drawList.AddCircle(TransformPosition(_context.ItemMovement.LastSnapTargetPositionOnCanvas),
-                                           progress * 50,
-                                           UiColors.ForegroundFull.Fade(progress * 0.2f));
-                    }
-                }
-
-                if (FrameStats.Current.OpenedPopUpName == string.Empty)
-                    CustomComponents.DrawContextMenuForScrollCanvas(() => GraphContextMenu.DrawContextMenuContent(_context, _projectView), ref _contextMenuIsOpen);
-
-                SmoothItemPositions();
-
-                _context.StateMachine.UpdateAfterDraw(_context);
+                drawList.AddBezierCubic(sourcePosOnScreen,
+                                        sourcePosOnScreen + new Vector2(d, 0),
+                                        targetPosOnScreen - new Vector2(d, 0),
+                                        targetPosOnScreen,
+                                        typeColor.Fade(0.6f),
+                                        2);
             }
-        }
 
+            OutputSnapper.Update(_context);
+            InputSnapper.Update(_context);
+
+            _context.ConnectionHovering.PrepareNewFrame(_context);
+            _context.Placeholder.Update(_context);
+
+            // Draw animated Snap indicator
+            {
+                var timeSinceSnap = ImGui.GetTime() - _context.ItemMovement.LastSnapTime;
+                var progress = ((float)timeSinceSnap).RemapAndClamp(0, 0.4f, 1, 0);
+                if (progress < 1)
+                {
+                    drawList.AddCircle(TransformPosition(_context.ItemMovement.LastSnapTargetPositionOnCanvas),
+                                       progress * 50,
+                                       UiColors.ForegroundFull.Fade(progress * 0.2f));
+                }
+            }
+
+            if (FrameStats.Current.OpenedPopUpName == string.Empty)
+                CustomComponents.DrawContextMenuForScrollCanvas(() => GraphContextMenu.DrawContextMenuContent(_context, _projectView), ref _contextMenuIsOpen);
+
+            SmoothItemPositions();
+
+            _context.StateMachine.UpdateAfterDraw(_context);
+        }
     }
 
     /// <summary>
@@ -262,7 +250,7 @@ internal sealed partial class MagGraphView
     }
 
     /// <summary>
-    /// This a very simple proof-of-concept implementation to test it's fidelity.
+    /// This a very simple proof-of-concept implementation to test its fidelity.
     /// A simple optimization could be to only do this for some time after a drag manipulation and then apply
     /// the correct position. Also, this animation does not affect connection lines.
     ///
@@ -277,7 +265,7 @@ internal sealed partial class MagGraphView
                                  : 0.7f;
             i.DampedPosOnCanvas = Vector2.Lerp(i.PosOnCanvas, i.DampedPosOnCanvas, dampAmount);
         }
-        
+
         foreach (var a in _context.Layout.Annotations.Values)
         {
             // var dampAmount = _context.ItemMovement.DraggedItems.Contains(i)
@@ -287,7 +275,6 @@ internal sealed partial class MagGraphView
             a.DampedPosOnCanvas = Vector2.Lerp(a.Annotation.PosOnCanvas, a.DampedPosOnCanvas, dampAmount);
             a.DampedSize = Vector2.Lerp(a.Annotation.Size, a.DampedSize, dampAmount);
         }
-        
     }
 
     private bool _contextMenuIsOpen;
@@ -312,18 +299,18 @@ internal sealed partial class MagGraphView
                 //                  ? new Vector2(MagGraphItem.GridSize.X / 16 * CanvasScale, 0)
                 //                  : new Vector2(0, MagGraphItem.GridSize.Y / 8 * CanvasScale);
 
-                drawList.AddRectFilled(center+ new Vector2(-offset, -1),
-                                       center+ new Vector2(offset, 1),
-                                       ColorVariations.ConnectionLines.Apply(typeColor).Fade(Blink)   
+                drawList.AddRectFilled(center + new Vector2(-offset, -1),
+                                       center + new Vector2(offset, 1),
+                                       ColorVariations.ConnectionLines.Apply(typeColor).Fade(Blink)
                                       );
             }
             else
             {
                 center.X += sp.DragPositionWithinBlock.X * CanvasScale;
-                var offset = MagGraphItem.GridSize.Y *0.25f * CanvasScale;
-                drawList.AddRectFilled(center+ new Vector2(0, -offset),
-                                       center+ new Vector2(2, offset),
-                                       ColorVariations.ConnectionLines.Apply(typeColor).Fade(Blink)   
+                var offset = MagGraphItem.GridSize.Y * 0.25f * CanvasScale;
+                drawList.AddRectFilled(center + new Vector2(0, -offset),
+                                       center + new Vector2(2, offset),
+                                       ColorVariations.ConnectionLines.Apply(typeColor).Fade(Blink)
                                       );
             }
         }
@@ -367,7 +354,7 @@ internal sealed partial class MagGraphView
         {
             var x = (int)(topLeftOnScreen.X + ix * screenGridSize.X);
             drawList.AddRectFilled(new Vector2(x, window.Min.Y),
-                                   new Vector2(x+1, window.Max.Y),
+                                   new Vector2(x + 1, window.Max.Y),
                                    color);
         }
 
@@ -375,7 +362,7 @@ internal sealed partial class MagGraphView
         {
             var y = (int)(topLeftOnScreen.Y + iy * screenGridSize.Y);
             drawList.AddRectFilled(new Vector2(window.Min.X, y),
-                                   new Vector2(window.Max.X, y+1 ),
+                                   new Vector2(window.Max.X, y + 1),
                                    color);
         }
     }
@@ -412,5 +399,4 @@ internal sealed partial class MagGraphView
         };
 
     internal static float Blink => MathF.Sin((float)ImGui.GetTime() * 10) * 0.5f + 0.5f;
-
 }

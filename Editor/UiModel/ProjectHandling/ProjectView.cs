@@ -289,8 +289,10 @@ internal sealed partial class ProjectView
                 var instance = InstView.Instance.Children[alsoSelectChildId.Value];
                 NodeSelection.SetSelection(instance.GetChildUi()!, instance);
                 var bounds = NodeSelection.GetSelectionBounds(NodeSelection, instance, 400);
-                var viewScope = ScalableCanvas.GetScopeForCanvasArea(bounds);
-                ScalableCanvas.SetScopeWithTransition(viewScope, compositionChanged ? transition : ScalableCanvas.Transition.Smooth);
+                //var viewScope = ScalableCanvas.GetScopeForCanvasArea(bounds);
+                //ScalableCanvas.SetScopeWithTransition(viewScope, compositionChanged ? transition : ScalableCanvas.Transition.Smooth);
+                ScalableCanvas.RequestTargetViewAreaWithTransition(bounds, 
+                                                               compositionChanged ? transition : ScalableCanvas.Transition.Smooth);
             }
             else
             {
@@ -299,7 +301,7 @@ internal sealed partial class ProjectView
                 var compositionOpSymbolChildId = CompositionInstance.SymbolChildId;
                 IEnumerable<ISelectableCanvasObject> childUisValues = InstView.SymbolUi.ChildUis.Values;
                 var savedOrValidView = CanvasHelpers.GetSavedOrValidViewForComposition(compositionOpSymbolChildId, childUisValues);
-                ScalableCanvas.SetTargetViewAreaWithTransition(savedOrValidView, transition);
+                ScalableCanvas.RequestTargetViewAreaWithTransition(savedOrValidView, transition);
             }
         }
         

@@ -87,7 +87,7 @@ internal sealed class SettingsWindow : Window
                                                           """
                                                           Allows to switch between different graphical representations.
                                                           This also will affect usability and performance
-                                                          """
+                                                          """, UserSettings.Defaults.GraphStyle
                                                          );
                     
 

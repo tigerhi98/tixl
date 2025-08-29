@@ -105,7 +105,6 @@ internal sealed partial class MagGraphView : ScalableCanvas, IGraphView
 
     public bool HasActiveInteraction => _context.StateMachine.CurrentState != GraphStates.Default;
 
-    ProjectView IGraphView.ProjectView { set => throw new NotImplementedException(); }
 
     void IGraphView.Close()
     {

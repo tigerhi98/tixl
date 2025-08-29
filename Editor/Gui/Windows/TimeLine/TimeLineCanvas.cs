@@ -141,55 +141,55 @@ internal sealed class TimeLineCanvas : CurveEditCanvas
             }
         }
     }
-
-    #region handle nested timelines ----------------------------------
-    public override void UpdateScaleAndTranslation(Instance compositionOp, ScalableCanvas.Transition transition)
-    {
-        if (transition == ScalableCanvas.Transition.Instant)
-            return;
-
-        // remember the old scroll state
-        var oldScale = Scale;
-        var oldScroll = Scroll;
-
-        var clip = Structure.GetCompositionTimeClip(compositionOp);
-        if (clip == null) return;
-
-        // determine scaling factor
-        TimeRange sourceRange, targetRange;
-        if (transition == ScalableCanvas.Transition.JumpIn)
-        {
-            sourceRange = clip.TimeRange;
-            targetRange = clip.SourceRange;
-        }
-        else
-        {
-            sourceRange = clip.SourceRange;
-            targetRange = clip.TimeRange;
-        }
-
-        float scale = targetRange.Duration / sourceRange.Duration;
-
-        // remove scrolling, then determine where the time clip is centered
-        Scroll = new Vector2(0, Scroll.Y);
-        var centerOfSourceRange = (sourceRange.Start + sourceRange.End) * 0.5f;
-        var originalScreenPos = TransformX(centerOfSourceRange);
-
-        // now apply scaling and determine where the source clip is centered
-        Scale /= scale;
-        var centerOfTargetRange = (targetRange.Start + targetRange.End) * 0.5f;
-        var newScreenPos = TransformX(centerOfTargetRange);
-
-        // set final scale and "undo" the movement of the position
-        ScaleTarget.X = Scale.X;
-        var positionDelta = new Vector2(newScreenPos - originalScreenPos, 0f);
-        ScrollTarget.X = oldScroll.X * scale + InverseTransformDirection(positionDelta).X;
-
-        // restore the old scale and scroll state
-        Scale = oldScale;
-        Scroll = oldScroll;
-    }
-    #endregion
+    //
+    // #region handle nested timelines ----------------------------------
+    // public override void UpdateScaleAndTranslation(Instance compositionOp, ScalableCanvas.Transition transition)
+    // {
+    //     if (transition == ScalableCanvas.Transition.Instant)
+    //         return;
+    //
+    //     // remember the old scroll state
+    //     var oldScale = Scale;
+    //     var oldScroll = Scroll;
+    //
+    //     var clip = Structure.GetCompositionTimeClip(compositionOp);
+    //     if (clip == null) return;
+    //
+    //     // determine scaling factor
+    //     TimeRange sourceRange, targetRange;
+    //     if (transition == ScalableCanvas.Transition.JumpIn)
+    //     {
+    //         sourceRange = clip.TimeRange;
+    //         targetRange = clip.SourceRange;
+    //     }
+    //     else
+    //     {
+    //         sourceRange = clip.SourceRange;
+    //         targetRange = clip.TimeRange;
+    //     }
+    //
+    //     float scale = targetRange.Duration / sourceRange.Duration;
+    //
+    //     // remove scrolling, then determine where the time clip is centered
+    //     Scroll = new Vector2(0, Scroll.Y);
+    //     var centerOfSourceRange = (sourceRange.Start + sourceRange.End) * 0.5f;
+    //     var originalScreenPos = TransformX(centerOfSourceRange);
+    //
+    //     // now apply scaling and determine where the source clip is centered
+    //     Scale /= scale;
+    //     var centerOfTargetRange = (targetRange.Start + targetRange.End) * 0.5f;
+    //     var newScreenPos = TransformX(centerOfTargetRange);
+    //
+    //     // set final scale and "undo" the movement of the position
+    //     ScaleTarget.X = Scale.X;
+    //     var positionDelta = new Vector2(newScreenPos - originalScreenPos, 0f);
+    //     ScrollTarget.X = oldScroll.X * scale + InverseTransformDirection(positionDelta).X;
+    //
+    //     // restore the old scale and scroll state
+    //     Scale = oldScale;
+    //     Scroll = oldScroll;
+    // }
+    // #endregion
 
     private void HandleDeferredActions()
     {

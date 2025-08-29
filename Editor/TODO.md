@@ -33,7 +33,7 @@ next:
 - [x] Try to improve searching with Ctrl+F focus into view behaviour
 - [ ] fix clamping of rounded numbers in infinity slider
 - [x] Connected parameters names should be renamable
-- [ ] Check Gradient interpolation override caching with LinearGradient
+- [x] Check Gradient interpolation override caching with LinearGradient
 
 
 # UI
