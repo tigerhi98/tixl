@@ -279,5 +279,14 @@
         "Y": -248.58
       }
     }
+  ],
+  "Links": [
+    {
+      "Id": "af1b867b-a30e-484d-be48-3c1121057b4d",
+      "Title": "Job Baker",
+      "Description": "",
+      "LinkUrl": "https://jbaker.graphics/writings/DEC.html",
+      "LinkType": "OriginalBy"
+    }
   ]
 }

@@ -11836,7 +11836,7 @@
     }
   ],
   "PlaybackSettings": {
-    "Enabled": true,
+    "Enabled": false,
     "Bpm": 120.0,
     "AudioSource": 0,
     "Syncing": 0,
@@ -11845,16 +11845,6 @@
     "AudioInputDeviceName": "",
     "EnableAudioBeatLocking": "False",
     "BeatLockAudioOffsetSec": "0",
-    "AudioClips": [
-      {
-        "Id": "00000000-0000-0000-0000-000000000000",
-        "StartTime": 0.0,
-        "EndTime": 0.0,
-        "Bpm": 120.0,
-        "DiscardAfterUse": true,
-        "IsSoundtrack": true,
-        "FilePath": "C:/Users/pixtur/dev/tooll/t3-main/Operators/examples/Resources/user/still/proj-worksforeverybody/soundtrack/works-for-everybody.mp3"
-      }
-    ]
+    "AudioClips": []
   }
 }

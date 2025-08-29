@@ -30,7 +30,7 @@ public sealed class SampleGradient : Instance<SampleGradient>, IExtractedInput<G
             gradient.Interpolation = interpolation;
         }
         Color.Value = gradient.Sample(t);
-        OutGradient.Value = gradient.TypedClone();    //FIXME: This might not be efficient or required
+        OutGradient.Value = gradient; //.TypedClone();    //FIXME: This might not be efficient or required
     }
 
     [Input(Guid = "a4527e01-f19a-4200-85e5-00144f3ce061")]
