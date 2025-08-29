@@ -315,11 +315,11 @@ internal static class GraphContextMenu
 
         if (ImGui.BeginMenu("Add..."))
         {
-            // TODO: implement
-            // if (ImGui.MenuItem("Add Node...", "TAB", false, true))
-            // {
-            //     _window.SymbolBrowser.OpenAt(InverseTransformPositionFloat(clickPosition), null, null, false);
-            // }
+            if (ImGui.MenuItem("Add Node...", "TAB", false, true))
+            {
+                var posOnCanvas = context.View.InverseTransformPositionFloat(ImGui.GetMousePos());
+                context.Placeholder.OpenOnCanvas(context, posOnCanvas);
+            }
         
             if (canModify)
             {
