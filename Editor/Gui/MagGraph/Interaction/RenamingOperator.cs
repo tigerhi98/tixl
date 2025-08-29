@@ -65,7 +65,7 @@ internal static class RenamingOperator
 
         var symbolChild = symbolChildUi.SymbolChild;
 
-        var positionInScreen = projectView.GraphCanvas.TransformPosition(symbolChildUi.PosOnCanvas);
+        var positionInScreen = projectView.GraphView.Canvas.TransformPosition(symbolChildUi.PosOnCanvas);
 
         ImGui.SetCursorScreenPos(positionInScreen + Vector2.One);
             

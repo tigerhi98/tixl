@@ -1,4 +1,4 @@
-#nullable enable
+﻿#nullable enable
 using ImGuiNET;
 using T3.Core.DataTypes;
 using T3.Core.DataTypes.Vector;
@@ -38,7 +38,7 @@ internal sealed class ConnectionHovering
         (_lastConnectionHovers, _connectionHoversForCurrentFrame) = (_connectionHoversForCurrentFrame, _lastConnectionHovers);
         _connectionHoversForCurrentFrame.Clear();
 
-        if(!context.Canvas.IsHovered)
+        if(!context.View.IsHovered)
             _lastConnectionHovers.Clear();
         
         if (_lastConnectionHovers.Count == 0)
@@ -103,7 +103,7 @@ internal sealed class ConnectionHovering
                     }
                     
                     // Show indicator at end...
-                    var inputPosInScreen = context.Canvas.TransformPosition(firstHover.Connection.TargetPos);
+                    var inputPosInScreen = context.View.TransformPosition(firstHover.Connection.TargetPos);
                     drawList.AddCircle(inputPosInScreen, hoverIndicatorRadius, firstHover.Color, 24,2);
                 }
             }
@@ -116,7 +116,7 @@ internal sealed class ConnectionHovering
                     context.StateMachine.SetState(GraphStates.HoldingConnectionBeginning, context);
                 }
                 
-                var outputPosInScreen = context.Canvas.TransformPosition(firstHover.Connection.SourcePos);
+                var outputPosInScreen = context.View.TransformPosition(firstHover.Connection.SourcePos);
                 drawList.AddCircle(outputPosInScreen, hoverIndicatorRadius, firstHover.Color, 24,2); 
             }
            

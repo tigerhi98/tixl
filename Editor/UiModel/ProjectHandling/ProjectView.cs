@@ -21,7 +21,7 @@ internal sealed partial class ProjectView
     public readonly NodeNavigation NodeNavigation;
     public Structure Structure => OpenedProject.Structure;
 
-    public IGraphCanvas GraphCanvas { get; set; } = null!; // TODO: remove set accessibility
+    public IGraphView GraphView { get; set; } = null!; // TODO: remove set accessibility
     public OpenedProject OpenedProject { get; }
     private readonly List<Guid> _compositionPath = [];
     
@@ -225,7 +225,7 @@ internal sealed partial class ProjectView
     {
         Debug.Assert(CompositionInstance != null);
 
-        if (CompositionInstance == null || GraphCanvas is not ScalableCanvas canvas) 
+        if (CompositionInstance == null || GraphView is not ScalableCanvas canvas) 
             return;
     
         var lastSymbolChildId = CompositionInstance.SymbolChildId;
@@ -235,7 +235,7 @@ internal sealed partial class ProjectView
         UserSettings.Save();
     }
 
-    public bool TrySetCompositionOp(IReadOnlyList<Guid> newIdPath, ICanvas.Transition transition = ICanvas.Transition.JumpIn, Guid? alsoSelectChildId = null)
+    public bool TrySetCompositionOp(IReadOnlyList<Guid> newIdPath, ScalableCanvas.Transition transition = ScalableCanvas.Transition.JumpIn, Guid? alsoSelectChildId = null)
     {
         var structure = OpenedProject.Structure;
         var newCompositionInstance = structure.GetInstanceFromIdPath(newIdPath);
@@ -290,7 +290,7 @@ internal sealed partial class ProjectView
                 NodeSelection.SetSelection(instance.GetChildUi()!, instance);
                 var bounds = NodeSelection.GetSelectionBounds(NodeSelection, instance, 400);
                 var viewScope = ScalableCanvas.GetScopeForCanvasArea(bounds);
-                ScalableCanvas.SetScopeWithTransition(viewScope, compositionChanged ? transition : ICanvas.Transition.Smooth);
+                ScalableCanvas.SetScopeWithTransition(viewScope, compositionChanged ? transition : ScalableCanvas.Transition.Smooth);
             }
             else
             {
@@ -306,13 +306,13 @@ internal sealed partial class ProjectView
         return true;
     }
     
-    private ScalableCanvas? ScalableCanvas => GraphCanvas as ScalableCanvas;
+    private ScalableCanvas? ScalableCanvas => GraphView as ScalableCanvas;
 
     public bool TrySetCompositionOpToChild(Guid symbolChildId)
     {
         List<Guid> path = [.._compositionPath, symbolChildId];
         
-        return TrySetCompositionOp(path, ICanvas.Transition.JumpIn);
+        return TrySetCompositionOp(path, ScalableCanvas.Transition.JumpIn);
     }
 
     public bool TrySetCompositionOpToParent()
@@ -326,7 +326,7 @@ internal sealed partial class ProjectView
         var path = _compositionPath.GetRange(0, _compositionPath.Count - 1);
 
         // pass the child UI only in case the previous composition was a cloned instance
-        return TrySetCompositionOp(path, ICanvas.Transition.JumpOut, previousComposition!.SymbolChildId);
+        return TrySetCompositionOp(path, ScalableCanvas.Transition.JumpOut, previousComposition!.SymbolChildId);
     }
     #endregion
     
@@ -346,7 +346,7 @@ internal sealed partial class ProjectView
         if(CompositionInstance != null)
             SaveUsersViewForCurrentComposition();
         
-        GraphCanvas.Close();
+        GraphView.Close();
         if (Focused != this)
             return;
         

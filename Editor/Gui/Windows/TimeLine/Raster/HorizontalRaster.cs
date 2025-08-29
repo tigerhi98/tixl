@@ -1,6 +1,7 @@
 ﻿using System.Globalization;
 using ImGuiNET;
 using T3.Core.DataTypes.Vector;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Snapping;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
@@ -9,13 +10,13 @@ namespace T3.Editor.Gui.Windows.TimeLine.Raster;
 
 public sealed  class HorizontalRaster: IValueSnapAttractor
 {
-    public void Draw(ICanvas canvas)
+    public void Draw(ScalableCanvas canvas)
     {
         _canvas = canvas;
         DrawLines(canvas.Scale.Y , canvas.Scroll.Y); // ???????????
     }
 
-    private ICanvas _canvas;
+    private ScalableCanvas _canvas;
         
     private static string BuildLabel(AbstractTimeRaster.Raster raster, double time)
     {

@@ -32,7 +32,7 @@ internal sealed class PlaceholderCreation
         context.TempConnections.Clear();
 
         context.StartMacroCommand("Insert operator");
-        var posOnCanvas = context.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
+        var posOnCanvas = context.View.InverseTransformPositionFloat(ImGui.GetMousePos());
 
         var firstHover = context.ConnectionHovering.ConnectionHoversWhenClicked[0];
 

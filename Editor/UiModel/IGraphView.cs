@@ -7,9 +7,13 @@ using T3.Editor.UiModel.ProjectHandling;
 
 namespace T3.Editor.UiModel;
 
-internal interface IGraphCanvas : IScalableCanvas
+/// <summary>
+/// Abstraction different graph views (I.e. legacy and magnetic)
+/// </summary>
+internal interface IGraphView 
 {
     bool Destroyed { get; set;  }
+    ScalableCanvas Canvas { get; }
 
     void FocusViewToSelection();
     void OpenAndFocusInstance(IReadOnlyList<Guid> path);

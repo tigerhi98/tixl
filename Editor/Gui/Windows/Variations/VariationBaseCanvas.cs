@@ -700,7 +700,7 @@ internal abstract class VariationBaseCanvas : ScalableCanvas, ISelectionContaine
         return PoolForBlendOperations?.AllVariations ?? [];
     }
 
-    protected override IScalableCanvas? Parent => null;
+    protected override ScalableCanvas? Parent => null;
 
     public bool IsBlendingActive { get; private set; }
     private readonly List<float> _blendWeights = new(3);

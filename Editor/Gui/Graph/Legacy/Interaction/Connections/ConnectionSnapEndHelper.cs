@@ -34,9 +34,9 @@ internal static class ConnectionSnapEndHelper
         BestMatchLastFrame = null;
     }
 
-    internal static void RegisterAsPotentialTarget(IGraphCanvas window, SymbolUi.Child childUi, IInputUi inputUi, int slotIndex, ImRect areaOnScreen)
+    internal static void RegisterAsPotentialTarget(IGraphView graph, SymbolUi.Child childUi, IInputUi inputUi, int slotIndex, ImRect areaOnScreen)
     {
-        if (ConnectionMaker.IsTargetInvalid(window, inputUi.Type))
+        if (ConnectionMaker.IsTargetInvalid(graph, inputUi.Type))
             return;
 
         var distance = Vector2.Distance(areaOnScreen.Min, _mousePosition);
@@ -56,9 +56,9 @@ internal static class ConnectionSnapEndHelper
         _bestMatchDistance = distance;
     }
 
-    public static void RegisterAsPotentialTarget(IGraphCanvas window, IOutputUi outputUi, ImRect areaOnScreen)
+    public static void RegisterAsPotentialTarget(IGraphView graph, IOutputUi outputUi, ImRect areaOnScreen)
     {
-        if (ConnectionMaker.IsTargetInvalid(window, outputUi.Type))
+        if (ConnectionMaker.IsTargetInvalid(graph, outputUi.Type))
             return;
 
         var distance = Vector2.Distance(areaOnScreen.Min, _mousePosition);

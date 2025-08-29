@@ -121,11 +121,11 @@ internal static class SampleCurveUi
 
         void DrawSamplePointIndicator()
         {
-            ICanvas? canvas = null; //CurveInputEditing.GetCanvasForCurve(curve);
-            if (canvas == null)
+            ScalableCanvas? scalableCanvas = null; //CurveInputEditing.GetCanvasForCurve(curve);
+            if (scalableCanvas == null)
                 return;
 
-            var x = canvas.TransformPosition(new Vector2(data.U.Value, 0)).X;
+            var x = scalableCanvas.TransformPosition(new Vector2(data.U.Value, 0)).X;
             if (!(x >= innerRect.Min.X) || !(x < innerRect.Max.X))
                 return;
 

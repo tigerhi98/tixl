@@ -41,7 +41,7 @@ next:
 ## Feedback from UncleX
 
 - [ ] Graph context menu should have an option to Add (and show keyboard shortcut)
-- [ ] Maybe add option to insert ops via Esc
+- [-] Maybe add option to insert ops via Esc
 - [x] Fix "don't disconnect unsnap"
 - [x] Drag and split vertical connection lines
 - [x] Output-Nodes should have a show in Output indicator

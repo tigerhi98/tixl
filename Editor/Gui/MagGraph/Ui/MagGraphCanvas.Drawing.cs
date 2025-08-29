@@ -14,7 +14,7 @@ using T3.Editor.UiModel.Selection;
 
 namespace T3.Editor.Gui.MagGraph.Ui;
 
-internal sealed partial class MagGraphCanvas
+internal sealed partial class MagGraphView
 {
     public void DrawGraph(ImDrawListPtr drawList, float graphOpacity)
     {

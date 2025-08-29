@@ -16,12 +16,12 @@ namespace T3.Editor.Gui.Graph.Legacy;
 /// </summary>
 internal static class InputNode
 {
-    internal static bool Draw(ProjectView components, GraphCanvas canvas, ImDrawListPtr drawList, Symbol.InputDefinition inputDef, IInputUi inputUi, int index)
+    internal static bool Draw(ProjectView components, GraphView view, ImDrawListPtr drawList, Symbol.InputDefinition inputDef, IInputUi inputUi, int index)
     { 
         var isSelectedOrHovered = false;
         ImGui.PushID(inputDef.Id.GetHashCode());
         {
-            _lastScreenRect = canvas.TransformRect(new ImRect(inputUi.PosOnCanvas, inputUi.PosOnCanvas + inputUi.Size));
+            _lastScreenRect = view.TransformRect(new ImRect(inputUi.PosOnCanvas, inputUi.PosOnCanvas + inputUi.Size));
             _lastScreenRect.Floor();
 
             // Interaction
@@ -36,7 +36,7 @@ internal static class InputNode
                 isSelectedOrHovered = true;
             }
 
-            canvas.SelectableNodeMovement.Handle(inputUi);
+            view.SelectableNodeMovement.Handle(inputUi);
 
             // Rendering
             var typeColor = TypeUiRegistry.GetPropertiesForType(inputDef.DefaultValue.ValueType).Color;
@@ -60,7 +60,7 @@ internal static class InputNode
             // Label
             {
                     
-                var isScaledDown = canvas.Scale.X < 1;
+                var isScaledDown = view.Scale.X < 1;
                 ImGui.PushFont(isScaledDown ? Fonts.FontSmall : Fonts.FontBold);
                     
                 // Index
@@ -85,27 +85,27 @@ internal static class InputNode
 
             // Draw slot 
             {
-                var usableSlotArea = GetUsableOutputSlotArea(_lastScreenRect, canvas);
+                var usableSlotArea = GetUsableOutputSlotArea(_lastScreenRect, view);
                 ImGui.SetCursorScreenPos(usableSlotArea.Min);
                 ImGui.InvisibleButton("output", usableSlotArea.GetSize());
                 DrawUtils.DebugItemRect();
                 var color = ColorVariations.ConnectionLines.Apply(typeColor).Fade(0.5f);
 
-                if (!ConnectionMaker.IsInputNodeCurrentConnectionSource(canvas, inputDef) && ImGui.IsItemHovered())
+                if (!ConnectionMaker.IsInputNodeCurrentConnectionSource(view, inputDef) && ImGui.IsItemHovered())
                 {
                     color = ColorVariations.Highlight.Apply(typeColor).Fade(0.8f);
-                    if (ConnectionMaker.IsMatchingInputType(canvas, inputDef.DefaultValue.ValueType))
+                    if (ConnectionMaker.IsMatchingInputType(view, inputDef.DefaultValue.ValueType))
                     {
                         if (ImGui.IsMouseReleased(0))
                         {
-                            ConnectionMaker.CompleteAtSymbolInputNode(canvas, components.CompositionInstance.GetSymbolUi(), inputDef);
+                            ConnectionMaker.CompleteAtSymbolInputNode(view, components.CompositionInstance.GetSymbolUi(), inputDef);
                         }
                     }
                     else
                     {
                         if (ImGui.IsItemClicked(0))
                         {
-                            ConnectionMaker.StartFromInputNode(canvas, inputDef);
+                            ConnectionMaker.StartFromInputNode(view, inputDef);
                         }
                     }
                 }
@@ -124,9 +124,9 @@ internal static class InputNode
         return isSelectedOrHovered;
     }
         
-    private static ImRect GetUsableOutputSlotArea(ImRect opRect, GraphCanvas canvas)
+    private static ImRect GetUsableOutputSlotArea(ImRect opRect, GraphView view)
     {
-        var thickness = (int)MathUtils.RemapAndClamp(canvas.Scale.X, 0.5f, 1.2f, (int)(GraphNode.UsableSlotThickness * 0.5f), GraphNode.UsableSlotThickness) *
+        var thickness = (int)MathUtils.RemapAndClamp(view.Scale.X, 0.5f, 1.2f, (int)(GraphNode.UsableSlotThickness * 0.5f), GraphNode.UsableSlotThickness) *
                         T3Ui.UiScaleFactor;
 
         var outputHeight = opRect.GetHeight();

@@ -34,9 +34,9 @@ namespace T3.Editor.Gui.MagGraph.Interaction;
 /// </remarks>
 internal sealed partial class MagItemMovement
 {
-    internal MagItemMovement(GraphUiContext graphUiContext, MagGraphCanvas magGraphCanvas, MagGraphLayout layout, NodeSelection nodeSelection)
+    internal MagItemMovement(GraphUiContext graphUiContext, MagGraphView magGraphView, MagGraphLayout layout, NodeSelection nodeSelection)
     {
-        _canvas = magGraphCanvas;
+        _view = magGraphView;
         _layout = layout;
         _nodeSelection = nodeSelection;
         _context = graphUiContext;
@@ -47,7 +47,7 @@ internal sealed partial class MagItemMovement
     internal void PrepareFrame(GraphUiContext context)
     {
         //PrepareDragInteraction();
-        _snapHandlerX.DrawSnapIndicator(context.Canvas, UiColors.StatusActivated.Fade(0.3f));
+        _snapHandlerX.DrawSnapIndicator(context.View, UiColors.StatusActivated.Fade(0.3f));
     }
 
     internal void PrepareDragInteraction()
@@ -186,25 +186,25 @@ internal sealed partial class MagItemMovement
 
         if (!_hasDragged)
         {
-            _dragStartPosInOpOnCanvas = context.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
+            _dragStartPosInOpOnCanvas = context.View.InverseTransformPositionFloat(ImGui.GetMousePos());
             _hasDragged = true;
         }
 
-        var mousePosOnCanvas = context.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
+        var mousePosOnCanvas = context.View.InverseTransformPositionFloat(ImGui.GetMousePos());
         var requestedDeltaOnCanvas = mousePosOnCanvas - _dragStartPosInOpOnCanvas;
 
         var dragExtend = MagGraphItem.GetItemsBounds(DraggedItems);
-        dragExtend.Expand(SnapThreshold * context.Canvas.Scale.X);
+        dragExtend.Expand(SnapThreshold * context.View.Scale.X);
 
-        if (_canvas.ShowDebug)
+        if (_view.ShowDebug)
         {
-            dl.AddCircle(_canvas.TransformPosition(_dragStartPosInOpOnCanvas), 10, Color.Blue);
+            dl.AddCircle(_view.TransformPosition(_dragStartPosInOpOnCanvas), 10, Color.Blue);
 
-            dl.AddLine(_canvas.TransformPosition(_dragStartPosInOpOnCanvas),
-                       _canvas.TransformPosition(_dragStartPosInOpOnCanvas + requestedDeltaOnCanvas), Color.Blue);
+            dl.AddLine(_view.TransformPosition(_dragStartPosInOpOnCanvas),
+                       _view.TransformPosition(_dragStartPosInOpOnCanvas + requestedDeltaOnCanvas), Color.Blue);
 
-            dl.AddRect(_canvas.TransformPosition(dragExtend.Min),
-                       _canvas.TransformPosition(dragExtend.Max),
+            dl.AddRect(_view.TransformPosition(dragExtend.Min),
+                       _view.TransformPosition(dragExtend.Max),
                        Color.Green.Fade(0.1f));
         }
 
@@ -235,7 +235,7 @@ internal sealed partial class MagItemMovement
 
             foreach (var otherItem in overlappingItems)
             {
-                _snapping.TestItemsForInsertion(otherItem, insertionAnchorItem, ip, _canvas);
+                _snapping.TestItemsForInsertion(otherItem, insertionAnchorItem, ip, _view);
             }
         }
 
@@ -243,16 +243,16 @@ internal sealed partial class MagItemMovement
         {
             foreach (var draggedItem in DraggedItems)
             {
-                _snapping.TestItemsForSnap(otherItem, draggedItem, false, _canvas);
-                _snapping.TestItemsForSnap(draggedItem, otherItem, true, _canvas);
+                _snapping.TestItemsForSnap(otherItem, draggedItem, false, _view);
+                _snapping.TestItemsForSnap(draggedItem, otherItem, true, _view);
             }
         }
 
         // Highlight best distance
-        if (_canvas.ShowDebug && _snapping.BestDistance < 500)
+        if (_view.ShowDebug && _snapping.BestDistance < 500)
         {
-            var p1 = _canvas.TransformPosition(_snapping.OutAnchorPos);
-            var p2 = _canvas.TransformPosition(_snapping.InputAnchorPos);
+            var p1 = _view.TransformPosition(_snapping.OutAnchorPos);
+            var p2 = _view.TransformPosition(_snapping.InputAnchorPos);
             dl.AddLine(p1, p2, UiColors.ForegroundFull.Fade(0.1f), 6);
         }
 
@@ -339,7 +339,7 @@ internal sealed partial class MagItemMovement
         }
 
         if (!_snapHandlerX.TryCheckForSnapping(newDragPosInCanvas.X, out var snappedXValue,
-                                               context.Canvas.Scale.X * snapFactor,
+                                               context.View.Scale.X * snapFactor,
                                                DraggedItems,
                                                _visibleItemsForSnapping
                                               )) 
@@ -375,7 +375,7 @@ internal sealed partial class MagItemMovement
         UpdateConnectionsToDraggedItems(DraggedItems);
         UpdateSnappedConnectionsToDraggedItems();
         
-        var mousePosInCanvas = context.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
+        var mousePosInCanvas = context.View.InverseTransformPositionFloat(ImGui.GetMousePos());
         InitSpliceLinks(DraggedItems, mousePosInCanvas);
         InitPrimaryDraggedOutput();
 
@@ -1480,7 +1480,7 @@ internal sealed partial class MagItemMovement
 
     
 
-    private readonly MagGraphCanvas _canvas;
+    private readonly MagGraphView _view;
     private readonly MagGraphLayout _layout;
     private readonly NodeSelection _nodeSelection;
     private const float SnapTolerance = 0.01f;

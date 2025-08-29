@@ -69,7 +69,7 @@ internal sealed class ValueSnapHandler
         return false;
     }
     
-    public void DrawSnapIndicator(ICanvas canvas, Color colorOverride= default)
+    public void DrawSnapIndicator(ScalableCanvas canvas, Color colorOverride= default)
     {
         if (ImGui.GetTime() - _lastSnapTime > SnapIndicatorDuration)
             return;

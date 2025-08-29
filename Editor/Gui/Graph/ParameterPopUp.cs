@@ -77,8 +77,8 @@ internal static class ParameterPopUp
             return;
         }
 
-        var nodeScreenRect = graphWindow.GraphCanvas.TransformRect(ImRect.RectWithSize(symbolChildUi.PosOnCanvas, symbolChildUi.Size));
-        var horizontalOffset = 25 * graphWindow.GraphCanvas.Scale.X;
+        var nodeScreenRect = graphWindow.GraphView.Canvas.TransformRect(ImRect.RectWithSize(symbolChildUi.PosOnCanvas, symbolChildUi.Size));
+        var horizontalOffset = 25 * graphWindow.GraphView.Canvas.Scale.X;
         var screenPos = new Vector2(nodeScreenRect.Min.X + horizontalOffset, nodeScreenRect.Max.Y + 5);
         var height = _lastRequiredHeight.Clamp(MinHeight, DefaultWindowSize.Y);
         ImGui.SetNextWindowPos(screenPos);

@@ -5,33 +5,11 @@ using ImGuiNET;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Operator;
 using T3.Core.Utils;
-using T3.Editor.Gui.MagGraph.Ui;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.Gui.Windows.TimeLine;
-using T3.Editor.UiModel.ProjectHandling;
 
 namespace T3.Editor.Gui.Interaction;
-
-// hacky interface to extend IGraphCanvas
-internal interface IScalableCanvas : ICanvas
-{
-    public void UpdateCanvas(out ScalableCanvas.InteractionState interactionState, T3Ui.EditingFlags flags = T3Ui.EditingFlags.None);
-    public Vector2 ChildPosFromCanvas(Vector2 posOnCanvas);
-    public void SetTargetView(Vector2 scale, Vector2 scroll);
-    public void SetViewInstant(Vector2 scale, Vector2 scroll);
-    public void SetScaleToMatchPixels();
-    public void SetScopeWithTransition(Vector2 scale, Vector2 scroll, Transition transition);
-    public void SetScopeToCanvasArea(ImRect area, bool flipY = false, IScalableCanvas? parent = null, float paddingX = 0, float paddingY = 0);
-    public void SetVerticalScopeToCanvasArea(ImRect area, bool flipY = false, ScalableCanvas? parent = null);
-    public void ZoomWithMouseWheel(MouseState mouseState, out bool zoomed);
-    public Vector2 TransformPositionFloat(Vector2 posOnCanvas);
-    public void FitAreaOnCanvas(ImRect areaOnCanvas, bool flipY = false);
-    public void SetTargetScope(CanvasScope scope);
-    public CanvasScope GetTargetScope();
-    public bool EnableParentZoom { get; set; }
-    public Vector2 ScaleTarget { get; }
-}
 
 /// <summary>
 /// Implements transformations and interactions for a canvas that can be zoomed and panned.
@@ -43,7 +21,7 @@ internal interface IScalableCanvas : ICanvas
 /// Other canvas should not inherit from this but use composition.
 /// IScalableCanvas should be removed
 /// </todo>
-internal abstract class ScalableCanvas : IScalableCanvas
+public abstract class ScalableCanvas
 {
     protected ScalableCanvas(Vector2? initialScale = null)
     {
@@ -85,7 +63,6 @@ internal abstract class ScalableCanvas : IScalableCanvas
         }
     }
 
-    #region implement ICanvas =================================================================
     /// <summary>
     /// Convert canvas position (e.g. of an Operator) into screen position  
     /// </summary>
@@ -190,7 +167,7 @@ internal abstract class ScalableCanvas : IScalableCanvas
                           InverseTransformPositionFloat(screenRect.Max));
     }
 
-    public virtual void UpdateScaleAndTranslation(Instance compositionOp, ICanvas.Transition transition)
+    public virtual void UpdateScaleAndTranslation(Instance compositionOp, ScalableCanvas.Transition transition)
     {
         // by default do nothing, override in subclasses
     }
@@ -209,11 +186,10 @@ internal abstract class ScalableCanvas : IScalableCanvas
     public Vector2 Scale { get; protected set; } = Vector2.One;
     protected Vector2 ScaleTarget = Vector2.One;
 
-    Vector2 IScalableCanvas.ScaleTarget => ScaleTarget;
+    //Vector2 IScalableCanvas.ScaleTarget => ScaleTarget;
 
     public Vector2 Scroll { get; protected set; } = new(0.0f, 0.0f);
     protected Vector2 ScrollTarget = new(0.0f, 0.0f);
-    #endregion
 
     public CanvasScope GetCurrentScope()
     {
@@ -245,7 +221,7 @@ internal abstract class ScalableCanvas : IScalableCanvas
         ScrollTarget = scroll;
     }
 
-    public void SetTargetViewAreaWithTransition(ImRect viewArea, ICanvas.Transition transition)
+    public void SetTargetViewAreaWithTransition(ImRect viewArea, ScalableCanvas.Transition transition)
     {
         var scope = GetScopeForCanvasArea(viewArea);
         SetScopeWithTransition(scope, transition);
@@ -262,7 +238,7 @@ internal abstract class ScalableCanvas : IScalableCanvas
         ScaleTarget = Vector2.One;
     }
 
-    public void SetScopeToCanvasArea(ImRect area, bool flipY = false, IScalableCanvas? parent = null, float paddingX = 0, float paddingY = 0)
+    public void SetScopeToCanvasArea(ImRect area, bool flipY = false, ScalableCanvas? parent = null, float paddingX = 0, float paddingY = 0)
     {
         var areaSize = area.GetSize();
         if (areaSize.X == 0)
@@ -359,7 +335,10 @@ internal abstract class ScalableCanvas : IScalableCanvas
         return new CanvasScope { Scale = scaleTarget, Scroll = scrollTarget };
     }
 
-    public ImRect GetCanvasAreaForScope(CanvasScope scope)
+    /// <summary>
+    /// Careful! This requires the window's size to be initialized.
+    /// </summary>
+    private ImRect GetCanvasAreaForScope(CanvasScope scope)
     {
         var scale = scope.Scale;
         if (scale.Y < 0) // Handle flipped Y
@@ -406,12 +385,41 @@ internal abstract class ScalableCanvas : IScalableCanvas
         ScrollTarget = scope.Scroll;
     }
 
-    public void SetScopeWithTransition(CanvasScope scope, ICanvas.Transition transition)
+
+    
+    
+    /// <summary>
+    /// To accurately showing the requested area on a canvas we need to have access to the current window's size.
+    /// Frequently this only available after the window has been initialized on the next frame. So we first have to
+    /// re 
+    /// </summary>
+    private void HandleRequestedTransitions()
+    {
+        if (_requestedTransition == null)
+            return;
+        
+    }
+
+    private void SetRequestedTransition(ImRect targetCanvasArea, ScalableCanvas.Transition transition)
+    {
+        if(_requestedTransition != null) 
+            Log.Warning("Requesting transition twice?");
+
+        _requestedTransition = new TransitionDef(targetCanvasArea, transition);
+    }
+    
+    private TransitionDef? _requestedTransition;
+    
+    
+
+    private record TransitionDef(ImRect CanvasArea, ScalableCanvas.Transition Transition);
+
+    public void SetScopeWithTransition(CanvasScope scope, ScalableCanvas.Transition transition)
     {
         SetScopeWithTransition(scope.Scale, scope.Scroll, transition);
     }
 
-    public void SetScopeWithTransition(Vector2 scale, Vector2 scroll, ICanvas.Transition transition)
+    public void SetScopeWithTransition(Vector2 scale, Vector2 scroll, ScalableCanvas.Transition transition)
     {
         if (float.IsInfinity(scale.X) || float.IsNaN(scale.X)
                                       || float.IsInfinity(scale.Y) || float.IsNaN(scale.Y)
@@ -428,15 +436,15 @@ internal abstract class ScalableCanvas : IScalableCanvas
 
         switch (transition)
         {
-            case ICanvas.Transition.JumpIn:
+            case ScalableCanvas.Transition.JumpIn:
                 SetZoomedScope(14);
                 break;
 
-            case ICanvas.Transition.JumpOut:
+            case ScalableCanvas.Transition.JumpOut:
                 SetZoomedScope(0.05f);
                 break;
 
-            case ICanvas.Transition.Instant:
+            case ScalableCanvas.Transition.Instant:
                 Scroll = ScaleTarget;
                 Scroll = ScrollTarget;
                 break;
@@ -716,7 +724,7 @@ internal abstract class ScalableCanvas : IScalableCanvas
 
     public bool EnableParentZoom { get; set; } = true;
 
-    protected abstract IScalableCanvas? Parent { get; }
+    protected abstract ScalableCanvas? Parent { get; }
 
     public readonly record struct InteractionState(bool UserPannedCanvas, bool UserZoomedCanvas, MouseState MouseState);
 
@@ -733,6 +741,13 @@ internal abstract class ScalableCanvas : IScalableCanvas
     //     Log.Debug(str);
     //     return str;
     // }
+    public enum Transition
+    {
+        Instant,
+        JumpIn,
+        JumpOut,
+        Smooth, // Only set target
+    }
 }
 
 public struct CanvasScope
@@ -760,4 +775,4 @@ public struct CanvasScope
     }
 }
 
-internal readonly record struct MouseState(Vector2 Position, Vector2 Delta, float ScrollWheel);
+public readonly record struct MouseState(Vector2 Position, Vector2 Delta, float ScrollWheel);

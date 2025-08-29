@@ -22,7 +22,7 @@ using Texture2D = T3.Core.DataTypes.Texture2D;
 
 namespace T3.Editor.Gui.MagGraph.Ui;
 
-internal sealed partial class MagGraphCanvas
+internal sealed partial class MagGraphView
 {
     private void DrawNode(MagGraphItem item, ImDrawListPtr drawList, GraphUiContext context)
     {
@@ -61,6 +61,9 @@ internal sealed partial class MagGraphCanvas
         var pMinVisible = pMin;
         var pMaxVisible = pMax;
 
+        //return;
+        //  6.2ms ------------
+        
         // Adjust size when snapped
         var snappedBorders = Borders.None;
         {
@@ -113,6 +116,10 @@ internal sealed partial class MagGraphCanvas
             if ((snappedBorders & Borders.Right) == 0) pMaxVisible.X -= (int)(snapPadding * CanvasScale);
         }
 
+        //return;
+        // 6.3ms
+        
+
         // Background and Outline
         var borders = (int)snappedBorders % 16;
         var imDrawFlags = _borderRoundings[borders];
@@ -158,21 +165,27 @@ internal sealed partial class MagGraphCanvas
         }
 
 
-        
+        // 7.5ms -------------------------
 
-        // Custom Ui
         OpUi.CustomUiResult customUiResult = OpUi.CustomUiResult.None;
-        if (item.Variant == MagGraphItem.Variants.Operator)
+        if (Scale.X > 0.3f)
         {
-            var additionalRightPadding = item.Instance.Outputs.Count> 1 ? 6 * CanvasScale:0; 
-            customUiResult = item.Instance.DrawCustomUi(drawList, 
-                                                        new ImRect(pMinVisible + Vector2.One, 
-                                                                   pMaxVisible - Vector2.One - new Vector2(additionalRightPadding,0)), this, ref item.OpUiBinding);
-            if ((customUiResult & OpUi.CustomUiResult.IsActive) != 0)
+            // Custom Ui
+            if (item.Variant == MagGraphItem.Variants.Operator)
             {
-                context.ItemWithActiveCustomUi = item;
+                var additionalRightPadding = item.Instance.Outputs.Count> 1 ? 6 * CanvasScale:0; 
+                customUiResult = item.Instance.DrawCustomUi(drawList, 
+                                                            new ImRect(pMinVisible + Vector2.One, 
+                                                                       pMaxVisible - Vector2.One - new Vector2(additionalRightPadding,0)), this, ref item.OpUiBinding);
+                if ((customUiResult & OpUi.CustomUiResult.IsActive) != 0)
+                {
+                    context.ItemWithActiveCustomUi = item;
+                }
             }
         }
+
+        // 6.6 ms
+        //return;
 
         // ImGUI element for selection
         ImGui.SetCursorScreenPos(pMin);
@@ -207,6 +220,9 @@ internal sealed partial class MagGraphCanvas
         //     item.Select(_nodeSelection);
         // }
 
+        // 8.5 -> 7.3ms ------------------
+        //return;
+        
         if (customUiResult == OpUi.CustomUiResult.None && CanvasScale > 0.2f)
         {
             // Draw Texture thumbnail
@@ -358,6 +374,9 @@ internal sealed partial class MagGraphCanvas
                 }
             }
         }
+
+        // 8.5 -> 7.9ms
+        //return;
 
         // Missing primary input indicator
         if (item.InputLines.Length > 0)

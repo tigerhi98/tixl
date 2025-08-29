@@ -19,8 +19,10 @@ namespace T3.Editor.Gui.MagGraph.Ui;
 /**
  * Draws and handles interaction with graph.
  */
-internal sealed partial class MagGraphCanvas : ScalableCanvas, IGraphCanvas
+internal sealed partial class MagGraphView : ScalableCanvas, IGraphView
 {
+    public ScalableCanvas Canvas => this;
+    
     public static ProjectView CreateWithComponents(OpenedProject openedProject)
     {
         ProjectView.CreateIndependentComponents(openedProject,
@@ -36,11 +38,11 @@ internal sealed partial class MagGraphCanvas : ScalableCanvas, IGraphCanvas
             return projectView; // TODO: handle this properly
         }
 
-        var canvas = new MagGraphCanvas(projectView);
+        var canvas = new MagGraphView(projectView);
         projectView.OnCompositionChanged += canvas.CompositionChangedHandler;
         projectView.OnCompositionContentChanged += canvas.CompositionContentChangedHandler;
 
-        projectView.GraphCanvas = canvas;
+        projectView.GraphView = canvas;
         return projectView;
     }
 
@@ -61,9 +63,9 @@ internal sealed partial class MagGraphCanvas : ScalableCanvas, IGraphCanvas
     private readonly ProjectView _projectView;
 
     #region implement IGraph canvas
-    bool IGraphCanvas.Destroyed { get => _destroyed; set => _destroyed = value; }
+    bool IGraphView.Destroyed { get => _destroyed; set => _destroyed = value; }
 
-    void IGraphCanvas.FocusViewToSelection()
+    void IGraphView.FocusViewToSelection()
     {
         if (_projectView.CompositionInstance == null)
             return;
@@ -72,21 +74,21 @@ internal sealed partial class MagGraphCanvas : ScalableCanvas, IGraphCanvas
         FitAreaOnCanvas(selectionBounds);
     }
 
-    void IGraphCanvas.OpenAndFocusInstance(IReadOnlyList<Guid> path)
+    void IGraphView.OpenAndFocusInstance(IReadOnlyList<Guid> path)
     {
         if (path.Count == 1)
         {
-            _projectView.TrySetCompositionOp(path, ICanvas.Transition.JumpOut, path[0]);
+            _projectView.TrySetCompositionOp(path, ScalableCanvas.Transition.JumpOut, path[0]);
             return;
         }
 
         var compositionPath = path.Take(path.Count - 1).ToList();
-        _projectView.TrySetCompositionOp(compositionPath, ICanvas.Transition.JumpIn, path[^1]);
+        _projectView.TrySetCompositionOp(compositionPath, ScalableCanvas.Transition.JumpIn, path[^1]);
     }
 
     private Instance _previousInstance;
 
-    void IGraphCanvas.BeginDraw(bool backgroundActive, bool bgHasInteractionFocus)
+    void IGraphView.BeginDraw(bool backgroundActive, bool bgHasInteractionFocus)
     {
         //TODO: This should probably be handled by CompositionChangedHandler
         if (_projectView.CompositionInstance != null && _projectView.CompositionInstance != _previousInstance)
@@ -103,16 +105,16 @@ internal sealed partial class MagGraphCanvas : ScalableCanvas, IGraphCanvas
 
     public bool HasActiveInteraction => _context.StateMachine.CurrentState != GraphStates.Default;
 
-    ProjectView IGraphCanvas.ProjectView { set => throw new NotImplementedException(); }
+    ProjectView IGraphView.ProjectView { set => throw new NotImplementedException(); }
 
-    void IGraphCanvas.Close()
+    void IGraphView.Close()
     {
         _destroyed = true;
         _projectView.OnCompositionChanged -= CompositionChangedHandler;
         _projectView.OnCompositionContentChanged -= CompositionContentChangedHandler;
     }
 
-    void IGraphCanvas.CreatePlaceHolderConnectedToInput(SymbolUi.Child symbolChildUi, Symbol.InputDefinition inputInputDefinition)
+    void IGraphView.CreatePlaceHolderConnectedToInput(SymbolUi.Child symbolChildUi, Symbol.InputDefinition inputInputDefinition)
     {
         if (_context.StateMachine.CurrentState != GraphStates.Default)
         {
@@ -126,7 +128,7 @@ internal sealed partial class MagGraphCanvas : ScalableCanvas, IGraphCanvas
         }
     }
 
-    void IGraphCanvas.ExtractAsConnectedOperator<T>(InputSlot<T> inputSlot, SymbolUi.Child symbolChildUi, Symbol.Child.Input input)
+    void IGraphView.ExtractAsConnectedOperator<T>(InputSlot<T> inputSlot, SymbolUi.Child symbolChildUi, Symbol.Child.Input input)
     {
         if (!_context.Layout.Items.TryGetValue(symbolChildUi.Id, out var sourceItem))
         {
@@ -156,13 +158,13 @@ internal sealed partial class MagGraphCanvas : ScalableCanvas, IGraphCanvas
         _context.CompleteMacroCommand();
     }
 
-    void IGraphCanvas.StartDraggingFromInputSlot(SymbolUi.Child symbolChildUi, Symbol.InputDefinition inputInputDefinition)
+    void IGraphView.StartDraggingFromInputSlot(SymbolUi.Child symbolChildUi, Symbol.InputDefinition inputInputDefinition)
     {
-        Log.Debug($"{nameof(IGraphCanvas.StartDraggingFromInputSlot)}() not implemented yet");
+        Log.Debug($"{nameof(IGraphView.StartDraggingFromInputSlot)}() not implemented yet");
     }
     #endregion
 
-    private MagGraphCanvas(ProjectView projectView)
+    private MagGraphView(ProjectView projectView)
     {
         _projectView = projectView;
         EnableParentZoom = false;

@@ -32,9 +32,9 @@ using T3.SystemUi;
 namespace T3.Editor.Gui.Graph.Legacy;
 
 /// <summary>
-/// A <see cref="ICanvas"/> that displays the graph of an Operator.
+/// A <see cref="IGraphView"/> that displays the graph of an Operator.
 /// </summary>
-internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
+internal sealed class GraphView : ScalableCanvas, IGraphView
 {
     public SymbolBrowser SymbolBrowser { get; set; }
 
@@ -43,6 +43,8 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
     private readonly NodeNavigation _nodeNavigation;
     private readonly NodeGraphLayouting _nodeGraphLayouting;
     private Legacy.Graph _graph;
+
+    public ScalableCanvas Canvas => this;
 
     private ProjectView _projectView;
 
@@ -57,7 +59,7 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
 
     public void Close()
     {
-        ConnectionMaker.RemoveWindow(this);
+        ConnectionMaker.RemoveGraphView(this);
         _nodeNavigation.FocusInstanceRequested -= OpenAndFocusInstance;
     }
 
@@ -74,7 +76,7 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
         ConnectionMaker.InitSymbolBrowserAtPosition(this, SymbolBrowser, freePosition);
     }
     
-    void IGraphCanvas.ExtractAsConnectedOperator<T>(InputSlot<T> inputSlot, SymbolUi.Child symbolChildUi, Symbol.Child.Input input)
+    void IGraphView.ExtractAsConnectedOperator<T>(InputSlot<T> inputSlot, SymbolUi.Child symbolChildUi, Symbol.Child.Input input)
     {
         if (_projectView?.InstView == null)
             return;
@@ -99,7 +101,7 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
     {
         ProjectView.CreateIndependentComponents(openedProject, out var navigationHistory, out var nodeSelection, out var graphImageBackground);
         var projectView = new ProjectView(openedProject, navigationHistory, nodeSelection, graphImageBackground);
-        var canvas = new GraphCanvas(nodeSelection,
+        var graphView = new GraphView(nodeSelection,
                                      openedProject.Structure,
                                      navigationHistory,
                                      projectView.NodeNavigation,
@@ -108,13 +110,13 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
             ProjectView = projectView
         };
 
-        projectView.GraphCanvas = canvas;
-        canvas.SymbolBrowser = new SymbolBrowser(projectView, canvas);
-        ConnectionMaker.AddWindow(canvas);
+        projectView.GraphView = graphView;
+        graphView.SymbolBrowser = new SymbolBrowser(projectView, graphView);
+        ConnectionMaker.GraphGraphView(graphView);
         return projectView;
     }
 
-    private GraphCanvas(NodeSelection nodeSelection, Structure structure, NavigationHistory navigationHistory, NodeNavigation nodeNavigation,
+    private GraphView(NodeSelection nodeSelection, Structure structure, NavigationHistory navigationHistory, NodeNavigation nodeNavigation,
                         Func<Instance> getComposition)
     {
         _nodeNavigation = nodeNavigation;
@@ -185,31 +187,31 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
             var compositionUi = compositionOp.GetSymbolUi();
             //compositionUi.FlagAsModified();
 
-            if (KeyActionHandling.Triggered(UserActions.FocusSelection))
+            if (UserActions.FocusSelection.Triggered())
                 FocusViewToSelection();
 
-            if (!T3Ui.IsCurrentlySaving && KeyActionHandling.Triggered(UserActions.Duplicate))
+            if (!T3Ui.IsCurrentlySaving && UserActions.Duplicate.Triggered())
             {
                 NodeActions.CopySelectedNodesToClipboard(_nodeSelection, compositionOp);
                 NodeActions.PasteClipboard(_nodeSelection, this, compositionOp);
             }
 
-            if (!T3Ui.IsCurrentlySaving && KeyActionHandling.Triggered(UserActions.DeleteSelection))
+            if (!T3Ui.IsCurrentlySaving && UserActions.DeleteSelection.Triggered())
             {
                 NodeActions.DeleteSelectedElements(_nodeSelection, compositionUi);
             }
 
-            if (KeyActionHandling.Triggered(UserActions.ToggleDisabled))
+            if (UserActions.ToggleDisabled.Triggered())
             {
                 NodeActions.ToggleDisabledForSelectedElements(_nodeSelection);
             }
 
-            if (KeyActionHandling.Triggered(UserActions.ToggleBypassed))
+            if (UserActions.ToggleBypassed.Triggered())
             {
                 NodeActions.ToggleBypassedForSelectedElements(_nodeSelection);
             }
 
-            if (KeyActionHandling.Triggered(UserActions.PinToOutputWindow))
+            if (UserActions.PinToOutputWindow.Triggered())
             {
                 if (UserSettings.Config.FocusMode)
                 {
@@ -225,7 +227,7 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
                 }
             }
 
-            if (KeyActionHandling.Triggered(UserActions.DisplayImageAsBackground))
+            if (UserActions.DisplayImageAsBackground.Triggered())
             {
                 var selectedImage = _nodeSelection.GetFirstSelectedInstance();
                 if (selectedImage != null && ProjectView.Focused != null)
@@ -235,22 +237,22 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
                 }
             }
 
-            if (KeyActionHandling.Triggered(UserActions.CopyToClipboard))
+            if (UserActions.CopyToClipboard.Triggered())
             {
                 NodeActions.CopySelectedNodesToClipboard(_nodeSelection, compositionOp);
             }
 
-            if (!T3Ui.IsCurrentlySaving && KeyActionHandling.Triggered(UserActions.PasteFromClipboard))
+            if (!T3Ui.IsCurrentlySaving && UserActions.PasteFromClipboard.Triggered())
             {
                 NodeActions.PasteClipboard(_nodeSelection, this, compositionOp);
             }
 
-            if (KeyActionHandling.Triggered(UserActions.LayoutSelection))
+            if (UserActions.LayoutSelection.Triggered())
             {
                 _nodeGraphLayouting.ArrangeOps(compositionOp);
             }
 
-            if (!T3Ui.IsCurrentlySaving && KeyActionHandling.Triggered(UserActions.AddAnnotation))
+            if (!T3Ui.IsCurrentlySaving && UserActions.AddAnnotation.Triggered())
             {
                 var newAnnotation = NodeActions.AddAnnotation(_nodeSelection, this, compositionOp);
                 _graph.RenameAnnotation(newAnnotation);
@@ -259,12 +261,12 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
             IReadOnlyList<Guid> navigationPath = null;
 
             // Navigation
-            if (KeyActionHandling.Triggered(UserActions.NavigateBackwards))
+            if (UserActions.NavigateBackwards.Triggered())
             {
                 navigationPath = _navigationHistory.NavigateBackwards();
             }
 
-            if (KeyActionHandling.Triggered(UserActions.NavigateForward))
+            if (UserActions.NavigateForward.Triggered())
             {
                 navigationPath = _navigationHistory.NavigateForward();
             }
@@ -272,32 +274,32 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
             if (navigationPath != null)
                 _projectView.TrySetCompositionOp(navigationPath);
 
-            if (KeyActionHandling.Triggered(UserActions.SelectToAbove))
+            if (UserActions.SelectToAbove.Triggered())
             {
                 _nodeNavigation.SelectAbove();
             }
 
-            if (KeyActionHandling.Triggered(UserActions.SelectToRight))
+            if (UserActions.SelectToRight.Triggered())
             {
                 _nodeNavigation.SelectRight();
             }
 
-            if (KeyActionHandling.Triggered(UserActions.SelectToBelow))
+            if (UserActions.SelectToBelow.Triggered())
             {
                 _nodeNavigation.SelectBelow();
             }
 
-            if (KeyActionHandling.Triggered(UserActions.AddComment))
+            if (UserActions.AddComment.Triggered())
             {
                 EditCommentDialog.ShowNextFrame();
             }
 
-            if (KeyActionHandling.Triggered(UserActions.SelectToLeft))
+            if (UserActions.SelectToLeft.Triggered())
             {
                 _nodeNavigation.SelectLeft();
             }
 
-            if (KeyActionHandling.Triggered(UserActions.DisplayImageAsBackground))
+            if (UserActions.DisplayImageAsBackground.Triggered())
             {
                 var selectedImage = _nodeSelection.GetFirstSelectedInstance();
                 if (selectedImage != null)
@@ -377,7 +379,7 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
 
         var isOnBackground = ImGui.IsWindowFocused() && !ImGui.IsAnyItemActive();
         var shouldHandleFenceSelection = isSomething
-                                         || isOnBackground && (ImGui.IsMouseDoubleClicked(0) || KeyActionHandling.Triggered(UserActions.CloseOperator));
+                                         || isOnBackground && (ImGui.IsMouseDoubleClicked(0) || UserActions.CloseOperator.Triggered());
 
         if (shouldHandleFenceSelection)
         {
@@ -977,18 +979,18 @@ internal sealed class GraphCanvas : ScalableCanvas, IGraphCanvas
     #endregion
 
     #region public API
-    bool IGraphCanvas.Destroyed { get; set; }
+    bool IGraphView.Destroyed { get; set; }
 
     public void OpenAndFocusInstance(IReadOnlyList<Guid> path)
     {
         if (path.Count == 1)
         {
-            _projectView.TrySetCompositionOp(path, ICanvas.Transition.JumpOut, path[0]);
+            _projectView.TrySetCompositionOp(path, ScalableCanvas.Transition.JumpOut, path[0]);
             return;
         }
 
         var compositionPath = path.Take(path.Count - 1).ToList();
-        _projectView.TrySetCompositionOp(compositionPath, ICanvas.Transition.JumpIn, path[^1]);
+        _projectView.TrySetCompositionOp(compositionPath, ScalableCanvas.Transition.JumpIn, path[^1]);
     }
     #endregion
 

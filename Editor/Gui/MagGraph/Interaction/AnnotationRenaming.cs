@@ -29,7 +29,7 @@ internal static class AnnotationRenaming
         }
 
         var annotation = magAnnotation.Annotation;
-        var screenArea = context.Canvas.TransformRect(ImRect.RectWithSize(annotation.PosOnCanvas, annotation.Size));
+        var screenArea = context.View.TransformRect(ImRect.RectWithSize(annotation.PosOnCanvas, annotation.Size));
 
         var justOpened = _focusedAnnotationId != annotationId;
         if (justOpened)

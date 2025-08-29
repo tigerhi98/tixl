@@ -44,7 +44,7 @@ namespace T3.Editor.Gui.MagGraph.States;
 /// - <see cref="StateMachine"/> the state machine is a very bare-bones (no hierarchy or events) implementation
 /// of a state machine that handles activation of <see cref="State"/>s. There can only be one state active.
 /// Most of the update interaction is done in State.Update() overrides.
-/// - <see cref="MagGraphCanvas"/> is a scalable canvas that handles drawing. The Layout sometimes resets
+/// - <see cref="MagGraphView"/> is a scalable canvas that handles drawing. The Layout sometimes resets
 /// the current state.
 /// - <see cref="PlaceholderCreation"/> combines drawing and logic that handles creating new operators (it's the
 /// "new" SymbolBrowser).
@@ -64,11 +64,11 @@ namespace T3.Editor.Gui.MagGraph.States;
 ///</remarks>
 internal sealed class GraphUiContext
 {
-    internal GraphUiContext(ProjectView projectView,  MagGraphCanvas canvas)
+    internal GraphUiContext(ProjectView projectView,  MagGraphView view)
     {
         ProjectView = projectView;
-        Canvas = canvas;
-        ItemMovement = new MagItemMovement(this, canvas, Layout, projectView.NodeSelection);
+        View = view;
+        ItemMovement = new MagItemMovement(this, view, Layout, projectView.NodeSelection);
         Placeholder = new PlaceholderCreation();
         //EditCommentDialog = new EditCommentDialog();
         StateMachine = new StateMachine(this);// needs to be initialized last
@@ -83,7 +83,7 @@ internal sealed class GraphUiContext
 
     internal bool PreventInteraction => ProjectView.GraphImageBackground.HasInteractionFocus;
     
-    internal readonly MagGraphCanvas Canvas;
+    internal readonly MagGraphView View;
     internal readonly MagItemMovement ItemMovement;
     internal readonly PlaceholderCreation Placeholder;
     internal readonly ConnectionHovering ConnectionHovering = new();

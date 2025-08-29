@@ -49,7 +49,7 @@ internal sealed class UiElements
         ImGui.PopStyleColor(4);
     }
 
-    public static void DrawMiniMap(ProjectView.InstanceView compositionOp, IGraphCanvas canvas)
+    public static void DrawMiniMap(ProjectView.InstanceView compositionOp, ScalableCanvas canvas)
     {
         var widgetSize = new Vector2(200, 200);
         var localPos = new Vector2(ImGui.GetWindowWidth() - widgetSize.X, 0);

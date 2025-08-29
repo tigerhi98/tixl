@@ -215,7 +215,7 @@ internal sealed class ViewSelectionPinning
             return instance != null;
         }
 
-        if (!_pinnedProjectView!.GraphCanvas.Destroyed)
+        if (!_pinnedProjectView!.GraphView.Destroyed)
         {
             instance = _pinnedProjectView.Structure.GetInstanceFromIdPath(_pinnedInstancePath);
             components = _pinnedProjectView;

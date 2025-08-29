@@ -219,13 +219,13 @@ internal static class GraphContextMenu
 
         if (ImGui.MenuItem("Paste", UserActions.PasteFromClipboard.ListShortcuts()))
         {
-            NodeActions.PasteClipboard(nodeSelection, context.Canvas, context.CompositionInstance);
+            NodeActions.PasteClipboard(nodeSelection, context.View, context.CompositionInstance);
             context.Layout.FlagStructureAsChanged();
         }
         
         if (ImGui.MenuItem("Paste Values", UserActions.PasteValues.ListShortcuts()))
         {
-            NodeActions.PasteValues(nodeSelection, context.Canvas, context.CompositionInstance);
+            NodeActions.PasteValues(nodeSelection, context.View, context.CompositionInstance);
             context.Layout.FlagStructureAsChanged();
         }
 
@@ -249,7 +249,7 @@ internal static class GraphContextMenu
                            enabled: selectedChildUis.Count > 0 && !isSaving))
         {
             NodeActions.CopySelectedNodesToClipboard(nodeSelection, context.CompositionInstance);
-            NodeActions.PasteClipboard(nodeSelection, context.Canvas, context.CompositionInstance);
+            NodeActions.PasteClipboard(nodeSelection, context.View, context.CompositionInstance);
             context.Layout.FlagStructureAsChanged();
         }
 
@@ -263,7 +263,7 @@ internal static class GraphContextMenu
         //     //                              symbol => { ChangeSymbol.ChangeOperatorSymbol(nodeSelection, context.CompositionOp, selectedChildUis, symbol); });
         // }
 
-        if (projectView.GraphCanvas is MagGraphCanvas canvas)
+        if (projectView.GraphView is MagGraphView canvas)
         {
             if (ImGui.BeginMenu("Symbol definition...", !isSaving))
             {
@@ -339,7 +339,7 @@ internal static class GraphContextMenu
                                selected: false,
                                enabled: true))
             {
-                var newAnnotation = NodeActions.AddAnnotation(nodeSelection, context.Canvas, context.CompositionInstance);
+                var newAnnotation = NodeActions.AddAnnotation(nodeSelection, context.View, context.CompositionInstance);
                 context.ActiveAnnotationId = newAnnotation.Id;
                 context.StateMachine.SetState(GraphStates.RenameAnnotation, context);
             }

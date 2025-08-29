@@ -178,7 +178,7 @@ internal static class InputPicking
             return;
         }
         
-        var screenPos = context.Canvas.TransformPosition(context.PeekAnchorInCanvas);
+        var screenPos = context.View.TransformPosition(context.PeekAnchorInCanvas);
         
         ImGui.SetNextWindowPos(screenPos);
 

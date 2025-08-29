@@ -38,23 +38,23 @@ namespace T3.Editor.Gui.Graph.Legacy;
 internal sealed partial class Graph
 {
     private readonly ProjectView _components;
-    private readonly GraphCanvas _canvas;
+    private readonly GraphView _view;
     private readonly Func<SymbolBrowser> _getSymbolBrowser;
-    public Graph(ProjectView components, GraphCanvas canvas, Func<SymbolBrowser> getSymbolBrowser)
+    public Graph(ProjectView components, GraphView view, Func<SymbolBrowser> getSymbolBrowser)
     {
         _components = components;
-        _canvas = canvas;
+        _view = view;
         _getSymbolBrowser = getSymbolBrowser;
-        _connectionSorter = new Graph.ConnectionSorter(this, canvas);
+        _connectionSorter = new Graph.ConnectionSorter(this, view);
     }
         
     public void DrawGraph(ImDrawListPtr drawList, bool preventInteraction, Instance composition, float graphOpacity)
     {
-        var canvas = _components.GraphCanvas;
+        var canvas = _components.GraphView.Canvas;
         var needsReinit = false;
         var graphSymbol = composition.Symbol;
             
-        var tempConnections = ConnectionMaker.GetTempConnectionsFor(_components.GraphCanvas);
+        var tempConnections = ConnectionMaker.GetTempConnectionsFor(_components.GraphView);
 
         // _symbolUi = SymbolUiRegistry.Entries[graphSymbol.Id];
         // _childUis = _symbolUi.ChildUis;
@@ -138,7 +138,7 @@ internal sealed partial class Graph
             // todo - remove nodes that are not in the graph anymore?
             if (!_graphNodes.TryGetValue(childUi, out var node))
             {
-                node = new GraphNode(_components, _canvas, _connectionSorter);
+                node = new GraphNode(_components, _view, _connectionSorter);
                 _graphNodes[childUi] = node;
             }
 
@@ -150,7 +150,7 @@ internal sealed partial class Graph
         {
             var inputDef = graphSymbol.InputDefinitions[index];
             var inputUi = compositionUi.InputUis[inputDef.Id];
-            var isSelectedOrHovered = InputNode.Draw(_components, _canvas, drawList, inputDef, inputUi, index);
+            var isSelectedOrHovered = InputNode.Draw(_components, _view, drawList, inputDef, inputUi, index);
 
             var sourcePos = new Vector2(
                                         InputNode._lastScreenRect.Max.X + GraphNode.UsableSlotThickness,
@@ -168,7 +168,7 @@ internal sealed partial class Graph
         foreach (var (outputId, outputNode) in compositionUi.OutputUis)
         {
             var outputDef = graphSymbol.OutputDefinitions.Find(od => od.Id == outputId);
-            OutputNode.Draw(_canvas, _components, drawList, outputDef, outputNode);
+            OutputNode.Draw(_view, _components, drawList, outputDef, outputNode);
 
             var targetPos = new Vector2(OutputNode.LastScreenRect.Min.X ,
                                         OutputNode.LastScreenRect.GetCenter().Y);
@@ -198,7 +198,7 @@ internal sealed partial class Graph
                 _annotationElements[annotation] = annotationElement;
             }
                 
-            annotationElement.Draw(drawList, _canvas);
+            annotationElement.Draw(drawList, _view);
         }
 
         drawList.ChannelsMerge();

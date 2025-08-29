@@ -6,16 +6,16 @@ namespace T3.Editor.Gui.Interaction;
 
 internal sealed class ScalableGraphSubCanvas : ScalableCanvas
 {
-    public ScalableGraphSubCanvas(IScalableCanvas parent)
+    public ScalableGraphSubCanvas(ScalableCanvas parent)
     {
         Parent = parent;
     }
 
-    protected override IScalableCanvas? Parent { get; }
+    protected override ScalableCanvas? Parent { get; }
 }
 
 internal sealed class CurrentGraphSubCanvas : ScalableCanvas
 {
     public CurrentGraphSubCanvas(Vector2? initialScale = null) : base(initialScale) { }
-    protected override IScalableCanvas? Parent => null; //ProjectView.Focused?.GraphCanvas;
+    protected override ScalableCanvas? Parent => null; //ProjectView.Focused?.GraphCanvas;
 }

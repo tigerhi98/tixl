@@ -1,5 +1,6 @@
 ﻿using System.Globalization;
 using ImGuiNET;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Snapping;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
@@ -11,12 +12,12 @@ namespace T3.Editor.Gui.Windows.TimeLine;
 /// </summary>
 public class HorizontalScaleLines : IValueSnapAttractor
 {
-    public HorizontalScaleLines(ICanvas canvas)
+    public HorizontalScaleLines(ScalableCanvas canvas)
     {
         _canvas = canvas;
     }
 
-    private ICanvas _canvas;
+    private readonly ScalableCanvas _canvas;
 
 
     public void Draw()

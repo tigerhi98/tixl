@@ -57,7 +57,7 @@ internal sealed class MagGraphLayout
 
         // TODO: This only needs to be done, on structural changes or when items have been moved
         UpdateConnectionLayout();
-        ComputeVerticalStackBoundaries(context.Canvas);
+        ComputeVerticalStackBoundaries(context.View);
     }
 
     public void FlagStructureAsChanged()

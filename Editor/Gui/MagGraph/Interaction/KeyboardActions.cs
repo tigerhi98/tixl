@@ -24,13 +24,13 @@ internal static class KeyboardActions
         {
             // TODO: Implement
             Log.Debug("Not implemented yet");
-            context.Canvas.FocusViewToSelection(context);
+            context.View.FocusViewToSelection(context);
         }
 
         if (!T3Ui.IsCurrentlySaving && UserActions.Duplicate.Triggered())
         {
             NodeActions.CopySelectedNodesToClipboard(context.Selector, compositionOp);
-            NodeActions.PasteClipboard(context.Selector, context.Canvas, compositionOp);
+            NodeActions.PasteClipboard(context.Selector, context.View, compositionOp);
             context.Layout.FlagStructureAsChanged();
             
             result |= ChangeSymbol.SymbolModificationResults.StructureChanged;
@@ -95,13 +95,13 @@ internal static class KeyboardActions
 
         if (!T3Ui.IsCurrentlySaving && UserActions.PasteFromClipboard.Triggered())
         {
-            NodeActions.PasteClipboard(context.Selector, context.Canvas, compositionOp);
+            NodeActions.PasteClipboard(context.Selector, context.View, compositionOp);
             context.Layout.FlagStructureAsChanged();
         }
         
         if (!T3Ui.IsCurrentlySaving && UserActions.PasteValues.Triggered())
         {
-            NodeActions.PasteValues(context.Selector, context.Canvas, context.CompositionInstance);
+            NodeActions.PasteValues(context.Selector, context.View, context.CompositionInstance);
             context.Layout.FlagStructureAsChanged();
         }
 
@@ -112,7 +112,7 @@ internal static class KeyboardActions
 
         if (!T3Ui.IsCurrentlySaving && UserActions.AddAnnotation.Triggered())
         {
-            var newAnnotation = NodeActions.AddAnnotation(context.Selector, context.Canvas, compositionOp);
+            var newAnnotation = NodeActions.AddAnnotation(context.Selector, context.View, compositionOp);
             context.ActiveAnnotationId = newAnnotation.Id;
             context.StateMachine.SetState(GraphStates.RenameAnnotation, context);
             context.Layout.FlagStructureAsChanged();

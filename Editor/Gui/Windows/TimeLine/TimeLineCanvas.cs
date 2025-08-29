@@ -143,9 +143,9 @@ internal sealed class TimeLineCanvas : CurveEditCanvas
     }
 
     #region handle nested timelines ----------------------------------
-    public override void UpdateScaleAndTranslation(Instance compositionOp, ICanvas.Transition transition)
+    public override void UpdateScaleAndTranslation(Instance compositionOp, ScalableCanvas.Transition transition)
     {
-        if (transition == ICanvas.Transition.Instant)
+        if (transition == ScalableCanvas.Transition.Instant)
             return;
 
         // remember the old scroll state
@@ -157,7 +157,7 @@ internal sealed class TimeLineCanvas : CurveEditCanvas
 
         // determine scaling factor
         TimeRange sourceRange, targetRange;
-        if (transition == ICanvas.Transition.JumpIn)
+        if (transition == ScalableCanvas.Transition.JumpIn)
         {
             sourceRange = clip.TimeRange;
             targetRange = clip.SourceRange;

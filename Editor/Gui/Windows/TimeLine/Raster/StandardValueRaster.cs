@@ -1,5 +1,6 @@
 using System.Globalization;
 using T3.Core.Animation;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Snapping;
 using T3.Editor.Gui.UiHelpers;
 
@@ -26,7 +27,7 @@ public sealed class StandardValueRaster : AbstractTimeRaster
     /// </summary>
     public bool EnableSnapping = false; 
 
-    public void Draw(ICanvas canvas)
+    public void Draw(ScalableCanvas canvas)
     {
         var unitInSecs = 1;
 

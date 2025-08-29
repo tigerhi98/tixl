@@ -1,16 +1,14 @@
 using ImGuiNET;
 using T3.Core.Utils;
 using T3.Editor.Gui.Graph.Legacy.Interaction;
-using T3.Editor.Gui.MagGraph.Interaction;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel;
 using T3.Editor.UiModel.Commands;
-using T3.Editor.UiModel.Commands.Annotations;
 using T3.Editor.UiModel.Commands.Graph;
 using T3.Editor.UiModel.ProjectHandling;
 using T3.Editor.UiModel.Selection;
-using T3.SystemUi;
 
 namespace T3.Editor.Gui.Graph.Legacy;
 
@@ -33,7 +31,7 @@ internal sealed class AnnotationElement
 
     private Guid _requestedRenameId = Guid.Empty;
 
-    internal void Draw(ImDrawListPtr drawList, GraphCanvas canvas)
+    internal void Draw(ImDrawListPtr drawList, ScalableCanvas canvas)
     {
         var annotation = _annotation;
         var screenArea = canvas.TransformRect(new ImRect(annotation.PosOnCanvas, annotation.PosOnCanvas + annotation.Size));
@@ -238,7 +236,7 @@ internal sealed class AnnotationElement
             return;
         }
             
-        var canvas = _components.GraphCanvas;
+        var canvas = _components.GraphView.Canvas;
 
         if (!_isDragging)
         {

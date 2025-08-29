@@ -17,7 +17,7 @@ namespace T3.Editor.Gui.Graph.Legacy.Interaction;
 /// <summary>
 /// Handles selection and dragging (with snapping) of node canvas elements
 /// </summary>
-internal sealed class SelectableNodeMovement(IGraphCanvas graphCanvas, Func<Instance> getCompositionOp, Func<IEnumerable<ISelectableCanvasObject>> getSelectableChildren, NodeSelection selection)
+internal sealed class SelectableNodeMovement(IGraphView graphView, Func<Instance> getCompositionOp, Func<IEnumerable<ISelectableCanvasObject>> getSelectableChildren, NodeSelection selection)
 {
     /// <summary>
     /// Reset to avoid accidental dragging of previous elements 
@@ -34,7 +34,7 @@ internal sealed class SelectableNodeMovement(IGraphCanvas graphCanvas, Func<Inst
     /// </summary>
     public static void CompleteFrame()
     {
-        if (ProjectView.Focused?.GraphCanvas is not GraphCanvas canvas)
+        if (ProjectView.Focused?.GraphView is not GraphView canvas)
             return;
         
         canvas.SelectableNodeMovement.DoCompleteFrame();
@@ -111,7 +111,7 @@ internal sealed class SelectableNodeMovement(IGraphCanvas graphCanvas, Func<Inst
                 if (singleDraggedNode != null && ConnectionSplitHelper.BestMatchLastFrame != null && singleDraggedNode is SymbolUi.Child childUi)
                 {
                     var instanceForUiChild = composition.Children[childUi.Id];
-                    ConnectionMaker.SplitConnectionWithDraggedNode(graphCanvas, 
+                    ConnectionMaker.SplitConnectionWithDraggedNode(graphView, 
                                                                    childUi, 
                                                                    ConnectionSplitHelper.BestMatchLastFrame.Connection, 
                                                                    instanceForUiChild,
@@ -214,12 +214,12 @@ internal sealed class SelectableNodeMovement(IGraphCanvas graphCanvas, Func<Inst
 
         if (!_isDragging)
         {
-            _dragStartPosInOpOnCanvas =  graphCanvas.InverseTransformPositionFloat(ImGui.GetMousePos()) - draggedNode.PosOnCanvas;
+            _dragStartPosInOpOnCanvas =  graphView.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos()) - draggedNode.PosOnCanvas;
             _isDragging = true;
         }
 
 
-        var mousePosOnCanvas = graphCanvas.InverseTransformPositionFloat(ImGui.GetMousePos());
+        var mousePosOnCanvas = graphView.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
         var newDragPosInCanvas = mousePosOnCanvas - _dragStartPosInOpOnCanvas;
 
         var bestDistanceInCanvas = float.PositiveInfinity;
@@ -257,7 +257,7 @@ internal sealed class SelectableNodeMovement(IGraphCanvas graphCanvas, Func<Inst
             }
         }
 
-        var snapDistanceInCanvas = graphCanvas.InverseTransformDirection(new Vector2(20, 0)).X;
+        var snapDistanceInCanvas = graphView.Canvas.InverseTransformDirection(new Vector2(20, 0)).X;
         var isSnapping = bestDistanceInCanvas < snapDistanceInCanvas;
 
         var moveDeltaOnCanvas = isSnapping
@@ -282,12 +282,12 @@ internal sealed class SelectableNodeMovement(IGraphCanvas graphCanvas, Func<Inst
 
         var color = new Color(1f, 1f, 1f, 0.08f);
         snappedNeighbours.Add(childUi);
-        var expandOnScreen = graphCanvas.TransformDirection(SelectableNodeMovement.SnapPadding).X / 2;
+        var expandOnScreen = graphView.Canvas.TransformDirection(SelectableNodeMovement.SnapPadding).X / 2;
 
         foreach (var snappedNeighbour in snappedNeighbours)
         {
             var areaOnCanvas = new ImRect(snappedNeighbour.PosOnCanvas, snappedNeighbour.PosOnCanvas + snappedNeighbour.Size);
-            var areaOnScreen = graphCanvas.TransformRect(areaOnCanvas);
+            var areaOnScreen = graphView.Canvas.TransformRect(areaOnCanvas);
             areaOnScreen.Expand(expandOnScreen);
             drawList.AddRect(areaOnScreen.Min, areaOnScreen.Max, color, rounding: 10, ImDrawFlags.RoundCornersAll, thickness: 4);
         }

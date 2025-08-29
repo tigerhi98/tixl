@@ -41,8 +41,8 @@ internal static class GraphStates
                           }
                           
                           // Check keyboard commands if focused...
-                          if (context.Canvas.IsFocused
-                              && context.Canvas.IsHovered
+                          if (context.View.IsFocused
+                              && context.View.IsHovered
                               && !ImGui.IsAnyItemActive())
                           {
                               // Tab create placeholder
@@ -50,7 +50,7 @@ internal static class GraphStates
                               {
                                   var focusedObject =
                                       context.Selector.Selection.Count == 1 &&
-                                      context.Canvas.IsItemVisible(context.Selector.Selection[0])
+                                      context.View.IsItemVisible(context.Selector.Selection[0])
                                           ? context.Selector.Selection[0]
                                           : null;
 
@@ -64,7 +64,7 @@ internal static class GraphStates
                                   }
                                   else
                                   {
-                                      var posOnCanvas = context.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
+                                      var posOnCanvas = context.View.InverseTransformPositionFloat(ImGui.GetMousePos());
                                       context.Placeholder.OpenOnCanvas(context, posOnCanvas);
                                   }
 
@@ -77,7 +77,7 @@ internal static class GraphStates
                               // }
                           }
 
-                          if (!context.Canvas.IsHovered)
+                          if (!context.View.IsHovered)
                               return;
 
                           // Mouse click
@@ -181,7 +181,7 @@ internal static class GraphStates
               Update: context =>
                       {
                           if (!ImGui.IsMouseDown(ImGuiMouseButton.Left)
-                              || !context.Canvas.IsFocused
+                              || !context.View.IsFocused
                               || ImGui.IsMouseDragging(ImGuiMouseButton.Left))
                           {
                               context.StateMachine.SetState(Default, context);
@@ -197,7 +197,7 @@ internal static class GraphStates
 
                           // TODO: setting both, state and placeholder, feels awkward.
                           context.StateMachine.SetState(Placeholder, context);
-                          var posOnCanvas = context.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
+                          var posOnCanvas = context.View.InverseTransformPositionFloat(ImGui.GetMousePos());
                           context.Placeholder.OpenOnCanvas(context, posOnCanvas);
                       },
               Exit: _ => { }
@@ -524,7 +524,7 @@ internal static class GraphStates
                               return;
                           }
 
-                          var posOnCanvas = context.Canvas.InverseTransformPositionFloat(ImGui.GetMousePos());
+                          var posOnCanvas = context.View.InverseTransformPositionFloat(ImGui.GetMousePos());
                           context.PeekAnchorInCanvas = posOnCanvas;
 
                           var mouseReleased = context.StateMachine.StateTime > 0 && ImGui.IsMouseReleased(ImGuiMouseButton.Left);

@@ -8,7 +8,7 @@ namespace T3.Editor.Gui.Interaction.WithCurves;
 
 internal static class CurvePoint
 {
-    public static void Draw(in Guid compositionSymbolId, VDefinition vDef, ICanvas curveEditCanvas, bool isSelected, CurveEditing curveEditing)
+    public static void Draw(in Guid compositionSymbolId, VDefinition vDef, ScalableCanvas curveEditCanvas, bool isSelected, CurveEditing curveEditing)
     {
         _drawList = ImGui.GetWindowDrawList();
         _curveEditCanvas = curveEditCanvas;
@@ -151,7 +151,7 @@ internal static class CurvePoint
         return tangent * s;
     }
 
-    private static ICanvas _curveEditCanvas;
+    private static ScalableCanvas _curveEditCanvas;
     private static VDefinition _vDef;
     private static ImDrawListPtr _drawList;
 

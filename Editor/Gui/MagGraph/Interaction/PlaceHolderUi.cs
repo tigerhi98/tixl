@@ -59,8 +59,8 @@ internal static class PlaceHolderUi
 
         uiResult |= DrawSearchInput(context, drawList);
 
-        var pMin = context.Canvas.TransformPosition(_placeholderItem.PosOnCanvas);
-        var pMax = context.Canvas.TransformPosition(_placeholderItem.Area.Max);
+        var pMin = context.View.TransformPosition(_placeholderItem.PosOnCanvas);
+        var pMax = context.View.TransformPosition(_placeholderItem.Area.Max);
         uiResult |= DrawResultsList(context, new ImRect(pMin, pMax), Filter, _connectionOrientation);
 
         var clickedOutsidePlaceholder = ImGui.IsMouseClicked(ImGuiMouseButton.Left) && !_placeholderAreaOnScreen.Contains(ImGui.GetMousePos());
@@ -95,10 +95,10 @@ internal static class PlaceHolderUi
         var uiResult = UiResults.None;
         Debug.Assert(_placeholderItem != null);
 
-        var canvasScale = context.Canvas.Scale.X;
+        var canvasScale = context.View.Scale.X;
         var item = _placeholderItem;
-        var pMin = context.Canvas.TransformPosition(item.PosOnCanvas);
-        var pMax = context.Canvas.TransformPosition(item.PosOnCanvas + item.Size);
+        var pMin = context.View.TransformPosition(item.PosOnCanvas);
+        var pMax = context.View.TransformPosition(item.PosOnCanvas + item.Size);
         var pMinVisible = pMin;
         var pMaxVisible = pMax;
 
@@ -190,7 +190,7 @@ internal static class PlaceHolderUi
 
         if (ImGui.IsMouseDragging(ImGuiMouseButton.Left))
         {
-            _placeholderItem.PosOnCanvas += context.Canvas.InverseTransformDirection(ImGui.GetIO().MouseDelta);
+            _placeholderItem.PosOnCanvas += context.View.InverseTransformDirection(ImGui.GetIO().MouseDelta);
         }
 
         return uiResult;

@@ -35,18 +35,18 @@ namespace T3.Editor.Gui.Graph.Legacy;
 /// </summary>
 internal sealed class GraphNode
 {
-    public GraphNode(ProjectView projectView, GraphCanvas canvas, Legacy.Graph.ConnectionSorter sorter)
+    public GraphNode(ProjectView projectView, GraphView view, Legacy.Graph.ConnectionSorter sorter)
     {
         _projectView = projectView;
-        _canvas = canvas;
+        _view = view;
         _sorter = sorter;
 
         lock (DraggedIds)
         {
-            if (!DraggedIds.TryGetValue(_canvas, out _dragInfo))
+            if (!DraggedIds.TryGetValue(_view, out _dragInfo))
             {
                 _dragInfo = new DraggedIdInfo();
-                DraggedIds[_canvas] = _dragInfo;
+                DraggedIds[_view] = _dragInfo;
             }
         }
     }
@@ -56,9 +56,9 @@ internal sealed class GraphNode
         var symbolUi = instance.GetSymbolUi();
         var nodeHasHiddenMatchingInputs = false;
         var visibleInputUis = FindVisibleInputUis(symbolUi, childUi, ref nodeHasHiddenMatchingInputs);
-        var tempConnections = ConnectionMaker.GetTempConnectionsFor(_canvas);
+        var tempConnections = ConnectionMaker.GetTempConnectionsFor(_view);
         bool hasConnections = tempConnections.Count > 0;
-        bool inActiveWindow = _canvas == ProjectView.Focused?.GraphCanvas;
+        bool inActiveWindow = _view == ProjectView.Focused?.GraphView;
 
         var framesSinceLastUpdate = 100;
         foreach (var output in instance.Outputs)
@@ -70,7 +70,7 @@ internal sealed class GraphNode
 
         var newNodeSize = ComputeNodeSize(childUi, visibleInputUis, _sorter);
         AdjustGroupLayoutAfterResize(childUi, newNodeSize, instance.Parent.GetSymbolUi());
-        _usableScreenRect = _canvas.TransformRect(new ImRect(childUi.PosOnCanvas,
+        _usableScreenRect = _view.TransformRect(new ImRect(childUi.PosOnCanvas,
                                                              childUi.PosOnCanvas + childUi.Size));
         _selectableScreenRect = _usableScreenRect;
         if (UserSettings.Config.ShowThumbnails)
@@ -109,7 +109,7 @@ internal sealed class GraphNode
                     if (ImGui.InvisibleButton("#comment", new Vector2(15, 15)))
                     {
                         _projectView.NodeSelection.SetSelection(childUi, instance);
-                        _canvas.EditCommentDialog.ShowNextFrame();
+                        _view.EditCommentDialog.ShowNextFrame();
                     }
                     Icons.DrawIconOnLastItem(Icon.Comment, UiColors.ForegroundFull);
                     CustomComponents.TooltipForLastItem( UiColors.Text, childUi.Comment, null, false);
@@ -123,7 +123,7 @@ internal sealed class GraphNode
                     ImGui.Button("##resize", new Vector2(10, 10) * T3Ui.UiScaleFactor);
                     if (ImGui.IsItemActive() && ImGui.IsMouseDragging(ImGuiMouseButton.Left))
                     {
-                        var delta = _canvas.InverseTransformDirection(ImGui.GetIO().MouseDelta);
+                        var delta = _view.InverseTransformDirection(ImGui.GetIO().MouseDelta);
                         childUi.Size += delta;
                     }
 
@@ -155,10 +155,10 @@ internal sealed class GraphNode
                                        backgroundColorWithHover.Fade(opacity));
 
                 // Custom ui
-                customUiResult =  instance.DrawCustomUi(drawList, _selectableScreenRect, _canvas);
+                customUiResult =  instance.DrawCustomUi(drawList, _selectableScreenRect, _view);
 
                 // Size toggle
-                if (customUiResult == OpUi.CustomUiResult.None && _canvas.Scale.X > 0.7f)
+                if (customUiResult == OpUi.CustomUiResult.None && _view.Scale.X > 0.7f)
                 {
                     var pos = new Vector2(_usableScreenRect.Max.X - 15, _usableScreenRect.Min.Y + 2);
 
@@ -222,11 +222,11 @@ internal sealed class GraphNode
                 //--------------------------------------------------------------------------
 
                 if(!preventInteraction)
-                    _canvas.SelectableNodeMovement.Handle(childUi, instance);
+                    _view.SelectableNodeMovement.Handle(childUi, instance);
 
                 isNodeHovered = !preventInteraction 
                                 && ImGui.IsItemHovered(ImGuiHoveredFlags.AllowWhenBlockedByPopup) 
-                                && !_canvas.SymbolBrowser.IsOpen
+                                && !_view.SymbolBrowser.IsOpen
                                 && ImGui.IsWindowHovered(ImGuiHoveredFlags.AllowWhenBlockedByPopup);
                     
                 // Tooltip
@@ -238,7 +238,7 @@ internal sealed class GraphNode
                          && (customUiResult & OpUi.CustomUiResult.PreventTooltip) != OpUi.CustomUiResult.PreventTooltip)
                 {
                     if (UserSettings.Config.SmartGroupDragging)
-                        _canvas.SelectableNodeMovement.HighlightSnappedNeighbours(childUi);
+                        _view.SelectableNodeMovement.HighlightSnappedNeighbours(childUi);
 
                     //ImGui.SetMouseCursor(ImGuiMouseCursor.Hand);
                     FrameStats.AddHoveredId(childUi.SymbolChild.Id);
@@ -303,7 +303,7 @@ internal sealed class GraphNode
                                 var count = Structure.CollectDependingSymbols(instance.Symbol).Count();
                                 LibWarningDialog.DependencyCount = count;
                                 LibWarningDialog.HandledInstance = instance;
-                                _canvas.LibWarningDialog.ShowNextFrame();
+                                _view.LibWarningDialog.ShowNextFrame();
                                 blocked = true;
                             }
                         }
@@ -379,14 +379,14 @@ internal sealed class GraphNode
                     && _selectableScreenRect.GetHeight() > 8)
                 {
                     drawList.PushClipRect(_usableScreenRect.Min, _usableScreenRect.Max, true);
-                    var useSmallFont = _canvas.Scale.X < 1 * T3Ui.UiScaleFactor;
+                    var useSmallFont = _view.Scale.X < 1 * T3Ui.UiScaleFactor;
                     var font = Fonts.FontBold;
                         
                     var isRenamed = !string.IsNullOrEmpty(childUi.SymbolChild.Name);
-                    var fade = MathUtils.SmootherStep(0.2f, 0.6f, _canvas.Scale.X);
+                    var fade = MathUtils.SmootherStep(0.2f, 0.6f, _view.Scale.X);
                         
                     drawList.AddText(font,
-                                     font.FontSize * ( useSmallFont ?  _canvas.Scale.X : 1) ,
+                                     font.FontSize * ( useSmallFont ?  _view.Scale.X : 1) ,
                                      _usableScreenRect.Min + LabelPos,
                                      ColorVariations.OperatorLabel.Apply(typeColor).Fade(fade),
                                      isRenamed ? $"\"{childUi.SymbolChild.ReadableName}\"" : childUi.SymbolChild.ReadableName);
@@ -428,7 +428,7 @@ internal sealed class GraphNode
                 
             hovered &= inActiveWindow;
                 
-            var isPotentialConnectionTarget = ConnectionMaker.IsMatchingInputType(_canvas, inputDefinition.DefaultValue.ValueType);
+            var isPotentialConnectionTarget = ConnectionMaker.IsMatchingInputType(_view, inputDefinition.DefaultValue.ValueType);
             var colorForType = ColorForInputType(inputDefinition).Fade(opacity);
                 
             var connectedLines = _sorter.GetLinesToNodeInputSlot(childUi, inputDefinition.Id);
@@ -436,7 +436,7 @@ internal sealed class GraphNode
             // Render input Label
             if ((customUiResult & OpUi.CustomUiResult.PreventInputLabels) == 0)
             {
-                var inputLabelOpacity = MathUtils.RemapAndClamp(_canvas.Scale.X,
+                var inputLabelOpacity = MathUtils.RemapAndClamp(_view.Scale.X,
                                                                 0.75f, 1.5f,
                                                                 0f, 1f) * opacity;
                 
@@ -514,7 +514,7 @@ internal sealed class GraphNode
                     var usableSocketArea = new ImRect(topLeft, topLeft + socketSize);
                 
                     var isSocketHovered = usableSocketArea.Contains(ImGui.GetMousePos());
-                    ConnectionSnapEndHelper.RegisterAsPotentialTarget(_canvas, childUi, inputUi, socketIndex, usableSocketArea);
+                    ConnectionSnapEndHelper.RegisterAsPotentialTarget(_view, childUi, inputUi, socketIndex, usableSocketArea);
                 
                     bool isGap = false;
                     if (showGaps)
@@ -584,7 +584,7 @@ internal sealed class GraphNode
                         {
                             var pos = usableSlotArea.GetCenter();
                                 
-                            var size = _canvas.Scale.X * 3;
+                            var size = _view.Scale.X * 3;
                                 
                             drawList.AddCircleFilled(
                                                      pos + new Vector2(-5, -(size *1f)),
@@ -602,7 +602,7 @@ internal sealed class GraphNode
             }
             else
             {
-                ConnectionSnapEndHelper.RegisterAsPotentialTarget(_canvas, childUi, inputUi, 0, usableSlotArea);
+                ConnectionSnapEndHelper.RegisterAsPotentialTarget(_view, childUi, inputUi, 0, usableSlotArea);
                 //ConnectionMaker.ConnectionSnapEndHelper.IsNextBestTarget(targetUi, inputDef.Id,0)
                 var isAboutToBeReconnected = ConnectionSnapEndHelper.IsNextBestTarget(childUi, inputDefinition.Id, 0);
                 var isChildSelected = _projectView.NodeSelection.IsNodeSelected(childUi);
@@ -629,7 +629,7 @@ internal sealed class GraphNode
         // Outputs sockets...
         var outputIndex = 0;
         //foreach(var output in instance.Outputs)
-        var canvasScale = _canvas.Scale;
+        var canvasScale = _view.Scale;
         foreach (var outputDef in childUi.SymbolChild.Symbol.OutputDefinitions)
         {
             var output = instance.Outputs[outputIndex];
@@ -743,7 +743,7 @@ internal sealed class GraphNode
         if (childUi.Size == newNodeSize)
             return;
 
-        var groupMembers = _canvas.SelectableNodeMovement.FindSnappedNeighbours(childUi);
+        var groupMembers = _view.SelectableNodeMovement.FindSnappedNeighbours(childUi);
         if (groupMembers.Count > 0)
         {
             var heightDelta = newNodeSize.Y - childUi.Size.Y;
@@ -793,7 +793,7 @@ internal sealed class GraphNode
             return symbolUi.InputUis.Values.ToList();
         }
 
-        var tempConnections = ConnectionMaker.GetTempConnectionsFor(_canvas);
+        var tempConnections = ConnectionMaker.GetTempConnectionsFor(_view);
 
         var isNodeHoveredAsConnectionTarget = _hoveredNodeIdForConnectionTarget == childUi.Id
                                               && tempConnections.Count == 1
@@ -817,7 +817,7 @@ internal sealed class GraphNode
             {
                 _visibleInputs.Add(inputUi);
             }
-            else if (ConnectionMaker.IsMatchingInputType(_canvas, inputUi.Type))
+            else if (ConnectionMaker.IsMatchingInputType(_view, inputUi.Type))
             {
                 if (isNodeHoveredAsConnectionTarget)
                 {
@@ -844,11 +844,11 @@ internal sealed class GraphNode
         var style = direction == SocketDirections.Input
                         ? ColorVariations.ConnectionLines
                         : ColorVariations.OperatorBackground;
-        if (ConnectionMaker.GetTempConnectionsFor(_canvas).Count > 0)
+        if (ConnectionMaker.GetTempConnectionsFor(_view).Count > 0)
         {
             if (direction == SocketDirections.Input
-                    ? ConnectionMaker.IsMatchingInputType(_canvas, type)
-                    : ConnectionMaker.IsMatchingOutputType(_canvas, type))
+                    ? ConnectionMaker.IsMatchingInputType(_view, type)
+                    : ConnectionMaker.IsMatchingOutputType(_view, type))
             {
                 var blink = (float)(Math.Sin(ImGui.GetTime() * 10) / 2f + 0.8f);
                 colorForType.Rgba.W *= blink;
@@ -938,7 +938,7 @@ internal sealed class GraphNode
     private void DrawOutput(ImDrawListPtr drawList, SymbolUi.Child childUi, Symbol.OutputDefinition outputDef, ImRect usableArea, Color colorForType,
                             bool hovered, Instance instance)
     {
-        if (ConnectionMaker.IsOutputSlotCurrentConnectionSource(_canvas, childUi, outputDef))
+        if (ConnectionMaker.IsOutputSlotCurrentConnectionSource(_view, childUi, outputDef))
         {
             drawList.AddRectFilled(usableArea.Min, usableArea.Max,
                                    ColorVariations.Highlight.Apply(colorForType));
@@ -958,20 +958,20 @@ internal sealed class GraphNode
                 //
                 // - If the user completes the symbol browser, it must complete the previous connections from the temp connections.
                 // - If the user cancels the operation, the previous state has to be restored. This might be tricky
-                ConnectionMaker.InitSymbolBrowserAtPosition(_canvas, _canvas.SymbolBrowser,
+                ConnectionMaker.InitSymbolBrowserAtPosition(_view, _view.SymbolBrowser,
                                                             childUi.PosOnCanvas + new Vector2(childUi.Size.X + SelectableNodeMovement.SnapPadding.X, 0));
             }
         }
         else if (hovered)
         {
-            if (ConnectionMaker.IsMatchingOutputType(_canvas, outputDef.ValueType))
+            if (ConnectionMaker.IsMatchingOutputType(_view, outputDef.ValueType))
             {
                 drawList.AddRectFilled(usableArea.Min, usableArea.Max,
                                        ColorVariations.OperatorBackgroundHover.Apply(colorForType));
 
                 if (ImGui.IsMouseReleased(0))
                 {
-                    ConnectionMaker.CompleteAtOutputSlot(_canvas, instance, childUi, outputDef);
+                    ConnectionMaker.CompleteAtOutputSlot(_view, instance, childUi, outputDef);
                 }
             }
             else
@@ -1010,7 +1010,7 @@ internal sealed class GraphNode
                         }
                         else if (ImGui.IsMouseReleased(ImGuiMouseButton.Right) && ImGui.GetIO().KeyCtrl)
                         {
-                            _canvas.EditNodeOutputDialog.OpenForOutput(_projectView.CompositionInstance.Symbol, childUi, outputDef);
+                            _view.EditNodeOutputDialog.OpenForOutput(_projectView.CompositionInstance.Symbol, childUi, outputDef);
                         }
                     }
                 }
@@ -1023,7 +1023,7 @@ internal sealed class GraphNode
             {
                 _dragInfo.DraggedOutputOpId = Guid.Empty;
                 _dragInfo.DraggedOutputDefId = Guid.Empty;
-                ConnectionMaker.StartFromOutputSlot(_canvas, _projectView.NodeSelection, childUi, outputDef);
+                ConnectionMaker.StartFromOutputSlot(_view, _projectView.NodeSelection, childUi, outputDef);
             }
         }
         else
@@ -1069,19 +1069,19 @@ internal sealed class GraphNode
     {
         var parentSymbol = instance.Parent.Symbol;
             
-        if (ConnectionMaker.IsInputSlotCurrentConnectionTarget(_canvas, targetUi, inputDef))
+        if (ConnectionMaker.IsInputSlotCurrentConnectionTarget(_view, targetUi, inputDef))
         {
         }
         else if (ConnectionSnapEndHelper.IsNextBestTarget(targetUi, inputDef.Id, 0) || hovered)
         {
-            if (ConnectionMaker.IsMatchingInputType(_canvas, inputDef.DefaultValue.ValueType))
+            if (ConnectionMaker.IsMatchingInputType(_view, inputDef.DefaultValue.ValueType))
             {
                 drawList.AddRectFilled(usableArea.Min, usableArea.Max,
                                        ColorVariations.OperatorBackgroundHover.Apply(colorForType));
 
                 if (ImGui.IsMouseReleased(0))
                 {
-                    ConnectionMaker.CompleteAtInputSlot(_canvas, instance, targetUi, inputDef);
+                    ConnectionMaker.CompleteAtInputSlot(_view, instance, targetUi, inputDef);
                 }
             }
             else
@@ -1135,13 +1135,13 @@ internal sealed class GraphNode
                         {
                             Log.Debug("Cloning connection from source op...");
                             var sourceOpUi = parentSymbol.GetSymbolUi().ChildUis[sourceOp.Id]!;
-                            ConnectionMaker.StartFromOutputSlot(_canvas, _projectView.NodeSelection, sourceOpUi, output.OutputDefinition);
+                            ConnectionMaker.StartFromOutputSlot(_view, _projectView.NodeSelection, sourceOpUi, output.OutputDefinition);
                         }
                         else if (connection.IsConnectedToSymbolInput)
                         {
                             Log.Debug("Cloning connection from input node...");
                             var inputDef2 = parentSymbol.InputDefinitions.Single(id => id.Id == connection.SourceSlotId);
-                            ConnectionMaker.StartFromInputNode(_canvas, inputDef2);
+                            ConnectionMaker.StartFromInputNode(_view, inputDef2);
                         }
                         else
                         {
@@ -1162,16 +1162,16 @@ internal sealed class GraphNode
                         _dragInfo.DraggedInputDefId = Guid.Empty;
                         if (ImGui.GetMouseDragDelta().Length() < UserSettings.Config.ClickThreshold)
                         {
-                            ConnectionMaker.StartFromInputSlot(_canvas, targetUi.SymbolChild.Parent, targetUi, inputDef);
+                            ConnectionMaker.StartFromInputSlot(_view, targetUi.SymbolChild.Parent, targetUi, inputDef);
                             if (SymbolUiRegistry.TryGetSymbolUi(parentSymbol.Id, out var compositionUi))
                             {
                                 var freePosition = NodeGraphLayouting.FindPositionForNodeConnectedToInput(compositionUi, targetUi);
-                                ConnectionMaker.InitSymbolBrowserAtPosition(_canvas, _canvas.SymbolBrowser, freePosition);
+                                ConnectionMaker.InitSymbolBrowserAtPosition(_view, _view.SymbolBrowser, freePosition);
                             }
                         }
                         else if (ImGui.IsMouseReleased(ImGuiMouseButton.Right) && ImGui.GetIO().KeyCtrl)
                         {
-                            ConnectionMaker.StartFromInputSlot(_canvas, parentSymbol, targetUi, inputDef);
+                            ConnectionMaker.StartFromInputSlot(_view, parentSymbol, targetUi, inputDef);
                         }
                     }
                 }
@@ -1184,7 +1184,7 @@ internal sealed class GraphNode
             {
                 _dragInfo.DraggedInputOpId = Guid.Empty;
                 _dragInfo.DraggedInputDefId = Guid.Empty;
-                ConnectionMaker.StartFromInputSlot(_canvas, parentSymbol, targetUi, inputDef);
+                ConnectionMaker.StartFromInputSlot(_view, parentSymbol, targetUi, inputDef);
             }
         }            
         else
@@ -1313,19 +1313,19 @@ internal sealed class GraphNode
                                       bool isInputHovered, int multiInputIndex, bool isGap, Color colorForType,
                                       Color reactiveSlotColor, Instance instance)
     {
-        if (ConnectionMaker.IsInputSlotCurrentConnectionTarget(_canvas, targetUi, inputDef, multiInputIndex))
+        if (ConnectionMaker.IsInputSlotCurrentConnectionTarget(_view, targetUi, inputDef, multiInputIndex))
         {
         }
         else if (ConnectionSnapEndHelper.IsNextBestTarget(targetUi, inputDef.Id, multiInputIndex) || isInputHovered)
         {
-            if (ConnectionMaker.IsMatchingInputType(_canvas, inputDef.DefaultValue.ValueType))
+            if (ConnectionMaker.IsMatchingInputType(_view, inputDef.DefaultValue.ValueType))
             {
                 drawList.AddRectFilled(usableArea.Min, usableArea.Max,
                                        ColorVariations.OperatorBackgroundHover.Apply(colorForType));
 
                 if (ImGui.IsMouseReleased(0))
                 {
-                    ConnectionMaker.CompleteAtInputSlot(_canvas, instance, targetUi, inputDef, multiInputIndex, true);
+                    ConnectionMaker.CompleteAtInputSlot(_view, instance, targetUi, inputDef, multiInputIndex, true);
                 }
             }
             else
@@ -1374,7 +1374,7 @@ internal sealed class GraphNode
                 //ImGui.SetTooltip($"-> .{inputDef.Name}[{multiInputIndex}] <{TypeNameRegistry.Entries[inputDef.DefaultValue.ValueType]}>");
                 if (ImGui.IsItemClicked(0))
                 {
-                    ConnectionMaker.StartFromInputSlot(_canvas, instance.Parent.Symbol, targetUi, inputDef, multiInputIndex);
+                    ConnectionMaker.StartFromInputSlot(_view, instance.Parent.Symbol, targetUi, inputDef, multiInputIndex);
                     Log.Debug("started connection at MultiInputIndex:" + multiInputIndex);
                 }
             }
@@ -1441,11 +1441,11 @@ internal sealed class GraphNode
     private static readonly ImageOutputCanvas _imageCanvasForTooltips = new() { DisableDamping = true };
     private static Guid _hoveredNodeIdForConnectionTarget;
 
-    private readonly GraphCanvas _canvas;
+    private readonly GraphView _view;
     private readonly ProjectView _projectView;
     private readonly Legacy.Graph.ConnectionSorter _sorter;
     private readonly DraggedIdInfo _dragInfo;
-    private static readonly Dictionary<IGraphCanvas, DraggedIdInfo> DraggedIds = new();
+    private static readonly Dictionary<IGraphView, DraggedIdInfo> DraggedIds = new();
         
     private ImRect _usableScreenRect;
     private ImRect _selectableScreenRect;

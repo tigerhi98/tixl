@@ -13,8 +13,8 @@ internal static class AnnotationResizing
 {
     internal static void Draw(GraphUiContext context)
     {
-        _snapHandlerY.DrawSnapIndicator(context.Canvas, UiColors.ForegroundFull.Fade(0.1f));
-        _snapHandlerX.DrawSnapIndicator(context.Canvas, UiColors.ForegroundFull.Fade(0.1f));
+        _snapHandlerY.DrawSnapIndicator(context.View, UiColors.ForegroundFull.Fade(0.1f));
+        _snapHandlerX.DrawSnapIndicator(context.View, UiColors.ForegroundFull.Fade(0.1f));
 
         // Setup...
         var instViewSymbolUi = context?.ProjectView?.InstView?.SymbolUi;
@@ -38,7 +38,7 @@ internal static class AnnotationResizing
             if (started)
             {
                 _draggedAnnotationId = context.ActiveAnnotationId;
-                _dragStartDelta = ImGui.GetMousePos() - context.Canvas.TransformPosition(magAnnotation.PosOnCanvas + magAnnotation.Size);
+                _dragStartDelta = ImGui.GetMousePos() - context.View.TransformPosition(magAnnotation.PosOnCanvas + magAnnotation.Size);
                 _moveCommand = new ModifyCanvasElementsCommand(instViewSymbolUi, [annotation], context.Selector);
             }
 
@@ -52,10 +52,10 @@ internal static class AnnotationResizing
             var gridSize = Vector2.One * minSize;
             
             var newDragPos = ImGui.GetMousePos() - _dragStartDelta;
-            var newDragPosInCanvas = context.Canvas.InverseTransformPositionFloat(newDragPos);
+            var newDragPosInCanvas = context.View.InverseTransformPositionFloat(newDragPos);
 
             if (_snapHandlerX.TryCheckForSnapping(newDragPosInCanvas.X, out var snappedPosX,
-                                                  context.Canvas.Scale.X * 0.25f,
+                                                  context.View.Scale.X * 0.25f,
                                                       [magAnnotation],
                                                   context.Layout.Annotations.Values
                                                  ))
@@ -63,11 +63,11 @@ internal static class AnnotationResizing
                 newDragPosInCanvas.X = (float)snappedPosX;
             }
             else if (_snapHandlerX.TryCheckForSnapping(newDragPosInCanvas.X, out var snappedXValue3,
-                                                       context.Canvas.Scale.X * 0.25f,
+                                                       context.View.Scale.X * 0.25f,
                                                            [],
                                                            [new RasterSnapAttractor
                                                                 {
-                                                                    Canvas = context.Canvas,
+                                                                    Canvas = context.View,
                                                                     GridSize = gridSize,
                                                                     Direction = RasterSnapAttractor.Directions.Horizontal
                                                                 }]))
@@ -76,7 +76,7 @@ internal static class AnnotationResizing
             }
 
             if (_snapHandlerY.TryCheckForSnapping(newDragPosInCanvas.Y, out var snappedPosY,
-                                                  context.Canvas.Scale.Y * 0.25f,
+                                                  context.View.Scale.Y * 0.25f,
                                                       [magAnnotation],
                                                   context.Layout.Annotations.Values
                                                  ))
@@ -84,11 +84,11 @@ internal static class AnnotationResizing
                 newDragPosInCanvas.Y = (float)snappedPosY;
             }
             else if (_snapHandlerY.TryCheckForSnapping(newDragPosInCanvas.Y, out var snappedYValue3,
-                                                       context.Canvas.Scale.Y * 0.25f,
+                                                       context.View.Scale.Y * 0.25f,
                                                            [],
                                                            [new RasterSnapAttractor
                                                                 {
-                                                                    Canvas = context.Canvas,
+                                                                    Canvas = context.View,
                                                                     GridSize = gridSize,
                                                                     Direction = RasterSnapAttractor.Directions.Vertical
                                                                 }]))

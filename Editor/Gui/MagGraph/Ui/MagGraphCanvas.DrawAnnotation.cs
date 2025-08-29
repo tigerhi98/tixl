@@ -8,11 +8,11 @@ using T3.Editor.Gui.UiHelpers;
 
 namespace T3.Editor.Gui.MagGraph.Ui;
 
-internal sealed partial class MagGraphCanvas
+internal sealed partial class MagGraphView
 {
     private void DrawAnnotation(MagGraphAnnotation magAnnotation, ImDrawListPtr drawList, GraphUiContext context)
     {
-        var canvas = context.Canvas;
+        var canvas = context.View;
         var area = ImRect.RectWithSize(magAnnotation.Annotation.PosOnCanvas,
                                        magAnnotation.Annotation.Size);
 

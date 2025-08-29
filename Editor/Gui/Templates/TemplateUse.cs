@@ -22,9 +22,9 @@ public static class TemplateUse
 
         var compositionSymbolUi = components.CompositionInstance.GetSymbolUi();
 
-        var graphCanvas = components.GraphCanvas;
-        var centerOnScreen = graphCanvas.WindowPos + graphCanvas.WindowSize / 2;
-        var positionOnCanvas2 = graphCanvas.InverseTransformPositionFloat(centerOnScreen);
+        var graphCanvas = components.GraphView;
+        var centerOnScreen = graphCanvas.Canvas.WindowPos + graphCanvas.Canvas.WindowSize / 2;
+        var positionOnCanvas2 = graphCanvas.Canvas.InverseTransformPositionFloat(centerOnScreen);
         var freePosition = FindFreePositionOnCanvas(compositionSymbolUi, positionOnCanvas2);
         var newSymbol = Duplicate.DuplicateAsNewType(compositionSymbolUi, project, template.TemplateSymbolId, symbolName, nameSpace, description, freePosition);
             

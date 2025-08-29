@@ -16,7 +16,7 @@ namespace T3.Editor.Gui.Interaction.WithCurves;
 /// </summary>
 internal class CurveEditBox : IValueSnapAttractor
 {
-    public CurveEditBox(ICanvas canvas, ValueSnapHandler snapHandler)
+    public CurveEditBox(ScalableCanvas canvas, ValueSnapHandler snapHandler)
     {
         _canvas = canvas;
         _snapHandler = snapHandler;
@@ -277,7 +277,7 @@ internal class CurveEditBox : IValueSnapAttractor
     }
         
     private ImRect _bounds;
-    private readonly ICanvas _canvas;
+    private readonly ScalableCanvas _canvas;
 
     // Styling
     private const float DragHandleSize = 10;

@@ -290,7 +290,7 @@ public static class CurveInputEditing
                     }
                 }
 
-                var graphCanvas = ProjectView.Focused?.GraphCanvas;
+                var graphCanvas = ProjectView.Focused?.GraphView;
                 DrawCurveCanvas(DrawCanvasContent, selectionFence, height, _interactionFlags);
                 return;
 
@@ -328,7 +328,7 @@ public static class CurveInputEditing
                     if (NeedToAdjustScopeAfterFirstRendering)
                     {
                         TryGetBoundsOnCanvas(interaction.GetAllKeyframes(), out var bounds);
-                        SetScopeToCanvasArea(bounds, flipY: true, ProjectView.Focused?.GraphCanvas, 30, 15);
+                        SetScopeToCanvasArea(bounds, flipY: true, ProjectView.Focused?.GraphView.Canvas, 30, 15);
                         NeedToAdjustScopeAfterFirstRendering = false;
                     }
                 }

@@ -19,19 +19,19 @@ using T3.SystemUi;
 namespace T3.Editor.Gui.Graph.Legacy.Interaction;
 
 /// <summary>
-/// Represents a placeholder for a new <see cref="GraphNode"/> on the <see cref="GraphCanvas"/>. 
+/// Represents a placeholder for a new <see cref="GraphNode"/> on the <see cref="GraphView"/>. 
 /// It can be connected to other nodes and provide search functionality. It's basically the
 /// T2's CreateOperatorWindow.
 /// </summary>
 internal sealed class SymbolBrowser
 {
     private readonly ProjectView _components;
-    private readonly IGraphCanvas _canvas;
+    private readonly IGraphView _graphView;
         
-    public SymbolBrowser(ProjectView components, IGraphCanvas canvas)
+    public SymbolBrowser(ProjectView components, IGraphView graphView)
     {
         _components = components;
-        _canvas = canvas;
+        _graphView = graphView;
     }
     #region public API ------------------------------------------------------------------------
 
@@ -39,18 +39,18 @@ internal sealed class SymbolBrowser
     {
         // Scroll canvas to avoid symbol-browser close too edge
 
-        var screenPos = _canvas.TransformPosition(positionOnCanvas);
+        var screenPos = _graphView.Canvas.TransformPosition(positionOnCanvas);
         var screenRect = ImRect.RectWithSize(screenPos, SymbolUi.Child.DefaultOpSize);
-        screenRect.Expand(200 * _canvas.Scale.X);
+        screenRect.Expand(200 * _graphView.Canvas.Scale.X);
         var windowRect = ImRect.RectWithSize(ImGui.GetWindowPos(), ImGui.GetWindowSize());
         var tooCloseToEdge = !windowRect.Contains(screenRect);
 
-        var canvasPosition = _canvas.InverseTransformPositionFloat(screenPos);
+        var canvasPosition = _graphView.Canvas.InverseTransformPositionFloat(screenPos);
         if (tooCloseToEdge)
         {
             var canvasRect = ImRect.RectWithSize(canvasPosition, SymbolUi.Child.DefaultOpSize);
             canvasRect.Expand(400);
-            _canvas.FitAreaOnCanvas(canvasRect);
+            _graphView.Canvas.FitAreaOnCanvas(canvasRect);
         }
 
 
@@ -75,7 +75,7 @@ internal sealed class SymbolBrowser
 
     public void Draw()
     {
-        var canvas = _canvas;
+        var canvas = _graphView.Canvas;
         var nodeSelection = _components.NodeSelection;
         if (!IsOpen)
         {
@@ -87,7 +87,7 @@ internal sealed class SymbolBrowser
 
             if (nodeSelection.GetSelectedChildUis().Count() != 1)
             {
-                ConnectionMaker.StartOperation(canvas, "Add operator");
+                ConnectionMaker.StartOperation(_graphView, "Add operator");
                     
                 var screenPos = ImGui.GetIO().MousePos + new Vector2(-4, -20);
                 var canvasPosition = canvas.InverseTransformPositionFloat(screenPos);
@@ -141,7 +141,7 @@ internal sealed class SymbolBrowser
             var browserPositionInWindow = posInWindow + BrowserPositionOffset;
             var browserSize = ResultListSize;
 
-            ClampPanelToCanvas(canvas, ref browserPositionInWindow, ref browserSize);
+            ClampPanelToCanvas(_graphView, ref browserPositionInWindow, ref browserSize);
 
             ImGui.SetCursorPos(browserPositionInWindow);
 
@@ -237,13 +237,13 @@ internal sealed class SymbolBrowser
 
         if (ImGui.IsMouseDragging(ImGuiMouseButton.Left))
         {
-            PosOnCanvas += _canvas.InverseTransformDirection(ImGui.GetIO().MouseDelta);
+            PosOnCanvas += _graphView.Canvas.InverseTransformDirection(ImGui.GetIO().MouseDelta);
         }
     }
 
     private void Cancel()
     {
-        ConnectionMaker.AbortOperation(_canvas);
+        ConnectionMaker.AbortOperation(_graphView);
         // if (_prepareCommand != null)
         // {
         //     _prepareCommand.Undo();
@@ -400,12 +400,12 @@ internal sealed class SymbolBrowser
         ImGui.PopFont();
     }
 
-    private static void ClampPanelToCanvas(IGraphCanvas canvas, ref Vector2 position, ref Vector2 size)
+    private static void ClampPanelToCanvas(IGraphView graphView, ref Vector2 position, ref Vector2 size)
     {
         var maxXPos = position.X + size.X;
         var maxYPos = position.Y + size.Y;
 
-        var windowSize = canvas.WindowSize;
+        var windowSize = graphView.Canvas.WindowSize;
 
         var shouldShiftLeft = maxXPos > windowSize.X;
         var xPositionOffset = shouldShiftLeft ? windowSize.X - maxXPos : 0;
@@ -422,7 +422,7 @@ internal sealed class SymbolBrowser
     private void DrawPresetPanel(Vector2 position, Vector2 size)
     {
         //size.X = 120;
-        if (!TryFindValidPanelPosition(_canvas, ref position, size))
+        if (!TryFindValidPanelPosition(_graphView, ref position, size))
             return;
 
         ImGui.PushStyleColor(ImGuiCol.FrameBg, UiColors.BackgroundPopup.Rgba);
@@ -482,7 +482,7 @@ internal sealed class SymbolBrowser
         if (!hasExamples && !hasDescription)
             return;
 
-        if (!TryFindValidPanelPosition(_canvas, ref position, size))
+        if (!TryFindValidPanelPosition(_graphView, ref position, size))
             return;
 
         ImGui.SetCursorPos(position);
@@ -511,10 +511,10 @@ internal sealed class SymbolBrowser
         ImGui.PopStyleVar();
     }
 
-    private static bool TryFindValidPanelPosition(IGraphCanvas canvas, ref Vector2 position, Vector2 size)
+    private static bool TryFindValidPanelPosition(IGraphView graphView, ref Vector2 position, Vector2 size)
     {
         var maxXPos = position.X + size.X + ResultListSize.X;
-        var wouldExceedWindowBounds = maxXPos >= canvas.WindowSize.X;
+        var wouldExceedWindowBounds = maxXPos >= graphView.Canvas.WindowSize.X;
 
         if (wouldExceedWindowBounds)
         {
@@ -589,7 +589,7 @@ internal sealed class SymbolBrowser
         //     additionalCommands.Add(_prepareCommand);
         // }
 
-        var tempConnections = ConnectionMaker.GetTempConnectionsFor(_canvas);
+        var tempConnections = ConnectionMaker.GetTempConnectionsFor(_graphView);
 
         foreach (var c in tempConnections)
         {
@@ -633,7 +633,7 @@ internal sealed class SymbolBrowser
 
         // var newCommand = new MacroCommand("Insert Op", commands);
         // UndoRedoStack.Add(newCommand);
-        ConnectionMaker.CompleteOperation(_canvas, commandsForUndo, "Insert Op " + newChildUi.SymbolChild.ReadableName);
+        ConnectionMaker.CompleteOperation(_graphView, commandsForUndo, "Insert Op " + newChildUi.SymbolChild.ReadableName);
         ParameterPopUp.NodeIdRequestedForParameterWindowActivation = newSymbolChild.Id;
         Close();
     }

@@ -461,7 +461,7 @@ internal sealed class TimelineCurveEditArea : AnimationParameterEditing, ITimeOb
     private const float SnapDistance = 4;
     #endregion
 
-    public static void DrawCurveLine(Curve curve, ICanvas canvas, Color color, bool isParamHovered = false)
+    public static void DrawCurveLine(Curve curve, ScalableCanvas canvas, Color color, bool isParamHovered = false)
     {
         const float step = 3f;
         var width = ImGui.GetWindowWidth();

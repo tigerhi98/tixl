@@ -21,7 +21,7 @@ internal static class ConnectionSplitHelper
     {
         _mousePosition = ImGui.GetMousePos();
         BestMatchLastFrame = _bestMatchYetForCurrentFrame;
-        if (components.GraphCanvas is not GraphCanvas graphCanvas)
+        if (components.GraphView is not GraphView graphCanvas)
             return;
             
         if (BestMatchLastFrame != null 

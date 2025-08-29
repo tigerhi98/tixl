@@ -27,7 +27,7 @@ internal sealed class CreateFromTemplateDialog : ModalDialog
             
         if (BeginDialog("Create"))
         {
-            var graphCanvas = ProjectView.Focused?.GraphCanvas;
+            var graphCanvas = ProjectView.Focused?.GraphView;
 
             if (graphCanvas == null)
             {

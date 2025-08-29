@@ -1,6 +1,7 @@
 using ImGuiNET;
 using T3.Core.Animation;
 using T3.Core.Utils;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Snapping;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
@@ -25,7 +26,7 @@ public abstract class AbstractTimeRaster : IValueSnapAttractor
         return scaleRange?.Rasters;
     }
 
-    protected void DrawTimeTicks(double scale, double scroll, ICanvas canvas)
+    protected void DrawTimeTicks(double scale, double scroll, ScalableCanvas canvas)
     {
         if (!(scale > Epsilon))
             return;

@@ -169,14 +169,14 @@ public sealed class SearchDialog : ModalDialog
 
             if (ImGui.IsItemHovered() && ImGui.IsMouseClicked(ImGuiMouseButton.Left))
             {
-                components.GraphCanvas.OpenAndFocusInstance(path);
+                components.GraphView.OpenAndFocusInstance(path);
                 _selectedInstance = foundInstance;
                 _selectedItemChanged = false;
             }
             else if (_selectedItemChanged && _selectedInstance == foundInstance)
             {
                 UiListHelpers.ScrollToMakeItemVisible();
-                components.GraphCanvas.OpenAndFocusInstance(path);
+                components.GraphView.OpenAndFocusInstance(path);
                 _selectedItemChanged = false;
             }
 

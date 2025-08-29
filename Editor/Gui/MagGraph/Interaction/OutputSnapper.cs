@@ -26,13 +26,13 @@ internal static class OutputSnapper
         
         if (BestOutputMatch.Item != null)
         {
-            ImGui.GetWindowDrawList().AddCircle(context.Canvas.TransformPosition(BestOutputMatch.Anchor.PositionOnCanvas), 20, Color.Red);
+            ImGui.GetWindowDrawList().AddCircle(context.View.TransformPosition(BestOutputMatch.Anchor.PositionOnCanvas), 20, Color.Red);
         }
     }
 
     public static void RegisterAsPotentialTargetOutput(GraphUiContext context, MagGraphItem item, MagGraphItem.OutputAnchorPoint outputAnchor)
     {
-        var posOnScreen = context.Canvas.TransformPosition(outputAnchor.PositionOnCanvas);
+        var posOnScreen = context.View.TransformPosition(outputAnchor.PositionOnCanvas);
         var distance = Vector2.Distance(posOnScreen, ImGui.GetMousePos());
         
         if (distance < _bestOutputMatchForCurrentFrame.Distance)

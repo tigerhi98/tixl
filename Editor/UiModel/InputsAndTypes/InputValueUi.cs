@@ -144,7 +144,7 @@ public abstract class InputValueUi<T> : IInputUi
             return InputEditStateFlags.Nothing;
 
         var nodeSelection = components.NodeSelection;
-        IReadOnlyList<ConnectionMaker.TempConnection> tempConnections = ConnectionMaker.GetTempConnectionsFor(components.GraphCanvas);
+        IReadOnlyList<ConnectionMaker.TempConnection> tempConnections = ConnectionMaker.GetTempConnectionsFor(components.GraphView);
 
         var name = inputSlot.Input.Name;
 
@@ -263,7 +263,7 @@ public abstract class InputValueUi<T> : IInputUi
                                                         //var structure = components.Structure;
                                                         if (ImGui.MenuItem("Extract as connection operator"))
                                                         {
-                                                            ProjectView.Focused?.GraphCanvas.ExtractAsConnectedOperator(typedInputSlot, symbolChildUi, input);
+                                                            ProjectView.Focused?.GraphView.ExtractAsConnectedOperator(typedInputSlot, symbolChildUi, input);
                                                         }
 
                                                         if (ImGui.MenuItem("Publish as Input", null, false, false))
@@ -501,7 +501,7 @@ public abstract class InputValueUi<T> : IInputUi
 
                      if (ImGui.MenuItem("Extract as connection operator"))
                      {
-                         ProjectView.Focused?.GraphCanvas.ExtractAsConnectedOperator(typedInputSlot, symbolChildUi, input);
+                         ProjectView.Focused?.GraphView.ExtractAsConnectedOperator(typedInputSlot, symbolChildUi, input);
                      }
 
                      if (ImGui.MenuItem("Publish as Input", null, false, false))
@@ -657,12 +657,12 @@ internal static class InputArea
                     break;
                 }
                 case InputOperations.Extract:
-                    ProjectView.Focused?.GraphCanvas.ExtractAsConnectedOperator(inputSlot, symbolChildUi, input);
+                    ProjectView.Focused?.GraphView.ExtractAsConnectedOperator(inputSlot, symbolChildUi, input);
                     break;
 
                 case InputOperations.ConnectWithSearch:
                 {
-                    ProjectView.Focused?.GraphCanvas.CreatePlaceHolderConnectedToInput(symbolChildUi, input.InputDefinition);
+                    ProjectView.Focused?.GraphView.CreatePlaceHolderConnectedToInput(symbolChildUi, input.InputDefinition);
                     break;
                 }
             }
@@ -693,7 +693,7 @@ internal static class InputArea
         {
             if (tempConnections.Count == 0)
             {
-                ProjectView.Focused?.GraphCanvas.StartDraggingFromInputSlot(symbolChildUi, input.InputDefinition);
+                ProjectView.Focused?.GraphView.StartDraggingFromInputSlot(symbolChildUi, input.InputDefinition);
                 //ConnectionMaker.StartFromInputSlot(canvas, compositionUi.Symbol, symbolChildUi, input.InputDefinition);
             }
         }

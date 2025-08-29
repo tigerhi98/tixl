@@ -98,7 +98,7 @@ internal static class GraphBookmarkNavigation
         }
 
         window.TrySetCompositionOp(bookmark.IdPath);
-        window.GraphCanvas.SetTargetView(bookmark.ViewScope.Scale, bookmark.ViewScope.Scroll);
+        window.GraphView.Canvas.SetTargetView(bookmark.ViewScope.Scale, bookmark.ViewScope.Scroll);
         //SelectionManager.SetSelection(bookmark.SelectedChildIds);
     }
 
@@ -116,7 +116,7 @@ internal static class GraphBookmarkNavigation
             bookmarks.AddRange(new Bookmark[index + 1 - bookmarks.Count]);
         }
             
-        var canvas = window.GraphCanvas;
+        var canvas = window.GraphView;
 
         bookmarks[index] = new Bookmark
                                {

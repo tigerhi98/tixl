@@ -11,7 +11,7 @@ using Vector2 = System.Numerics.Vector2;
 
 namespace T3.Editor.Gui.MagGraph.Ui;
 
-internal sealed partial class MagGraphCanvas
+internal sealed partial class MagGraphView
 {
     private void DrawConnection(MagGraphConnection connection, ImDrawListPtr drawList, GraphUiContext context)
     {

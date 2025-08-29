@@ -27,7 +27,7 @@ internal sealed partial class MagItemMovement
         public bool IsInsertion;
         public SpliceLink? InsertionPoint;
 
-        public void TestItemsForSnap(MagGraphItem outputItem, MagGraphItem inputItem, bool revert, MagGraphCanvas canvas)
+        public void TestItemsForSnap(MagGraphItem outputItem, MagGraphItem inputItem, bool revert, MagGraphView view)
         {
             MagGraphConnection? inConnection;
 
@@ -101,20 +101,20 @@ internal sealed partial class MagItemMovement
 
             void ShowDebugLine(Vector2 outPos, Vector2 inPos, Type connectionType)
             {
-                if (!canvas.ShowDebug)
+                if (!view.ShowDebug)
                     return;
 
                 var drawList = ImGui.GetForegroundDrawList();
                 var uiPrimaryColor = TypeUiRegistry.GetPropertiesForType(connectionType).Color;
-                drawList.AddLine(canvas.TransformPosition(outPos),
-                                 canvas.TransformPosition(inPos),
+                drawList.AddLine(view.TransformPosition(outPos),
+                                 view.TransformPosition(inPos),
                                  uiPrimaryColor.Fade(0.4f));
 
-                drawList.AddCircleFilled(canvas.TransformPosition(inPos), 6, uiPrimaryColor.Fade(0.4f));
+                drawList.AddCircleFilled(view.TransformPosition(inPos), 6, uiPrimaryColor.Fade(0.4f));
             }
         }
 
-        public void TestItemsForInsertion(MagGraphItem inputItem, MagGraphItem insertionAnchorItem, SpliceLink insertionPoint, MagGraphCanvas canvas)
+        public void TestItemsForInsertion(MagGraphItem inputItem, MagGraphItem insertionAnchorItem, SpliceLink insertionPoint, MagGraphView view)
         {
             if (inputItem.InputLines.Length < 1)
                 return;
@@ -221,16 +221,16 @@ internal sealed partial class MagItemMovement
             }
             void ShowDebugLine(Vector2 outPos, Vector2 inPos, Color color)
             {
-                if (!canvas.ShowDebug)
+                if (!view.ShowDebug)
                     return;
 
                 var drawList = ImGui.GetForegroundDrawList();
                 
-                drawList.AddLine(canvas.TransformPosition(outPos),
-                                 canvas.TransformPosition(inPos),
+                drawList.AddLine(view.TransformPosition(outPos),
+                                 view.TransformPosition(inPos),
                                  color.Fade(0.4f));
 
-                drawList.AddCircleFilled(canvas.TransformPosition(inPos), 6, color.Fade(0.4f));
+                drawList.AddCircleFilled(view.TransformPosition(inPos), 6, color.Fade(0.4f));
             }
         }
 

@@ -4,6 +4,7 @@ using T3.Core.Animation;
 using T3.Core.Operator;
 using T3.Editor.Gui.Graph.Dialogs;
 using T3.Editor.Gui.Graph.Interaction;
+using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.TransformGizmos;
 using T3.Editor.Gui.MagGraph.Ui;
 using T3.Editor.Gui.Styling;
@@ -75,8 +76,8 @@ internal sealed class GraphWindow : Windows.Window
         }
 
         ProjectView = UserSettings.Config.GraphStyle == UserSettings.GraphStyles.Magnetic
-                          ? MagGraphCanvas.CreateWithComponents(project)
-                          : Legacy.GraphCanvas.CreateWithComponents(project);
+                          ? MagGraphView.CreateWithComponents(project)
+                          : Legacy.GraphView.CreateWithComponents(project);
         
         // ProjectView = MagGraphCanvas.CreateWithComponents(project);
         // ProjectView = Legacy.GraphCanvas.CreateWithComponents(project);
@@ -95,7 +96,7 @@ internal sealed class GraphWindow : Windows.Window
             }
         }
 
-        const ICanvas.Transition transition = ICanvas.Transition.JumpIn;
+        const ScalableCanvas.Transition transition = ScalableCanvas.Transition.JumpIn;
         if (!ProjectView.TrySetCompositionOp(startPath, transition)
             && !ProjectView.TrySetCompositionOp(rootPath, transition))
         {
@@ -240,8 +241,8 @@ internal sealed class GraphWindow : Windows.Window
             }
         }
 
-        if (UserSettings.Config.ShowMiniMap)
-            UiElements.DrawMiniMap(ProjectView.InstView, GraphCanvas);
+        if (UserSettings.Config.ShowMiniMap && GraphCanvas != null)
+            UiElements.DrawMiniMap(ProjectView.InstView, GraphCanvas.Canvas);
     }
 
     private void DrawGraphContent(ImDrawListPtr drawList)
@@ -308,6 +309,6 @@ internal sealed class GraphWindow : Windows.Window
     }
     #endregion
 
-    private IGraphCanvas? GraphCanvas => ProjectView?.GraphCanvas;
+    private IGraphView? GraphCanvas => ProjectView?.GraphView;
     private static readonly EditSymbolDescriptionDialog _editDescriptionDialog = new();
 }

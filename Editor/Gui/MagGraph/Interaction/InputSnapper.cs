@@ -27,7 +27,7 @@ internal static class InputSnapper
         if (BestInputMatch.Item != null)
         {
             // TODO: Make beautiful
-            ImGui.GetWindowDrawList().AddCircle(context.Canvas.TransformPosition(BestInputMatch.PosOnScreen), 20, Color.Red);
+            ImGui.GetWindowDrawList().AddCircle(context.View.TransformPosition(BestInputMatch.PosOnScreen), 20, Color.Red);
         }
     }
 

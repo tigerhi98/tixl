@@ -15,13 +15,13 @@ internal sealed partial class Graph
     internal sealed class ConnectionSorter
     {
         public readonly List<ConnectionLineUi> Lines = new();
-        private readonly IGraphCanvas _canvas;
+        private readonly IGraphView _graphView;
         private readonly Legacy.Graph _graph;
 
-        public ConnectionSorter(Legacy.Graph graph, IGraphCanvas canvas)
+        public ConnectionSorter(Legacy.Graph graph, IGraphView graphView)
         {
             _graph = graph;
-            _canvas = canvas;
+            _graphView = graphView;
         }
             
         public void Init()
@@ -122,7 +122,7 @@ internal sealed partial class Graph
             }
             else if (c.TargetParentOrChildId == ConnectionMaker.UseDraftChildId)
             {
-                newLine.TargetPosition = _canvas.TransformPosition(symbolBrowser.PosOnCanvas);
+                newLine.TargetPosition = _graphView.Canvas.TransformPosition(symbolBrowser.PosOnCanvas);
                 //newLine.ColorForType = Color.White;
             }
             else if (c.SourceParentOrChildId == ConnectionMaker.NotConnectedId)

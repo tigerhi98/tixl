@@ -278,7 +278,7 @@ internal sealed class ConsoleLogWindow : Window, ILogWriter
         if (isMouseClicked)
         {
             if (hoveredSourceInstance != null)
-                ProjectView.Focused!.GraphCanvas.OpenAndFocusInstance(entrySourceIdPath.ToList());
+                ProjectView.Focused!.GraphView.OpenAndFocusInstance(entrySourceIdPath.ToList());
         }
     }
 
