@@ -1,0 +1,26 @@
+{
+  "Id": "6095a1f7-0633-4a6b-8eb0-331db20a814e"/*IntsToList*/,
+  "Description": "",
+  "InputUis": [
+    {
+      "InputId": "cfc02c47-b0a9-477b-8d88-7d0da83f61a6"/*Input*/,
+      "Relevancy": "Required",
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0
+      },
+      "Min": -100.0,
+      "Max": 100.0
+    }
+  ],
+  "SymbolChildUis": [],
+  "OutputUis": [
+    {
+      "OutputId": "3a9dc2ec-961c-49b6-a0c8-95f7ef92cb7b"/*Result*/,
+      "Position": {
+        "X": 0.0,
+        "Y": 0.0
+      }
+    }
+  ]
+}

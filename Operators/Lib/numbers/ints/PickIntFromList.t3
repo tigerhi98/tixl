@@ -1,0 +1,20 @@
+{
+  "Id": "df218352-52ae-4d11-a0f1-24fce0964af5"/*PickIntFromList*/,
+  "Inputs": [
+    {
+      "Id": "5dfaa21c-5b6e-4943-b787-170b29809f49"/*Index*/,
+      "DefaultValue": 0
+    },
+    {
+      "Id": "dbf3ed9f-110f-4a5a-93c3-956396538dc3"/*Input*/,
+      "DefaultValue": {
+        "Values": [
+          5.0,
+          17.0
+        ]
+      }
+    }
+  ],
+  "Children": [],
+  "Connections": []
+}
