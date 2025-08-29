@@ -173,10 +173,10 @@ public struct ImRect
     public static ImRect RectBetweenPoints(Vector2 a, Vector2 b)
     {
         return new ImRect(
-                          x1: MathUtils.Min(a.X, b.X),
-                          y1: MathUtils.Min(a.Y, b.Y),
-                          x2: MathUtils.Max(a.X, b.X),
-                          y2: MathUtils.Max(a.Y, b.Y));
+                          x1: Math.Min(a.X, b.X),
+                          y1: Math.Min(a.Y, b.Y),
+                          x2: Math.Max(a.X, b.X),
+                          y2: Math.Max(a.Y, b.Y));
     }
 
     public static ImRect RectWithSize(Vector2 position, Vector2 size)
@@ -194,8 +194,8 @@ public struct ImRect
     // Full version, ensure both points are fully clipped.
     public void ClipWithFull(ImRect r)
     {
-        Min = MathUtils.Clamp(Min, r.Min, r.Max);
-        Max = MathUtils.Clamp(Max, r.Min, r.Max);
+        Min = Min.Clamp(r.Min, r.Max);
+        Max = Max.Clamp(r.Min, r.Max);
     }
 
     public void Floor()

@@ -61,7 +61,7 @@ public static class ValueLabel
                 {
                     if (ImGui.IsItemActive())
                     {
-                        SingleValueEdit.DrawValueEditMethod(ref value,  restarted, _jogDailCenter,double.NegativeInfinity, double.PositiveInfinity, false, 0.025f);
+                        SingleValueEdit.DrawValueEditMethod(ref value,  restarted, _jogDailCenter,double.NegativeInfinity, double.PositiveInfinity, false, false, 0.025f);
                         inputSlot.SetTypedInputValue((float)value);
                         modified = true;
                     }

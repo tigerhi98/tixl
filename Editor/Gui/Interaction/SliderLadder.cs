@@ -39,7 +39,7 @@ internal static class SliderLadder
 
     private const float LockDistance = 100;
 
-    public static void Draw(ref double editValue, double min, double max, float scale, float timeSinceVisible, bool clamp, Vector2 center)
+    public static void Draw(ref double editValue, double min, double max, float scale, float timeSinceVisible, bool clampMin, bool clampMax, Vector2 center)
     {
         var io = ImGui.GetIO();
         var foreground = ImGui.GetForegroundDrawList();
@@ -101,10 +101,10 @@ internal static class SliderLadder
             // Draw
             var isLookedRange = _lockedRange == range;
             var centerColor = !isActiveRange
-                                  ? RangeFillColor
+                                  ? _rangeFillColor
                                   : isLookedRange
-                                      ? LockedRangeFillColor
-                                      : ActiveRangeFillColor;
+                                      ? _lockedRangeFillColor
+                                      : _activeRangeFillColor;
 
             var bMin = new Vector2(-RangeWidth, yMin) + center;
             var bMax = new Vector2(RangeWidth, yMax) + center;
@@ -154,8 +154,7 @@ internal static class SliderLadder
                 editValue = Math.Round(editValue / (activeScaleFactor)) * (activeScaleFactor);
             }
 
-            if (clamp)
-                editValue = editValue.Clamp(min, max);
+            editValue = MathUtils.OptionalClamp(editValue, min, clampMin, max, clampMax);
         }
 
         _lastX = x;
@@ -164,9 +163,9 @@ internal static class SliderLadder
     private const float PixelsPerStep = 10;
     private const float RangeWidth = 40;
     private const float OuterRangeHeight = 50;
-    private static readonly Color RangeFillColor = new(0.3f, 0.3f, 0.3f);
-    private static readonly Color ActiveRangeFillColor = new(0.8f, 0.8f, 0.8f);
-    private static readonly Color LockedRangeFillColor = new(1f, 0.6f, 0.6f);
+    private static readonly Color _rangeFillColor = new(0.3f, 0.3f, 0.3f);
+    private static readonly Color _activeRangeFillColor = new(0.8f, 0.8f, 0.8f);
+    private static readonly Color _lockedRangeFillColor = new(1f, 0.6f, 0.6f);
     private static bool _hasExceededDragThreshold;
     private static float _lastX;
 }

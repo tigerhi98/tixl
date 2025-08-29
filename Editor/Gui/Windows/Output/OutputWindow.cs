@@ -270,8 +270,11 @@ internal sealed class OutputWindow : Window
 
         ImGui.SameLine();
         ImGui.PushID("CamSpeed");
-        var result = SingleValueEdit.Draw(ref UserSettings.Config.CameraSpeed, new Vector2(ImGui.GetFrameHeight() * 2, ImGui.GetFrameHeight()), 0.001f, 100,
-                                          true, 0.01f, "{0:G3}");
+        var result = SingleValueEdit.Draw(ref UserSettings.Config.CameraSpeed, new Vector2(ImGui.GetFrameHeight() * 2, ImGui.GetFrameHeight()), min: 0.001f, max: 100,
+                                          clampMin: true, 
+                                          clampMax: true, 
+                                          scale: 0.01f, 
+                                          format: "{0:G3}");
         CustomComponents.TooltipForLastItem("Camera speed when flying with WASD keys.", "TIP: Use mouse wheel while flying to adjust on the fly.");
         ImGui.PopID();
     }

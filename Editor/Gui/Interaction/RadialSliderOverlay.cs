@@ -22,7 +22,9 @@ public static class RadialSliderOverlay
 {
     public static void Draw(ref double roundedValue, bool restarted, Vector2 center, double min = double.NegativeInfinity,
                             double max = double.PositiveInfinity,
-                            float scale = 0.1f, bool clamp = false)
+                            float scale = 0.1f, 
+                            bool clampMin = false,  // Todo Implement 
+                            bool clampMax= false)
     {
         var drawList = ImGui.GetForegroundDrawList();
         _io = ImGui.GetIO();

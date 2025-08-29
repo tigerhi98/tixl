@@ -385,7 +385,7 @@ internal static class TimeControls
         if (settings.Syncing == PlaybackSettings.SyncModes.Tapping)
         {
             var bpm = BeatTiming.Bpm;
-            if (SingleValueEdit.Draw(ref bpm, new Vector2(StandardWidth, ControlSize.Y), 1, 360, true, 0.01f, "{0:0.0 BPM}") ==
+            if (SingleValueEdit.Draw(ref bpm, new Vector2(StandardWidth, ControlSize.Y), min: 1, max: 360, clampMin: true, clampMax: true, scale: 0.01f, format: "{0:0.0 BPM}") ==
                 InputEditStateFlags.Modified)
             {
                 composition.Symbol.GetSymbolUi().FlagAsModified();

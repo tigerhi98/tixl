@@ -3,10 +3,11 @@ using T3.Editor.UiModel.InputsAndTypes;
 
 namespace T3.Editor.Gui.Interaction;
 
-public static class VectorValueEdit
+internal static class VectorValueEdit
 {
     // Float control
-    public static InputEditStateFlags Draw(float[] components, float min, float max, float scale, bool clamp, float rightPadding = 0, string format = null)
+    internal static InputEditStateFlags Draw(float[] components, float min, float max, float scale, bool clampMin, bool clampMax, float rightPadding = 0,
+                                             string format = null)
     {
         var width = (ImGui.GetContentRegionAvail().X - rightPadding) / components.Length-1;
         var size = new Vector2(width, 0);
@@ -18,7 +19,7 @@ public static class VectorValueEdit
                 ImGui.SameLine();
 
             ImGui.PushID(index);
-            resultingEditState |= SingleValueEdit.Draw(ref components[index], size: size, min, max, clamp, scale, format??="{0:0.000}");
+            resultingEditState |= SingleValueEdit.Draw(ref components[index], size, min, max, clampMin, clampMax, scale,  format??="{0:0.000}");
             ImGui.PopID();
         }
 
@@ -26,7 +27,7 @@ public static class VectorValueEdit
     }
         
     // Integer control
-    public static InputEditStateFlags Draw(int[] components, int min, int max, float scale, bool clamp)
+    internal static InputEditStateFlags Draw(int[] components, int min, int max, float scale, bool clampMin, bool clampMax)
     {
         var width = ImGui.GetContentRegionAvail().X / components.Length-1;
         var size = new Vector2(width, 0);
@@ -38,7 +39,7 @@ public static class VectorValueEdit
                 ImGui.SameLine();
 
             ImGui.PushID(index);
-            resultingEditState |= SingleValueEdit.Draw(ref components[index], size: size, min, max, clamp);
+            resultingEditState |= SingleValueEdit.Draw(ref components[index], size, min, max, clampMin, clampMax);
             ImGui.PopID();
         }
 

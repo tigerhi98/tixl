@@ -107,7 +107,7 @@ internal static class FormInputs
         var hasReset = defaultValue != NotADefaultValue;
 
         var size = GetAvailableInputSize(tooltip, hasReset);
-        var result = SingleValueEdit.Draw(ref value, size, min, max, true, scale);
+        var result = SingleValueEdit.Draw(ref value, size, min, max, true, true, scale);
         ImGui.PopID();
 
         AppendTooltip(tooltip);
@@ -128,7 +128,8 @@ internal static class FormInputs
                                 float min = float.NegativeInfinity,
                                 float max = float.PositiveInfinity,
                                 float scale = 0.01f,
-                                bool clamp = false,
+                                bool clampMin = false, 
+                                bool clampMax= false,
                                 string? tooltip = null,
                                 float defaultValue = float.NaN)
     {
@@ -145,7 +146,7 @@ internal static class FormInputs
 
         ImGui.PushID(label);
 
-        var result = SingleValueEdit.Draw(ref value, size, min, max, clamp, scale);
+        var result = SingleValueEdit.Draw(ref value, size, min, max, clampMin, clampMax, scale);
         ImGui.PopID();
 
         AppendTooltip(tooltip);
@@ -652,19 +653,20 @@ internal static class FormInputs
     
     public static void SetCursorToParameterEdit() => ImGui.SetCursorPosX(LeftParameterPadding + ParameterSpacing);
         
-    public static bool DrawValueRangeControl(ref float min, ref float max, ref float scale, ref bool clamped, float defaultMin, float defaultMax, float defaultScale)
+    public static bool DrawValueRangeControl(ref float min, ref float max, ref float scale, ref bool clampedMin, ref bool clampedMax, float defaultMin,
+                                             float defaultMax, float defaultScale)
     {
         var modified = false;
         var flexWidth = ComputeFlexWidth(2, 3);
         if (CustomComponents.IconButton("clampMin",
-                                        clamped ? Icon.ClampMinOn : Icon.ClampMinOff, 0,
+                                        clampedMin ? Icon.ClampMinOn : Icon.ClampMinOff, 0,
                                         ImDrawFlags.RoundCornersLeft,
-                                        clamped
+                                        clampedMin
                                             ? CustomComponents.ButtonStates.NeedsAttention
                                             : CustomComponents.ButtonStates.Dimmed))
         {
             modified = true;
-            clamped = !clamped;
+            clampedMin = !clampedMin;
         }
 
         modified |= SimpleFloatEdit(1, ref min, defaultMin, flexWidth);
@@ -674,14 +676,14 @@ internal static class FormInputs
         ImGui.SameLine();
 
         if (CustomComponents.IconButton("clampMax",
-                                        clamped ? Icon.ClampMaxOn : Icon.ClampMaxOff, 0,
+                                        clampedMax ? Icon.ClampMaxOn : Icon.ClampMaxOff, 0,
                                         ImDrawFlags.RoundCornersRight,
-                                        clamped
+                                        clampedMax
                                             ? CustomComponents.ButtonStates.NeedsAttention
                                             : CustomComponents.ButtonStates.Dimmed))
         {
             modified = true;
-            clamped = !clamped;
+            clampedMax = !clampedMax;
         }
 
         return modified;
@@ -695,9 +697,9 @@ internal static class FormInputs
         ImGui.PushID(id);
         ImGui.PushStyleVar(ImGuiStyleVar.Alpha, Math.Abs(max - defaultValue) < 0.0001f ? 0.5f : 1.0f);
         if (SingleValueEdit.Draw(ref max, 
-                                 new Vector2(flexWidth, ImGui.GetFrameHeight()), 
+                                 new Vector2(flexWidth, ImGui.GetFrameHeight()),  
                                  format: "{0:G7}", 
-                                 defaultValue: defaultValue, horizontalAlign:0.5f)
+                                 defaultValue: defaultValue, horizontalAlign: 0.5f)
                            .HasFlag(InputEditStateFlags.Modified))
         {
             modified = true;
@@ -708,19 +710,19 @@ internal static class FormInputs
         return modified;
     }
         
-    public static bool DrawIntValueRangeControl(ref int min, ref int max, ref float scale, ref bool clamped)
+    public static bool DrawIntValueRangeControl(ref int min, ref int max, ref float scale, ref bool clampedMin, ref bool clampedMax)
     {
         var modified = false;
         var flexWidth = ComputeFlexWidth(2, 3);
         if (CustomComponents.IconButton("clampMin",
-                                        clamped ? Icon.ClampMinOn : Icon.ClampMinOff, 0,
+                                        clampedMin ? Icon.ClampMinOn : Icon.ClampMinOff, 0,
                                         ImDrawFlags.RoundCornersLeft,
-                                        clamped
+                                        clampedMin
                                             ? CustomComponents.ButtonStates.NeedsAttention
                                             : CustomComponents.ButtonStates.Dimmed))
         {
             modified = true;
-            clamped = !clamped;
+            clampedMin = !clampedMin;
         }
 
         modified |= SimpleIntEdit(1, ref min, int.MinValue, flexWidth);
@@ -730,14 +732,14 @@ internal static class FormInputs
         ImGui.SameLine();
 
         if (CustomComponents.IconButton("clampMax",
-                                        clamped ? Icon.ClampMaxOn : Icon.ClampMaxOff, 0,
+                                        clampedMax ? Icon.ClampMaxOn : Icon.ClampMaxOff, 0,
                                         ImDrawFlags.RoundCornersRight,
-                                        clamped
+                                        clampedMax
                                             ? CustomComponents.ButtonStates.NeedsAttention
                                             : CustomComponents.ButtonStates.Dimmed))
         {
             modified = true;
-            clamped = !clamped;
+            clampedMax = !clampedMax;
         }
 
         return modified;
@@ -751,8 +753,7 @@ internal static class FormInputs
         ImGui.PushID(id);
         ImGui.PushStyleVar(ImGuiStyleVar.Alpha, value == defaultValue ? 0.5f : 1.0f);
         if (SingleValueEdit.Draw(ref value, 
-                                 new Vector2(flexWidth, ImGui.GetFrameHeight()), 
-                                 defaultValue: defaultValue, horizontalAlign:0.5f)
+                                 new Vector2(flexWidth, ImGui.GetFrameHeight()), defaultValue: defaultValue, horizontalAlign: 0.5f)
                            .HasFlag(InputEditStateFlags.Modified))
         {
             modified = true;

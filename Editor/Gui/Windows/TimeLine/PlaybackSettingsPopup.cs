@@ -218,7 +218,7 @@ internal static class PlaybackSettingsPopup
                                             0,
                                             1000,
                                             0.02f,
-                                            true,
+                                            true, true,
                                             "In T3 animation units are in bars.\nThe BPM rate controls the animation speed of your project.",
                                             120))
                     {
@@ -234,7 +234,7 @@ internal static class PlaybackSettingsPopup
                                             -100,
                                             100,
                                             0.02f,
-                                            false,
+                                            false, true,
                                             "Offsets the beginning of the soundtrack in seconds.",
                                             0))
                     {
@@ -249,7 +249,7 @@ internal static class PlaybackSettingsPopup
                                             0.001f,
                                             0.1f,
                                             0.001f,
-                                            true,
+                                            true, true,
                                             "If audio playbacks drifts too far from the animation playback it will be resynced. If the threshold for this is too low you will encounter audio glitches. If the threshold is too large you will lose precision. A normal range is between 0.02s and 0.05s.",
                                             ProjectSettings.Defaults.AudioResyncThreshold))
 
@@ -261,7 +261,7 @@ internal static class PlaybackSettingsPopup
                                         0.001f,
                                         1f,
                                         0.01f,
-                                        true,
+                                        true, true,
                                         "The decay factors controls the impact of [AudioReaction] when AttackMode. Good values strongly depend on style, loudness and variation of input signal.",
                                         0.9f);
                     
@@ -314,7 +314,7 @@ internal static class PlaybackSettingsPopup
                                                   0,
                                                   1000,
                                                   0.02f,
-                                                  true,
+                                                  true, true,
                                                   """
                                                   In T3 animation units are in bars.
                                                   The BPM rate controls the animation speed of your project.
@@ -326,7 +326,7 @@ internal static class PlaybackSettingsPopup
                 modified |= FormInputs.AddFloat("Beat Sync Offset (ms)",
                                                 ref settings.BeatLockAudioOffsetSec,
                                                 -1f, 1f, 0.001f, 
-                                                true,
+                                                true, true,
                                                 """
                                                 When using beat lock through audio analysis, you can slightly offset the phase. 
 
@@ -344,7 +344,7 @@ internal static class PlaybackSettingsPopup
                 //     playback = new BeatTimingPlayback();
                 // }
 
-                modified |= FormInputs.AddFloat("AudioGain", ref settings.AudioGainFactor , 0.01f, 100, 0.01f, true,
+                modified |= FormInputs.AddFloat("AudioGain", ref settings.AudioGainFactor , 0.01f, 100, 0.01f, true, true,
                                     """Can be used to adjust the input signal (e.g. in live situation where the input level might vary.""",
                                     1);
 
@@ -352,7 +352,7 @@ internal static class PlaybackSettingsPopup
                                     0.001f,
                                     1f,
                                     0.01f,
-                                    true,
+                                    true, true,
                                     "The decay factors controls the impact of [AudioReaction] when AttackMode. Good values strongly depend on style, loudness and variation of input signal.",
                                     0.9f);
                 

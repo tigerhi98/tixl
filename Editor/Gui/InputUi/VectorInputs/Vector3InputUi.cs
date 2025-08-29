@@ -20,7 +20,7 @@ internal sealed class Vector3InputUi : FloatVectorInputValueUi<Vector3>
     protected override InputEditStateFlags DrawEditControl(string name, Symbol.Child.Input input, ref Vector3 float3Value, bool readOnly)
     {
         float3Value.CopyTo(FloatComponents);
-        var inputEditState = VectorValueEdit.Draw(FloatComponents, Min, Max, Scale, Clamp, 0,Format);
+        var inputEditState = VectorValueEdit.Draw(FloatComponents, Min, Max, Scale, ClampMin, ClampMax, 0,Format);
         if (readOnly)
             return InputEditStateFlags.Nothing;
             

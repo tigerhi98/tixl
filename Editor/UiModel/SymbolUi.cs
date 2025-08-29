@@ -204,10 +204,10 @@ public sealed partial class SymbolUi : ISelectionContainer
 
         foreach (var childUi in childUis)
         {
-            minY = MathUtils.Min(childUi.PosOnCanvas.Y, minY);
-            maxY = MathUtils.Max(childUi.PosOnCanvas.Y, maxY);
+            minY = Math.Min(childUi.PosOnCanvas.Y, minY);
+            maxY = Math.Max(childUi.PosOnCanvas.Y, maxY);
 
-            maxX = MathUtils.Max(childUi.PosOnCanvas.X, maxX);
+            maxX = Math.Max(childUi.PosOnCanvas.X, maxX);
             setByChildren = true;
         }
 

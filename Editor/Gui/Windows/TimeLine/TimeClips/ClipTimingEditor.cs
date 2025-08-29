@@ -64,7 +64,7 @@ internal static class ClipTimingEditor
         
         var size = new Vector2(100, 0);
         ImGui.PushID(0);
-        if (SingleValueEdit.Draw(ref _combinedSpeedPercentage, size, 0, 999, false, 0.01f, "{0:0.0}%") != InputEditStateFlags.Nothing)
+        if (SingleValueEdit.Draw(ref _combinedSpeedPercentage, size, min: 0, max: 999, clampMin: false, clampMax: false, scale: 0.01f, format: "{0:0.0}%") != InputEditStateFlags.Nothing)
         {
             foreach (var clip in _clips)
             {
@@ -91,7 +91,7 @@ internal static class ClipTimingEditor
         
         // Start
         ImGui.PushID(0);
-        if (SingleValueEdit.Draw(ref r.Start, size, 0, 999) != InputEditStateFlags.Nothing)
+        if (SingleValueEdit.Draw(ref r.Start, size, min: 0, max: 999) != InputEditStateFlags.Nothing)
         {
             if (!float.IsNaN(r.Start))
             {
@@ -115,7 +115,7 @@ internal static class ClipTimingEditor
         ImGui.SameLine();
         ImGui.PushID(1);
         var duration = r.Duration;
-        if (SingleValueEdit.Draw(ref duration, size, 0, 999) != InputEditStateFlags.Nothing)
+        if (SingleValueEdit.Draw(ref duration, size, min: 0, max: 999) != InputEditStateFlags.Nothing)
         {
             if (!float.IsNaN(duration))
             {
@@ -137,7 +137,7 @@ internal static class ClipTimingEditor
         
         ImGui.SameLine();
         ImGui.PushID(2);
-        if (SingleValueEdit.Draw(ref r.End, size, 0, 999) == InputEditStateFlags.Finished)
+        if (SingleValueEdit.Draw(ref r.End, size, min: 0, max: 999) == InputEditStateFlags.Finished)
         {
             if (!float.IsNaN(r.End))
             {

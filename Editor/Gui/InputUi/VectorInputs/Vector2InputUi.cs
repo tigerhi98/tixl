@@ -35,7 +35,7 @@ internal sealed class Vector2InputUi : FloatVectorInputValueUi<Vector2>
         var showControl = (controlRatio > 1f && UseVec2Control != Vec2Controls.None);
         var rightPadding = showControl ? ImGui.GetFrameHeight() * controlRatio : 0;
 
-        var inputEditState = VectorValueEdit.Draw(FloatComponents, Min, Max, Scale, Clamp, rightPadding , Format);
+        var inputEditState = VectorValueEdit.Draw(FloatComponents, Min, Max, Scale, ClampMin, ClampMax, rightPadding , Format);
         var shouldClamp = false;
             
         if (showControl)

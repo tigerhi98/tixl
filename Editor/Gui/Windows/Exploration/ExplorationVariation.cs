@@ -222,7 +222,9 @@ internal sealed class ExplorationVariation
         public float ParameterScale = 1;
         public float ParameterMin = float.NegativeInfinity;
         public float ParameterMax = float.PositiveInfinity;
-        public bool ParameterClamp = false;
+        public bool ParameterClampMin = false;
+        public bool ParameterClampMax = false;
+        
         //public bool IsHidden;
     }
 

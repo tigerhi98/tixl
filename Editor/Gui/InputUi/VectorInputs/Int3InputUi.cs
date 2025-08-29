@@ -26,7 +26,7 @@ internal sealed class Int3InputUi : IntVectorInputValueUi<Int3>
         IntComponents[1] = int3Value.Y;
         IntComponents[2] = int3Value.Z;
 
-        var inputEditState = VectorValueEdit.Draw(IntComponents, Min, Max, Scale, Clamp);
+        var inputEditState = VectorValueEdit.Draw(IntComponents, Min, Max, Scale, ClampMin, ClampMax);
         int3Value = new Int3(IntComponents[0], IntComponents[1], IntComponents[2]);
 
         return inputEditState;

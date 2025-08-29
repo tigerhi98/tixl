@@ -79,7 +79,9 @@ internal sealed class IntListOutputUi : OutputUi<List<int>>
                                          new Vector2(ImGui.GetFrameHeight() * 2, ImGui.GetFrameHeight()),
                                          0,
                                          100,
-                                         true, 0.1f) == InputEditStateFlags.Modified)
+                                         true,
+                                         false,
+                                         0.1f) == InputEditStateFlags.Modified)
                 {
                     UserSettings.Config.GridOutputColumnCount = UserSettings.Config.GridOutputColumnCount.Clamp(1, 100);
                 }

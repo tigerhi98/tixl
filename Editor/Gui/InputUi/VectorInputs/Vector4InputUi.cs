@@ -14,7 +14,8 @@ internal sealed class Vector4InputUi : FloatVectorInputValueUi<Vector4>
     {
         Min = 0;
         Max = 1;
-        Clamp = true;
+        ClampMin = true;
+        ClampMax = false;
     }
         
     public override IInputUi Clone()
@@ -41,7 +42,7 @@ internal sealed class Vector4InputUi : FloatVectorInputValueUi<Vector4>
     {
         float4Value.CopyTo(FloatComponents);
         var thumbWidth = ImGui.GetFrameHeight();
-        var inputEditState = VectorValueEdit.Draw(FloatComponents, Min, Max, Scale, Clamp, thumbWidth+1);
+        var inputEditState = VectorValueEdit.Draw(FloatComponents, Min, Max, Scale, ClampMin, ClampMax, thumbWidth+1);
             
         ImGui.SameLine();
         if (!readOnly)
@@ -75,7 +76,7 @@ internal sealed class Vector4InputUi : FloatVectorInputValueUi<Vector4>
     {
         float4Value.CopyTo(_floatComponentsForEdit);
         
-        var inputEditState = VectorValueEdit.Draw(_floatComponentsForEdit, 0, 1, 0.01f, false, rightPadding);
+        var inputEditState = VectorValueEdit.Draw(_floatComponentsForEdit, 0, 1, 0.01f, false, false, rightPadding);
             
         ImGui.SameLine();
         if (!readOnly)

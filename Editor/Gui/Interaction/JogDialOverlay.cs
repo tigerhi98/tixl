@@ -11,8 +11,10 @@ namespace T3.Editor.Gui.Interaction;
 internal static class JogDialOverlay
 {
     internal static bool Draw(ref double value, bool restarted, Vector2 center, double min = double.NegativeInfinity,
-                            double max = double.PositiveInfinity,
-                            float scale = 0.1f, bool clamp = false)
+                              double max = double.PositiveInfinity,
+                              float scale = 0.1f, 
+                              bool clampMin = false, 
+                              bool clampMax= false)
     {
         var modified = false;
         _drawList = ImGui.GetForegroundDrawList();
@@ -26,7 +28,8 @@ internal static class JogDialOverlay
             _unclampedValue = value;
             _min = min;
             _max = max;
-            _clamp = clamp;
+            _clampMin = clampMin;
+            _clampMax = clampMax;
                 
             _state = States.WaitingInNeutral;
         }
@@ -47,9 +50,7 @@ internal static class JogDialOverlay
     private const int RingCount = 2;
     private static double _unclampedValue;
 
-    private static double ClampedValue => _clamp
-                                              ? _unclampedValue.Clamp(_min, _max)
-                                              : _unclampedValue;
+    private static double ClampedValue => MathUtils.OptionalClamp(_unclampedValue,_min, _clampMin, _max, _clampMax);
 
     private static float _baseLog10Speed = 1;
     private static double _originalValue;
@@ -74,7 +75,8 @@ internal static class JogDialOverlay
 
     private static double _min;
     private static double _max;
-    private static bool _clamp;
+    private static bool _clampMin;
+    private static bool _clampMax;
 
     private const float NeutralRadius = 15;
 
@@ -127,7 +129,7 @@ internal static class JogDialOverlay
                 var color = new Color(0, 0, 0, alpha);
                 var lineThickness = lineIndex == 0 ? 4 : 1;
                 var dialValue = ComputeDialValue(_unclampedValue, f);
-                if (!_clamp || (dialValue >= _min && dialValue <= _max))
+                if ( (!_clampMin || dialValue >= _min) && (!_clampMax || dialValue <= _max) )
                 {
                     DrawTick(f, color, lineThickness);
                 }

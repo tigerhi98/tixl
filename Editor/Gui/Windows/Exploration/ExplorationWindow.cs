@@ -158,7 +158,8 @@ internal sealed class ExplorationWindow : Window
                             var scale = 1f;
                             var min = float.NegativeInfinity;
                             var max = float.PositiveInfinity;
-                            var clamp = false;
+                            var clampMin = false;
+                            var clampMax = false;
 
                             var symbolUi = symbolChildUi.SymbolChild.Symbol.GetSymbolUi();
                             var inputUi = symbolUi.InputUis[input.Id];
@@ -168,19 +169,22 @@ internal sealed class ExplorationWindow : Window
                                     scale = floatInputUi.Scale;
                                     min = floatInputUi.Min;
                                     max = floatInputUi.Max;
-                                    clamp = floatInputUi.Clamp;
+                                    clampMin = floatInputUi.ClampMin;
+                                    clampMax = floatInputUi.ClampMax;
                                     break;
                                 case Vector2InputUi float2InputUi:
                                     scale = float2InputUi.Scale;
                                     min = float2InputUi.Min;
                                     max = float2InputUi.Max;
-                                    clamp = float2InputUi.Clamp;
+                                    clampMin = float2InputUi.ClampMin;
+                                    clampMax = float2InputUi.ClampMax;
                                     break;
                                 case Vector3InputUi float3InputUi:
                                     scale = float3InputUi.Scale;
                                     min = float3InputUi.Min;
                                     max = float3InputUi.Max;
-                                    clamp = float3InputUi.Clamp;
+                                    clampMin = float3InputUi.ClampMin;
+                                    clampMax = float3InputUi.ClampMax;
                                     break;
                                 case Vector4InputUi float4InputUi:
                                     scale = 0.02f; // Reasonable default for color variations
@@ -197,7 +201,8 @@ internal sealed class ExplorationWindow : Window
                                                             ParameterScale = scale,
                                                             ParameterMin = min,
                                                             ParameterMax = max,
-                                                            ParameterClamp = clamp,
+                                                            ParameterClampMin = clampMin,
+                                                            ParameterClampMax = clampMax,
                                                         });
                         }
 

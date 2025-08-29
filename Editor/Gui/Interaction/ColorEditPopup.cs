@@ -384,7 +384,7 @@ internal static class ColorEditPopup
                 var hueDegrees = hNormalized * 360f;
 
                 ImGui.PushID("h");
-                if (SingleValueEdit.Draw(ref hueDegrees, inputSize, 0, 360, false, 1, "{0:0.0}") is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref hueDegrees, inputSize, min: 0, max: 360, clampMin: false, clampMax: false, scale: 1, format: "{0:0.0}") is InputEditStateFlags.Modified)
                 {
                     if (hueDegrees < 360)
                     {
@@ -403,7 +403,7 @@ internal static class ColorEditPopup
 
                 ImGui.SameLine();
                 ImGui.PushID("s");
-                if (SingleValueEdit.Draw(ref linearSaturation, inputSize, 0, 1, true,
+                if (SingleValueEdit.Draw(ref linearSaturation, inputSize, min: 0, max: 1, clampMin: true, clampMax: true,
                                          scale: 0.005f,
                                          format: "{0:0.00}") is InputEditStateFlags.Modified)
                 {
@@ -415,7 +415,7 @@ internal static class ColorEditPopup
 
                 ImGui.SameLine();
                 ImGui.PushID("v");
-                if (SingleValueEdit.Draw(ref v, inputSize, 0, 20, true, 0.005f, "{0:0.00}") is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref v, inputSize, min: 0, max: 20, clampMin: true, clampMax: false, scale: 0.005f, format: "{0:0.00}") is InputEditStateFlags.Modified)
                 {
                     cColor.V = v.Clamp(0, 1000);
                     edited |= InputEditStateFlags.Modified;
@@ -429,7 +429,7 @@ internal static class ColorEditPopup
                 ImGui.SameLine();
                 ImGui.PushID("a");
                 var a = cColor.A;
-                if (SingleValueEdit.Draw(ref a, inputSize, 0, 1, true, 0.005f, "{0:0.00}") is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref a, inputSize, min: 0, max: 1, clampMin: true, clampMax: true, scale: 0.005f, format: "{0:0.00}") is InputEditStateFlags.Modified)
                 {
                     cColor.A = a.Clamp(0, 1);
                     edited |= InputEditStateFlags.Modified;
@@ -442,7 +442,7 @@ internal static class ColorEditPopup
             {
                 var r = cColor.R;
                 ImGui.PushID("r");
-                if (SingleValueEdit.Draw(ref r, inputSize, 0, 1, false, 1) is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref r, inputSize, min: 0, max: 1, clampMin: true, clampMax: false, scale: 1) is InputEditStateFlags.Modified)
                 {
                     cColor.R = r;
                     edited |= InputEditStateFlags.Modified;
@@ -453,7 +453,7 @@ internal static class ColorEditPopup
                 ImGui.SameLine();
                 var g = cColor.G;
                 ImGui.PushID("g");
-                if (SingleValueEdit.Draw(ref g, inputSize, 0, 1, false, 1) is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref g, inputSize, min: 0, max: 1, clampMin: true, clampMax: false, scale: 1) is InputEditStateFlags.Modified)
                 {
                     cColor.G = g;
                     edited |= InputEditStateFlags.Modified;
@@ -464,7 +464,7 @@ internal static class ColorEditPopup
                 ImGui.SameLine();
                 var b = cColor.B;
                 ImGui.PushID("b");
-                if (SingleValueEdit.Draw(ref b, inputSize, 0, 1, false, 1) is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref b, inputSize, min: 0, max: 1, clampMin: true, clampMax: false, scale: 1) is InputEditStateFlags.Modified)
                 {
                     cColor.B = b;
                     edited |= InputEditStateFlags.Modified;
@@ -477,7 +477,7 @@ internal static class ColorEditPopup
                 ImGui.SameLine();
                 var a = cColor.A;
                 ImGui.PushID("a");
-                if (SingleValueEdit.Draw(ref a, inputSize, 0, 1, false, 1) is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref a, inputSize, min: 0, max: 1, clampMin: true, clampMax: true, scale: 1) is InputEditStateFlags.Modified)
                 {
                     cColor.A = a;
                     edited |= InputEditStateFlags.Modified;
@@ -491,7 +491,7 @@ internal static class ColorEditPopup
             {
                 var r = MathF.Round(cColor.R * 255);
                 ImGui.PushID("r");
-                if (SingleValueEdit.Draw(ref r, inputSize, 0, 255, false, 1, "{0:0}") is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref r, inputSize, min: 0, max: 255, clampMin: true, clampMax: false, scale: 1, format: "{0:0}") is InputEditStateFlags.Modified)
                 {
                     cColor.R = r / 255;
                     edited |= InputEditStateFlags.Modified;
@@ -502,7 +502,7 @@ internal static class ColorEditPopup
                 ImGui.SameLine();
                 var g = MathF.Round(cColor.G * 255);
                 ImGui.PushID("g");
-                if (SingleValueEdit.Draw(ref g, inputSize, 0, 255, false, 1, "{0:0}") is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref g, inputSize, min: 0, max: 255, clampMin: true, clampMax: false, scale: 1, format: "{0:0}") is InputEditStateFlags.Modified)
                 {
                     cColor.G = g / 255;
                     edited |= InputEditStateFlags.Modified;
@@ -513,7 +513,7 @@ internal static class ColorEditPopup
                 ImGui.SameLine();
                 var b = MathF.Round(cColor.B * 255);
                 ImGui.PushID("b");
-                if (SingleValueEdit.Draw(ref b, inputSize, 0, 255, false, 1, "{0:0}") is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref b, inputSize, min: 0, max: 255, clampMin: true, clampMax: false, scale: 1, format: "{0:0}") is InputEditStateFlags.Modified)
                 {
                     cColor.B = b / 255;
                     edited |= InputEditStateFlags.Modified;
@@ -527,7 +527,7 @@ internal static class ColorEditPopup
                 var a = MathF.Round(cColor.A * 255);
                 
                 ImGui.PushID("a");
-                if (SingleValueEdit.Draw(ref a, inputSize, 0, 255, false, 1, "{0:0}") is InputEditStateFlags.Modified)
+                if (SingleValueEdit.Draw(ref a, inputSize, min: 0, max: 255, clampMin: true, clampMax: true, scale: 1, format: "{0:0}") is InputEditStateFlags.Modified)
                 {
                     cColor.A = a / 255;
                     edited |= InputEditStateFlags.Modified;

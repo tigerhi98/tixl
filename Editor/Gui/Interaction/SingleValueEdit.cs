@@ -16,23 +16,24 @@ namespace T3.Editor.Gui.Interaction;
 /// <summary>
 /// An alternative ImGui component for editing float values 
 /// </summary>
-public static class SingleValueEdit
+internal static class SingleValueEdit
 {
     /// <summary>
     /// Wrapper coll for int type 
     /// </summary>
-    public static InputEditStateFlags Draw(ref int value,
-                                           Vector2 size,
-                                           int min = int.MinValue,
-                                           int max = int.MaxValue,
-                                           bool clamp = false,
-                                           float scale = 0.2f,
-                                           string format = "{0:0}",
-                                           int defaultValue = default,
-                                           float horizontalAlign = 0)
+    internal static InputEditStateFlags Draw(ref int value,
+                                             Vector2 size,
+                                             int min = int.MinValue,
+                                             int max = int.MaxValue,
+                                             bool clampMin = false,
+                                             bool clampMax = false,
+                                             float scale = 0.2f,
+                                             string format = "{0:0}",
+                                             int defaultValue = default,
+                                             float horizontalAlign = 0)
     {
         double doubleValue = value;
-        var result = Draw(ref doubleValue, size, min, max, clamp, scale, format, useIntegers:true, defaultValue:defaultValue, horizontalAlign);
+        var result = Draw(ref doubleValue, size, min, max, clampMin, clampMax, scale: scale, format: format, useIntegers: true, defaultValue: defaultValue, horizontalAlign: horizontalAlign);
         value = (int)doubleValue;
         return result;
     }
@@ -40,34 +41,37 @@ public static class SingleValueEdit
     /// <summary>
     /// Wrapper call for float type
     /// </summary>
-    public static InputEditStateFlags Draw(ref float value,
-                                           Vector2 size,
-                                           float min = float.NegativeInfinity,
-                                           float max = float.PositiveInfinity,
-                                           bool clamp = false,
-                                           float scale = 0.01f,
-                                           string format = "{0:0.000}", 
-                                           float defaultValue= default,
-                                           float horizontalAlign = 0)
+    internal static InputEditStateFlags Draw(ref float value,
+                                             Vector2 size,
+                                             float min = float.NegativeInfinity,
+                                             float max = float.PositiveInfinity,
+                                             bool clampMin = false, 
+                                             bool clampMax= false,
+                                             float scale = 0.01f,
+                                             string format = "{0:0.000}",
+                                             float defaultValue = default,
+                                             float horizontalAlign = 0)
     {
         double floatValue = value;
-        var result = Draw(ref floatValue, size, min, max, clamp, scale, format, defaultValue:defaultValue, horizontalAlign:horizontalAlign);
+        var result = Draw(ref floatValue, size, min, max, clampMin, clampMax, scale: scale, format: format, defaultValue: defaultValue,
+                          horizontalAlign: horizontalAlign);
         value = (float)floatValue;
         return result;
     }
 
     private static int _editInteractionCounter = 0;
 
-    public static InputEditStateFlags Draw(ref double value,
-                                           Vector2 size,
-                                           double min = double.NegativeInfinity,
-                                           double max = double.PositiveInfinity,
-                                           bool clamp = false,
-                                           float scale = 1,
-                                           string format = "{0:0.000}",
-                                           bool useIntegers= false, 
-                                           double defaultValue = default,
-                                           float horizontalAlign = 0)
+    private static InputEditStateFlags Draw(ref double value,
+                                            Vector2 size,
+                                            double min = double.NegativeInfinity,
+                                            double max = double.PositiveInfinity,
+                                            bool clampMin = false, 
+                                            bool clampMax= false,
+                                            float scale = 1,
+                                            string format = "{0:0.000}",
+                                            bool useIntegers = false,
+                                            double defaultValue = default,
+                                            float horizontalAlign = 0)
     {
         _numberFormat = format;
         _currentTabIndex++;
@@ -132,7 +136,7 @@ public static class SingleValueEdit
                     }
 
                     var restarted = (float)(ImGui.GetTime() - _timeOpened) < 0.1f;
-                    DrawValueEditMethod(ref _editValue, restarted, _center, min, max, clamp, scale);
+                    DrawValueEditMethod(ref _editValue, restarted, _center, min, max, clampMin, clampMax, scale);
                     _dampedValue = _slidingAverage.UpdateAndCompute(_editValue);
                     
                     break;
@@ -195,7 +199,7 @@ public static class SingleValueEdit
                     {
                         _editValue = _startValue;
                         _editValue = defaultValue;
-                        _jogDialText = value.ToString();
+                        _jogDialText = value.ToString(CultureInfo.InvariantCulture);
                     }
 
                     break;
@@ -297,22 +301,23 @@ public static class SingleValueEdit
         return InputEditStateFlags.Nothing;
     }
 
-    public static void DrawValueEditMethod(ref double editValue, bool restarted, Vector2 center, double min, double max, bool clamp, float scale)
+    internal static void DrawValueEditMethod(ref double editValue, bool restarted, Vector2 center, double min, double max, bool clampMin, bool clampMax,
+                                             float scale)
     {
         switch (UserSettings.Config.ValueEditMethod)
         {
             case UserSettings.ValueEditMethods.InfinitySlider:
-                InfinitySliderOverlay.Draw(ref editValue, restarted, center, min, max, scale, clamp);
+                InfinitySliderOverlay.Draw(ref editValue, restarted, center, min, max, scale, clampMin, clampMax);
                 break;
             case UserSettings.ValueEditMethods.RadialSlider:
-                RadialSliderOverlay.Draw(ref editValue, restarted, center, min, max, scale, clamp);
+                RadialSliderOverlay.Draw(ref editValue, restarted, center, min, max, scale, clampMin, clampMax);
                 break;
             case UserSettings.ValueEditMethods.JogDial:
-                JogDialOverlay.Draw(ref editValue, restarted, center, min, max, scale, clamp);
+                JogDialOverlay.Draw(ref editValue, restarted, center, min, max, scale, clampMin, clampMax);
                 break;
             case UserSettings.ValueEditMethods.ValueLadder:
             default:
-                SliderLadder.Draw(ref editValue, min, max, scale, (float)(ImGui.GetTime() - _timeOpened), clamp, center);
+                SliderLadder.Draw(ref editValue, min, max, scale, (float)(ImGui.GetTime() - _timeOpened), clampMin, clampMax, center);
                 break;
         }
     }

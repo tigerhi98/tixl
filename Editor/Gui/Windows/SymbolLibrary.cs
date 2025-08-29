@@ -648,7 +648,7 @@ internal sealed class RandomPromptGenerator(SymbolFilter filter)
         var listNeedsUpdate = _allLibSymbols == null;
         FormInputs.SetIndent(80 * T3Ui.UiScaleFactor);
         FormInputs.AddInt("Seed", ref _randomSeed);
-        listNeedsUpdate |= FormInputs.AddFloat("Complexity", ref _promptComplexity, 0, 1, 0.02f, true);
+        listNeedsUpdate |= FormInputs.AddFloat("Complexity", ref _promptComplexity, 0, 1, 0.02f, true, true);
         FormInputs.SetIndentToLeft();
 
         FormInputs.AddVerticalSpace();

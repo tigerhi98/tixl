@@ -26,7 +26,8 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
                        Max = Max,
                        Min = Min,
                        _scale = _scale,
-                       Clamp = Clamp,
+                       ClampMin = ClampMin,
+                       ClampMax = ClampMax,
                        InputDefinition = InputDefinition,
                        Parent = Parent,
                        PosOnCanvas = PosOnCanvas,
@@ -86,7 +87,8 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
         public float MinValue;
         public float MaxValue;
         public string CustomFormat;
-        public bool ClampRange;
+        public bool ClampRangeMin;
+        public bool ClampRangeMax;
     }
 
     private ValueSettingPreset[] _valueSettingPresets =
@@ -114,7 +116,7 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
                     MinValue = 0,
                     MaxValue = 1,
                     CustomFormat = null,
-                    ClampRange = true,
+                    ClampRangeMin = true,
                 },
             new()
                 {
@@ -123,7 +125,6 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
                     MinValue = -5,
                     MaxValue = 5,
                     CustomFormat = "{0:0.000} ×",
-                    ClampRange = false,
                 },
             new()
                 {
@@ -132,7 +133,6 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
                     MinValue = 0,
                     MaxValue = 5,
                     CustomFormat = "{0:0.000} ×",
-                    ClampRange = false,
                 },
             new()
                 {
@@ -141,7 +141,8 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
                     MinValue = 0,
                     MaxValue = 1,
                     CustomFormat = "{0:0.000}",
-                    ClampRange = true,
+                    ClampRangeMin = true,
+                    ClampRangeMax = true,
                 },
         };
 
@@ -164,17 +165,19 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
             ImGui.TextUnformatted("Apply formatting presets...");
             foreach (var p in _valueSettingPresets)
             {
-                if (ImGui.Button(p.Title))
-                {
-                    Min = p.MinValue;
-                    Max = p.MaxValue;
-                    _scale = p.Scale;
-                    Clamp = p.ClampRange;
-                    Format = p.CustomFormat;
-                    Parent.FlagAsModified();
-                    ImGui.CloseCurrentPopup();
-                    modified = true;
-                }
+                if (!ImGui.Button(p.Title)) 
+                    continue;
+                
+                Min = p.MinValue;
+                Max = p.MaxValue;
+                _scale = p.Scale;
+                ClampMin = p.ClampRangeMin;
+                ClampMax = p.ClampRangeMax;
+                Format = p.CustomFormat;
+                    
+                Parent?.FlagAsModified();
+                ImGui.CloseCurrentPopup();
+                modified = true;
             }
 
             ImGui.EndPopup();
@@ -183,7 +186,7 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
         modified |= base.DrawSettings();
 
         FormInputs.DrawFieldSetHeader("Value Range");
-        if (FormInputs.DrawValueRangeControl(ref Min, ref Max, ref _scale, ref Clamp, DefaultMin, DefaultMax, DefaultScale))
+        if (FormInputs.DrawValueRangeControl(ref Min, ref Max, ref _scale, ref ClampMin, ref ClampMax, DefaultMin, DefaultMax, DefaultScale))
         {
             modified = true;
         }
@@ -226,9 +229,12 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
         if (_scale != DefaultScale)
             writer.WriteValue("Scale", _scale);
 
-        if (Clamp)
-            writer.WriteValue("Clamp", Clamp);
+        if (ClampMin)
+            writer.WriteValue("ClampMin", ClampMin);
 
+        if (ClampMax)
+            writer.WriteValue("ClampMax", ClampMax);
+        
         if (!string.IsNullOrEmpty(Format))
             writer.WriteObject("Format", Format);
 
@@ -238,11 +244,18 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
     public override void Read(JToken inputToken)
     {
         base.Read(inputToken);
+        if (inputToken == null)
+            return;
 
         Min = inputToken["Min"]?.Value<float>() ?? DefaultMin;
         Max = inputToken["Max"]?.Value<float>() ?? DefaultMax;
         _scale = inputToken["Scale"]?.Value<float>() ?? DefaultScale;
-        Clamp = inputToken["Clamp"]?.Value<bool>() ?? false;
+        
+        var legacyClamp = inputToken["Clamp"]?.Value<bool>() ?? false;
+        ClampMin = (inputToken["ClampMin"]?.Value<bool>() ?? false) | legacyClamp;
+        ClampMax = (inputToken["ClampMax"]?.Value<bool>() ?? false) | legacyClamp;
+        
+        
         Format = inputToken["Format"]?.Value<string>();
     }
 
@@ -265,7 +278,9 @@ internal abstract class FloatVectorInputValueUi<T> : InputValueUi<T>
     public float Max = DefaultMax;
     private float _scale = DefaultScale;
     public float Scale => FloatInputUi.GetScaleFromRange(_scale, Min, Max);
-    public bool Clamp;
+    //private bool Clamp;
+    public bool ClampMin;
+    public bool ClampMax;
     public string Format;
 
     protected readonly float[] FloatComponents;

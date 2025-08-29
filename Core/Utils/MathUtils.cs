@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Numerics;
 using System.Runtime.CompilerServices;
 using T3.Core.Animation;
 
@@ -234,24 +235,33 @@ public static class MathUtils
         return firstIndex;
     }
         
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T Min<T>(T lhs, T rhs) where T : IComparable<T>
-    {
-        return lhs.CompareTo(rhs) < 0 ? lhs : rhs;
-    }
+    // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    // public static T Min<T>(T a, T b) where T : INumber<T>
+    //     => T.Min(a, b);
+    //
+    // [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    // public static T Max<T>(T a, T b) where T : INumber<T>
+    //     => T.Max(a, b);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T Max<T>(T lhs, T rhs) where T : IComparable<T>
-    {
-        return lhs.CompareTo(rhs) >= 0 ? lhs : rhs;
-    }
+    public static T Clamp<T>(this T v, T min, T max) where T : INumber<T>
+        => T.Min(T.Max(v, min), max);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static T Clamp<T>(this T val, T min, T max) where T : IComparable<T>
+    public static T ClampMin<T>(this T v, T min) where T : INumber<T>
+        => T.Max(v, min);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T ClampMax<T>(this T v, T max) where T : INumber<T>
+        => T.Min(v, max);
+    
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static T OptionalClamp<T>(T v, T min, bool clampMin, T max, bool clampMax) where T : INumber<T>
     {
-        if (val.CompareTo(min) < 0) return min;
-        else if (val.CompareTo(max) > 0) return max;
-        else return val;
+        var r = v;
+        if (clampMin) r = T.Max(r, min);
+        if (clampMax) r = T.Min(r, max);
+        return r;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]

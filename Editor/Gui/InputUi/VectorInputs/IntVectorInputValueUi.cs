@@ -24,7 +24,8 @@ internal abstract class IntVectorInputValueUi<T> : InputValueUi<T>
                                 Max = Max,
                                 Min = Min,
                                 _scale = _scale,
-                                Clamp = Clamp,
+                                ClampMin = ClampMin,
+                                ClampMax = ClampMax,
                                 InputDefinition = InputDefinition,
                                 Parent = Parent,
                                 PosOnCanvas = PosOnCanvas,
@@ -82,7 +83,7 @@ internal abstract class IntVectorInputValueUi<T> : InputValueUi<T>
     {
         var modified = base.DrawSettings();
         FormInputs.DrawFieldSetHeader("Value Range");
-        modified |= FormInputs.DrawIntValueRangeControl(ref Min, ref Max, ref _scale, ref Clamp);
+        modified |= FormInputs.DrawIntValueRangeControl(ref Min, ref Max, ref _scale, ref ClampMin, ref ClampMax);
         return modified;
     }
 
@@ -100,8 +101,12 @@ internal abstract class IntVectorInputValueUi<T> : InputValueUi<T>
         if (_scale != DefaultScale)
             writer.WriteValue("Scale", _scale);
             
-        if(Clamp)
-            writer.WriteValue("Clamp", Clamp);
+        if(ClampMin)
+            writer.WriteValue("ClampMin", ClampMin);
+        
+        if(ClampMax)
+            writer.WriteValue("ClampMax", ClampMax);
+
         // ReSharper enable CompareOfFloatsByEqualityOperator
     }
 
@@ -112,15 +117,19 @@ internal abstract class IntVectorInputValueUi<T> : InputValueUi<T>
         Min = inputToken?["Min"]?.Value<int>() ?? DefaultMin;
         Max = inputToken?["Max"]?.Value<int>() ?? DefaultMax;
         _scale = inputToken?["Scale"]?.Value<float>() ?? DefaultScale;
-        Clamp = inputToken?["Clamp"]?.Value<bool>() ?? false;
+        
+        var legacyClamp=inputToken?["Clamp"]?.Value<bool>() ?? false;
+        
+        ClampMin =(inputToken?["ClampMin"]?.Value<bool>() ?? false) | legacyClamp;
+        ClampMax =(inputToken?["ClampMax"]?.Value<bool>() ?? false) | legacyClamp;
     }
-        
-        
+    
     public int Min  = DefaultMin;
     public int Max  = DefaultMax;
     private float _scale = DefaultScale;
     public float Scale  => 0.1f;
-    public bool Clamp;
+    public bool ClampMin;
+    public bool ClampMax;
         
     protected readonly int[] IntComponents;
 

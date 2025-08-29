@@ -11,9 +11,9 @@ namespace T3.Editor.Gui.OpUis.WidgetUi;
 /// <summary>
 /// A set of helper methods for implementing consistent ChildUi 
 /// </summary>
-public static class WidgetElements
+internal static class WidgetElements
 {
-    public static void DrawPrimaryTitle(ImDrawListPtr drawList, ImRect widgetRect, string formattedValue, Vector2 canvasScale)
+    internal static void DrawPrimaryTitle(ImDrawListPtr drawList, ImRect widgetRect, string formattedValue, Vector2 canvasScale)
     {
         if (string.IsNullOrEmpty(formattedValue))
             return;
@@ -41,7 +41,7 @@ public static class WidgetElements
         ImGui.PopFont();
     }
 
-    public static void DrawSmallTitle(ImDrawListPtr drawList, ImRect widgetRect, string title, Vector2 canvasScale)
+    internal static void DrawSmallTitle(ImDrawListPtr drawList, ImRect widgetRect, string title, Vector2 canvasScale)
     {
         if (string.IsNullOrEmpty(title))
             return;
@@ -67,7 +67,7 @@ public static class WidgetElements
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static ImFontPtr GetPrimaryLabelFont(float canvasScale)
+    internal static ImFontPtr GetPrimaryLabelFont(float canvasScale)
     {
         var font = canvasScale < ScaleFactors.NormalScale
                        ? Fonts.FontSmall
@@ -78,7 +78,7 @@ public static class WidgetElements
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static Color GetPrimaryLabelColor(float canvasScale)
+    internal static Color GetPrimaryLabelColor(float canvasScale)
     {
         return UiColors.WidgetTitle
                        .Fade(MathUtils.NormalizeAndClamp
@@ -88,7 +88,7 @@ public static class WidgetElements
                                   ScaleFactors.SmallScale));
     }
 
-    public static void DrawPrimaryValue(ImDrawListPtr drawList, ImRect widgetRect, string formattedValue, Vector2 canvasScale)
+    internal static void DrawPrimaryValue(ImDrawListPtr drawList, ImRect widgetRect, string formattedValue, Vector2 canvasScale)
     {
         if (string.IsNullOrEmpty(formattedValue))
             return;
@@ -106,7 +106,7 @@ public static class WidgetElements
         ImGui.PopFont();
     }
 
-    public static void DrawSmallValue(ImDrawListPtr drawList, ImRect widgetRect, string title, Vector2 canvasScale)
+    internal static void DrawSmallValue(ImDrawListPtr drawList, ImRect widgetRect, string title, Vector2 canvasScale)
     {
         if (string.IsNullOrEmpty(title))
             return;
@@ -133,7 +133,7 @@ public static class WidgetElements
         ImGui.PopFont();
     }
 
-    public static bool DrawRateLabelWithTitle(InputSlot<float> inputSlot, ImRect selectableScreenRect, ImDrawListPtr drawList, string nodeLabel, Vector2 canvasScale)
+    internal static bool DrawRateLabelWithTitle(InputSlot<float> inputSlot, ImRect selectableScreenRect, ImDrawListPtr drawList, string nodeLabel, Vector2 canvasScale)
     {
         var rate = inputSlot.Input.Value is InputValue<float> floatValue ? floatValue.Value : inputSlot.Value;
 
@@ -188,7 +188,7 @@ public static class WidgetElements
     /// <summary>
     /// Draws a drag indicator on the left side of a graph operator and returns the computed width in pixels
     /// </summary>
-    public static float DrawOperatorDragHandle(ImRect visibleScreenRect, ImDrawListPtr drawList, Vector2 canvasScale)
+    internal static float DrawOperatorDragHandle(ImRect visibleScreenRect, ImDrawListPtr drawList, Vector2 canvasScale)
     {
         var canvasScaleY = canvasScale.Y / T3Ui.UiScaleFactor;
         var width = Math.Max(10 * T3Ui.UiScaleFactor, (int)(7 * canvasScaleY));

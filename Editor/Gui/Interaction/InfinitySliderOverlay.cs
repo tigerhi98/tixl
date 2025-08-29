@@ -19,13 +19,14 @@ internal static class InfinitySliderOverlay
     private const int Log10YDistance = 100;
     private const float Width = 750;
 
-    internal static void Draw(ref double roundedValue, 
-                              bool restarted, 
-                              Vector2 center, 
+    internal static void Draw(ref double roundedValue,
+                              bool restarted,
+                              Vector2 center,
                               double min = double.NegativeInfinity,
                               double max = double.PositiveInfinity,
-                              float scale = 0.1f, 
-                              bool clamp = false)
+                              float scale = 0.1f,
+                              bool clampMin = false, 
+                              bool clampMax=false)
     {
         var drawList = ImGui.GetForegroundDrawList();
         _io = ImGui.GetIO();
@@ -82,9 +83,8 @@ internal static class InfinitySliderOverlay
         if (!isDraggingWidgetPosition)
         {
             _value += deltaX / Width * valueRange;
-            if (clamp)
-                _value = _value.Clamp(min, max);
         }
+        _value = MathUtils.OptionalClamp(_value, min, clampMin, max, clampMax);
         
         DrawUi(out roundedValue, min, max, valueRange, mousePosX, drawList);
         

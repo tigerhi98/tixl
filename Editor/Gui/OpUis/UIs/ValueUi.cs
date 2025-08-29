@@ -93,7 +93,13 @@ internal static class ValueUi
                     var restarted = ImGui.IsItemActivated();
                     if (ImGui.IsItemActive())
                     {
-                        SingleValueEdit.DrawValueEditMethod(ref value, restarted, _jogDialCenter, double.NegativeInfinity, double.PositiveInfinity, false,
+                        SingleValueEdit.DrawValueEditMethod(ref value, 
+                                                            restarted, 
+                                                            _jogDialCenter, 
+                                                            double.NegativeInfinity, 
+                                                            double.PositiveInfinity, 
+                                                            false, 
+                                                            false,
                                                             0.025f);
                         inputSlot.SetTypedInputValue((float)value);
                         inputSlot.DirtyFlag.ForceInvalidate();

@@ -59,7 +59,7 @@ internal sealed class SettingsWindow : Window
                     FormInputs.SetIndentToParameters();
                     changed |= FormInputs.AddFloat("UI Scale",
                                                    ref UserSettings.Config.UiScaleFactor,
-                                                   0.1f, 5f, 0.01f, true,
+                                                   0.1f, 5f, 0.01f, true, true,
                                                    "The global scale of all rendered UI in the application",
                                                    UserSettings.Defaults.UiScaleFactor);
 
@@ -112,7 +112,7 @@ internal sealed class SettingsWindow : Window
                         
                         changed |= FormInputs.AddFloat("Connection radius",
                                                        ref UserSettings.Config.MaxCurveRadius,
-                                                       0.0f, 1000f, 1f, true, 
+                                                       0.0f, 1000f, 1f, true, true, 
                                                        "Controls the roundness of curve lines",
                                                        UserSettings.Defaults.MaxCurveRadius);
                         changed |= FormInputs.AddInt("Connection segments",
@@ -146,19 +146,19 @@ internal sealed class SettingsWindow : Window
 
                     changed |= FormInputs.AddFloat("Scroll smoothing",
                                                    ref UserSettings.Config.ScrollSmoothing,
-                                                   0.0f, 0.2f, 0.01f, true,
+                                                   0.0f, 0.2f, 0.01f, true, true,
                                                    null,
                                                    UserSettings.Defaults.ScrollSmoothing);
 
                     changed |= FormInputs.AddFloat("Click threshold",
                                                    ref UserSettings.Config.ClickThreshold,
-                                                   0.0f, 10f, 0.1f, true,
+                                                   0.0f, 10f, 0.1f, true, true,
                                                    "The threshold in pixels until a click becomes a drag. Adjusting this might be useful for stylus input",
                                                    UserSettings.Defaults.ClickThreshold);
 
                     changed |= FormInputs.AddFloat("Gizmo size",
                                                    ref UserSettings.Config.GizmoSize,
-                                                   0.0f, 200f, 0.01f, true, "Size of the transform gizmo in 3d views",
+                                                   0.0f, 200f, 0.01f, true, true, "Size of the transform gizmo in 3d views",
                                                    UserSettings.Defaults.GizmoSize);
 
                     
@@ -180,19 +180,19 @@ internal sealed class SettingsWindow : Window
 
                     changed |= FormInputs.AddFloat("Grid density",
                                                    ref UserSettings.Config.TimeRasterDensity,
-                                                   0.0f, 10f, 0.01f, true,
+                                                   0.0f, 10f, 0.01f, true, true,
                                                    "Density/opacity of the marks (time or beat) at the bottom of the timeline",
                                                    UserSettings.Defaults.TimeRasterDensity);
 
                     changed |= FormInputs.AddFloat("Snap strength",
                                                    ref UserSettings.Config.SnapStrength,
-                                                   0.0f, 0.2f, 0.01f, true,
+                                                   0.0f, 0.2f, 0.01f, true, true,
                                                    "Controls the distance until items such as keyframes snap in the timeline",
                                                    UserSettings.Defaults.SnapStrength);
                     
                     changed |= FormInputs.AddFloat("Audio Volume",
                                                    ref ProjectSettings.Config.PlaybackVolume,
-                                                   0.0f, 10f, 0.01f, true,
+                                                   0.0f, 10f, 0.01f, true, true,
                                                    "Limit the audio playback volume",
                                                    ProjectSettings.Defaults.PlaybackVolume);
 
@@ -402,15 +402,15 @@ internal sealed class SettingsWindow : Window
 
                     changed |= FormInputs.AddFloat("Smoothing",
                                                    ref UserSettings.Config.SpaceMouseDamping,
-                                                   0.0f, 10f, 0.01f, true);
+                                                   0.0f, 10f, 0.01f, true, true);
 
                     changed |= FormInputs.AddFloat("Move Speed",
                                                    ref UserSettings.Config.SpaceMouseMoveSpeedFactor,
-                                                   0.0f, 10f, 0.01f, true);
+                                                   0.0f, 10f, 0.01f, true, true);
 
                     changed |= FormInputs.AddFloat("Rotation Speed",
                                                    ref UserSettings.Config.SpaceMouseRotationSpeedFactor,
-                                                   0.0f, 10f, 0.01f, true);
+                                                   0.0f, 10f, 0.01f, true, true);
                     break;
 
                 case Categories.Keyboard:
