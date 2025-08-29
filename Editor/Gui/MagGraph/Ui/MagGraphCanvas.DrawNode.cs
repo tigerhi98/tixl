@@ -47,8 +47,6 @@ internal sealed partial class MagGraphView
             idleFactor = MathUtils.RemapAndClamp(framesSinceLastUpdate, 0f, 60f, 0f, 1f);
         }
 
-        //var hoverProgress = GetHoverTimeForId(item.Id).RemapAndClamp(0, 0.2f, 0, 1);
-
         var smallFontScaleFactor = CanvasScale.Clamp(0.5f, 2);
         
         var typeUiProperties = TypeUiRegistry.GetPropertiesForType(item.PrimaryType);
@@ -61,9 +59,6 @@ internal sealed partial class MagGraphView
         var pMinVisible = pMin;
         var pMaxVisible = pMax;
 
-        //return;
-        //  6.2ms ------------
-        
         // Adjust size when snapped
         var snappedBorders = Borders.None;
         {
@@ -116,10 +111,6 @@ internal sealed partial class MagGraphView
             if ((snappedBorders & Borders.Right) == 0) pMaxVisible.X -= (int)(snapPadding * CanvasScale);
         }
 
-        //return;
-        // 6.3ms
-        
-
         // Background and Outline
         var borders = (int)snappedBorders % 16;
         var imDrawFlags = _borderRoundings[borders];
@@ -165,8 +156,6 @@ internal sealed partial class MagGraphView
         }
 
 
-        // 7.5ms -------------------------
-
         OpUi.CustomUiResult customUiResult = OpUi.CustomUiResult.None;
         if (Scale.X > 0.3f)
         {
@@ -183,9 +172,6 @@ internal sealed partial class MagGraphView
                 }
             }
         }
-
-        // 6.6 ms
-        //return;
 
         // ImGUI element for selection
         ImGui.SetCursorScreenPos(pMin);

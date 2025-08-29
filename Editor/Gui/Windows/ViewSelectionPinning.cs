@@ -3,6 +3,8 @@ using System.Diagnostics.CodeAnalysis;
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Interaction;
+using T3.Editor.Gui.Interaction.Keyboard;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.Windows.Output;
 using T3.Editor.UiModel;
@@ -53,7 +55,8 @@ internal sealed class ViewSelectionPinning
             }
         }
 
-        CustomComponents.TooltipForLastItem("Pin output to active operator.");
+        CustomComponents.TooltipForLastItem("Pin output to active operator.", 
+                                            UserActions.PinToOutputWindow.ListShortcuts());
 
         if (_isPinned)
         {
@@ -70,7 +73,8 @@ internal sealed class ViewSelectionPinning
 
             CustomComponents.TooltipForLastItem(selectedOp != null
                                                     ? $"Pin output to selected {selectedOp.Symbol.Name}."
-                                                    : $"Select an operator and click to update pinning.");
+                                                    : $"Select an operator and click to update pinning.",
+                                                UserActions.PinToOutputWindow.ListShortcuts());
         }
 
         ImGui.SameLine();
@@ -106,7 +110,7 @@ internal sealed class ViewSelectionPinning
                     var instanceSelectedInGraph = _pinnedProjectView!.NodeSelection.GetFirstSelectedInstance();
                     if (instanceSelectedInGraph != pinnedOrSelectedInstance)
                     {
-                        if (ImGui.MenuItem("Pin Selection to View"))
+                        if (ImGui.MenuItem("Pin Selection to View", UserActions.PinToOutputWindow.ListShortcuts()))
                         {
                             PinSelectionToView(canvas);
                         }
@@ -115,7 +119,7 @@ internal sealed class ViewSelectionPinning
             }
             else
             {
-                if (ImGui.MenuItem("Pin Selection to View"))
+                if (ImGui.MenuItem("Pin Selection to View", UserActions.PinToOutputWindow.ListShortcuts()))
                 {
                     PinSelectionToView(canvas);
                 }

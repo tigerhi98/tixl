@@ -21,17 +21,16 @@
 next:
 - [x] Don't show hidden input popup on snap
 
-
 ## Todo / Meetup 2025-08-25:
 
-- [ ] RadialPoints should have Color parameter
-- [ ] Improve RadialPoint parameter pair documentation
+- [x] RadialPoints should have Color parameter
+- [x] Improve RadialPoint parameter pair documentation
 - [x] AnimInt should have OpUi and Modulo parameter
 - [ ] Check if [ForwardBeatTap] is still working
 - [x] AnimBool visualization should look less scary if not evaluated yet
 - [x] Fix DrawPointsShaded fadeOutToo close parameter
 - [x] Try to improve searching with Ctrl+F focus into view behaviour
-- [ ] fix clamping of rounded numbers in infinity slider
+- [x] fix clamping of rounded numbers in infinity slider
 - [x] Connected parameters names should be renamable
 - [x] Check Gradient interpolation override caching with LinearGradient
 
@@ -40,13 +39,14 @@ next:
 
 ## Feedback from UncleX
 
-- [ ] Graph context menu should have an option to Add (and show keyboard shortcut)
+- [x] Graph context menu should have an option to Add (and show keyboard shortcut)
 - [-] Maybe add option to insert ops via Esc
 - [x] Fix "don't disconnect unsnap"
 - [x] Drag and split vertical connection lines
 - [x] Output-Nodes should have a show in Output indicator
-- [ ] Tooltip + short for pinning in Output window bar
+- [x] Tooltip + short for pinning in Output window bar
 - [ ] Create [HowToUseVariables]
+- [ ] Scaling color to zero clears hue and saturation.
 
 ## Project handling / Project HUB
 
@@ -56,12 +56,10 @@ next:
 - [x] Scrolling in project hub list #716
 - [ ] unload projects from project list
 - [ ] Project backups should be project specific
-- 
 
 ## Graph
 
 - [ ] Publish as input does not create connection
-- 
 - [ ] Split Connections on drop
 - [x] Rewiring of vertical connection lines
 - [ ] LoadImage has no thumbnail
