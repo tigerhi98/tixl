@@ -17,7 +17,8 @@
       },
       "Min": 0.01,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4dfce92e-9282-486f-a274-e59402696bbb"/*CenterToBounds*/,

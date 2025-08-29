@@ -12,7 +12,8 @@
       "Min": 0,
       "Max": 5000,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

@@ -23,7 +23,8 @@
       "Min": 0.0,
       "Max": 0.9,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "70fa51a8-b683-4a17-ad2b-d6ee5ccda3c0"/*EdgeFallOff*/,
@@ -35,7 +36,8 @@
       "Min": 0.0,
       "Max": 1.0,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "8d45de22-edfa-4f34-8030-2b038666b501"/*Phase*/,
@@ -56,7 +58,8 @@
       "Min": 0.001,
       "Max": 1.0,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "ce6c982d-8878-4fee-8f88-41d11e008ec2"/*ImageA*/,

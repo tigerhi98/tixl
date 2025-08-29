@@ -27,7 +27,8 @@
       "GroupTitle": "Force",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "6be3ff09-439f-4506-86d9-27e70422bb41"/*VolumeCenter*/,

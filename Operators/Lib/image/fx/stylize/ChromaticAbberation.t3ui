@@ -12,7 +12,8 @@
       "Description": "Controls the intensity of discoloration at the edges of the image.",
       "Min": -2.0,
       "Max": 2.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4c51b5f5-5307-45a7-9641-25f572627926"/*Size*/,
@@ -24,7 +25,8 @@
       "Description": "Controls how far the individual colors are shifted away from each other at the edges of the image.",
       "Min": 0.1,
       "Max": 20.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4e03d06a-d19b-463f-bbbd-b64d24c04b9e"/*SampleCount*/,
@@ -36,7 +38,8 @@
       "AddPadding": "True",
       "Min": 3,
       "Max": 60,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "6dd98990-82a7-4f68-aef1-ff34d1825b3b"/*Distort*/,
@@ -47,7 +50,8 @@
       "Description": "Simulates lens distortion.\nNegative values stretch the edges of the image outwards. Positive values pull them inwards.",
       "Min": -2.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "b62aece4-8098-475b-a4d3-469f81a58207"/*Image*/,

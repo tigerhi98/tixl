@@ -38,7 +38,8 @@
       "Min": 0.01,
       "Max": 10.0,
       "Scale": 0.001,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.000} ×"
     },
     {
@@ -108,7 +109,10 @@
         "Y": 643.8898
       },
       "Description": "Selects a color which will be multiplied with the incoming image.",
-      "AddPadding": "True"
+      "AddPadding": "True",
+      "Min": 0.0,
+      "Max": 1.0,
+      "ClampMin": true
     }
   ],
   "SymbolChildUis": [

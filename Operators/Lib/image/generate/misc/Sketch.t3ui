@@ -26,7 +26,8 @@
       "GroupTitle": "Visuals",
       "Min": 0.0,
       "Max": 10.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "2ded8235-157d-486b-a997-87d09d18f998"/*Filename*/,
@@ -44,7 +45,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "37093302-053a-47b2-ace6-b9d310d3f4b7"/*OverridePageIndex*/,
@@ -61,7 +63,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5cdb04d5-9bef-4789-8082-ea04e56b3ca7"/*Resolution*/,

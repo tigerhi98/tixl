@@ -10,7 +10,10 @@
         "Y": -978.81415
       },
       "GroupTitle": "Particle Settings",
-      "Description": "The length of the cycle buffer holding the simulated particles. Depending on the number of emitted particles it defines the maximum possible particle lifetime.\n\nIf set to -1 it will use the count of emit points."
+      "Description": "The length of the cycle buffer holding the simulated particles. Depending on the number of emitted particles it defines the maximum possible particle lifetime.\n\nIf set to -1 it will use the count of emit points.",
+      "Min": -1,
+      "Max": 1000000,
+      "ClampMin": true
     },
     {
       "InputId": "21c666bb-a28f-498c-a834-a2ba4aca78a7"/*EmitMode*/,

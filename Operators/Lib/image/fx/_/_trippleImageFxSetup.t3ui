@@ -25,7 +25,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "39c7dd84-7418-49e6-850e-6064db28660c"/*FloatParams*/,

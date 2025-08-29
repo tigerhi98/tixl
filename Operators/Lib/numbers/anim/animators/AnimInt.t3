@@ -2,6 +2,10 @@
   "Id": "85b5a198-deb9-4bea-b760-dad211e16ee6"/*AnimInt*/,
   "Inputs": [
     {
+      "Id": "0d0a2c33-f3bb-4035-8f8d-d01524952b2e"/*Modulo*/,
+      "DefaultValue": 0
+    },
+    {
       "Id": "1bc7d002-1483-48bd-b419-cccfcb38aa2f"/*Rate*/,
       "DefaultValue": 1.0
     },

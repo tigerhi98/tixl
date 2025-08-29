@@ -11,7 +11,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3a226812-98bf-4fe9-b435-f84b154a41e8"/*OverrideSize*/,
@@ -29,7 +30,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "73afdd61-dd59-4018-a473-025272deab93"/*EffectTexture*/,
@@ -62,7 +64,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f975a9bb-26db-4683-abe7-88e900787610"/*Opacity*/,
@@ -72,7 +75,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [

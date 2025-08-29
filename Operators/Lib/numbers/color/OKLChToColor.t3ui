@@ -42,7 +42,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "dec03f8a-e363-459d-ac55-0cd3914e660b"/*Alpha*/,
@@ -52,7 +53,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

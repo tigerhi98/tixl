@@ -12,7 +12,8 @@
       "Description": "Brightness and intensity of the primary horizontal streak.",
       "Min": 0.1,
       "Max": 11.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "18b19778-3ff2-4e38-8fb6-fa748babb967"/*RandomSeed*/,
@@ -41,7 +42,8 @@
       "Description": "Intensity and size of the secondary blobs at the edge of the flare.",
       "Min": 0.1,
       "Max": 11.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "7a870089-8e1e-4cd4-a920-7cc5a50d7376"/*Star*/,
@@ -52,7 +54,8 @@
       "Description": "Brightness and magnitude of the primary stellar element in the center of the light.",
       "Min": 0.1,
       "Max": 11.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "7a8b4acd-69db-4282-a6ce-d637a1339a27"/*MultiIris*/,
@@ -63,7 +66,8 @@
       "Description": "Intensity and transparency of the secondary lens reflections.",
       "Min": 0.1,
       "Max": 11.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "7cd57dc9-e6a8-4bb6-8245-ffbe962f6bf4"/*Digital*/,
@@ -75,7 +79,8 @@
       "Description": "Intensity of secondary digital bars.",
       "Min": 0.1,
       "Max": 11.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "8fa8fbae-4d50-480e-ae20-677946d3e533"/*LightIndex*/,
@@ -95,7 +100,8 @@
       "Description": "Visibility and intensity of the secondary rainbow glitter at the edge of the image.",
       "Min": 0.1,
       "Max": 11.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "be8975c0-2748-4ace-8047-c941caad45c2"/*Shimmer*/,
@@ -116,7 +122,8 @@
       "Description": "Intensity and magnitude of the primary element in the center of the light.",
       "Min": 0.1,
       "Max": 11.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f2c310f0-a019-40e5-9b17-3c35d254bb82"/*Brightness*/,

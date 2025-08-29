@@ -94,7 +94,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "bd0ebb71-65f0-477b-8352-20790919f751"/*PointScale*/,

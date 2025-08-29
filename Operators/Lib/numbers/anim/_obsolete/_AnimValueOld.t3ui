@@ -19,7 +19,8 @@
       "Min": 0.01,
       "Max": 0.99,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "36ae5b4b-62e9-49c0-b841-97394122cb1e"/*Phase*/,
@@ -36,7 +37,8 @@
       },
       "Min": 0.0,
       "Max": 2.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4c38c34c-d992-47f1-bcb5-9bd13fc6474b"/*Shape*/,

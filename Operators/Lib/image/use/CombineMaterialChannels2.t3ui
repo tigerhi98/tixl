@@ -62,7 +62,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "a2c0720a-ee57-4e83-b2b1-5f38b09415d9"/*GenerateMips*/,

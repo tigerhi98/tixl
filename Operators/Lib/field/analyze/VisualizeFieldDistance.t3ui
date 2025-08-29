@@ -18,7 +18,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5fc455af-f66a-4f04-8cc2-0498ee479f26"/*EnableZWrite*/,

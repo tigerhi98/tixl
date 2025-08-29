@@ -21,7 +21,8 @@
       "Description": "Defines the number of iterations with which the image is blurred. \n\nHigher values produce higher quality at the cost of computing speed.",
       "Min": 0.0,
       "Max": 100.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "99188668-b6ac-468b-a892-cd020a3862b2"/*Size*/,

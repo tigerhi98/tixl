@@ -11,7 +11,8 @@
       },
       "Description": "Sets the size of the tiles according to the source resolution",
       "Min": 0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "25711dcb-4b53-4a00-8b9d-7b653f8eaf59"/*Color*/,

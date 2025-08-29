@@ -1,5 +1,5 @@
 {
-  "Id": "1f85f846-0a59-44f3-8e3e-4c2357893494"/*AnimTrigger*/,
+  "Id": "1f85f846-0a59-44f3-8e3e-4c2357893494"/*AnimBoolean*/,
   "Description": "",
   "InputUis": [
     {
@@ -27,7 +27,7 @@
   "SymbolChildUis": [],
   "OutputUis": [
     {
-      "OutputId": "4b2820f8-f7e5-4973-81f6-7fa6b69d0509"/*WasStep*/,
+      "OutputId": "4b2820f8-f7e5-4973-81f6-7fa6b69d0509"/*TriggerOutput*/,
       "Position": {
         "X": 149.09799,
         "Y": 93.17799

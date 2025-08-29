@@ -86,7 +86,8 @@
       },
       "Min": 0,
       "Max": 2,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f6efc4a6-5267-40aa-82d3-e1b67d852fa8"/*Spherize*/,

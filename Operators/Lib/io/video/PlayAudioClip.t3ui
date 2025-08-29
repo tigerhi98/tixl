@@ -34,7 +34,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e0c927f9-5528-49c5-b457-5aea51f51628"/*Path*/,

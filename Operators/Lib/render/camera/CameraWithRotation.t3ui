@@ -25,7 +25,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "2ba9e2c0-f494-49aa-9030-172177f06eda"/*LensShift*/,
@@ -107,7 +108,8 @@
       },
       "Min": 0.0,
       "Max": 180.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e5756357-6edc-4c1c-bcee-bd160eb2ec62"/*RotationMode*/,

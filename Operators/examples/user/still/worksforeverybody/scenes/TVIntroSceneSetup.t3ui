@@ -17,7 +17,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4c5c6be2-05d0-4a70-8705-1c0aad83fa2d"/*TvImage*/,
@@ -42,7 +43,8 @@
       "Min": 0.0,
       "Max": 1.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "92d469d0-33ed-41e5-9b47-d20f58e38e91"/*SceneBrightness*/,

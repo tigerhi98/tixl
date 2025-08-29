@@ -47,7 +47,8 @@
       "Description": "Defines how round / sharp the corners are",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3bc236ab-c5f8-4dee-b933-84cf627118ef"/*Image*/,

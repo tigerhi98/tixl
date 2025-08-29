@@ -13,7 +13,8 @@
       "Description": "A factor that will keep the particle velocity planar to the camera.\nThis might be useful to emphasize the angled direction if camera rotation changes.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "1ad4c103-a0ab-4477-94ec-520d5bf16903"/*AngleCount*/,
@@ -47,7 +48,8 @@
       "Description": "How frequently random rotations occur: 0 never. 1 always.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "afd8fd12-8b3b-462b-a117-90981ddfccc6"/*Variation*/,
@@ -58,7 +60,8 @@
       "Description": "If a random threshold is exceeded, define the amount of random rotation the particle will do.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e596a8ec-3681-4f45-b72c-d50a97240270"/*Amount*/,
@@ -68,7 +71,8 @@
       },
       "Min": 0.0,
       "Max": 10.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [

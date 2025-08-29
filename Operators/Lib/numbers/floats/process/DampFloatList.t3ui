@@ -11,7 +11,8 @@
       "Description": "Amount of damping to apply.\nThe ideal setting for this depends on the range of the input values: Generally, lower damping works better with very large changes in value.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "491cc9cd-28fc-4ec4-8d98-5a7e0d17082a"/*Values*/,

@@ -14,7 +14,8 @@
       "Description": "Controller selection",
       "Min": 0,
       "Max": 3,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

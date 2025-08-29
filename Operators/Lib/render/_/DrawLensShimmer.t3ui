@@ -30,7 +30,8 @@
       "Description": "An animated variation to the width of each segment. ",
       "Min": 0.0,
       "Max": 10.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "384bd5d5-55a4-4d0f-895b-b2e5cac51e95"/*SparkleGradient*/,

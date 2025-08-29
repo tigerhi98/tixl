@@ -1,31 +1,27 @@
 {
-  "Id": "4bbc6fac-789d-496e-9833-a0af78c31c98"/*ScaleVector2*/,
-  "Description": "Multiplies two incoming [Vector2]s with each other",
+  "Id": "c20452bc-ff82-4684-bc49-77fe59d2df46"/*DivideVector2*/,
+  "Description": "",
   "InputUis": [
     {
-      "InputId": "65B844DE-7ED6-4D3A-9ECD-E499F1523FB5"/*UniformScale*/,
+      "InputId": "65b844de-7ed6-4d3a-9ecd-e499f1523fb5"/*UniformScale*/,
       "Position": {
         "X": -200.0,
-        "Y": 90.0
-      },
-      "Description": "Factor to divide the incoming vectors uniformly",
-      "AddPadding": "True"
+        "Y": 150.0
+      }
     },
     {
       "InputId": "cab9a7a3-e32d-42ea-a6b4-247b5ed79b5f"/*B*/,
       "Position": {
         "X": -200.0,
-        "Y": 45.0
-      },
-      "Description": "Input for the second Vector2 (B) which will be used to divide Vector2 (A) by"
+        "Y": 75.0
+      }
     },
     {
       "InputId": "d21dbb6f-db32-4a79-80a0-ad36af9306e0"/*A*/,
       "Position": {
         "X": -200.0,
         "Y": 0.0
-      },
-      "Description": "Input for the first Vector2 (A)"
+      }
     }
   ],
   "SymbolChildUis": [],
@@ -33,8 +29,8 @@
     {
       "OutputId": "ce997e45-80f7-4a19-bb43-5ee125d09f3b"/*Result*/,
       "Position": {
-        "X": 0.0,
-        "Y": 0.0
+        "X": 300.0,
+        "Y": 200.0
       }
     }
   ]

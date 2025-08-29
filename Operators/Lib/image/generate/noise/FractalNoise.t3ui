@@ -97,7 +97,8 @@
       "GroupTitle": "Domain Warp",
       "Min": 0,
       "Max": 5,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "c8eda097-f139-464c-8573-b08220b3b2c8"/*WarpZ*/,
@@ -114,7 +115,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "UseVec2Control": "BiasAndGain"
     }
   ],

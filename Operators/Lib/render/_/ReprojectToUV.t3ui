@@ -40,7 +40,8 @@
       "Description": "Defines the clear color",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "cb1254ab-4d68-41db-a326-c5e34bb5d2f4"/*CameraReference*/,

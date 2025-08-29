@@ -16,14 +16,22 @@
       "Position": {
         "X": -1099.2083,
         "Y": 326.588
-      }
+      },
+      "Min": -1,
+      "Max": 16384,
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f1888e3b-edf6-409c-9cda-8c97fb18c38e"/*BlendFraction*/,
       "Position": {
         "X": -1099.2083,
         "Y": 236.58801
-      }
+      },
+      "Min": -1.0,
+      "Max": 16383.0,
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [

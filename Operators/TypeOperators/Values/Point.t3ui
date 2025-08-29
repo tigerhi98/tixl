@@ -27,7 +27,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3cdc9cab-36d4-431f-b9bd-c8d8f49ee465"/*Scale*/,

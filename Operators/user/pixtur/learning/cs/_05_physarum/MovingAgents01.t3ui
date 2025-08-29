@@ -25,7 +25,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "38b646b3-1379-4436-bba0-2e51f317cdf5"/*RestoreLayout*/,
@@ -102,7 +103,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "abf905a0-bbaa-4e70-9db6-7f651482d058"/*SampleAngle*/,

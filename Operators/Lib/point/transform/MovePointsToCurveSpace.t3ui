@@ -39,7 +39,8 @@
       "Description": "The range of the curve that will be used for mapping.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "7b1cb7b0-110f-4c13-9f85-ab3a205ba633"/*Scale*/,

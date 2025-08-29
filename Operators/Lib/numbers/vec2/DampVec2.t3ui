@@ -10,7 +10,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e5a9f11d-dc51-45bb-9ae0-3ddb6119527d"/*Method*/,

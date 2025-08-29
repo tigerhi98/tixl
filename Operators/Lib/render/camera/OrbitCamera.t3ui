@@ -106,7 +106,8 @@
       "Min": -89.0,
       "Max": 89.0,
       "Scale": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.0}°"
     },
     {
@@ -119,7 +120,8 @@
       "Min": -360.0,
       "Max": 360.0,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "acf14901-3373-4b0c-8567-03ea0051a21f"/*CameraTargetPosition*/,

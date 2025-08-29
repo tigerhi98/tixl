@@ -32,7 +32,8 @@
       },
       "Min": 0.0,
       "Max": 1000.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "b465481c-8b5d-4c6d-a659-6f51135b86fa"/*Rotation*/,
@@ -53,7 +54,8 @@
       },
       "Min": 0.0,
       "Max": 2.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "b9859a88-4dd1-4221-9884-0a6e8cec9da4"/*Background*/,

@@ -37,7 +37,8 @@
       "Min": 0.1,
       "Max": 1.0,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4c9b9135-f27b-414e-bed7-f9e5640dc526"/*Threshold*/,
@@ -48,7 +49,8 @@
       "Description": "Controls the brightness of the image and helps to control which areas of the image are included in the effect.",
       "Min": -0.2,
       "Max": 0.2,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "53fe4db2-128c-43e3-8c58-8f01694d13ac"/*BlendMode*/,
@@ -80,7 +82,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f6bdd487-c16e-4fb0-bfba-b3801f121314"/*Texture*/,

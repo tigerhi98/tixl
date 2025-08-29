@@ -75,7 +75,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e2c0218d-3dda-4770-8b47-e44a6b716c34"/*FakeAmount*/,

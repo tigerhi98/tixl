@@ -21,7 +21,8 @@
       "Min": 0.0,
       "Max": 5.0,
       "Scale": 0.1,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "355fa01e-b2c4-4d11-bead-18c5961d8e96"/*GainAndBias*/,
@@ -32,7 +33,8 @@
       "Description": "This can be used to shape the distribution of the blur kernels\n\nLower curves focus on the core, higher curves on the blurred parts.\n\nMany settings cause artifacts, but when used subtly can be very useful for crafting a look.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.000}",
       "UseVec2Control": "BiasAndGain"
     },
@@ -45,7 +47,8 @@
       "Description": "Colors to calculate the initial luminance used for the glow. This can be useful for limiting the effect on certain colors.\nThe default values are the NTSC perception of color channels.\n\nReducing the alpha channel blends these colors to gray.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "97d8f330-5957-4309-8c56-d94c1266f6cb"/*Image*/,
@@ -66,7 +69,8 @@
       "Min": 0.0,
       "Max": 100.0,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "be4e0dba-7613-4860-96e1-fe7ea493511f"/*GlowGradient*/,

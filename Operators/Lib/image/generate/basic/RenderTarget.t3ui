@@ -12,7 +12,8 @@
       "Description": "Overrides the default resolution or the resolution of the Output window.\n\nIf the resolution is:\n- [0,0], the current resolution requested by the Output window is used.\n- For image fx operators, negative resolutions will use the incoming resolution.\n\nAll other settings use custom resolutions. \nThe maximum resolution depends on your graphics hardware and is normally 16k.\n",
       "Min": -1,
       "Max": 16384,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "07ad28ad-ff5f-4ca9-b7bb-f7f8b16a6434"/*TextureReference*/,

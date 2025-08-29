@@ -18,7 +18,8 @@
       },
       "Min": 1,
       "Max": 16,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5626d449-ef28-4d68-8805-014454f74f6b"/*TriggerProgramChange*/,
@@ -50,7 +51,8 @@
       },
       "Min": 0,
       "Max": 127,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "9a4db45a-06da-4c47-bfff-860aae8d9dfe"/*TriggerContinue*/,

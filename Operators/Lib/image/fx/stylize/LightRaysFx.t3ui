@@ -50,7 +50,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "b26c20c8-ec60-4215-a53a-3e21cd98ea03"/*Decay*/,

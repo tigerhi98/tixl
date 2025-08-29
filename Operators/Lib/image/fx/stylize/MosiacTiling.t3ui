@@ -24,7 +24,8 @@
       "Description": "Defines the color and alpha of the lines between the tiles",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "30791a22-3a50-451f-a080-cdb2cb48d87d"/*Randomize*/,

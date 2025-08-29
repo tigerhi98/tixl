@@ -56,7 +56,8 @@
       "Description": "Defines the field of view (FOV) or focal length of the camera in degrees",
       "Min": 0.0,
       "Max": 180.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.0}°"
     },
     {

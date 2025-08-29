@@ -3,6 +3,13 @@
   "Description": "Animates an integer value.",
   "InputUis": [
     {
+      "InputId": "0d0a2c33-f3bb-4035-8f8d-d01524952b2e"/*Modulo*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 0.0
+      }
+    },
+    {
       "InputId": "1bc7d002-1483-48bd-b419-cccfcb38aa2f"/*Rate*/,
       "Position": {
         "X": -200.0,
@@ -10,7 +17,8 @@
       },
       "Min": -5.0,
       "Max": 5.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5b3d75c9-aac5-44d7-9e68-828cd87cdc0c"/*Phase*/,

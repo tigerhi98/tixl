@@ -95,7 +95,8 @@
       },
       "Min": 0.0,
       "Max": 10.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "ceb7008d-c536-4d87-b3f8-d5ba9fe29eed"/*Bounciness*/,

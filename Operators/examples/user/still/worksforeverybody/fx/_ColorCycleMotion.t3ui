@@ -75,7 +75,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f6566a76-f545-4877-8660-49e471e7c9d3"/*TimeSpread*/,

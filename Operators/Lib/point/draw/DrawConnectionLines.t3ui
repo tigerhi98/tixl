@@ -89,7 +89,8 @@
       "Min": 0.001,
       "Max": 100.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "df2076a1-1d25-4112-b0e6-2987541786d9"/*Color*/,

@@ -11834,17 +11834,5 @@
       "TargetParentOrChildId": "fe15aa70-9c4e-4e51-9bda-a9b83b237884",
       "TargetSlotId": "c38647f6-c6ea-40a0-b872-0df6d4168c05"
     }
-  ],
-  "PlaybackSettings": {
-    "Enabled": false,
-    "Bpm": 120.0,
-    "AudioSource": 0,
-    "Syncing": 0,
-    "AudioDecayFactor": 0.98,
-    "AudioGainFactor": 1.0,
-    "AudioInputDeviceName": "",
-    "EnableAudioBeatLocking": "False",
-    "BeatLockAudioOffsetSec": "0",
-    "AudioClips": []
-  }
+  ]
 }

@@ -37,7 +37,8 @@
       "Description": "Amount of damping to apply.\nThe ideal setting for this depends on the range of the input values: Generally, lower damping works better with very large changes in value.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

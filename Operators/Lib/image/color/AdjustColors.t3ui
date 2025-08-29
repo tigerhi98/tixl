@@ -22,7 +22,8 @@
       "GroupTitle": "Additional Options",
       "Min": 0.0,
       "Max": 5.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "42d296cf-6c53-4da9-bef8-da36c4ca3aea"/*Hue*/,

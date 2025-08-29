@@ -171,12 +171,6 @@
       "Outputs": []
     },
     {
-      "Id": "e23bd572-dad8-42e2-bb18-3bfae9319aed"/*GheoDemo2*/,
-      "SymbolId": "a60138eb-2a78-40a9-899a-e7593723a945",
-      "InputValues": [],
-      "Outputs": []
-    },
-    {
       "Id": "fa431c7a-81c5-4c0a-b4ae-f559c4c1707b"/*Katsumaki*/,
       "SymbolId": "f92a1144-55d9-4d8e-bfa6-f80665800e25",
       "Name": "Katsumaki",

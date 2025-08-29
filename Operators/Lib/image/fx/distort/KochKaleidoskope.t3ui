@@ -76,7 +76,8 @@
       },
       "Min": 1,
       "Max": 666,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "d2e12b96-7be3-4b31-bcdd-c882543a6ca6"/*ShadeFolds*/,

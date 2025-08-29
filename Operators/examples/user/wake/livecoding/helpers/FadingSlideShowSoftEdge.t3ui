@@ -17,7 +17,8 @@
       },
       "Min": 0.0,
       "Max": 10.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "0897d439-f170-4983-ad8b-05e416709918"/*TriggerUpdate*/,
@@ -51,7 +52,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "57eea5bc-49fe-4b07-b817-edaaff2b1c57"/*BackgroundColor*/,
@@ -61,7 +63,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5ddd4bdd-c231-416c-ad25-0fc73bcab016"/*ScaleMode*/,

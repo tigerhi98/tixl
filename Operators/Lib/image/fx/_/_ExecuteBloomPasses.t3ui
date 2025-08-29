@@ -105,7 +105,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "d5914036-f628-4305-d7b5-1634b219c305"/*Clamp*/,

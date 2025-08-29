@@ -64,7 +64,8 @@
       "Description": "Defines how strongly the shadows in the center (X) and at the edge (Y) of the ShadowPlane are blurred.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.000} ×"
     },
     {
@@ -85,7 +86,8 @@
       "Description": "Defines the Color and Opacity of the shadow.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [

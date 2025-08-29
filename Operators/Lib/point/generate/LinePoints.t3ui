@@ -30,7 +30,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "UseVec2Control": "BiasAndGain"
     },
     {
@@ -65,7 +66,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "6f46bd61-422f-4715-9219-3d2e1dff1d90"/*ColorA*/,
@@ -77,7 +79,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "6fa2fddb-3b8d-4fda-9ac4-796618aa88d0"/*Length*/,

@@ -11,7 +11,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "1bfb5c46-a1dd-41fe-aa6b-96e3d602bc82"/*Offset*/,
@@ -30,7 +31,8 @@
       },
       "Min": 0.0,
       "Max": 100.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "29f6bc05-de55-4336-a275-f06b835c66f8"/*Image*/,
@@ -89,7 +91,8 @@
       "Min": 0.0,
       "Max": 100.0,
       "Scale": 0.1,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [

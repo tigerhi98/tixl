@@ -11,7 +11,8 @@
       "Min": 0.001,
       "Max": 100.0,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3b64cb71-71dc-4f68-8daa-6b2d15bb6353"/*Center*/,

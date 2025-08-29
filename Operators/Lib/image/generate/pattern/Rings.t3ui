@@ -38,7 +38,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4084b10d-d0be-4a88-a713-29107193f694"/*BlendMode*/,

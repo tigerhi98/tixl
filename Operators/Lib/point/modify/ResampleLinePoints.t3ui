@@ -62,7 +62,8 @@
       "Description": "The sample count used for smoothing out the result. \nBecause higher values can have a significant performance impact, the max count is 10.",
       "Min": 1,
       "Max": 10,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e731ef71-b172-4308-b7d2-a59fa55b266a"/*Count*/,

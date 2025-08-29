@@ -11,7 +11,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "19e5420c-6d48-4d5b-a0db-e2ee361f8f31"/*Offset*/,
@@ -66,7 +67,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4ed2a94d-ea7b-4fc5-8b3b-2ced9542b763"/*Twist*/,

@@ -57,7 +57,8 @@
       "Min": -180.0,
       "Max": 180.0,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5124b85d-5c09-4329-bf33-ef3cc13f30aa"/*BlendMod*/,
@@ -95,7 +96,8 @@
       "Min": -3600.0,
       "Max": 3600.0,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "d41169ee-4e53-4198-b56a-b4b771cc3dfd"/*Width*/,
@@ -108,7 +110,8 @@
       "Min": 0.01,
       "Max": 10.0,
       "Scale": 0.0001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [

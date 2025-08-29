@@ -60,7 +60,8 @@
       "Description": "We have to rely on the field's gradient to estimate the marching directions.\nThis factor is applied on the distance field steps and can help with fields that don't have a constant Lipschitz property.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e024f44c-3ebd-4972-ae4f-43b5305df425"/*Amount*/,

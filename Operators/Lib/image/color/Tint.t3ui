@@ -13,7 +13,8 @@
       "Description": "A factor that is applied before using the brightness. This can be useful to constrain HDR colors with levels above 1 into the mapped range.",
       "Min": 0.0,
       "Max": 5.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "26a45300-c4d6-4e43-8550-37d2fa87799d"/*MapWhiteTo*/,
@@ -24,7 +25,8 @@
       "Description": "Light colors will become this",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "387ce8fc-42c2-438d-bf52-144b5dfd8811"/*MapBlackTo*/,
@@ -35,7 +37,8 @@
       "Description": "Dark colors will become this color.\n\nTip: You can use the alpha channel to create a masking effect.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3f1d8fa3-73bd-475c-a65b-c5352bf6ea85"/*Texture2d*/,
@@ -63,7 +66,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "UseVec2Control": "BiasAndGain"
     },
     {

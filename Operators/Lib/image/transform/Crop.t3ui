@@ -12,7 +12,8 @@
       "GroupTitle": "Frame",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "a7fff052-42c2-40fb-938e-9fb9b6cfa591"/*Texture2d*/,

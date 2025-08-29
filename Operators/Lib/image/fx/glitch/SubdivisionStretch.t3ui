@@ -12,7 +12,8 @@
       "Description": "Controls the distribution of scroll speeds of each cell.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.000}",
       "UseVec2Control": "BiasAndGain"
     },
@@ -54,7 +55,8 @@
       "Description": "Color of the gap.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "6bdb499c-1300-4fe1-8634-7d3edc4d4050"/*UseAspectForSplit*/,
@@ -85,7 +87,8 @@
       "Description": "The chance that the cell is no longer subdivided. If 0, every cell will be subdivided until MaxSubdivisions is reached.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "7a8684c9-ee81-49c1-ad13-d91d62799efb"/*RandomPhase*/,

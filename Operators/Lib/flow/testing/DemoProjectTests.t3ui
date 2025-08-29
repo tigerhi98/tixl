@@ -67,13 +67,6 @@
       }
     },
     {
-      "ChildId": "e23bd572-dad8-42e2-bb18-3bfae9319aed"/*GheoDemo2*/,
-      "Position": {
-        "X": 0.0,
-        "Y": 329.92804
-      }
-    },
-    {
       "ChildId": "fa431c7a-81c5-4c0a-b4ae-f559c4c1707b"/*Katsumaki*/,
       "Position": {
         "X": 0.0,

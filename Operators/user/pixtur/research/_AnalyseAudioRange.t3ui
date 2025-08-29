@@ -18,7 +18,8 @@
       "Min": 0.0,
       "Max": 1.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "42412b35-6942-4802-8f12-b83bba66c830"/*RangeMin*/,
@@ -29,7 +30,8 @@
       "Min": 0.0,
       "Max": 1.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "b9befe9e-c11a-41c8-a127-410bd1681add"/*FFT*/,

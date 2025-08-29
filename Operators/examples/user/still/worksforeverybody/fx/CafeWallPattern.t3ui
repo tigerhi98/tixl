@@ -90,7 +90,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "c1c35717-7ea6-4507-bb7f-bfc827e0446e"/*Ratio*/,

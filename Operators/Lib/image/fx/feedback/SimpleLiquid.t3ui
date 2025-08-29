@@ -39,7 +39,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "a9d8c898-545e-4c0e-af61-6d2251209460"/*Gravity*/,

@@ -20,7 +20,8 @@
       "Description": "Defines how intensely the used texture is blurred.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "48da47d3-8d30-4e85-8ecc-8c07894c54b4"/*TextureWrap*/,

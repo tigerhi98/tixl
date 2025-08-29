@@ -19,7 +19,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "1503c058-e270-40cd-99e6-40325b9233a7"/*Seed*/,

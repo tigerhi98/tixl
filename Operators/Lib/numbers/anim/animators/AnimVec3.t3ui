@@ -26,7 +26,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "6086f33d-e8aa-4f66-830e-8624e19e186c"/*AmplitudeFactor*/,
@@ -93,7 +94,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:P2}"
     }
   ],

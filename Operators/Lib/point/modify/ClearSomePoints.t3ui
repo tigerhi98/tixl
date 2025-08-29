@@ -17,7 +17,8 @@
         "Y": 1101.7097
       },
       "Min": 1,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "68a2ea07-4ca9-4211-a8e5-e67943c7d3fa"/*Repeat*/,
@@ -26,7 +27,8 @@
         "Y": 1056.7097
       },
       "Min": 0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "ed9306bb-5ca8-4cfc-acb9-7333821f651f"/*Seed*/,

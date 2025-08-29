@@ -1,5 +1,5 @@
 {
-  "Id": "1f85f846-0a59-44f3-8e3e-4c2357893494"/*AnimTrigger*/,
+  "Id": "1f85f846-0a59-44f3-8e3e-4c2357893494"/*AnimBoolean*/,
   "Inputs": [
     {
       "Id": "a8e49df7-3388-4532-8efe-766ea3a47108"/*Rate*/,

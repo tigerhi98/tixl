@@ -17,7 +17,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4e0b3a38-9459-4479-9f9d-2be3538f1475"/*GPoints*/,

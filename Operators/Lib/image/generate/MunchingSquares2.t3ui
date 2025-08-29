@@ -31,7 +31,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5cc518ea-736e-45ec-a27b-7e976262194e"/*GrayScaleWeights*/,
@@ -41,7 +42,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "8a5d12fd-5f64-4df2-bcf1-ed4968e6420c"/*ShadowColor*/,
@@ -51,7 +53,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "9750e62b-e650-4eac-9ff6-ec7c2640d6d5"/*GainAndBias*/,
@@ -61,7 +64,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.000}",
       "UseVec2Control": "BiasAndGain"
     },
@@ -90,7 +94,8 @@
       },
       "Min": 1.0,
       "Max": 15.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "d97df58f-09ff-4f96-b9ac-5844a454e5c9"/*IterationFx*/,

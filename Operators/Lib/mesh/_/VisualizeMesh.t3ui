@@ -27,7 +27,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "76147372-f850-4aa3-ad3a-af4c374e1f2a"/*ShowVerticeSelection*/,

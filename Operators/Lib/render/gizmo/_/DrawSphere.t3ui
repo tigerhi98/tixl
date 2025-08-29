@@ -10,7 +10,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "aa1307c2-c955-461b-8d43-b81c7e85a868"/*Radius*/,

@@ -29,7 +29,8 @@
       "Description": "Defines a color that is added to the original image",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "ec6f2f37-05f7-41ad-8a42-2e6974cce0cd"/*DecayRate*/,

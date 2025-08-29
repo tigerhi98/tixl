@@ -61,7 +61,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5cb6a27b-db0d-4d85-83aa-87316ba6f5a0"/*GlitchFlicker*/,

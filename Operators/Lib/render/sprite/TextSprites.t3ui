@@ -20,7 +20,8 @@
       "GroupTitle": "Appearance",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5008e9b4-083a-4494-8f7c-50fe5d80fc35"/*Size*/,

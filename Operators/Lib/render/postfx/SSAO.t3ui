@@ -46,7 +46,8 @@
       "AddPadding": "True",
       "Min": 0.1,
       "Max": 100.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "602f3004-59ef-4065-a9a6-3c14fab79c6c"/*NearFarRange*/,

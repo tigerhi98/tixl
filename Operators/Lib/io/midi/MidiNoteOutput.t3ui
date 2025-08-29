@@ -18,7 +18,8 @@
       },
       "Min": 1,
       "Max": 16,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5a99b601-328a-4238-9841-ab6022a932f5"/*VelocityFloat*/,
@@ -28,7 +29,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "90221c60-c7ac-4470-affb-e4fb22712ee5"/*NoteNumber*/,
@@ -38,7 +40,8 @@
       },
       "Min": 0,
       "Max": 127,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "97a4f0d3-e691-4c2c-b731-7e4afc77eed2"/*Device*/,
@@ -57,7 +60,8 @@
       },
       "Min": 0,
       "Max": 127,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "b7eca85f-3c35-43c3-9d79-2112d112c8c7"/*UseVelocityFloat*/,

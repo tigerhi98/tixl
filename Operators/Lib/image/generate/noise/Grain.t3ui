@@ -14,7 +14,8 @@
       "Min": 0.0,
       "Max": 1.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "36df2611-4f74-4cc5-a49d-c0aff65f738a"/*RandomPhase*/,
@@ -66,7 +67,8 @@
       "Description": "Controls the saturation of the noise.\n\n0: monochromatic noise\n5: Colored Noise as in old TV Sets",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "d24cce46-dd3f-4047-a33f-50abbca89cc4"/*Exponent*/,

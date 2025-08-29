@@ -21,7 +21,8 @@
       "GroupTitle": "Vignette",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4dc44a7b-fe7c-4807-aaaa-53fb553de017"/*Gain*/,

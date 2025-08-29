@@ -12,7 +12,8 @@
       "Min": 0.001,
       "Max": 100.0,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5b3fcf3c-7155-401f-b3ac-3a4ac9d921df"/*AttractionDecay*/,

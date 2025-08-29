@@ -59,7 +59,8 @@
       "Description": "Scales the size of the glitch elements\nHigh value can make this effect take a lot of resources",
       "Min": 0.0,
       "Max": 5.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "531556ad-5d4d-4110-b8ea-be1fd6d443fd"/*Offset*/,
@@ -96,7 +97,8 @@
       "Description": "Defines the color intensity",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "7914bb8b-8444-4438-a156-b00d099ce659"/*Image*/,

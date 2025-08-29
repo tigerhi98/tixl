@@ -19,7 +19,8 @@
       },
       "Min": 0.01,
       "Max": 5.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5ec00ae8-1cd5-418f-bd9f-1b925df08466"/*Value*/,
@@ -38,7 +39,8 @@
       "GroupTitle": "Settings",
       "Min": 0.01,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

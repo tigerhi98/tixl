@@ -38,7 +38,8 @@
       },
       "Min": 0.001,
       "Max": 999.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

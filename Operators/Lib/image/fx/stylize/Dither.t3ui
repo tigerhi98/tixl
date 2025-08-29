@@ -13,7 +13,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "0fb3a599-897f-4d38-a284-50374118810f"/*BlendMethod*/,
@@ -32,7 +33,8 @@
       "Description": "Defines which color channels are used to determine the light-dark distinction.\n",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3a6f87d6-913b-4200-807c-bb4da3f64fb7"/*GainAndBias*/,
@@ -42,7 +44,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.000}",
       "UseVec2Control": "BiasAndGain"
     },
@@ -64,7 +67,8 @@
       "Description": "Uniformly scales the size of the effect.",
       "Min": 1.0,
       "Max": 15.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "50335511-3b96-4c23-a604-3bc3dacae062"/*Offset*/,
@@ -85,7 +89,8 @@
       "Description": "Color selection for all bright pixels.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "9364f41d-0700-4c43-ad16-569081f510cf"/*Method*/,

@@ -20,7 +20,8 @@
       "Description": "Tilts/offsets the virtual camera without moving the target \nX = Left / Right\nY = Up / Down",
       "Min": -90.0,
       "Max": 90.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.0}°",
       "UseVec2Control": "Position"
     },
@@ -52,7 +53,8 @@
       "Min": -0.5,
       "Max": 0.95,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e10c3708-9696-4d15-81b5-93eb4026937b"/*BackgroundColor*/,
@@ -62,7 +64,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "ec096545-6cc7-45b0-8eb6-2100e52d3815"/*DepthOfField*/,
@@ -83,7 +86,8 @@
       "Description": "Defines the intensity of the fog (looks like a vignette)",
       "Min": 0.0,
       "Max": 2.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [

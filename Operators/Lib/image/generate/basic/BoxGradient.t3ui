@@ -13,7 +13,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "06f28039-d349-4f5f-a68f-6009886e180b"/*Size*/,
@@ -93,7 +94,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "UseVec2Control": "BiasAndGain"
     },
     {

@@ -46,7 +46,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "86fbda4c-5c1b-42b0-a35f-ebcccd6cc648"/*MaxReflectionCount*/,

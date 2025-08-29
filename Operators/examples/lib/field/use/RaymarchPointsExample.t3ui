@@ -10,7 +10,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "605074a4-eaf7-4638-84d3-4a37ac0e8ce2"/*Angle*/,

@@ -92,7 +92,8 @@
       "GroupTitle": "Balance",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true,
+      "ClampMin": true,
+      "ClampMax": true,
       "Format": "{0:0.000}",
       "UseVec2Control": "BiasAndGain"
     },

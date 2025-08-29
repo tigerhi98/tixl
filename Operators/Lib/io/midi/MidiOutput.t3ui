@@ -11,7 +11,8 @@
       },
       "Min": 0,
       "Max": 127,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "61ccd308-0006-42de-b190-c006e99b5871"/*Velocity*/,
@@ -35,7 +36,8 @@
       },
       "Min": -1,
       "Max": 127,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "a7e1eac2-5602-4c40-8519-19ca53763c76"/*ChannelNumber*/,
@@ -45,7 +47,8 @@
       },
       "Min": 1,
       "Max": 16,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "abe9393e-282e-4de0-8f86-541fa955658f"/*DurationInSecs*/,

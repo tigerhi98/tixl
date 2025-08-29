@@ -53,7 +53,8 @@
       "Description": "Tints the background with the selected color.\n\nDoes not affect the color of the light and/or reflection.",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "71c54c8e-a95f-47e8-b126-0cdaa89ae49b"/*Exposure*/,
@@ -72,7 +73,8 @@
       "Description": "Defines how much the image on the sphere in the background is blurred.\n",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "c3c815fa-8672-4d99-99a7-986844f2fc45"/*UpdateLive*/,

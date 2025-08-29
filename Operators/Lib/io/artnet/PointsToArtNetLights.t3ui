@@ -21,7 +21,8 @@
       "Min": 0,
       "Max": 512,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "1348ed7c-79f8-48c6-ac00-e60fb40050db"/*FixtureChannelSize*/,
@@ -107,7 +108,8 @@
       "Min": 0,
       "Max": 255,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5cdc69f7-45ec-4eec-bfb6-960d6245dafb"/*GetColor*/,
@@ -165,7 +167,8 @@
       "Min": 0,
       "Max": 512,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "91c78090-be10-4203-827e-d2ef1b93317e"/*GetF1*/,
@@ -194,7 +197,8 @@
       "Min": 0,
       "Max": 512,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "afd3aa99-c892-4b87-ad3f-f97461e8a934"/*WithReferencePoints*/,
@@ -213,7 +217,8 @@
       "Min": 0,
       "Max": 512,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "b7061834-66aa-4f7f-91f9-10ebfe16713f"/*F1Channel*/,
@@ -249,7 +254,8 @@
       "Min": 0,
       "Max": 255,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "d755342b-9a9e-4c78-8376-81579d8c0909"/*BlueChannel*/,
@@ -281,7 +287,8 @@
       "Min": 0,
       "Max": 255,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e96655be-6bc7-4ca4-bf74-079a07570d74"/*ShortestPathPanTilt*/,

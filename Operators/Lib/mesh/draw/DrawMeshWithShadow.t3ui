@@ -12,7 +12,8 @@
       "GroupTitle": "Shadow Settings",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "2c7cb3a7-ba47-42e9-bc39-597e5fd45457"/*FillMode*/,

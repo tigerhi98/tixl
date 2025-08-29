@@ -63,7 +63,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "9586a163-0e1b-4229-b368-1fdb06938b2b"/*Phase*/,

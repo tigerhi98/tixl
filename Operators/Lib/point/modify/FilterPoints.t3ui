@@ -39,7 +39,8 @@
       "Min": 0.0,
       "Max": 1.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "af0758b6-3876-4c95-a80f-0233b96bc1a7"/*Step*/,

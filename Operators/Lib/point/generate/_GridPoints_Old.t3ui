@@ -110,7 +110,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "d79bde19-0d67-434d-88fd-3c9c762fb3c2"/*PointScale*/,

@@ -11,7 +11,8 @@
       },
       "Min": 0,
       "Max": 127,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5188cc2f-723c-497c-bfb8-1b00a3006327"/*TriggerSend*/,
@@ -28,7 +29,8 @@
       },
       "Min": 0,
       "Max": 127,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5734d4c9-1d84-4559-91d6-6611f0ea1658"/*ValueFloat*/,
@@ -38,7 +40,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "aff6a747-7c3d-4cef-a5b7-daf9a60fcba0"/*Device*/,
@@ -64,7 +67,8 @@
       },
       "Min": 1,
       "Max": 16,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "dc2f8501-2889-4949-9866-3c0eb43cd061"/*CCorPressure*/,

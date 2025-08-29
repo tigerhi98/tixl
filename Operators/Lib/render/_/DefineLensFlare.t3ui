@@ -139,7 +139,8 @@
       "Min": 0.0,
       "Max": 100.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "a5ad260c-9341-4e43-923c-86f12974df97"/*TextureIndex*/,

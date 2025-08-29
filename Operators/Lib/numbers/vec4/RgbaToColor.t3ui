@@ -11,7 +11,8 @@
       "Description": "Green",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5f2de1d3-6803-4f56-aaf1-9e29b4d81eb8"/*R*/,
@@ -22,7 +23,8 @@
       "Description": "Red",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "80bc1511-7210-4710-a45f-ac961f1d672d"/*B*/,
@@ -33,7 +35,8 @@
       "Description": "Blue",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f2fd304f-11e7-466f-b594-b1c3af901852"/*A*/,
@@ -45,7 +48,8 @@
       "AddPadding": "True",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

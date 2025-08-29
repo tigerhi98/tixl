@@ -34,7 +34,8 @@
       },
       "Min": 1,
       "Max": 16,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "b9982ed7-c481-4508-a61e-229eaf5e960e"/*Pitch*/,
@@ -44,7 +45,8 @@
       },
       "Min": -8192,
       "Max": 8191,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e8665f67-9760-4289-ae2f-13665f63b4d8"/*TriggerSend*/,
@@ -61,7 +63,8 @@
       },
       "Min": -1.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

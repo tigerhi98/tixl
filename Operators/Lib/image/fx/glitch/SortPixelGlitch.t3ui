@@ -39,7 +39,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3c0a4fe5-25ae-4732-806f-7b7c1eb56da9"/*StreakColor*/,
@@ -93,7 +94,8 @@
       "Min": -0.999,
       "Max": 0.999,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "ec8f4ff1-6b7a-4050-8086-2565c8f5d3fb"/*LumaBias*/,

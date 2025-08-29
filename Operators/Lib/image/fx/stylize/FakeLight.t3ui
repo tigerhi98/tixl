@@ -90,7 +90,8 @@
       "Min": 0.0,
       "Max": 100.0,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f93db0c6-c5ed-40da-9677-0c284618f5bb"/*SampleRadius*/,

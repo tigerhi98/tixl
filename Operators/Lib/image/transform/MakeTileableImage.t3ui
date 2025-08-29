@@ -13,7 +13,8 @@
       "Min": 0,
       "Max": 3,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "0fef83cc-01c5-4e4a-a716-5bbdf9d916a0"/*IsEnabled*/,
@@ -33,7 +34,8 @@
       "Min": 0.0,
       "Max": 1.0,
       "Scale": 0.01,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "f09d6911-dd5f-4dac-a475-3ea291f04dfe"/*ImageA*/,

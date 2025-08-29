@@ -21,7 +21,8 @@
       "Description": "Defines the strength of the spring.\nHigher values produce faster and longer bouncing.",
       "Min": 0.01,
       "Max": 5.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "8cd61153-9e93-42bf-9fb6-ad29988e780f"/*Tension*/,
@@ -33,7 +34,8 @@
       "Description": "Defines the rigidity of the spring.\nLower values produce slower and more intense bounce.",
       "Min": 0.01,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "bafae88a-4000-442f-9698-7d4d50e3eccf"/*UseAppRunTime*/,

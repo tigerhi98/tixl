@@ -17,7 +17,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3938188b-41ba-4efe-b7e1-9720d2e58cd4"/*Offset*/,
@@ -51,7 +52,8 @@
       "GroupTitle": "Color",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

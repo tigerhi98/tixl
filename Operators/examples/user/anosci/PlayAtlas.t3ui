@@ -19,7 +19,8 @@
       },
       "Description": "The number of frames spanning the height of the atlas.",
       "Min": 1,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "3f7b1f1f-7790-4142-890c-c69a17689b87"/*StartFrame*/,
@@ -39,7 +40,8 @@
       "Description": "An atlas will sometimes have empty frames at the end of the final row. Specify how many here.",
       "Min": 0,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "69c0ee10-8498-4128-b865-7e622b62cd3d"/*PlaybackRate*/,
@@ -76,7 +78,8 @@
       "Description": "The number of frames spanning the width of the atlas.",
       "AddPadding": "True",
       "Min": 1,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [

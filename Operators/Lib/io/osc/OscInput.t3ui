@@ -47,7 +47,8 @@
       "Description": "OSC port to listen on. \n\nChanging this parameter will discard recorded values and reconnect.",
       "Min": 0,
       "Max": 65335,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "8e5d30a3-5878-4f64-9eb4-ad5782a957bf"/*SearchFilterKey*/,

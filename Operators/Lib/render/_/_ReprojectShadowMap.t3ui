@@ -41,7 +41,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "ceeeeca9-492d-40bd-9fbb-670b7f469d56"/*CameraReference*/,

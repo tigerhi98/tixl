@@ -14,7 +14,8 @@
       "Min": -1,
       "Max": 128,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "5305a99b-c9ee-41d8-b3e8-918b17ed2107"/*Strength*/,
@@ -26,7 +27,8 @@
       "Min": 0.1,
       "Max": 3.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "a341c7d8-b324-4b5e-82e4-b9fae958e913"/*Texture*/,

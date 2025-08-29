@@ -102,7 +102,8 @@
       "Min": 0,
       "Max": 250,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "c42d8124-d656-4b52-864f-9c9d888e0c54"/*WrapSize*/,
@@ -133,7 +134,8 @@
       "Min": 1,
       "Max": 1000000,
       "Scale": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "e3a995dc-ec77-439c-8aed-e47df5e2b923"/*OffsetVolume*/,

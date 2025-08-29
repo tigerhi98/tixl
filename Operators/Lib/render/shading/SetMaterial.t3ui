@@ -95,7 +95,8 @@
       "Description": "Defines how much reflections and highlights are blurred.",
       "Min": -1.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],

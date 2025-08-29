@@ -26,7 +26,8 @@
       "Min": 0.01,
       "Max": 1000.0,
       "Scale": 0.001,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "98155900-1bb9-427a-9c4e-0988fec806cd"/*Intensity*/,

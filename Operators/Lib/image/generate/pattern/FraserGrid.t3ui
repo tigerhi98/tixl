@@ -11,7 +11,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "1dad9264-32a0-4476-a4af-c7eb9a5a5fec"/*Rotate*/,

@@ -28,7 +28,8 @@
       "GroupTitle": "Axis Settings",
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "4701df38-3ec8-4133-ba40-afdf859e8f2f"/*AxisDistribution*/,

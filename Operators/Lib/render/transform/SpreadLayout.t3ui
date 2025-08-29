@@ -41,7 +41,8 @@
       },
       "Min": 0.0,
       "Max": 1.0,
-      "Clamp": true
+      "ClampMin": true,
+      "ClampMax": true
     },
     {
       "InputId": "938e7f13-c78f-4474-abe1-38e413fb74e6"/*ForceColorUpdate*/,
