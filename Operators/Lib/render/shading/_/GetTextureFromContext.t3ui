@@ -1,6 +1,6 @@
 {
   "Id": "dee8f2de-5cbd-4ca7-9449-d6c74197546e"/*GetTextureFromContext*/,
-  "Description": "",
+  "Description": "Access a texture set by [SetContextTexture]",
   "SymbolTags": "16",
   "InputUis": [
     {

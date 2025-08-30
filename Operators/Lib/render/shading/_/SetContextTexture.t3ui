@@ -1,6 +1,6 @@
 {
   "Id": "944d1903-cd23-49ca-9b0d-2fc73bfcfd30"/*SetContextTexture*/,
-  "Description": "An internal op that sets the pre-filtered specular map \nfor the environment to the context.",
+  "Description": "Store a texture in the context and access  it with [GetTextureFromContext] anywhere in the graph",
   "SymbolTags": "24",
   "InputUis": [
     {
@@ -19,7 +19,7 @@
       "Usage": "Default"
     },
     {
-      "InputId": "3ab2e94d-b10b-4cd9-9ee0-073292a947fc"/*PrefilteredSpecularMap*/,
+      "InputId": "3ab2e94d-b10b-4cd9-9ee0-073292a947fc"/*Texture*/,
       "Position": {
         "X": -200.0,
         "Y": 90.0
