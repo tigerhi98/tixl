@@ -57,7 +57,7 @@ public static class UiColors
     
     [T3Style.Hint(GroupTitle = "Various elements", Description = "The overlay grid on for the graph canvas.")]
     public static  Color CanvasGrid = new(0, 0, 0, 0.15f);
-    public static  Color GridLines = new(0, 0, 0, 1f);
+    public static  Color GridLines = new(0, 0, 0, 0.5f);
     public static Color MiniMapItems = new(1f, 1f, 1f, 1f);
 
     
