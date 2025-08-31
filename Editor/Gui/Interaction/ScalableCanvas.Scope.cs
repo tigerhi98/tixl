@@ -204,14 +204,14 @@ public abstract partial class ScalableCanvas
             scale = WindowSize.X / widthOnCanvas;
             scrollTarget = new Vector2(
                                        areaOnCanvas.Min.X,
-                                       areaOnCanvas.Min.Y);
+                                       areaOnCanvas.Min.Y - (WindowSize.Y / scale - heightOnCanvas) / 2);
         }
         else
         {
             // Center in a wide window... 
             scale = WindowSize.Y / heightOnCanvas;
             scrollTarget = new Vector2(
-                                       areaOnCanvas.Min.X,
+                                       areaOnCanvas.Min.X - (WindowSize.X / scale - widthOnCanvas) / 2,
                                        areaOnCanvas.Min.Y);
         }
 
