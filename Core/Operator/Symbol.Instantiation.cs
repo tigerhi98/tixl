@@ -53,8 +53,8 @@ public sealed partial class Symbol
                         if (parent.Id == child.Parent?.Id) 
                         {
                             // this should never happen, but if it does, we are assuming that 
-                            Log.Warning($"Duplicate parent id {parent.Id} for {Name}, but different parent objects. " +
-                                        $"If this happens at any time other than during copy/paste operations, then this is an error that should be reported.");
+                            // Log.Warning($"Duplicate parent id {parent.Id} for {Name}, but different parent objects. " +
+                            //             $"If this happens at any time other than during copy/paste operations, then this is an error that should be reported.");
                             replacedId = false;
                             var newChild = new Child(child.Symbol, child.Id, parent, child.Name, child.IsBypassed, _creationLock, child.Id);
                             _childrenCreatedFromMe[child.Id] = newChild;
