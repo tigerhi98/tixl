@@ -1,7 +1,6 @@
 #nullable enable
 using System.Diagnostics;
 using System.IO;
-using System.Windows.Forms.VisualStyles;
 using T3.Core.Compilation;
 using T3.Core.Operator;
 using T3.Core.Resource;

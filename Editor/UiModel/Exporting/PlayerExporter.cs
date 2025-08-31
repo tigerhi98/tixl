@@ -1,8 +1,6 @@
 #nullable enable
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
-using System.Threading;
-using T3.Core.Compilation;
 using T3.Core.DataTypes;
 using T3.Core.IO;
 using T3.Core.Model;

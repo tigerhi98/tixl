@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using System.Reflection;
 using T3.Core.Operator;
-using T3.Core.Operator.Slots;
 using T3.Core.Utils;
 
 namespace T3.Editor.Gui.OpUis;

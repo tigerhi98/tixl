@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System.Drawing;
 using ImGuiNET;
 using T3.Editor.Gui.MagGraph.States;
 using T3.Editor.Gui.Styling;
@@ -7,7 +6,6 @@ using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel.Commands;
 using T3.Editor.UiModel.Commands.Annotations;
 using T3.SystemUi;
-using Color = T3.Core.DataTypes.Vector.Color;
 
 namespace T3.Editor.Gui.MagGraph.Interaction;
 

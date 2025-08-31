@@ -1,6 +1,5 @@
 ﻿#nullable enable
 using System.Diagnostics;
-using System.Text;
 using System.Text.RegularExpressions;
 using T3.Core.Operator;
 using T3.Editor.UiModel.ProjectHandling;

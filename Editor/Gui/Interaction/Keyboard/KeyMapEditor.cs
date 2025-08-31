@@ -1,7 +1,5 @@
 #nullable enable
-using System.Windows.Forms;
 using ImGuiNET;
-using Silk.NET.GLFW;
 using T3.Core.UserData;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;

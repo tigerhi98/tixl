@@ -2,7 +2,6 @@
 using T3.Core.DataTypes;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
-using T3.Core.Utils;
 using T3.Editor.Gui.Interaction;
 using T3.Editor.UiModel.InputsAndTypes;
 

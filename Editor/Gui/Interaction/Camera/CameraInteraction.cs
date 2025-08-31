@@ -6,7 +6,6 @@ using T3.Editor.Gui.Interaction.Keyboard;
 using T3.Editor.Gui.Interaction.TransformGizmos;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
-using T3.SystemUi;
 
 namespace T3.Editor.Gui.Interaction.Camera;
 

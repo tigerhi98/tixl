@@ -8,12 +8,9 @@ using T3.Core.IO;
 using T3.Core.Model;
 using T3.Core.Operator;
 using T3.Core.Resource;
-using T3.Core.SystemUi;
 using T3.Core.UserData;
 using T3.Core.Utils;
-using T3.Editor.Compilation;
 using T3.Editor.External;
-using T3.Editor.Gui.OpUis;
 
 namespace T3.Editor.UiModel;
 

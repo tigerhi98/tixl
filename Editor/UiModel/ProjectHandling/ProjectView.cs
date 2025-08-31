@@ -1,6 +1,5 @@
 #nullable enable
 using System.Diagnostics;
-using System.IO.Packaging;
 using T3.Core.Operator;
 using T3.Core.Resource;
 using T3.Editor.Gui.Graph;

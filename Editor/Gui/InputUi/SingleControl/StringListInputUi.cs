@@ -1,7 +1,4 @@
-﻿using ImGuiNET;
-using T3.Editor.UiModel.InputsAndTypes;
-
-namespace T3.Editor.Gui.InputUi.SingleControl;
+﻿namespace T3.Editor.Gui.InputUi.SingleControl;
 
 // internal sealed class StringListInputUi : SingleControlInputUi<List<string>>
 // {

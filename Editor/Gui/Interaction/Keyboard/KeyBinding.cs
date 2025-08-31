@@ -2,7 +2,6 @@
 using ImGuiNET;
 using Newtonsoft.Json;
 using T3.Serialization;
-using T3.SystemUi;
 
 namespace T3.Editor.Gui.Interaction.Keyboard;
 

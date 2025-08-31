@@ -2,8 +2,6 @@
 
 using System.Diagnostics;
 using System.Runtime.CompilerServices;
-using ImGuiNET;
-using T3.Core.DataTypes.Vector;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
 using T3.Editor.Gui.Interaction;

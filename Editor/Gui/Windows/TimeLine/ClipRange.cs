@@ -1,5 +1,4 @@
 ﻿using ImGuiNET;
-using SharpDX;
 using T3.Core.Animation;
 using T3.Editor.Gui.Interaction.Snapping;
 using T3.Editor.Gui.Styling;

@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using T3.Editor.Gui.Graph.Interaction;
 using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Keyboard;
 using T3.Editor.Gui.MagGraph.Model;
@@ -7,7 +6,6 @@ using T3.Editor.Gui.MagGraph.States;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel.Modification;
 using T3.Editor.UiModel.ProjectHandling;
-using T3.Editor.UiModel.Selection;
 
 namespace T3.Editor.Gui.MagGraph.Interaction;
 

@@ -17,7 +17,6 @@ using T3.Editor.Gui.UiHelpers;
 using T3.Editor.Gui.Windows.Output;
 using T3.Editor.SystemUi;
 using T3.Editor.UiModel.Commands;
-using T3.Editor.UiModel.Commands.Animation;
 using T3.Editor.UiModel.Commands.Annotations;
 using T3.Editor.UiModel.Commands.Graph;
 using T3.Editor.UiModel.InputsAndTypes;

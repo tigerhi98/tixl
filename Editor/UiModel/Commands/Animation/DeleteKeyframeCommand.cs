@@ -1,7 +1,5 @@
 ﻿using T3.Core.Animation;
 using T3.Core.DataTypes;
-using T3.Editor.Gui.Graph.Window;
-using T3.Editor.Gui.Windows.TimeLine;
 using T3.Editor.UiModel.ProjectHandling;
 
 namespace T3.Editor.UiModel.Commands.Animation;

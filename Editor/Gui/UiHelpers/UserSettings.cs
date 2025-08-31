@@ -1,13 +1,10 @@
 #nullable enable
-using System.IO;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using T3.Core.Animation;
-using T3.Core.DataTypes;
 using T3.Core.IO;
 using T3.Core.UserData;
 using T3.Editor.Compilation;
-using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Windows;
 using T3.Editor.Gui.Windows.TimeLine;
 // ReSharper disable MemberCanBeInternal

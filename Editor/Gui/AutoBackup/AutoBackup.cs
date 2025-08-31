@@ -7,9 +7,7 @@ using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using T3.Core.UserData;
-using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
-using T3.Editor.Gui.Windows.Layouts;
 using T3.Editor.UiModel;
 
 namespace T3.Editor.Gui.AutoBackup;

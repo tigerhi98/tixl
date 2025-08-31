@@ -12,7 +12,6 @@ using T3.Core.UserData;
 using T3.Editor.App;
 using T3.Editor.Compilation;
 using T3.Editor.Gui;
-using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Camera;
 using T3.Editor.Gui.Interaction.Keyboard;
 using T3.Editor.Gui.Interaction.StartupCheck;

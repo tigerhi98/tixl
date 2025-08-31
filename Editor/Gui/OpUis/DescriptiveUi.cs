@@ -2,11 +2,9 @@
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Interfaces;
-using T3.Core.Utils;
 using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.OpUis.WidgetUi;
 using T3.Editor.Gui.UiHelpers;
-using T3.Editor.UiModel;
 
 namespace T3.Editor.Gui.OpUis;
 

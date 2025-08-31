@@ -2,7 +2,6 @@ using System.Globalization;
 using T3.Core.Animation;
 using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Snapping;
-using T3.Editor.Gui.UiHelpers;
 
 namespace T3.Editor.Gui.Windows.TimeLine.Raster;
 

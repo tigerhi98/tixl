@@ -2,7 +2,6 @@
 using T3.Core.DataTypes;
 using T3.Core.Operator;
 using T3.Editor.Gui.Interaction.WithCurves;
-using T3.Editor.Gui.UiHelpers;
 
 namespace T3.Editor.Gui.Windows.TimeLine;
 

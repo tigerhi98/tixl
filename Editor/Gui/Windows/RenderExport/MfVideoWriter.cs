@@ -13,8 +13,6 @@ using SharpDX.WIC;
 using T3.Core.DataTypes;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Resource;
-using T3.Core.Video;
-using MF = SharpDX.MediaFoundation;
 
 namespace T3.Editor.Gui.Windows.RenderExport;
 

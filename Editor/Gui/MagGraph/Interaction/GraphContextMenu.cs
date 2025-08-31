@@ -1,8 +1,6 @@
 ﻿using ImGuiNET;
 using T3.Core.DataTypes;
 using T3.Core.SystemUi;
-using T3.Editor.Gui.Graph;
-using T3.Editor.Gui.Graph.Interaction;
 using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Keyboard;
 using T3.Editor.Gui.Interaction.Variations;

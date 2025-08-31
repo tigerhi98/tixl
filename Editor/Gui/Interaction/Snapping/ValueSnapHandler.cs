@@ -3,7 +3,6 @@ using ImGuiNET;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Utils;
 using T3.Editor.Gui.Styling;
-using T3.Editor.Gui.UiHelpers;
 
 namespace T3.Editor.Gui.Interaction.Snapping;
 

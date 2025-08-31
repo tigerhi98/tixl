@@ -9,7 +9,6 @@ using T3.Core.DataTypes.DataSet;
 using T3.Core.Operator;
 using T3.Core.Operator.Interfaces;
 using T3.Core.Resource;
-using T3.Core.Video;
 using T3.Editor.App;
 using T3.Editor.Compilation;
 using T3.Editor.Gui.Dialog;
