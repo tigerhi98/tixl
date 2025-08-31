@@ -389,6 +389,7 @@ internal static class TimeControls
                 InputEditStateFlags.Modified)
             {
                 composition.Symbol.GetSymbolUi().FlagAsModified();
+                BeatTiming.SetBpmRate(bpm);
             }
 
             ImGui.SameLine();

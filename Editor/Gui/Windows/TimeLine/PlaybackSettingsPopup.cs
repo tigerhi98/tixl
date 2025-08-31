@@ -1,5 +1,4 @@
 ﻿#nullable enable
-using System.Runtime.InteropServices.JavaScript;
 using System.Text;
 using System.Text.RegularExpressions;
 using ImGuiNET;
@@ -323,7 +322,7 @@ internal static class PlaybackSettingsPopup
                 }
 
                 FormInputs.SetIndentToParameters();
-                modified |= FormInputs.AddFloat("Beat Sync Offset (ms)",
+                modified |= FormInputs.AddFloat("Beat Sync Offset (sec)",
                                                 ref settings.BeatLockAudioOffsetSec,
                                                 -1f, 1f, 0.001f, 
                                                 true, true,

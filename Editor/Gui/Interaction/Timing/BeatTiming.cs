@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using T3.Core.Animation;
 using T3.Core.Audio;
-using T3.Core.IO;
 
 namespace T3.Editor.Gui.Interaction.Timing;
 
@@ -20,6 +19,7 @@ internal static class BeatTiming
     {
         _beatDuration = 60f / bpm;
         _tapTimes.Clear();
+        _resynced = false;
     }
 
     internal static void TriggerSyncTap() => _tapTriggeredLastFrame = true;
