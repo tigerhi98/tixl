@@ -80,7 +80,8 @@
       },
       "AddPadding": "True",
       "Min": -2.0,
-      "Max": 2.0
+      "Max": 2.0,
+      "UseVec2Control": "Position"
     }
   ],
   "SymbolChildUis": [
