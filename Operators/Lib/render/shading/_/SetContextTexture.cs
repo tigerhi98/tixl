@@ -13,24 +13,14 @@ internal sealed class SetContextTexture : Instance<SetContextTexture>
         Output.UpdateAction += Update;
     }
 
-    //private Buffer _parameterBuffer = null;
-
     private void Update(EvaluationContext context)
     {
         var id = Id.GetValue(context);
             
         //var previousMap = context.PrbPrefilteredSpecular;
-        var tex = PrefilteredSpecularMap.GetValue(context) ?? PbrContextSettings.WhitePixelTexture;
+        var tex = Texture.GetValue(context) ?? PbrContextSettings.WhitePixelTexture;
         var hadPreviousTexture = context.ContextTextures.TryGetValue(id, out var previousTexture);
         context.ContextTextures[id] = tex;
-        // {
-        //     
-        // }
-        //
-        // if (tex != null)
-        // {
-        //     context.PrbPrefilteredSpecular = tex;
-        // }
             
         SubTree.GetValue(context);
         if (hadPreviousTexture)
@@ -41,6 +31,7 @@ internal sealed class SetContextTexture : Instance<SetContextTexture>
         {
             context.ContextTextures.Remove(id);
         }
+        
     }
 
     [Input(Guid = "16863415-1d90-46a7-80a4-372602a49c6f")]
@@ -50,6 +41,6 @@ internal sealed class SetContextTexture : Instance<SetContextTexture>
     public readonly InputSlot<string> Id = new();
         
     [Input(Guid = "3ab2e94d-b10b-4cd9-9ee0-073292a947fc")]
-    public readonly InputSlot<Texture2D> PrefilteredSpecularMap = new();
+    public readonly InputSlot<Texture2D> Texture = new();
 
 }
