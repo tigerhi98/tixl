@@ -236,7 +236,7 @@ internal static class ProgramWindows
             args.Cancel = false;
 #else
             args.Cancel = true;
-            T3Ui.ExitDialog.ShowNextFrame();
+    //        T3Ui.ExitDialog.ShowNextFrame();
 #endif
         }
     }
