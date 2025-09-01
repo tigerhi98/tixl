@@ -7,6 +7,7 @@ using SharpDX.DXGI;
 using T3.Core.IO;
 using T3.Core.Resource;
 using T3.Core.SystemUi;
+using T3.Editor.Gui;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel;
 using Device = SharpDX.Direct3D11.Device;
@@ -236,7 +237,7 @@ internal static class ProgramWindows
             args.Cancel = false;
 #else
             args.Cancel = true;
-    //        T3Ui.ExitDialog.ShowNextFrame();
+            T3Ui.ExitDialog.ShowNextFrame();
 #endif
         }
     }
