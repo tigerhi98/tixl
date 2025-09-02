@@ -44,9 +44,9 @@ static const int3 AxisOrders[] =
     int3(2, 0, 1), // 0
 };
  
-StructuredBuffer<LegacyPoint> StartPoints : t0;
-StructuredBuffer<LegacyPoint> TargetPoints : t1;
-RWStructuredBuffer<LegacyPoint> ResultPoints : u0;
+StructuredBuffer<Point> StartPoints : t0;
+StructuredBuffer<Point> TargetPoints : t1;
+RWStructuredBuffer<Point> ResultPoints : u0;
 
 [numthreads(11,1,1)]
 void main(uint3 i : SV_DispatchThreadID)
@@ -66,13 +66,13 @@ void main(uint3 i : SV_DispatchThreadID)
     uint lineIndex = i.x / stepsPerPairCount;
     uint lineStepIndex = i.x % stepsPerPairCount;
 
-    LegacyPoint A = StartPoints[lineIndex % (uint)countA];
-    LegacyPoint B = TargetPoints[lineIndex % (uint)countB];
+    Point A = StartPoints[lineIndex % (uint)countA];
+    Point B = TargetPoints[lineIndex % (uint)countB];
 
     float2 hash = hash21(lineIndex);
     int3 axisOrder =  AxisOrders[(int)(hash.x*4)]; // int3(2,1,0);
 
-    float3 randomOffset = (hash31(lineIndex + 321) * 2 -1) * RandomizeGrid;
+    float3 randomOffset = (hash41u(lineIndex + 321) * 2 -1).xyz * RandomizeGrid;
     float3 posA = (A.Position + 0.0001) / GridSize + fmod(GridOffset , GridSize);
     float3 posB = (B.Position + 0.0001) / GridSize + fmod(GridOffset , GridSize);
 
@@ -84,7 +84,7 @@ void main(uint3 i : SV_DispatchThreadID)
     };
 
     float3 previousPos = 0;
-    float3 p = 0;
+    float3 pos = 0;
     float d =  0;
 
     float4 stepPositions[11];
@@ -93,7 +93,7 @@ void main(uint3 i : SV_DispatchThreadID)
     {
         int3 factorsForStep = TransitionSteps[step];
 
-        p = float3(
+        pos = float3(
             transition[factorsForStep[axisOrder.x]].x,
             transition[factorsForStep[axisOrder.y]].y,
             transition[factorsForStep[axisOrder.z]].z
@@ -101,12 +101,12 @@ void main(uint3 i : SV_DispatchThreadID)
 
         if(step > 0) 
         {
-            d += length(p - previousPos);
+            d += length(pos - previousPos);
         }
 
-        stepPositions[step] = float4(p, 
-                                     1-A.W * Speed * StrokeLength + d / StrokeLength  + PhaseOffset);        
-        previousPos = p;
+        stepPositions[step] = float4(pos, 
+                                     1-A.FX1 * Speed * StrokeLength + d / StrokeLength  + PhaseOffset);        
+        previousPos = pos;
     }
     
     // ========== INSERT SHARED MEMORY BOUNDARY ===================
@@ -118,7 +118,7 @@ void main(uint3 i : SV_DispatchThreadID)
     float w = 1;
     const float NaN = sqrt(-1); // 0.1f;//
 
-    p = current.xyz;
+    pos = current.xyz;
     d = current.w;
     //float d2 = d;
 
@@ -127,7 +127,7 @@ void main(uint3 i : SV_DispatchThreadID)
         float a = abs(current.w);
         float b = next.w;
         float f = saturate(b / (a+b));
-        p.xyz = lerp(current.xyz, next.xyz, 1-f);
+        pos.xyz = lerp(current.xyz, next.xyz, 1-f);
         d = 0;
     }
     // Case A2
@@ -135,7 +135,7 @@ void main(uint3 i : SV_DispatchThreadID)
         float a = abs(current.w) -1 ;
         float b = abs(prev.w) + 1;
         float f = saturate(a / (a+b));
-        p.xyz = lerp(prev.xyz, current.xyz, 1-f);
+        pos.xyz = lerp(prev.xyz, current.xyz, 1-f);
         d = 1;
     }
 
@@ -151,7 +151,7 @@ void main(uint3 i : SV_DispatchThreadID)
         float a = -current.w;
         float b = next.w;
         float f = saturate(a / (a+b));
-        p.xyz = lerp(p, next.xyz, f);
+        pos.xyz = lerp(pos, next.xyz, f);
         d =0;
         //w =2;
     }
@@ -166,7 +166,7 @@ void main(uint3 i : SV_DispatchThreadID)
         float a = 1 - prev.w;
         float b = current.w - 1;
         float f = saturate(a / (a+b));
-        p.xyz = lerp(prev.xyz, p, f);
+        pos.xyz = lerp(prev.xyz, pos, f);
         d = 1;
     }
 
@@ -175,12 +175,26 @@ void main(uint3 i : SV_DispatchThreadID)
         w = NaN;
     }
 
+    Point p = A;
 
-    ResultPoints[i.x].Position = (p - fmod(GridOffset,1)) * GridSize;
-    //ResultPoints[i.x].position.z += current.w;
-
-    ResultPoints[i.x].W =  1-d * w;
+    p.Position = (pos - fmod(GridOffset,1)) * GridSize;
+    p.FX1 =  1-d * w;
 
     if( lineStepIndex == 10)
-        ResultPoints[i.x].W = NaN; // NaN for divider
+        w = NaN; // NaN for divider
+
+    float scaleFactor = isnan(w * d) ? NaN : 1;
+
+    //p.Scale *= scaleFactor;
+    p.Scale = 0.5 * scaleFactor;
+
+    //p.FX2 =  1;
+    //p.Scale =  1;
+    //p.Rotation = float4(0,0,0,1);
+    //p.Color = float4(1,1,1,0);
+
+    //ResultPoints[i.x].position.z += current.w;
+
+
+    ResultPoints[i.x] = p;
 }
