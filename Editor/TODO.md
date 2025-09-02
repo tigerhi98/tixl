@@ -18,6 +18,8 @@
 - [ ] Rethink bookmarks -> Add marker in Op with number / switch with numbers only. only bring to view if hidden
 - [ ] Export should use project folder and some prefix like _
 
+- [ ] Fix tiny node-text with 200% display-scaling
+
 next:
 - [x] Don't show hidden input popup on snap
 
@@ -36,6 +38,9 @@ next:
 
 
 # UI
+
+- add color preview to vec4 (and maybe a history gradient?)
+- 
 
 ## Feedback from UncleX
 
