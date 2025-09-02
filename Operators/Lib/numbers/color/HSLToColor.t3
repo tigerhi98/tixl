@@ -1,5 +1,5 @@
 {
-  "Id": "1677fd74-6e54-479a-b478-c2ac77288f9c"/*HSBToColor*/,
+  "Id": "1677fd74-6e54-479a-b478-c2ac77288f9c"/*HSLToColor*/,
   "Inputs": [
     {
       "Id": "115e3d92-2e91-447d-ba81-18a508d3d36a"/*Brightness*/,

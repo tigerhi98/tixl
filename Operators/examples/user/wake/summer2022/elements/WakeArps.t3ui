@@ -318,14 +318,14 @@
       }
     },
     {
-      "ChildId": "5254d619-8352-45bf-9a5d-f852f18baa7c"/*HSBToColor*/,
+      "ChildId": "5254d619-8352-45bf-9a5d-f852f18baa7c"/*HSLToColor*/,
       "Position": {
         "X": -1978.6943,
         "Y": 1871.075
       }
     },
     {
-      "ChildId": "526ba7a8-6601-477f-9100-43b86b37f6f1"/*HSBToColor*/,
+      "ChildId": "526ba7a8-6601-477f-9100-43b86b37f6f1"/*HSLToColor*/,
       "Position": {
         "X": -2170.817,
         "Y": 730.5289

@@ -1,12 +1,12 @@
 namespace Lib.numbers.color;
 
 [Guid("1677fd74-6e54-479a-b478-c2ac77288f9c")]
-internal sealed class HSBToColor : Instance<HSBToColor>
+internal sealed class HSLToColor : Instance<HSLToColor>
 {
     [Output(Guid = "A73DC8D3-ECC5-454A-999A-1C79442FF2E2")]
     public readonly Slot<Vector4> Color = new();
 
-    public HSBToColor()
+    public HSLToColor()
     {
         Color.UpdateAction += Update;
     }
@@ -16,7 +16,7 @@ internal sealed class HSBToColor : Instance<HSBToColor>
         var hue = (Hue.GetValue(context) % 1) *360f; // + Saturation.GetValue(context);
             
         var sat = Saturation.GetValue(context);// + Saturation.GetValue(context);
-        var brightness = Brightness.GetValue(context);// + Saturation.GetValue(context);
+        var brightness = Lightness.GetValue(context);// + Saturation.GetValue(context);
 
         float fSatR = 1;
         float fSatG = 1;
@@ -76,7 +76,7 @@ internal sealed class HSBToColor : Instance<HSBToColor>
     public readonly InputSlot<float> Saturation = new();
 
     [Input(Guid = "115E3D92-2E91-447D-BA81-18A508D3D36A")]
-    public readonly InputSlot<float> Brightness = new();
+    public readonly InputSlot<float> Lightness = new();
         
     [Input(Guid = "FB8C2263-804D-4204-80AA-BA21BBEFDD8E")]
     public readonly InputSlot<float> Alpha = new(1f);

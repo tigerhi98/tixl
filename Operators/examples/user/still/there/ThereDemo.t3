@@ -1899,7 +1899,7 @@
       ]
     },
     {
-      "Id": "e90f52ed-fba0-49fd-b207-0ee2767fdfab"/*HSBToColor*/,
+      "Id": "e90f52ed-fba0-49fd-b207-0ee2767fdfab"/*HSLToColor*/,
       "SymbolId": "1677fd74-6e54-479a-b478-c2ac77288f9c",
       "InputValues": [
         {

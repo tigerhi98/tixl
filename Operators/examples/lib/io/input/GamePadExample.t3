@@ -923,7 +923,7 @@
       "Outputs": []
     },
     {
-      "Id": "757cf10e-1644-4ca8-8b5a-d1c01845873b"/*HSBToColor*/,
+      "Id": "757cf10e-1644-4ca8-8b5a-d1c01845873b"/*HSLToColor*/,
       "SymbolId": "1677fd74-6e54-479a-b478-c2ac77288f9c",
       "InputValues": [
         {
@@ -1469,7 +1469,7 @@
       "Outputs": []
     },
     {
-      "Id": "bf6b911e-a622-495a-a874-851de4c8dcbb"/*HSBToColor*/,
+      "Id": "bf6b911e-a622-495a-a874-851de4c8dcbb"/*HSLToColor*/,
       "SymbolId": "1677fd74-6e54-479a-b478-c2ac77288f9c",
       "InputValues": [
         {
@@ -1508,7 +1508,7 @@
       "Outputs": []
     },
     {
-      "Id": "c336f32b-5ca8-4869-958c-605508613d15"/*HSBToColor*/,
+      "Id": "c336f32b-5ca8-4869-958c-605508613d15"/*HSLToColor*/,
       "SymbolId": "1677fd74-6e54-479a-b478-c2ac77288f9c",
       "InputValues": [
         {
@@ -1711,7 +1711,7 @@
       "Outputs": []
     },
     {
-      "Id": "ee91d890-0a84-487c-9e8d-ec368c975238"/*HSBToColor*/,
+      "Id": "ee91d890-0a84-487c-9e8d-ec368c975238"/*HSLToColor*/,
       "SymbolId": "1677fd74-6e54-479a-b478-c2ac77288f9c",
       "InputValues": [
         {

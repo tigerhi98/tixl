@@ -473,7 +473,7 @@
       "Outputs": []
     },
     {
-      "Id": "d760fddc-edc9-49df-80a1-b19b7f804e13"/*HSBToColor*/,
+      "Id": "d760fddc-edc9-49df-80a1-b19b7f804e13"/*HSLToColor*/,
       "SymbolId": "1677fd74-6e54-479a-b478-c2ac77288f9c",
       "InputValues": [],
       "Outputs": []

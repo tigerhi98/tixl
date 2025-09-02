@@ -1744,11 +1744,11 @@
       "Outputs": []
     },
     {
-      "Id": "9e6b87bb-622c-49ff-92a7-ce78153c05a9"/*HSBToColor*/,
+      "Id": "9e6b87bb-622c-49ff-92a7-ce78153c05a9"/*HSLToColor*/,
       "SymbolId": "1677fd74-6e54-479a-b478-c2ac77288f9c",
       "InputValues": [
         {
-          "Id": "115e3d92-2e91-447d-ba81-18a508d3d36a"/*Brightness*/,
+          "Id": "115e3d92-2e91-447d-ba81-18a508d3d36a"/*Lightness*/,
           "Type": "System.Single",
           "Value": 1.0
         },

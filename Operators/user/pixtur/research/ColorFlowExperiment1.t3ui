@@ -88,7 +88,7 @@
       }
     },
     {
-      "ChildId": "312fc54a-b212-4ff6-a0db-3ff216366596"/*HSBToColor*/,
+      "ChildId": "312fc54a-b212-4ff6-a0db-3ff216366596"/*HSLToColor*/,
       "Position": {
         "X": -115.56973,
         "Y": -366.398

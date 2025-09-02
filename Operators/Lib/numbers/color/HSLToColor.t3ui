@@ -1,5 +1,5 @@
 {
-  "Id": "1677fd74-6e54-479a-b478-c2ac77288f9c"/*HSBToColor*/,
+  "Id": "1677fd74-6e54-479a-b478-c2ac77288f9c"/*HSLToColor*/,
   "Description": "Creates an RGBA color from HSB settings",
   "SymbolTags": "1",
   "InputUis": [
@@ -10,7 +10,9 @@
         "Y": 0.0
       },
       "Min": 0.0,
-      "Max": 100.0
+      "Max": 1.0,
+      "Scale": 0.01,
+      "ClampMin": true
     },
     {
       "InputId": "2c1adb2b-36bd-4ca0-8fbb-e7571163a98d"/*Hue*/,

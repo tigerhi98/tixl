@@ -1975,7 +1975,7 @@
       ]
     },
     {
-      "Id": "8eb7b22d-debf-4723-9442-4b4464444c9b"/*HSBToColor*/,
+      "Id": "8eb7b22d-debf-4723-9442-4b4464444c9b"/*HSLToColor*/,
       "SymbolId": "1677fd74-6e54-479a-b478-c2ac77288f9c",
       "InputValues": [],
       "Outputs": []
