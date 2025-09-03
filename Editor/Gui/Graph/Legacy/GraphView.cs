@@ -170,7 +170,7 @@ internal sealed class GraphView : ScalableCanvas, IGraphView
         UpdateCanvas(out _, editingFlags);
     }
 
-    public void DrawGraph(ImDrawListPtr drawList, float graphOpacity)
+    void IGraphView.DrawGraph(ImDrawListPtr drawList, float graphOpacity)
     {
         if (_projectView?.CompositionInstance == null)
             return;
@@ -351,9 +351,12 @@ internal sealed class GraphView : ScalableCanvas, IGraphView
 
         ScrollTarget += _dampedScrollVelocity;
         _dampedScrollVelocity *= 0.90f;
+        
+        
 
         drawList.PushClipRect(WindowPos, WindowPos + WindowSize);
 
+        
         if (!_drawingFlags.HasFlag(GraphDrawingFlags.HideGrid))
             DrawGrid(drawList);
 
@@ -381,14 +384,10 @@ internal sealed class GraphView : ScalableCanvas, IGraphView
                                          || isOnBackground && (ImGui.IsMouseDoubleClicked(0) || UserActions.CloseOperator.Triggered());
 
         if (shouldHandleFenceSelection)
-        {
             HandleFenceSelection(_projectView.CompositionInstance, _selectionFence);
-        }
 
         if (isOnBackground && doubleClicked)
-        {
             _projectView.TrySetCompositionOpToParent();
-        }
 
         if (tempConnections.Count > 0 && ImGui.IsMouseReleased(0))
         {
@@ -410,7 +409,7 @@ internal sealed class GraphView : ScalableCanvas, IGraphView
                 }
             }
         }
-
+        
         drawList.PopClipRect();
 
         var compositionInstance = _projectView.CompositionInstance;
@@ -538,43 +537,35 @@ internal sealed class GraphView : ScalableCanvas, IGraphView
 
     private void DrawDropHandler(Instance compositionOp, SymbolUi compositionOpSymbolUi)
     {
-        if (!T3Ui.DraggingIsInProgress)
+        
+        if (!DragAndDropHandling.IsDragging)
             return;
 
         ImGui.SetCursorPos(Vector2.Zero);
         ImGui.InvisibleButton("## drop", ImGui.GetWindowSize());
 
-        if (ImGui.BeginDragDropTarget())
+        if (!DragAndDropHandling.TryGetDataDroppedLastItem(DragAndDropHandling.SymbolDraggingId, out var payload))
+            return;
+        
+        if (!Guid.TryParse(payload, out var guid))
         {
-            var payload = ImGui.AcceptDragDropPayload("Symbol");
-            if (ImGui.IsMouseReleased(0))
-            {
-                var myString = Marshal.PtrToStringAuto(payload.Data);
-                if (myString != null)
-                {
-                    var guidString = myString.Split('|')[0];
-                    var guid = Guid.Parse(guidString);
-                    Log.Debug("dropped symbol here" + payload + " " + myString + "  " + guid);
+            Log.Warning("Invalid data format for drop? " + payload);
+            return;
+        }
+        
+        if (SymbolUiRegistry.TryGetSymbolUi(guid, out var newSymbolUi))
+        {
+            var newSymbol = newSymbolUi.Symbol;
+            var posOnCanvas = InverseTransformPositionFloat(ImGui.GetMousePos());
+            var newChildUi = GraphOperations.AddSymbolChild(newSymbol, compositionOpSymbolUi, posOnCanvas);
 
-                    if (SymbolUiRegistry.TryGetSymbolUi(guid, out var symbolUi))
-                    {
-                        var symbol = symbolUi.Symbol;
-                        var posOnCanvas = InverseTransformPositionFloat(ImGui.GetMousePos());
-                        var childUi = GraphOperations.AddSymbolChild(symbol, compositionOpSymbolUi, posOnCanvas);
-
-                        var instance = compositionOp.Children[childUi.Id];
-                        _nodeSelection.SetSelection(childUi, instance);
-                    }
-                    else
-                    {
-                        Log.Warning($"Symbol {guid} not found in registry");
-                    }
-
-                    T3Ui.DraggingIsInProgress = false;
-                }
-            }
-
-            ImGui.EndDragDropTarget();
+            var instance = compositionOp.Children[newChildUi.Id];
+            _nodeSelection.SetSelection(newChildUi, instance);
+            compositionOp.GetSymbolUi().FlagAsModified();
+        }
+        else
+        {
+            Log.Warning($"Symbol {guid} not found in registry");
         }
     }
     

@@ -117,7 +117,7 @@ internal sealed partial class Graph
             }
         }
 
-        drawList.ChannelsSplit(2);
+        //drawList.ChannelsSplit(2);
         drawList.ChannelsSetCurrent((int)Channels.Operators);
 
         compositionUi = composition.GetSymbolUi();

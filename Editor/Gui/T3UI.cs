@@ -354,7 +354,6 @@ public static class T3Ui
     //     OscDataRecording.Dispose();
     // }
     
-    internal static bool DraggingIsInProgress = false;
     internal static bool MouseWheelFieldHovered { private get; set; }
     internal static bool MouseWheelFieldWasHoveredLastFrame { get; private set; }
     internal static bool DragFieldHovered { private get; set; }

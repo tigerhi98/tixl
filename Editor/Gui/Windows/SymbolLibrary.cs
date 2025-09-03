@@ -479,7 +479,7 @@ internal sealed class SymbolLibrary : Window
 }
 
 /// <summary>
-/// A simple ui to filter filter operators for certain properties like missing descriptions, invalid references, etc.
+/// A simple ui to filter operators for certain properties like missing descriptions, invalid references, etc.
 /// </summary>
 /// <remarks>
 /// It is only shown after scanning the library by pressing the update icon.
