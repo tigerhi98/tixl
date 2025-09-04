@@ -98,12 +98,12 @@ namespace Lib.io.dmx
             if (useReferencePoints)
             {
                 fixtureCount = _referencePoints.Length;
-                if (effectedPointsCount % fixtureCount != 0)
+                if (fixtureCount == 0 || effectedPointsCount % fixtureCount != 0)
                 {
                     Log.Warning($"Effected points count ({effectedPointsCount}) is not a multiple of reference points count ({fixtureCount}). Falling back to 1-to-1 mapping.", this);
-                    fixtureCount = effectedPointsCount; // Fallback: each effected point is a fixture
+                    fixtureCount = effectedPointsCount;
                     pixelsPerFixture = 1;
-                    useReferencePoints = false; // Disable relative calculations as mapping is unclear
+                    useReferencePoints = false;
                 }
                 else
                 {
@@ -131,6 +131,13 @@ namespace Lib.io.dmx
                 return;
             }
 
+            // Get channel settings once
+            var redCh = RedChannel.GetValue(context);
+            var greenCh = GreenChannel.GetValue(context);
+            var blueCh = BlueChannel.GetValue(context);
+            var whiteCh = WhiteChannel.GetValue(context);
+            var alphaCh = AlphaChannel.GetValue(context);
+
             for (var fixtureIndex = 0; fixtureIndex < fixtureCount; fixtureIndex++)
             {
                 for (var i = 0; i < fixtureChannelSize; i++) { _pointChannelValues[i] = 0; }
@@ -143,35 +150,35 @@ namespace Lib.io.dmx
                 if (GetRotation.GetValue(context)) ProcessRotation(context, transformPoint, referencePoint, useReferencePoints);
                 if (GetPosition.GetValue(context)) ProcessPosition(context, transformPoint, referencePoint, useReferencePoints);
 
-                // --- Color Processing ---
-                if (GetColor.GetValue(context))
+                // --- NEW DYNAMIC COLOR PROCESSING ---
+                if (GetColor.GetValue(context) && redCh > 0)
                 {
-                    if (pixelsPerFixture > 1) // Implicit Pixel Mapping
+                    var currentDmxChannelIndex = redCh - 1;
+                    var useCmy = RGBToCMY.GetValue(context);
+
+                    for (var pixelIndex = 0; pixelIndex < pixelsPerFixture; pixelIndex++)
                     {
-                        var redChannelStart = RedChannel.GetValue(context);
-                        if (redChannelStart > 0)
-                        {
-                            var currentDmxChannelIndex = redChannelStart - 1;
-                            var useCmy = RGBToCMY.GetValue(context);
+                        var pointForColor = points[firstPointIndexForFixture + pixelIndex];
 
-                            for (var pixelIndex = 0; pixelIndex < pixelsPerFixture; pixelIndex++)
-                            {
-                                var pointForColor = points[firstPointIndexForFixture + pixelIndex];
-                                float r = float.IsNaN(pointForColor.Color.X) ? 0f : Math.Clamp(pointForColor.Color.X, 0f, 1f);
-                                float g = float.IsNaN(pointForColor.Color.Y) ? 0f : Math.Clamp(pointForColor.Color.Y, 0f, 1f);
-                                float b = float.IsNaN(pointForColor.Color.Z) ? 0f : Math.Clamp(pointForColor.Color.Z, 0f, 1f);
+                        // Calculate all potential color values
+                        float r = float.IsNaN(pointForColor.Color.X) ? 0f : Math.Clamp(pointForColor.Color.X, 0f, 1f);
+                        float g = float.IsNaN(pointForColor.Color.Y) ? 0f : Math.Clamp(pointForColor.Color.Y, 0f, 1f);
+                        float b = float.IsNaN(pointForColor.Color.Z) ? 0f : Math.Clamp(pointForColor.Color.Z, 0f, 1f);
 
-                                if (useCmy) { r = 1f - r; g = 1f - g; b = 1f - b; }
+                        if (useCmy) { r = 1f - r; g = 1f - g; b = 1f - b; }
 
-                                InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(r * 255.0f));
-                                InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(g * 255.0f));
-                                InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(b * 255.0f));
-                            }
-                        }
-                    }
-                    else // Standard 1-to-1 color
-                    {
-                        ProcessColor(context, transformPoint);
+                        var vR = r * 255.0f;
+                        var vG = g * 255.0f;
+                        var vB = b * 255.0f;
+                        var vW = Math.Min(vR, Math.Min(vG, vB));
+                        var vA = pointForColor.Color.W * 255f;
+
+                        // Write enabled channels sequentially
+                        if (redCh > 0) InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(vR));
+                        if (greenCh > 0) InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(vG));
+                        if (blueCh > 0) InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(vB));
+                        if (whiteCh > 0) InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(vW));
+                        if (alphaCh > 0) InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(vA));
                     }
                 }
 
@@ -185,7 +192,6 @@ namespace Lib.io.dmx
                 if (SetCustomVar4.GetValue(context) && CustomVar4Channel.GetValue(context) > 0) InsertOrSet(CustomVar4Channel.GetValue(context) - 1, CustomVar4.GetValue(context));
                 if (SetCustomVar5.GetValue(context) && CustomVar5Channel.GetValue(context) > 0) InsertOrSet(CustomVar5Channel.GetValue(context) - 1, CustomVar5.GetValue(context));
 
-                // FitInUniverse logic
                 if (fitInUniverse)
                 {
                     var currentChannelIndex = _resultItems.Count;
@@ -198,7 +204,6 @@ namespace Lib.io.dmx
                 _resultItems.AddRange(_pointChannelValues);
             }
 
-            // FillUniverse logic
             if (fillUniverse)
             {
                 var currentSize = _resultItems.Count;
@@ -231,7 +236,7 @@ namespace Lib.io.dmx
                 var refRotation = referencePoint.Orientation;
                 if (float.IsNaN(refRotation.X) || float.IsNaN(refRotation.Y) || float.IsNaN(refRotation.Z) || float.IsNaN(refRotation.W))
                 {
-                    activeRotation = rotation; // fallback if reference rotation is invalid
+                    activeRotation = rotation;
                 }
                 else
                 {
@@ -398,26 +403,6 @@ namespace Lib.io.dmx
             return (int)Math.Round(Math.Clamp(normalizedValue, 0f, 1f) * 65535.0f);
         }
 
-        private void ProcessColor(EvaluationContext context, Point point)
-        {
-            float r = float.IsNaN(point.Color.X) ? 0f : Math.Clamp(point.Color.X, 0f, 1f);
-            float g = float.IsNaN(point.Color.Y) ? 0f : Math.Clamp(point.Color.Y, 0f, 1f);
-            float b = float.IsNaN(point.Color.Z) ? 0f : Math.Clamp(point.Color.Z, 0f, 1f);
-
-            if (RGBToCMY.GetValue(context)) { r = 1f - r; g = 1f - g; b = 1f - b; }
-
-            var vR = r * 255.0f;
-            var vG = g * 255.0f;
-            var vB = b * 255.0f;
-            var vW = Math.Min(vR, Math.Min(vG, vB));
-
-            InsertOrSet(RedChannel.GetValue(context) - 1, (int)Math.Round(vR));
-            InsertOrSet(GreenChannel.GetValue(context) - 1, (int)Math.Round(vG));
-            InsertOrSet(BlueChannel.GetValue(context) - 1, (int)Math.Round(vB));
-            if (AlphaChannel.GetValue(context) > 0) InsertOrSet(AlphaChannel.GetValue(context) - 1, (int)Math.Round(point.Color.W * 255f));
-            if (WhiteChannel.GetValue(context) > 0) InsertOrSet(WhiteChannel.GetValue(context) - 1, (int)Math.Round(vW));
-        }
-
         private void ProcessF1(EvaluationContext context, Point point) { if (!float.IsNaN(point.F1)) InsertOrSet(F1Channel.GetValue(context) - 1, (int)Math.Round(point.F1 * 255.0f)); }
         private void ProcessF2(EvaluationContext context, Point point) { if (!float.IsNaN(point.F2)) InsertOrSet(F2Channel.GetValue(context) - 1, (int)Math.Round(point.F2 * 255.0f)); }
 
@@ -426,6 +411,8 @@ namespace Lib.io.dmx
             if (index < 0) return;
             if (index >= _pointChannelValues.Count)
             {
+                // This can happen if FixtureChannelSize is smaller than the color block. We can either log or ignore.
+                // For now, we'll log, as it's a configuration issue.
                 Log.Warning($"DMX Channel index {index + 1} is out of range (list size: {_pointChannelValues.Count}). Adjust FixtureChannelSize or Channel Assignments.", this);
                 return;
             }

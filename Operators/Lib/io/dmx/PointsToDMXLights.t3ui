@@ -108,7 +108,7 @@
       "GroupTitle": "Color"
     },
     {
-      "InputId": "61b48e46-c3d1-46e3-a470-810d55f30aa6"/*Points*/,
+      "InputId": "61b48e46-c3d1-46e3-a470-810d55f30aa6"/*EffectedPoints*/,
       "Position": {
         "X": -200.0,
         "Y": 0.0
@@ -237,13 +237,6 @@
       "Position": {
         "X": -200.0,
         "Y": 3075.0
-      }
-    },
-    {
-      "InputId": "afd3aa99-c892-4b87-ad3f-f97461e8a934"/*WithReferencePoints*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 75.0
       }
     },
     {
