@@ -1,0 +1,82 @@
+{
+  "Id": "b469d554-a69f-44a0-a03f-331853b82199"/*SerialOutput*/,
+  "Description": "",
+  "InputUis": [
+    {
+      "InputId": "262d4a18-354a-4835-9b22-458db18579e7"/*BaudRate*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 75.0
+      }
+    },
+    {
+      "InputId": "3f9e404b-993a-427e-8367-9a9772f76426"/*PortName*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 0.0
+      },
+      "Usage": "CustomDropdown"
+    },
+    {
+      "InputId": "7414a929-8a33-405d-a466-933e31972b57"/*Connect*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 375.0
+      }
+    },
+    {
+      "InputId": "a0e35517-337a-4770-985a-34cac95b5b5f"/*SendOnChange*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 300.0
+      }
+    },
+    {
+      "InputId": "aa199834-537d-4c67-9ecb-88358252d263"/*MessageParts*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 150.0
+      },
+      "Usage": "Default"
+    },
+    {
+      "InputId": "b9c6837c-4ad3-424c-976e-1e4552a85523"/*Separator*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 225.0
+      },
+      "Usage": "Default"
+    },
+    {
+      "InputId": "c796590a-335b-4c21-8898-356d3b69601f"/*SendTrigger*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 225.0
+      }
+    },
+    {
+      "InputId": "daf8e832-6d55-4424-aef9-a92543b1a796"/*AddLineEnding*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 300.0
+      }
+    }
+  ],
+  "SymbolChildUis": [],
+  "OutputUis": [
+    {
+      "OutputId": "26c9848a-7067-4592-ae8d-26496f435017"/*Result*/,
+      "Position": {
+        "X": 300.0,
+        "Y": 200.0
+      }
+    },
+    {
+      "OutputId": "1b91e3a7-92f6-44a2-b086-a82fdee9426d"/*IsConnected*/,
+      "Position": {
+        "X": 300.0,
+        "Y": 300.0
+      }
+    }
+  ]
+}

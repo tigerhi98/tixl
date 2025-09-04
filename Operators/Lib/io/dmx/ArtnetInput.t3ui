@@ -7,7 +7,18 @@
       "Position": {
         "X": -505.05722,
         "Y": -259.4615
-      }
+      },
+      "Min": 0,
+      "Scale": 1.0,
+      "Clamp": true
+    },
+    {
+      "InputId": "24b5d450-4e83-49db-88b1-7d688e64585d"/*LocalIpAddress*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 0.0
+      },
+      "Usage": "CustomDropdown"
     },
     {
       "InputId": "3d085f6f-6f4a-4876-805f-22f25497a731"/*Active*/,
@@ -21,6 +32,13 @@
       "Position": {
         "X": -505.05722,
         "Y": -109.46149
+      }
+    },
+    {
+      "InputId": "a5b6c7d8-e9f0-4123-4567-890abcdef123"/*PrintToLog*/,
+      "Position": {
+        "X": -505.05722,
+        "Y": -34.461487
       }
     },
     {

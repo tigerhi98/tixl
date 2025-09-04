@@ -1,0 +1,60 @@
+{
+  "Id": "98efc7c8-cafd-45ee-8746-14f37e9f59f8"/*ArtnetOutput*/,
+  "Description": "",
+  "InputUis": [
+    {
+      "InputId": "0fc76369-788a-4ffe-9dde-8eea5f10cf32"/*TargetIpAddress*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 300.0
+      },
+      "Usage": "Default"
+    },
+    {
+      "InputId": "34aeeda5-72b0-4f13-bfd3-4ad5cf42b24f"/*StartUniverse*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 75.0
+      }
+    },
+    {
+      "InputId": "7c15da5f-cfa1-4339-aceb-4ed0099ea041"/*SendUnicast*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 225.0
+      }
+    },
+    {
+      "InputId": "9e23335a-d63a-4286-930e-c63e86d0e6f0"/*LocalIpAddress*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 0.0
+      },
+      "Usage": "CustomDropdown"
+    },
+    {
+      "InputId": "c1f747f5-3634-4142-a16d-346743a13728"/*MaxFps*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 375.0
+      }
+    },
+    {
+      "InputId": "f7520a37-c2d4-41fa-a6ba-a6ed0423a4ec"/*InputsValues*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 150.0
+      }
+    }
+  ],
+  "SymbolChildUis": [],
+  "OutputUis": [
+    {
+      "OutputId": "499329d0-15e9-410e-9f61-63724dbec937"/*Result*/,
+      "Position": {
+        "X": 300.0,
+        "Y": 200.0
+      }
+    }
+  ]
+}
