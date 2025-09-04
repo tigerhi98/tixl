@@ -1,73 +1,27 @@
 {
-  "Id": "9b4e3c2d-a1f0-4567-89bc-def012345678"/*WebSocketServer*/,
+  "Id": "f0e1d2c3-b4a5-9876-5432-10fedcba9876"/*WebSocketServer*/,
   "Description": "",
   "InputUis": [
     {
-      "InputId": "0a1b2c3d-4e5f-4678-9012-3456789abcde"/*Message*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 225.0
-      },
-      "Usage": "Default"
-    },
-    {
-      "InputId": "1d2e3f4a-5b6c-4789-a0b1-c2d3e4f5a6b7"/*Port*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 75.0
-      }
-    },
-    {
-      "InputId": "2e725916-4143-4759-8651-e12185c658d3"/*PrintToLog*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 525.0
-      }
-    },
-    {
-      "InputId": "3d4f5e6a-7b8c-9d0e-f1a2-b3c4d5e6f7a8"/*Listen*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 0.0
-      }
-    },
-    {
-      "InputId": "4b5a6f7e-8d9c-4501-2345-6789abcdef01"/*ClientMessageParsingMode*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 600.0
-      }
-    },
-    {
-      "InputId": "4d3c2b1a-0f9e-4876-5432-10fedcba9876"/*SendTrigger*/,
+      "InputId": "10293847-56af-becd-8901-23456789abcd"/*SendTrigger*/,
       "Position": {
         "X": -200.0,
         "Y": 375.0
       }
     },
     {
-      "InputId": "5a6f7e8d-9c0b-4412-3456-789abcdef012"/*ClientMessageDelimiter*/,
+      "InputId": "1234abcd-5678-90ef-1234-567890abcdef"/*Listen*/,
       "Position": {
         "X": -200.0,
-        "Y": 675.0
-      },
-      "Usage": "CustomDropdown"
+        "Y": 0.0
+      }
     },
     {
-      "InputId": "73b1f8c9-9a2e-47c0-b1c8-29c34a2e7d01"/*LocalIpAddress*/,
+      "InputId": "4321dcba-8765-fe09-4321-dcba87654321"/*Port*/,
       "Position": {
         "X": -200.0,
-        "Y": 450.0
-      },
-      "Usage": "Default"
-    },
-    {
-      "InputId": "8e7d6c5b-4a3f-4123-b9c8-d7e6f5a4b3c2"/*Path*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 150.0
-      },
-      "Usage": "Default"
+        "Y": 75.0
+      }
     },
     {
       "InputId": "a0e35517-337a-4770-985a-34cac95b5b5f"/*SendOnChange*/,
@@ -75,57 +29,45 @@
         "X": -200.0,
         "Y": 300.0
       }
+    },
+    {
+      "InputId": "aabbccdd-eeff-0011-2233-445566778899"/*Path*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 150.0
+      },
+      "Usage": "Default"
+    },
+    {
+      "InputId": "fedcba12-3456-7890-fedc-ba1234567890"/*Message*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 225.0
+      },
+      "Usage": "Default"
     }
   ],
   "SymbolChildUis": [],
   "OutputUis": [
     {
-      "OutputId": "2a4c9b5e-3d7f-41b0-80f5-1f92d7e0b4c8"/*Result*/,
+      "OutputId": "01234567-89ab-cdef-0123-456789abcdef"/*Result*/,
       "Position": {
         "X": 300.0,
         "Y": 200.0
       }
     },
     {
-      "OutputId": "3a2b1c0d-e9f8-4756-a3c1-b5e7d9f0a2b4"/*IsListening*/,
+      "OutputId": "fedcba09-8765-4321-fedc-ba0987654321"/*IsListening*/,
       "Position": {
         "X": 300.0,
         "Y": 300.0
       }
     },
     {
-      "OutputId": "6f5e4d3c-2b1a-4987-ab9c-def012345678"/*ConnectionCount*/,
+      "OutputId": "11223344-5566-7788-99aa-bbccddeeff00"/*ConnectionCount*/,
       "Position": {
         "X": 300.0,
         "Y": 400.0
-      }
-    },
-    {
-      "OutputId": "6f7e8d9c-0b1a-4323-4567-89abcdef0123"/*LastReceivedClientString*/,
-      "Position": {
-        "X": 300.0,
-        "Y": 500.0
-      }
-    },
-    {
-      "OutputId": "7e8d9c0b-1a2f-4234-5678-9abcdef01234"/*LastReceivedClientParts*/,
-      "Position": {
-        "X": 300.0,
-        "Y": 600.0
-      }
-    },
-    {
-      "OutputId": "8d9c0b1a-2f3e-4145-6789-abcdef012345"/*LastReceivedClientDictionary*/,
-      "Position": {
-        "X": 300.0,
-        "Y": 700.0
-      }
-    },
-    {
-      "OutputId": "9c0b1a2f-3e4d-4056-789a-bcdef0123456"/*ClientMessageWasTrigger*/,
-      "Position": {
-        "X": 300.0,
-        "Y": 800.0
       }
     }
   ]

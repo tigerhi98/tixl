@@ -18,21 +18,7 @@
       "Usage": "CustomDropdown"
     },
     {
-      "InputId": "7414a929-8a33-405d-a466-933e31972b57"/*Connect*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 375.0
-      }
-    },
-    {
-      "InputId": "a0e35517-337a-4770-985a-34cac95b5b5f"/*SendOnChange*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 300.0
-      }
-    },
-    {
-      "InputId": "aa199834-537d-4c67-9ecb-88358252d263"/*MessageParts*/,
+      "InputId": "5091d50e-2722-441f-b826-a4cb8610e9d5"/*DataToSend*/,
       "Position": {
         "X": -200.0,
         "Y": 150.0
@@ -40,12 +26,11 @@
       "Usage": "Default"
     },
     {
-      "InputId": "b9c6837c-4ad3-424c-976e-1e4552a85523"/*Separator*/,
+      "InputId": "7414a929-8a33-405d-a466-933e31972b57"/*Connect*/,
       "Position": {
         "X": -200.0,
-        "Y": 225.0
-      },
-      "Usage": "Default"
+        "Y": 375.0
+      }
     },
     {
       "InputId": "c796590a-335b-4c21-8898-356d3b69601f"/*SendTrigger*/,

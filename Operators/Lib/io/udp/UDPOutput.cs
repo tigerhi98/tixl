@@ -26,12 +26,9 @@ internal sealed class UDPOutput : Instance<UDPOutput>, IStatusProvider, ICustomD
     private string? _lastLocalIp;
     private bool _lastConnectState;
     private string? _lastSentMessage;
-    private bool _printToLog; // Added for PrintToLog functionality
 
     private void Update(EvaluationContext context)
     {
-        _printToLog = PrintToLog.GetValue(context); // Update printToLog flag
-
         var localIp = LocalIpAddress.GetValue(context);
         var shouldConnect = Connect.GetValue(context);
 
@@ -64,22 +61,8 @@ internal sealed class UDPOutput : Instance<UDPOutput>, IStatusProvider, ICustomD
             if (!string.IsNullOrEmpty(currentMessage) && !string.IsNullOrEmpty(targetIp) && targetPort > 0)
             {
                 var data = Encoding.UTF8.GetBytes(currentMessage);
-                try
-                {
-                    _udpClient!.Send(data, data.Length, targetIp, targetPort);
-                    if (_printToLog)
-                    {
-                        Log.Debug($"UDP Output → '{currentMessage}' to {targetIp}:{targetPort}", this);
-                    }
-                }
-                catch (Exception e)
-                {
-                    SetStatus($"UDP send error: {e.Message}", IStatusProvider.StatusLevel.Warning);
-                    if (_printToLog)
-                    {
-                        Log.Warning($"UDP Output: Send error to {targetIp}:{targetPort}: {e.Message}", this);
-                    }
-                }
+                try { _udpClient!.Send(data, data.Length, targetIp, targetPort); }
+                catch (Exception e) { SetStatus($"UDP send error: {e.Message}", IStatusProvider.StatusLevel.Warning); }
                 _lastSentMessage = currentMessage;
             }
         }
@@ -92,21 +75,13 @@ internal sealed class UDPOutput : Instance<UDPOutput>, IStatusProvider, ICustomD
 
         try
         {
-            var localEndPoint = new IPEndPoint(ip, 0); // Bind to a dynamic port for sending
+            var localEndPoint = new IPEndPoint(ip, 0);
             _udpClient = new UdpClient(localEndPoint);
             SetStatus($"Socket ready on {localEndPoint}", IStatusProvider.StatusLevel.Success);
-            if (_printToLog)
-            {
-                Log.Debug($"UDP Output: Socket opened on {localEndPoint}", this);
-            }
         }
         catch (Exception e)
         {
             SetStatus($"Failed to open socket: {e.Message}", IStatusProvider.StatusLevel.Error);
-            if (_printToLog)
-            {
-                Log.Error($"UDP Output: Failed to open socket on {localIpAddress}: {e.Message}", this);
-            }
             _udpClient?.Dispose();
             _udpClient = null;
         }
@@ -116,14 +91,7 @@ internal sealed class UDPOutput : Instance<UDPOutput>, IStatusProvider, ICustomD
     {
         _udpClient?.Close();
         _udpClient = null;
-        if (_lastConnectState)
-        {
-            SetStatus("Disconnected", IStatusProvider.StatusLevel.Notice);
-            if (_printToLog)
-            {
-                Log.Debug("UDP Output: Socket closed.", this);
-            }
-        }
+        if (_lastConnectState) SetStatus("Disconnected", IStatusProvider.StatusLevel.Notice);
     }
 
     public void Dispose() { CloseSocket(); }
@@ -154,7 +122,7 @@ internal sealed class UDPOutput : Instance<UDPOutput>, IStatusProvider, ICustomD
         }
     }
 
-    [Input(Guid = "9E23335A-D63A-4286-930E-C63E86D0E6F0")] public readonly InputSlot<string> LocalIpAddress = new("127.0.0.1"); // Default updated
+    [Input(Guid = "9E23335A-D63A-4286-930E-C63E86D0E6F0")] public readonly InputSlot<string> LocalIpAddress = new();
     [Input(Guid = "24B5D450-4E83-49DB-88B1-7D688E64585D")] public readonly InputSlot<string> TargetIpAddress = new("127.0.0.1");
     [Input(Guid = "36C2BF8B-3E0C-4856-AA4A-32943A4B0223")] public readonly InputSlot<int> TargetPort = new(7001);
     [Input(Guid = "59074D76-1F4F-406A-B512-5813F4E3420E")] public readonly MultiInputSlot<string> MessageParts = new();
@@ -162,5 +130,4 @@ internal sealed class UDPOutput : Instance<UDPOutput>, IStatusProvider, ICustomD
     [Input(Guid = "216A0356-EF4A-413A-A656-7497127E31D4")] public readonly InputSlot<bool> SendOnChange = new(true);
     [Input(Guid = "C7AC22C0-A31E-41F6-B29D-D40956E6688B")] public readonly InputSlot<bool> SendTrigger = new();
     [Input(Guid = "7AB8F2A6-4874-4235-85A5-D0E1F30C0446")] public readonly InputSlot<bool> Connect = new();
-    [Input(Guid = "A1B2C3D4-E5F6-4789-89AB-CDEF01234567")] public readonly InputSlot<bool> PrintToLog = new(); // New GUID for PrintToLog
 }

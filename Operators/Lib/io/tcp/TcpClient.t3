@@ -1,41 +1,41 @@
 {
-  "Id": "a2b3c4d5-e6f7-4890-1234-567890abcdef"/*TcpClient*/,
+  "Id": "2b1c3d4e-5f6a-7b8c-9d0e-1f2a3b4c5d6e"/*TcpClient*/,
   "Inputs": [
     {
-      "Id": "1b2c3d4e-5f6a-4789-0123-456789abcdef"/*SendTrigger*/,
-      "DefaultValue": false
-    },
-    {
-      "Id": "3c4d5e6f-7a8b-4901-2345-67890abcdef1"/*PrintToLog*/,
-      "DefaultValue": false
-    },
-    {
-      "Id": "a3b4c5d6-e7f8-4901-2345-67890abcdef1"/*Port*/,
-      "DefaultValue": 7070
-    },
-    {
-      "Id": "b5c6d7e8-f9a0-4123-4567-890abcdef123"/*MessageParts*/,
+      "Id": "210fedcb-a987-6543-210f-edcba9876543"/*MessageParts*/,
       "DefaultValue": ""
     },
     {
-      "Id": "c2d3e4f5-a6b7-4890-1234-567890abcdef"/*Connect*/,
+      "Id": "3210fedc-ba98-7654-3210-fedcba987654"/*Port*/,
+      "DefaultValue": 7777
+    },
+    {
+      "Id": "6543210f-edcb-a987-6543-210fedcba987"/*ListLength*/,
+      "DefaultValue": 1
+    },
+    {
+      "Id": "87654321-0fed-cba9-8765-43210fedcba9"/*PrintToLog*/,
       "DefaultValue": false
     },
     {
-      "Id": "d4e5f6a7-b8c9-4012-3456-7890abcdef12"/*ListLength*/,
-      "DefaultValue": 9
+      "Id": "a9876543-210f-edcb-a987-6543210fedcb"/*SendTrigger*/,
+      "DefaultValue": false
     },
     {
-      "Id": "e6f7a8b9-c0d1-4234-5678-90abcdef1234"/*Separator*/,
+      "Id": "ba987654-3210-fedc-ba98-76543210fedc"/*Host*/,
       "DefaultValue": ""
     },
     {
-      "Id": "f1e2d3c4-b5a6-4789-0123-456789abcdef"/*Host*/,
-      "DefaultValue": "127.0.0.1"
+      "Id": "cba98765-4321-0fed-cba9-876543210fed"/*SendOnChange*/,
+      "DefaultValue": false
     },
     {
-      "Id": "f7a8b9c0-d1e2-4345-6789-0abcdef12345"/*SendOnChange*/,
-      "DefaultValue": true
+      "Id": "edcba987-6543-210f-edcb-a9876543210f"/*Connect*/,
+      "DefaultValue": false
+    },
+    {
+      "Id": "fedcba98-7654-3210-fedc-ba9876543210"/*Separator*/,
+      "DefaultValue": ""
     }
   ],
   "Children": [],

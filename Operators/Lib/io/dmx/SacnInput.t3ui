@@ -35,13 +35,6 @@
       }
     },
     {
-      "InputId": "c3d4e5f6-a7b8-4901-2345-67890abcdef1"/*PrintToLog*/,
-      "Position": {
-        "X": -505.05722,
-        "Y": -34.461487
-      }
-    },
-    {
       "InputId": "ca55c1b3-0669-46f1-bcc4-ee2e7f5a6028"/*Active*/,
       "Position": {
         "X": -200.0,

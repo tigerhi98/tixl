@@ -40,23 +40,19 @@
       "DefaultValue": false
     },
     {
-      "Id": "9b8a7c6d-5e4f-4012-3456-7890abcdef12"/*SendTrigger*/,
-      "DefaultValue": true
-    },
-    {
-      "Id": "9c233633-959f-4447-b248-4d431c1b18e7"/*LocalIpAddress*/,
-      "DefaultValue": "127.0.0.1"
-    },
-    {
-      "Id": "c2d3e4f5-a6b7-4890-1234-567890abcdef"/*Reconnect*/,
+      "Id": "9c233633-959f-4447-b248-4d431c1b18e7"/*SendTrigger*/,
       "DefaultValue": false
     },
     {
-      "Id": "d0e1f2a3-b4c5-4678-9012-3456789abcde"/*PrintToLog*/,
+      "Id": "c2a9e3e3-a4e9-430b-9c6a-4e1a1e0b8e2e"/*Reconnect*/,
       "DefaultValue": false
     },
     {
       "Id": "d9e8d7c6-b5a4-434a-9e3a-4e2b1d0c9a7b"/*TargetIpAddress*/,
+      "DefaultValue": ""
+    },
+    {
+      "Id": "f8a7e0c8-c6c7-4b53-9a3a-3e5f2a4f4e1c"/*LocalIpAddress*/,
       "DefaultValue": ""
     }
   ],

@@ -22,7 +22,7 @@ using T3.Core.Utils;
 namespace Lib.io.dmx;
 
 [Guid("e5a8d9e6-3c5a-4bbb-9da3-737b6330b9c3")]
-internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICustomDropdownHolder, IDisposable // Implements IDisposable
+internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICustomDropdownHolder
 {
     private const int SacnPort = 5568;
     private const string SacnDiscoveryIp = "239.255.250.214";
@@ -31,13 +31,12 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
     public readonly Slot<Command> Result = new();
 
     private Thread? _discoveryListenerThread;
-    private volatile bool _isDiscovering; // Made volatile
+    private volatile bool _isDiscovering;
     private UdpClient? _discoveryUdpClient;
     private readonly ConcurrentDictionary<string, string> _discoveredSources = new();
     private readonly byte[] _cid = Guid.NewGuid().ToByteArray();
     private readonly Stopwatch _stopwatch = new();
     private long _nextFrameTimeTicks;
-    private bool _printToLog; // Added for PrintToLog functionality
 
     public SacnOutput()
     {
@@ -46,8 +45,6 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
 
     private void Update(EvaluationContext context)
     {
-        _printToLog = PrintToLog.GetValue(context); // Update printToLog flag
-
         var maxFps = MaxFps.GetValue(context);
         if (maxFps > 0)
         {
@@ -66,7 +63,7 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
         if (Reconnect.GetValue(context) || settingsChanged)
         {
             Reconnect.SetTypedInputValue(false);
-            if (_printToLog) Log.Debug("sACN Output: Reconnecting sACN socket...", this);
+            Log.Debug("Reconnecting sACN socket...", this);
             CloseSocket();
             _connected = TryConnectSacn(_connectionSettings.LocalIp);
         }
@@ -75,16 +72,7 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
         if (discoverSources && !_isDiscovering) StartSacnDiscovery();
         else if (!discoverSources && _isDiscovering) StopSacnDiscovery();
 
-        if (!_enableSending || !_connected || _socket == null)
-        {
-            if (!_connected)
-                SetStatus($"Not connected. {(_lastErrorMessage ?? "Check settings.")}", IStatusProvider.StatusLevel.Warning);
-            else if (!_enableSending)
-                SetStatus("Sending is disabled. Enable 'Send Trigger'.", IStatusProvider.StatusLevel.Notice);
-            return;
-        }
-
-        SetStatus("Connected and sending.", IStatusProvider.StatusLevel.Success); // Update status if sending
+        if (!_enableSending || !_connected || _socket == null) return;
 
         var startUniverse = Math.Max(1, StartUniverse.GetValue(context));
         var priority = Priority.GetValue(context).Clamp(0, 200);
@@ -98,7 +86,7 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
 
     private void StartSacnDiscovery()
     {
-        if (_printToLog) Log.Debug("sACN Output: Starting sACN Discovery Listener...", this);
+        Log.Debug("Starting sACN Discovery Listener...", this);
         _isDiscovering = true;
         _discoveredSources.Clear();
         _discoveryListenerThread = new Thread(ListenForSacnDiscovery) { IsBackground = true, Name = "sACNDiscoveryListener" };
@@ -108,34 +96,25 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
     private void StopSacnDiscovery()
     {
         if (!_isDiscovering) return;
-        if (_printToLog) Log.Debug("sACN Output: Stopping sACN Discovery.", this);
+        Log.Debug("Stopping sACN Discovery.", this);
         _isDiscovering = false;
-        _discoveryUdpClient?.Close(); // This will unblock the Receive call in ListenForSacnDiscovery
-        _discoveryListenerThread?.Join(200); // Give the thread a moment to shut down
-        _discoveryListenerThread = null;
-        _discoveredSources.Clear(); // Clear sources on stop
+        _discoveryUdpClient?.Close();
     }
 
     private void ListenForSacnDiscovery()
     {
-        UdpClient? currentDiscoveryUdpClient = null; // Declare locally for safer cleanup
         try
         {
-            currentDiscoveryUdpClient = new UdpClient();
+            _discoveryUdpClient = new UdpClient();
             var localEp = new IPEndPoint(IPAddress.Any, SacnPort);
-            currentDiscoveryUdpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            currentDiscoveryUdpClient.Client.Bind(localEp);
-            currentDiscoveryUdpClient.JoinMulticastGroup(IPAddress.Parse(SacnDiscoveryIp));
-
-            _discoveryUdpClient = currentDiscoveryUdpClient; // Assign to member field
-
-            if (_printToLog) Log.Debug($"sACN Output: Discovery listener bound to {localEp}, joined multicast {SacnDiscoveryIp}", this);
+            _discoveryUdpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            _discoveryUdpClient.Client.Bind(localEp);
+            _discoveryUdpClient.JoinMulticastGroup(IPAddress.Parse(SacnDiscoveryIp));
 
             while (_isDiscovering)
             {
                 try
                 {
-                    if (_discoveryUdpClient == null) break; // Check if client was disposed externally
                     var remoteEp = new IPEndPoint(IPAddress.Any, 0);
                     var data = _discoveryUdpClient.Receive(ref remoteEp);
                     if (data.Length <= 125) continue;
@@ -145,28 +124,11 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
                     var displayName = string.IsNullOrWhiteSpace(sourceName) ? ipString : sourceName;
 
                     _discoveredSources[ipString] = $"{displayName} ({ipString})";
-                    if (_printToLog) Log.Debug($"sACN Output: Discovered source: {displayName} ({ipString})", this);
                 }
-                catch (SocketException ex)
-                {
-                    if (_isDiscovering) // Only log if not intentionally stopping
-                    {
-                        Log.Warning($"sACN Output discovery receive socket error: {ex.Message} (Error Code: {ex.ErrorCode})", this);
-                    }
-                    break;
-                }
-                catch (Exception e)
-                {
-                    if (_isDiscovering) Log.Error($"sACN Output discovery listener failed: {e.Message}", this);
-                }
+                catch (SocketException) { if (_isDiscovering) break; }
             }
         }
-        catch (Exception e) { if (_isDiscovering) Log.Error($"sACN Output discovery listener failed to bind: {e.Message}", this); }
-        finally
-        {
-            currentDiscoveryUdpClient?.Close();
-            if (_discoveryUdpClient == currentDiscoveryUdpClient) _discoveryUdpClient = null;
-        }
+        catch (Exception e) { if (_isDiscovering) Log.Error($"sACN discovery listener failed: {e.Message}", this); }
     }
 
     private void SendData(EvaluationContext context, int startUniverse, int priority, string sourceName, bool enableSync, int syncUniverse, byte sequenceNumber, List<Slot<List<int>>> connections)
@@ -190,14 +152,10 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
                                              ? new IPEndPoint(_connectionSettings.TargetIp, SacnPort)
                                              : new IPEndPoint(GetSacnMulticastAddress(universeIndex), SacnPort);
                     _socket.SendTo(packet, targetEndPoint);
-                    if (_printToLog)
-                    {
-                        Log.Debug($"sACN Output → DMX Universe {universeIndex} to {targetEndPoint}", this);
-                    }
                 }
                 catch (SocketException e)
                 {
-                    Log.Warning($"sACN Output send failed for universe {universeIndex}: {e.Message}", this);
+                    Log.Warning($"sACN send failed for universe {universeIndex}: {e.Message}", this);
                     _connected = false; return;
                 }
                 universeIndex++;
@@ -214,14 +172,10 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
             var syncPacket = BuildSacnSyncPacket(syncAddress, sequenceNumber);
             var syncEndPoint = new IPEndPoint(GetSacnMulticastAddress(syncAddress), SacnPort);
             _socket.SendTo(syncPacket, syncEndPoint);
-            if (_printToLog)
-            {
-                Log.Debug($"sACN Output → Sync Packet for Universe {syncAddress} to {syncEndPoint}", this);
-            }
         }
         catch (SocketException e)
         {
-            Log.Warning($"sACN Output: Failed to send sACN sync packet to universe {syncAddress}: {e.Message}", this);
+            Log.Warning($"Failed to send sACN sync packet to universe {syncAddress}: {e.Message}", this);
             _connected = false;
         }
     }
@@ -271,21 +225,20 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
         return ms.ToArray();
     }
 
-    // Standard IDisposable implementation
-    public void Dispose()
+    protected override void Dispose(bool isDisposing)
     {
-        StopSacnDiscovery();
-        CloseSocket();
-        // No managed resources to dispose directly here as they are closed in StopSacnDiscovery and CloseSocket
+        if (isDisposing)
+        {
+            StopSacnDiscovery();
+            CloseSocket();
+        }
     }
 
     private void CloseSocket()
     {
-        if (_printToLog) Log.Debug("sACN Output: Closing socket.", this);
         _socket?.Close();
         _socket = null;
         _connected = false;
-        _lastErrorMessage = "Socket closed.";
     }
 
     private bool TryConnectSacn(IPAddress? localIp)
@@ -293,7 +246,6 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
         if (localIp == null)
         {
             _lastErrorMessage = "Local IP Address is not valid.";
-            if (_printToLog) Log.Error($"sACN Output: Failed to connect - invalid Local IP.", this);
             return false;
         }
         try
@@ -301,16 +253,14 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
             _socket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             _socket.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastLoopback, true);
-            _socket.Bind(new IPEndPoint(localIp, 0)); // Bind to a dynamic port
+            _socket.Bind(new IPEndPoint(localIp, 0));
             _socket.SetSocketOption(SocketOptionLevel.IP, SocketOptionName.MulticastTimeToLive, 10);
-            _lastErrorMessage = null; // Clear error message on successful connect
-            if (_printToLog) Log.Debug($"sACN Output: Socket bound to {localIp}.", this);
+            _lastErrorMessage = null;
             return _connected = true;
         }
         catch (Exception e)
         {
             _lastErrorMessage = $"Failed to bind sACN socket to {localIp}: {e.Message}";
-            if (_printToLog) Log.Error($"sACN Output: Failed to bind sACN socket to {localIp}: {e.Message}", this);
             CloseSocket();
             return false;
         }
@@ -342,14 +292,8 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
     private readonly ConnectionSettings _connectionSettings = new();
     private string? _lastErrorMessage;
 
-    public IStatusProvider.StatusLevel GetStatusLevel() => _connected && string.IsNullOrEmpty(_lastErrorMessage) ? IStatusProvider.StatusLevel.Success : IStatusProvider.StatusLevel.Warning;
+    public IStatusProvider.StatusLevel GetStatusLevel() => _connected ? IStatusProvider.StatusLevel.Success : IStatusProvider.StatusLevel.Warning;
     public string? GetStatusMessage() => _lastErrorMessage;
-
-    #region IStatusProvider implementation
-    // Changed SetStatus to public
-    public void SetStatus(string m, IStatusProvider.StatusLevel l) { _lastErrorMessage = m; _lastStatusLevel = l; }
-    private IStatusProvider.StatusLevel _lastStatusLevel = IStatusProvider.StatusLevel.Notice;
-    #endregion
 
     #region ICustomDropdownHolder implementation
     string ICustomDropdownHolder.GetValueForInput(Guid inputId)
@@ -359,6 +303,7 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
         return string.Empty;
     }
 
+    // FIX: This method now correctly uses `yield return` for all paths.
     IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid inputId)
     {
         if (inputId == LocalIpAddress.Id)
@@ -386,10 +331,6 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
                 }
             }
         }
-        else
-        {
-            yield break; // For other inputIds, return empty
-        }
     }
 
     void ICustomDropdownHolder.HandleResultForInput(Guid inputId, string? selected, bool isAListItem)
@@ -408,20 +349,17 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
 
     [Input(Guid = "2a8d39a3-5a41-477d-815a-8b8b9d8b1e4a")] public readonly MultiInputSlot<List<int>> InputsValues = new();
     [Input(Guid = "1b26f5d5-8141-4b13-b88d-6859ed5a4af8")] public readonly InputSlot<int> StartUniverse = new(1);
-    [Input(Guid = "9C233633-959F-4447-B248-4D431C1B18E7")] public readonly InputSlot<string> LocalIpAddress = new("127.0.0.1"); // Updated GUID and default
-    [Input(Guid = "9B8A7C6D-5E4F-4012-3456-7890ABCDEF12")] public readonly InputSlot<bool> SendTrigger = new(); // Updated GUID
-    [Input(Guid = "C2D3E4F5-A6B7-4890-1234-567890ABCDEF")] public readonly InputSlot<bool> Reconnect = new(); // Updated GUID
-    [Input(Guid = "8C6C9A8D-29C5-489E-8C6B-9E4A3C1E2B6A")] public readonly InputSlot<bool> SendUnicast = new();
-    [Input(Guid = "D9E8D7C6-B5A4-434A-9E3A-4E2B1D0C9A7B")] public readonly InputSlot<string> TargetIpAddress = new();
-    [Input(Guid = "3F25C04C-0A88-42FB-93D3-05992B861E61")] public readonly InputSlot<bool> DiscoverSources = new();
-    [Input(Guid = "4A9E2D3B-8C6F-4B1D-8D7E-9F3A5B2C1D0E")] public readonly InputSlot<int> Priority = new(100);
-    [Input(Guid = "5B1D9C8A-7E3F-4A2B-9C8D-1E0F3A5B2C1D")] public readonly InputSlot<string> SourceName = new("T3 sACN Output");
-    [Input(Guid = "6F5C4B3A-2E1D-4F9C-8A7B-3D2E1F0C9B8A")] public readonly InputSlot<int> MaxFps = new(60);
-    [Input(Guid = "7A8B9C0D-1E2F-3A4B-5C6D-7E8F9A0B1C2D")] public readonly InputSlot<bool> EnableSync = new();
-    [Input(Guid = "8B9C0D1E-2F3A-4B5C-6D7E-8F9A0B1C2D3E")] public readonly InputSlot<int> SyncUniverse = new(64001);
-    // New InputSlot for PrintToLog
-    [Input(Guid = "D0E1F2A3-B4C5-4678-9012-3456789ABCDE")] // New GUID
-    public readonly InputSlot<bool> PrintToLog = new();
+    [Input(Guid = "f8a7e0c8-c6c7-4b53-9a3a-3e5f2a4f4e1c")] public readonly InputSlot<string> LocalIpAddress = new();
+    [Input(Guid = "9c233633-959f-4447-b248-4d431c1b18e7")] public readonly InputSlot<bool> SendTrigger = new();
+    [Input(Guid = "c2a9e3e3-a4e9-430b-9c6a-4e1a1e0b8e2e")] public readonly InputSlot<bool> Reconnect = new();
+    [Input(Guid = "8c6c9a8d-29c5-489e-8c6b-9e4a3c1e2b6a")] public readonly InputSlot<bool> SendUnicast = new();
+    [Input(Guid = "d9e8d7c6-b5a4-434a-9e3a-4e2b1d0c9a7b")] public readonly InputSlot<string> TargetIpAddress = new();
+    [Input(Guid = "3f25c04c-0a88-42fb-93d3-05992b861e61")] public readonly InputSlot<bool> DiscoverSources = new();
+    [Input(Guid = "4a9e2d3b-8c6f-4b1d-8d7e-9f3a5b2c1d0e")] public readonly InputSlot<int> Priority = new(100);
+    [Input(Guid = "5b1d9c8a-7e3f-4a2b-9c8d-1e0f3a5b2c1d")] public readonly InputSlot<string> SourceName = new("T3 sACN Output");
+    [Input(Guid = "6f5c4b3a-2e1d-4f9c-8a7b-3d2e1f0c9b8a")] public readonly InputSlot<int> MaxFps = new(60);
+    [Input(Guid = "7a8b9c0d-1e2f-3a4b-5c6d-7e8f9a0b1c2d")] public readonly InputSlot<bool> EnableSync = new();
+    [Input(Guid = "8b9c0d1e-2f3a-4b5c-6d7e-8f9a0b1c2d3e")] public readonly InputSlot<int> SyncUniverse = new(64001);
 
     private sealed class ConnectionSettings
     {
@@ -450,12 +388,13 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
 
             if (sendUnicast)
             {
+                // FIX: Parse to a local variable first before assigning to the property.
                 IPAddress.TryParse(targetIpStr, out var parsedTargetIp);
                 TargetIp = parsedTargetIp;
             }
             else
             {
-                TargetIp = null; // Ensure TargetIp is null if not unicast
+                TargetIp = null;
             }
             return true;
         }

@@ -45,7 +45,6 @@ internal sealed class UDPInput : Instance<UDPInput>, IStatusProvider, ICustomDro
     private bool _wasListening;
     private string? _lastLocalIp;
     private int _lastPort;
-    private bool _printToLog; // ONLY ONE DECLARATION OF _printToLog
 
     private void Update(EvaluationContext context)
     {
@@ -88,35 +87,21 @@ internal sealed class UDPInput : Instance<UDPInput>, IStatusProvider, ICustomDro
         _runListener = true;
         _listenerThread = new Thread(ListenLoop) { IsBackground = true, Name = "UDPInputListener" };
         _listenerThread.Start();
-        if (_printToLog)
-        {
-            Log.Debug($"UDP Input: Starting listener thread.", this);
-        }
     }
 
     private void StopListening()
     {
         if (!_runListener) return;
         _runListener = false;
-        if (_printToLog)
-        {
-            Log.Debug("UDP Input: Stopping listener.", this);
-        }
         _udpClient?.Close();
-        _listenerThread?.Join(200); // Give the thread a moment to shut down
+        _listenerThread?.Join(100);
         _listenerThread = null;
-        if (_printToLog)
-        {
-            Log.Debug("UDP Input: Listener stopped.", this);
-        }
     }
 
     private void ListenLoop()
     {
         var port = Port.Value;
         var localIpStr = LocalIpAddress.Value;
-        UdpClient? currentUdpClient = null; // Declare locally
-
         try
         {
             var listenIp = IPAddress.Any;
@@ -124,70 +109,38 @@ internal sealed class UDPInput : Instance<UDPInput>, IStatusProvider, ICustomDro
                 listenIp = parsedIp;
             var localEp = new IPEndPoint(listenIp, port);
 
-            currentUdpClient = new UdpClient { ExclusiveAddressUse = false };
-            currentUdpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-            currentUdpClient.Client.Bind(localEp);
-
-            _udpClient = currentUdpClient;
-
-            if (_printToLog)
-            {
-                Log.Debug($"UDP Input: Bound to {localEp.Address}:{localEp.Port}. Ready to receive.", this);
-            }
+            _udpClient = new UdpClient { ExclusiveAddressUse = false };
+            _udpClient.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+            _udpClient.Client.Bind(localEp);
 
             var remoteEP = new IPEndPoint(IPAddress.Any, 0);
             while (_runListener)
             {
                 try
                 {
-                    if (_udpClient == null) break;
                     var data = _udpClient.Receive(ref remoteEP);
                     if (_printToLog)
                     {
                         var message = Encoding.UTF8.GetString(data);
-                        Log.Debug($"UDP Input received from {remoteEP.Address}:{remoteEP.Port}: \"{message}\"", this);
+                        Log.Debug($"UDP received from {remoteEP.Address}:{remoteEP.Port}: \"{message}\"", this);
                     }
                     _receivedQueue.Enqueue(new ReceivedMessage(data, remoteEP));
                     ReceivedString.DirtyFlag.Invalidate();
                 }
-                catch (SocketException ex)
-                {
-                    if (_runListener)
-                    {
-                        Log.Warning($"UDP Input receive socket error: {ex.Message} (Error Code: {ex.ErrorCode})", this);
-                    }
-                    break;
-                }
-                catch (Exception e)
-                {
-                    if (_runListener)
-                    {
-                        Log.Error($"UDP Input receive error: {e.Message}", this);
-                    }
-                }
+                catch (SocketException) { break; }
+                catch (Exception e) { if (_runListener) Log.Error($"UDP receive error: {e.Message}", this); }
             }
         }
-        catch (Exception e)
-        {
-            SetStatus($"Failed to bind to {localIpStr}:{port}. Error: {e.Message}", IStatusProvider.StatusLevel.Error);
-            if (_printToLog)
-            {
-                Log.Error($"UDP Input: Failed to bind to {localIpStr}:{port}. Error: {e.Message}", this);
-            }
-        }
-        finally
-        {
-            currentUdpClient?.Close();
-            if (_udpClient == currentUdpClient) _udpClient = null;
-        }
+        catch (Exception e) { SetStatus($"Failed to bind to {localIpStr}:{port}. Error: {e.Message}", IStatusProvider.StatusLevel.Error); }
+        finally { _udpClient?.Close(); }
     }
 
     private void UpdateStatusMessage()
     {
-        var localIpDisplay = LocalIpAddress.Value;
+        var localIp = LocalIpAddress.Value ?? "0.0.0.0 (Any)";
         if (!_runListener) SetStatus("Not listening. Enable 'Listen'.", IStatusProvider.StatusLevel.Notice);
         else if (_lastStatusLevel != IStatusProvider.StatusLevel.Error)
-            SetStatus($"Listening on {localIpDisplay.Split(' ')[0]}:{Port.Value}", IStatusProvider.StatusLevel.Success);
+            SetStatus($"Listening on {localIp.Split(' ')[0]}:{Port.Value}", IStatusProvider.StatusLevel.Success);
     }
 
     public void Dispose() { StopListening(); }
@@ -196,7 +149,7 @@ internal sealed class UDPInput : Instance<UDPInput>, IStatusProvider, ICustomDro
     private UdpClient? _udpClient;
     private Thread? _listenerThread;
     private volatile bool _runListener;
-    // REMOVED DUPLICATE: private bool _printToLog; 
+    private bool _printToLog;
     private readonly ConcurrentQueue<ReceivedMessage> _receivedQueue = new();
     private readonly List<string> _messageHistory = new();
     private readonly struct ReceivedMessage
@@ -233,7 +186,7 @@ internal sealed class UDPInput : Instance<UDPInput>, IStatusProvider, ICustomDro
     #endregion
 
     [Input(Guid = "2EBE418D-407E-46D8-B274-13B41C52ACCF")] public readonly InputSlot<int> Port = new(7000);
-    [Input(Guid = "9E23335A-D63A-4286-930E-C63E86D0E6F0")] public readonly InputSlot<string> LocalIpAddress = new("0.0.0.0 (Any)");
+    [Input(Guid = "9E23335A-D63A-4286-930E-C63E86D0E6F0")] public readonly InputSlot<string> LocalIpAddress = new("0.0.0.0");
     [Input(Guid = "E6589335-4E51-41B0-8777-6A5D54C4F0EE")] public readonly InputSlot<int> ListLength = new(10);
     [Input(Guid = "0944714D-693D-4251-93A6-E22A2DB64F20")] public readonly InputSlot<bool> Listen = new();
     [Input(Guid = "5E725916-4143-4759-8651-E12185C658D3")] public readonly InputSlot<bool> PrintToLog = new();

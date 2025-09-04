@@ -1,17 +1,13 @@
 {
-  "Id": "8e9f0a1b-2c3d-4e5f-6a7b-8c9d0e1f2a3b"/*WebSocketClient*/,
+  "Id": "1a1b1c1d-2e2f-3a3b-4c4d-5e5f6a6b7c7d"/*WebSocketClient*/,
   "Inputs": [
-    {
-      "Id": "0f1e2d3c-4b5a-4968-7012-3456789abcde"/*ParsingMode*/,
-      "DefaultValue": 0
-    },
-    {
-      "Id": "1e2d3c4b-5a6f-4879-0123-456789abcdef"/*Delimiter*/,
-      "DefaultValue": ""
-    },
     {
       "Id": "216a0356-ef4a-413a-a656-7497127e31d4"/*SendOnChange*/,
       "DefaultValue": false
+    },
+    {
+      "Id": "54321098-fedc-ba98-7654-321098fedcba"/*Url*/,
+      "DefaultValue": "ws://127.0.0.1:8080/ws"
     },
     {
       "Id": "59074d76-1f4f-406a-b512-5813f4e3420e"/*MessageParts*/,
@@ -26,20 +22,16 @@
       "DefaultValue": ""
     },
     {
-      "Id": "a1b2c3d4-e5f6-4789-0123-456789abcdef"/*Connect*/,
-      "DefaultValue": false
-    },
-    {
-      "Id": "b1c2d3e4-f5a6-4789-0123-456789abcdef"/*Url*/,
-      "DefaultValue": "ws://127.0.0.1:8081/"
+      "Id": "abc12345-def6-7890-abcd-ef1234567890"/*ListLength*/,
+      "DefaultValue": 1
     },
     {
       "Id": "c7ac22c0-a31e-41f6-b29d-d40956e6688b"/*SendTrigger*/,
       "DefaultValue": false
     },
     {
-      "Id": "d1e2f3a4-b5c6-4789-0123-456789abcdef"/*ListLength*/,
-      "DefaultValue": 5
+      "Id": "fedcba98-7654-3210-fedc-ba9876543210"/*Connect*/,
+      "DefaultValue": false
     }
   ],
   "Children": [],

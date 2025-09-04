@@ -7,7 +7,7 @@
     },
     {
       "Id": "24b5d450-4e83-49db-88b1-7d688e64585d"/*LocalIpAddress*/,
-      "DefaultValue": "127.0.0.1"
+      "DefaultValue": ""
     },
     {
       "Id": "2cffbf1c-ce09-4283-a685-5234e4e49fee"/*NumUniverses*/,
@@ -18,12 +18,8 @@
       "DefaultValue": 0.0
     },
     {
-      "Id": "c3d4e5f6-a7b8-4901-2345-67890abcdef1"/*PrintToLog*/,
-      "DefaultValue": false
-    },
-    {
       "Id": "ca55c1b3-0669-46f1-bcc4-ee2e7f5a6028"/*Active*/,
-      "DefaultValue": true
+      "DefaultValue": false
     }
   ],
   "Children": [],
