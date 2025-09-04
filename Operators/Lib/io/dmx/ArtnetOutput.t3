@@ -1,13 +1,13 @@
 {
-  "Id": "98efc7c8-cafd-45ee-8746-14f37e9f59f8"/**/,
+  "Id": "98efc7c8-cafd-45ee-8746-14f37e9f59f8"/*ArtnetOutput*/,
   "Inputs": [
     {
       "Id": "0fc76369-788a-4ffe-9dde-8eea5f10cf32"/*TargetIpAddress*/,
-      "DefaultValue": "127.0.0.1"
+      "DefaultValue": ""
     },
     {
       "Id": "34aeeda5-72b0-4f13-bfd3-4ad5cf42b24f"/*StartUniverse*/,
-      "DefaultValue": 0
+      "DefaultValue": 1
     },
     {
       "Id": "7c15da5f-cfa1-4339-aceb-4ed0099ea041"/*SendUnicast*/,
@@ -15,7 +15,7 @@
     },
     {
       "Id": "9e23335a-d63a-4286-930e-c63e86d0e6f0"/*LocalIpAddress*/,
-      "DefaultValue": ""
+      "DefaultValue": "127.0.0.1"
     },
     {
       "Id": "c1f747f5-3634-4142-a16d-346743a13728"/*MaxFps*/,

@@ -10,12 +10,20 @@
       "DefaultValue": ""
     },
     {
-      "Id": "5091d50e-2722-441f-b826-a4cb8610e9d5"/*DataToSend*/,
+      "Id": "7414a929-8a33-405d-a466-933e31972b57"/*Connect*/,
+      "DefaultValue": false
+    },
+    {
+      "Id": "a0e35517-337a-4770-985a-34cac95b5b5f"/*SendOnChange*/,
+      "DefaultValue": false
+    },
+    {
+      "Id": "aa199834-537d-4c67-9ecb-88358252d263"/*MessageParts*/,
       "DefaultValue": ""
     },
     {
-      "Id": "7414a929-8a33-405d-a466-933e31972b57"/*Connect*/,
-      "DefaultValue": false
+      "Id": "b9c6837c-4ad3-424c-976e-1e4552a85523"/*Separator*/,
+      "DefaultValue": ""
     },
     {
       "Id": "c796590a-335b-4c21-8898-356d3b69601f"/*SendTrigger*/,

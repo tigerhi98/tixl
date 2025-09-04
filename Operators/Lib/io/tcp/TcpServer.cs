@@ -4,6 +4,7 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation; // Added for NetworkInterface
 using System.Net.Sockets;
 using System.Text;
 using System.Threading;
@@ -16,17 +17,17 @@ using T3.Core.Utils;
 
 namespace Lib.io.tcp
 {
-    [Guid("3C4D5E6F-7A8B-9C0D-1E2F-3A4B5C6D7E8F")]
+    [Guid("0F1E2D3C-4B5A-4678-9012-3456789ABCDE")] // Updated GUID
     public sealed class TcpServer : Instance<TcpServer>
-,IStatusProvider,IDisposable
+, IStatusProvider, ICustomDropdownHolder, IDisposable // Added ICustomDropdownHolder
     {
-        [Output(Guid = "23456789-ABCD-EF01-2345-6789ABCDEF01")]
+        [Output(Guid = "6789ABCD-EF01-4234-5678-90ABCDEF0123")] // Updated GUID
         public readonly Slot<Command> Result = new();
 
-        [Output(Guid = "3456789A-BCDE-F012-3456-789ABCDEF012")]
+        [Output(Guid = "789ABCDE-F012-4345-6789-ABCDEF012345")] // Updated GUID
         public readonly Slot<bool> IsListening = new();
 
-        [Output(Guid = "456789AB-CDEF-0123-4567-89ABCDEF0123")]
+        [Output(Guid = "89ABCDEF-0123-4567-89AB-CDEF01234567")] // Updated GUID
         public readonly Slot<int> ConnectionCount = new();
 
         public TcpServer()
@@ -37,6 +38,7 @@ namespace Lib.io.tcp
         }
 
         private bool _lastListenState;
+        private string? _lastLocalIp; // Added for dropdown implementation
         private int _lastPort;
         private string? _lastSentMessage;
         private TcpListener? _listener;
@@ -45,24 +47,28 @@ namespace Lib.io.tcp
         private string _statusMessage = "Not listening";
         private IStatusProvider.StatusLevel _statusLevel = IStatusProvider.StatusLevel.Notice;
         private bool _disposed;
+        private bool _printToLog; // Added for PrintToLog functionality
 
         private void Update(EvaluationContext context)
         {
             if (_disposed)
                 return;
 
+            _printToLog = PrintToLog.GetValue(context); // Update printToLog flag
             var shouldListen = Listen.GetValue(context);
+            var localIp = LocalIpAddress.GetValue(context); // Get the selected local IP
             var port = Port.GetValue(context);
 
-            var settingsChanged = shouldListen != _lastListenState || port != _lastPort;
+            var settingsChanged = shouldListen != _lastListenState || localIp != _lastLocalIp || port != _lastPort; // Included localIp
             if (settingsChanged)
             {
                 StopListening();
                 if (shouldListen)
                 {
-                    StartListening(port);
+                    StartListening(localIp, port); // Pass localIp to StartListening
                 }
                 _lastListenState = shouldListen;
+                _lastLocalIp = localIp; // Store the last local IP
                 _lastPort = port;
             }
 
@@ -88,23 +94,46 @@ namespace Lib.io.tcp
             }
         }
 
-        private void StartListening(int port)
+        private void StartListening(string? localIpAddress, int port)
         {
             if (_listener != null) return;
 
-            _listener = new TcpListener(IPAddress.Any, port);
+            IPAddress listenIp = IPAddress.Any; // Initialize to avoid CS8600
+            if (string.IsNullOrEmpty(localIpAddress) || localIpAddress == "0.0.0.0 (Any)")
+            {
+                listenIp = IPAddress.Any;
+            }
+            else if (!IPAddress.TryParse(localIpAddress, out listenIp)) // TryParse will assign to listenIp if successful
+            {
+                SetStatus($"Invalid Local IP '{localIpAddress}'. Defaulting to IPAddress.Any.", IStatusProvider.StatusLevel.Warning);
+                if (_printToLog)
+                {
+                    Log.Warning($"TCP Server: Invalid Local IP '{localIpAddress}', defaulting to IPAddress.Any.", this);
+                }
+                listenIp = IPAddress.Any; // Ensure it's explicitly set if parsing failed
+            }
+
+            _listener = new TcpListener(listenIp, port);
             _cancellationTokenSource = new CancellationTokenSource();
 
             try
             {
                 _listener.Start();
-                SetStatus($"Listening on port {port}", IStatusProvider.StatusLevel.Success);
+                SetStatus($"Listening on {listenIp}:{port}", IStatusProvider.StatusLevel.Success);
+                if (_printToLog)
+                {
+                    Log.Debug($"TCP Server: Started listening on {listenIp}:{port}", this);
+                }
                 _ = Task.Run(AcceptConnectionsLoop, _cancellationTokenSource.Token);
             }
             catch (Exception e)
             {
                 SetStatus($"Failed to start: {e.Message}", IStatusProvider.StatusLevel.Error);
-                _listener.Stop();
+                if (_printToLog)
+                {
+                    Log.Error($"TCP Server: Failed to start listening on {listenIp}:{port}: {e.Message}", this);
+                }
+                _listener?.Stop();
                 _listener = null;
             }
         }
@@ -113,12 +142,37 @@ namespace Lib.io.tcp
         {
             try
             {
-                while (!_cancellationTokenSource!.IsCancellationRequested)
+                // Capture CancellationTokenSource and listener outside the loop to avoid race conditions
+                var cts = _cancellationTokenSource;
+                var listener = _listener;
+
+                if (cts == null || listener == null) return;
+
+                while (!cts.IsCancellationRequested)
                 {
-                    var client = await _listener!.AcceptTcpClientAsync(_cancellationTokenSource.Token);
+                    System.Net.Sockets.TcpClient client;
+                    try
+                    {
+                        client = await listener.AcceptTcpClientAsync(cts.Token);
+                    }
+                    catch (OperationCanceledException)
+                    {
+                        // Expected when cancellation token is triggered
+                        break;
+                    }
+                    catch (SocketException sex) when (sex.SocketErrorCode == SocketError.OperationAborted)
+                    {
+                        // Expected when listener is stopped
+                        break;
+                    }
+
                     var clientId = Guid.NewGuid();
                     _clients[clientId] = client;
                     ConnectionCount.DirtyFlag.Invalidate();
+                    if (_printToLog)
+                    {
+                        Log.Debug($"TCP Server: Client {clientId} connected from {client.Client.RemoteEndPoint}", this);
+                    }
                     _ = HandleClient(clientId, client);
                 }
             }
@@ -127,7 +181,7 @@ namespace Lib.io.tcp
             {
                 if (!_cancellationTokenSource!.IsCancellationRequested)
                 {
-                    Log.Warning($"Listener loop stopped: {e.Message}", this);
+                    Log.Warning($"TCP Server: Listener loop stopped unexpectedly: {e.Message}", this);
                 }
             }
         }
@@ -138,26 +192,48 @@ namespace Lib.io.tcp
             try
             {
                 using var stream = client.GetStream();
-                while (!_cancellationTokenSource!.IsCancellationRequested && client.Connected)
+                // Capture CancellationTokenSource outside the loop
+                var cts = _cancellationTokenSource;
+                if (cts == null) return;
+
+                while (!cts.IsCancellationRequested && client.Connected)
                 {
-                    var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, _cancellationTokenSource.Token);
-                    if (bytesRead == 0) // Connection closed
+                    var bytesRead = await stream.ReadAsync(buffer, 0, buffer.Length, cts.Token);
+                    if (bytesRead == 0) // Connection closed by client
                     {
+                        if (_printToLog)
+                        {
+                            Log.Debug($"TCP Server: Client {clientId} disconnected gracefully.", this);
+                        }
                         break;
                     }
 
                     var message = Encoding.UTF8.GetString(buffer, 0, bytesRead);
-                    Log.Debug($"TCP Server ← '{message}'", this);
+                    if (_printToLog)
+                    {
+                        Log.Debug($"TCP Server ← '{message}' from client {clientId}", this);
+                    }
+                    // Additional processing of received messages can be done here.
                 }
             }
             catch (OperationCanceledException) { /* Expected */ }
-            catch (Exception) { /* Client disconnected */ }
+            catch (Exception e)
+            {
+                if (_printToLog)
+                {
+                    Log.Warning($"TCP Server: Error handling client {clientId}: {e.Message}", this);
+                }
+            }
             finally
             {
                 if (_clients.TryRemove(clientId, out var removedClient))
                 {
                     removedClient.Dispose();
                     ConnectionCount.DirtyFlag.Invalidate();
+                    if (_printToLog)
+                    {
+                        Log.Debug($"TCP Server: Client {clientId} removed from active connections.", this);
+                    }
                 }
             }
         }
@@ -169,6 +245,11 @@ namespace Lib.io.tcp
             var data = Encoding.UTF8.GetBytes(message);
             var clientsToBroadcast = _clients.Values.ToList();
 
+            if (_printToLog)
+            {
+                Log.Debug($"TCP Server → Broadcast '{message}' to {clientsToBroadcast.Count} clients", this);
+            }
+
             foreach (var client in clientsToBroadcast)
             {
                 if (client.Connected)
@@ -176,12 +257,15 @@ namespace Lib.io.tcp
                     try
                     {
                         var stream = client.GetStream();
-                        await stream.WriteAsync(data, 0, data.Length, _cancellationTokenSource!.Token);
-                        Log.Debug($"TCP Server → '{message}'", this);
+                        // Capture CancellationTokenSource outside the loop
+                        var cts = _cancellationTokenSource;
+                        if (cts == null) continue;
+
+                        await stream.WriteAsync(data, 0, data.Length, cts.Token);
                     }
                     catch (Exception e)
                     {
-                        Log.Warning($"Failed to send to a client: {e.Message}", this);
+                        Log.Warning($"TCP Server: Failed to send to a client: {e.Message}", this);
                     }
                 }
             }
@@ -189,26 +273,52 @@ namespace Lib.io.tcp
 
         private void StopListening()
         {
+            // Capture and nullify resources within a lock
+            TcpListener? listenerToStop = null;
+            CancellationTokenSource? ctsToDispose = null;
+
+            lock (_clients) // Reusing _clients lock, or could define a new _listenerLock
+            {
+                if (_listener != null)
+                {
+                    listenerToStop = _listener;
+                    _listener = null;
+                }
+                if (_cancellationTokenSource != null)
+                {
+                    ctsToDispose = _cancellationTokenSource;
+                    _cancellationTokenSource = null;
+                }
+            }
+
             try
             {
-                _cancellationTokenSource?.Cancel();
-                _listener?.Stop();
+                ctsToDispose?.Cancel(); // Cancel first
+                listenerToStop?.Stop(); // Stop the listener
 
                 foreach (var client in _clients.Values)
                 {
-                    client.Dispose();
+                    client.Dispose(); // Synchronous dispose of client sockets
                 }
                 _clients.Clear();
 
                 if (!_lastListenState)
                     SetStatus("Not listening", IStatusProvider.StatusLevel.Notice);
+                else if (_printToLog)
+                {
+                    Log.Debug("TCP Server: Stopped listening.", this);
+                }
 
                 IsListening.DirtyFlag.Invalidate();
                 ConnectionCount.DirtyFlag.Invalidate();
             }
             catch (Exception e)
             {
-                Log.Warning($"Error stopping server: {e.Message}", this);
+                Log.Warning($"TCP Server: Error stopping server: {e.Message}", this);
+            }
+            finally
+            {
+                ctsToDispose?.Dispose(); // Dispose CTS after cancelling and stopping
             }
         }
 
@@ -217,8 +327,9 @@ namespace Lib.io.tcp
             if (_disposed) return;
             _disposed = true;
 
-            StopListening();
-            _cancellationTokenSource?.Dispose();
+            // Do not await StopListening directly in Dispose as Dispose should not block.
+            // Run it as a fire-and-forget task.
+            Task.Run(StopListening);
         }
 
         public IStatusProvider.StatusLevel GetStatusLevel() => _statusLevel;
@@ -229,19 +340,57 @@ namespace Lib.io.tcp
             _statusLevel = level;
         }
 
-        [Input(Guid = "56789ABC-DEF0-1234-5678-9ABCDEF01234")]
+        #region ICustomDropdownHolder Implementation
+        string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+        IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id ? GetLocalIPv4Addresses() : Enumerable.Empty<string>();
+        void ICustomDropdownHolder.HandleResultForInput(Guid id, string? s, bool i)
+        {
+            if (string.IsNullOrEmpty(s) || !i || id != LocalIpAddress.Id) return;
+            LocalIpAddress.SetTypedInputValue(s.Split(' ')[0]);
+        }
+        private static IEnumerable<string> GetLocalIPv4Addresses()
+        {
+            yield return "0.0.0.0 (Any)"; // Option to listen on all available interfaces
+            yield return "127.0.0.1"; // Loopback address
+
+            if (!NetworkInterface.GetIsNetworkAvailable()) yield break;
+
+            foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+            {
+                // Only consider operational and non-loopback interfaces
+                if (ni.OperationalStatus != OperationalStatus.Up || ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+
+                foreach (var ipInfo in ni.GetIPProperties().UnicastAddresses)
+                {
+                    // Only consider IPv4 addresses
+                    if (ipInfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                    {
+                        yield return ipInfo.Address.ToString();
+                    }
+                }
+            }
+        }
+        #endregion
+
+        [Input(Guid = "9A0B1C2D-3E4F-4567-8901-23456789ABC0")] // Updated GUID
         public readonly InputSlot<bool> Listen = new();
 
-        [Input(Guid = "6789ABCD-EF01-2345-6789-ABCDEF012345")]
+        [Input(Guid = "A0B1C2D3-E4F5-4678-9012-3456789ABCDE")] // Updated GUID
+        public readonly InputSlot<string> LocalIpAddress = new("0.0.0.0 (Any)"); // New input slot with default
+
+        [Input(Guid = "B1C2D3E4-F5A6-4789-0123-456789ABCDEF")] // Updated GUID
         public readonly InputSlot<int> Port = new(8080);
 
-        [Input(Guid = "789ABCDE-F012-3456-789A-BCDEF0123456")]
+        [Input(Guid = "C2D3E4F5-A6B7-4890-1234-567890ABCDEF")] // Updated GUID
         public readonly InputSlot<string> Message = new();
 
-        [Input(Guid = "89ABCDEF-0123-4567-89AB-CDEF01234567")]
+        [Input(Guid = "D3E4F5A6-B7C8-4901-2345-67890ABCDEF1")] // Updated GUID
         public readonly InputSlot<bool> SendOnChange = new(true);
 
-        [Input(Guid = "9ABCDEF0-1234-5678-9ABC-DEF012345678")]
+        [Input(Guid = "E4F5A6B7-C8D9-4012-3456-7890ABCDEF12")] // Updated GUID
         public readonly InputSlot<bool> SendTrigger = new();
+
+        [Input(Guid = "F5A6B7C8-D9E0-4123-4567-890ABCDEF123")] // New GUID for PrintToLog
+        public readonly InputSlot<bool> PrintToLog = new();
     }
 }

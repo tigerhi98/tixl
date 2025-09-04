@@ -1,41 +1,56 @@
 {
-  "Id": "aabbccdd-eeff-0011-2233-4455667788aa"/*WebServer*/,
+  "Id": "1d2e3f4a-5b6c-4789-0123-456789abcdef"/*WebServer*/,
   "Description": "",
   "InputUis": [
     {
-      "InputId": "33334444-5555-6666-7777-88889999aaaa"/*Listen*/,
+      "InputId": "4c5d6e7f-8a9b-4012-3456-7890abcdef12"/*Listen*/,
       "Position": {
         "X": -200.0,
         "Y": 0.0
       }
     },
     {
-      "InputId": "44445555-6666-7777-8888-9999aaaabbbb"/*Port*/,
+      "InputId": "5d6e7f8a-9b0c-4123-4567-890abcdef123"/*LocalIpAddress*/,
       "Position": {
         "X": -200.0,
         "Y": 75.0
-      }
+      },
+      "Usage": "CustomDropdown"
     },
     {
-      "InputId": "55556666-7777-8888-9999-aaaabbbbcccc"/*HtmlContent*/,
+      "InputId": "6e7f8a9b-0c1d-4234-5678-90abcdef1234"/*Port*/,
       "Position": {
         "X": -200.0,
         "Y": 150.0
+      }
+    },
+    {
+      "InputId": "7f8a9b0c-1d2e-4345-6789-0abcdef12345"/*HtmlContent*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 225.0
       },
-      "Usage": "Default"
+      "Usage": "Multiline"
+    },
+    {
+      "InputId": "8a9b0c1d-2e3f-4456-7890-abcdef123456"/*PrintToLog*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 300.0
+      }
     }
   ],
   "SymbolChildUis": [],
   "OutputUis": [
     {
-      "OutputId": "11112222-3333-4444-5555-666677778888"/*IsRunning*/,
+      "OutputId": "2a3b4c5d-6e7f-4890-1234-567890abcdef"/*IsRunning*/,
       "Position": {
         "X": 300.0,
         "Y": 200.0
       }
     },
     {
-      "OutputId": "22223333-4444-5555-6666-777788889999"/*PortOutput*/,
+      "OutputId": "3b4c5d6e-7f8a-4901-2345-67890abcdef1"/*PortOutput*/,
       "Position": {
         "X": 300.0,
         "Y": 300.0
