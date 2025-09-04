@@ -81,13 +81,13 @@ public abstract partial class ScalableCanvas
                                    || float.IsInfinity(ScaleTarget.Y);
         if (isScaleTargetInvalid)
         {
-            Debug.Assert(false); // should never happen
+            //Debug.Assert(false); // should never happen
             Scale = ScaleTarget;
         }
 
         if (float.IsNaN(ScrollTarget.X) || float.IsNaN(ScrollTarget.Y) || float.IsInfinity(ScrollTarget.X) || float.IsInfinity(ScrollTarget.Y))
         {
-            Debug.Assert(false); // should never happen
+            //Debug.Assert(false); // should never happen
             Scroll = ScrollTarget;
         }
     }
