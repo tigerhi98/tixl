@@ -28,15 +28,12 @@ namespace Lib.io.dmx
 
         private void Update(EvaluationContext context)
         {
-            var fixtureChannelSize = FixtureChannelSize.GetValue(context);
-            var pointBuffer = Points.GetValue(context);
+            var pointBuffer = EffectedPoints.GetValue(context);
             var referencePointBuffer = ReferencePoints.GetValue(context);
-            var useReferencePoints = WithReferencePoints.GetValue(context);
 
-            // Read primary points
             if (pointBuffer == null)
             {
-                Log.Warning("Points buffer is not connected.", this);
+                Log.Warning("EffectedPoints buffer is not connected.", this);
                 Result.Value.Clear();
                 return;
             }
@@ -47,8 +44,7 @@ namespace Lib.io.dmx
                                              OnPointsReadComplete);
             _pointsBufferReader.Update();
 
-            // Read reference points only if the mode is enabled AND the specific buffer is connected
-            if (useReferencePoints && referencePointBuffer != null)
+            if (referencePointBuffer != null)
             {
                 _referencePointsBufferReader.InitiateRead(referencePointBuffer.Buffer,
                                                          referencePointBuffer.Srv.Description.Buffer.ElementCount,
@@ -58,14 +54,13 @@ namespace Lib.io.dmx
             }
             else
             {
-                // Clear reference points if not used, to prevent using old data
                 if (_referencePoints.Length > 0)
                     _referencePoints = [];
             }
 
             if (_points != null && _points.Length > 0)
             {
-                UpdateChannelData(context, _points, fixtureChannelSize);
+                UpdateChannelData(context, _points);
                 Result.Value = _resultItems;
             }
             else
@@ -90,26 +85,35 @@ namespace Lib.io.dmx
             using (dataStream) { dataStream.ReadRange(_referencePoints, 0, count); }
         }
 
-        private void UpdateChannelData(EvaluationContext context, Point[] points, int fixtureChannelSize)
+        private void UpdateChannelData(EvaluationContext context, Point[] points)
         {
-            var useReferencePoints = WithReferencePoints.GetValue(context);
-            var referenceBufferIsConnected = ReferencePoints.GetValue(context) != null;
-
-            // Determine if we should use the original "split buffer" method
-            bool useSplitBufferForReference = useReferencePoints && !referenceBufferIsConnected;
+            var fixtureChannelSize = FixtureChannelSize.GetValue(context);
+            var effectedPointsCount = points.Length;
 
             int fixtureCount;
-            if (useSplitBufferForReference)
+            int pixelsPerFixture;
+
+            bool useReferencePoints = _referencePoints.Length > 0;
+
+            if (useReferencePoints)
             {
-                fixtureCount = points.Length / 2;
-                if (points.Length % 2 != 0)
+                fixtureCount = _referencePoints.Length;
+                if (effectedPointsCount % fixtureCount != 0)
                 {
-                    Log.Warning("Using 'WithReferencePoints' without a connected ReferencePoints buffer requires an even number of points. The last point will be ignored.", this);
+                    Log.Warning($"Effected points count ({effectedPointsCount}) is not a multiple of reference points count ({fixtureCount}). Falling back to 1-to-1 mapping.", this);
+                    fixtureCount = effectedPointsCount; // Fallback: each effected point is a fixture
+                    pixelsPerFixture = 1;
+                    useReferencePoints = false; // Disable relative calculations as mapping is unclear
+                }
+                else
+                {
+                    pixelsPerFixture = effectedPointsCount / fixtureCount;
                 }
             }
             else
             {
-                fixtureCount = points.Length;
+                fixtureCount = effectedPointsCount;
+                pixelsPerFixture = 1;
             }
 
             var fitInUniverse = FitInUniverse.GetValue(context);
@@ -118,73 +122,61 @@ namespace Lib.io.dmx
             _resultItems.Clear();
             _pointChannelValues.Clear();
 
-            // Initialize channel list size
             if (fixtureChannelSize > 0)
             {
                 for (var i = 0; i < fixtureChannelSize; i++) _pointChannelValues.Add(0);
             }
             else
             {
-                return; // No channels, nothing to process
+                return;
             }
 
-            bool separateReferencePointsAreValid = useReferencePoints && referenceBufferIsConnected && _referencePoints != null && _referencePoints.Length >= fixtureCount;
-            if (useReferencePoints && referenceBufferIsConnected && !separateReferencePointsAreValid)
-            {
-                Log.Warning("ReferencePoints buffer has fewer points than the main Points buffer. Will fallback to self-referencing for missing points.", this);
-            }
-
-            // Process each point/fixture
-            for (var pointIndex = 0; pointIndex < fixtureCount; pointIndex++)
+            for (var fixtureIndex = 0; fixtureIndex < fixtureCount; fixtureIndex++)
             {
                 for (var i = 0; i < fixtureChannelSize; i++) { _pointChannelValues[i] = 0; }
 
-                var point = points[pointIndex];
+                var firstPointIndexForFixture = fixtureIndex * pixelsPerFixture;
+                var transformPoint = points[firstPointIndexForFixture];
 
-                Point refPointForCurrentFixture;
-                bool calculateRelative = useReferencePoints;
+                Point referencePoint = useReferencePoints ? _referencePoints[fixtureIndex] : transformPoint;
 
-                if (useReferencePoints)
+                if (GetRotation.GetValue(context)) ProcessRotation(context, transformPoint, referencePoint, useReferencePoints);
+                if (GetPosition.GetValue(context)) ProcessPosition(context, transformPoint, referencePoint, useReferencePoints);
+
+                // --- Color Processing ---
+                if (GetColor.GetValue(context))
                 {
-                    if (referenceBufferIsConnected)
+                    if (pixelsPerFixture > 1) // Implicit Pixel Mapping
                     {
-                        // New Method: Use the separate buffer if valid
-                        if (separateReferencePointsAreValid && pointIndex < _referencePoints.Length)
+                        var redChannelStart = RedChannel.GetValue(context);
+                        if (redChannelStart > 0)
                         {
-                            refPointForCurrentFixture = _referencePoints[pointIndex];
-                        }
-                        else
-                        {
-                            refPointForCurrentFixture = point; // Fallback if reference buffer is invalid or too short
-                            calculateRelative = false;
+                            var currentDmxChannelIndex = redChannelStart - 1;
+                            var useCmy = RGBToCMY.GetValue(context);
+
+                            for (var pixelIndex = 0; pixelIndex < pixelsPerFixture; pixelIndex++)
+                            {
+                                var pointForColor = points[firstPointIndexForFixture + pixelIndex];
+                                float r = float.IsNaN(pointForColor.Color.X) ? 0f : Math.Clamp(pointForColor.Color.X, 0f, 1f);
+                                float g = float.IsNaN(pointForColor.Color.Y) ? 0f : Math.Clamp(pointForColor.Color.Y, 0f, 1f);
+                                float b = float.IsNaN(pointForColor.Color.Z) ? 0f : Math.Clamp(pointForColor.Color.Z, 0f, 1f);
+
+                                if (useCmy) { r = 1f - r; g = 1f - g; b = 1f - b; }
+
+                                InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(r * 255.0f));
+                                InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(g * 255.0f));
+                                InsertOrSet(currentDmxChannelIndex++, (int)Math.Round(b * 255.0f));
+                            }
                         }
                     }
-                    else
+                    else // Standard 1-to-1 color
                     {
-                        // Original Method (Fallback): Use the second half of the main buffer
-                        refPointForCurrentFixture = points[pointIndex + fixtureCount];
+                        ProcessColor(context, transformPoint);
                     }
                 }
-                else
-                {
-                    // No reference points enabled
-                    refPointForCurrentFixture = point; // This point will effectively act as the reference for itself, leading to absolute measurements from origin
-                    calculateRelative = false;
-                }
 
-                if (GetRotation.GetValue(context))
-                {
-                    ProcessRotation(context, point, refPointForCurrentFixture, calculateRelative);
-                }
-
-                if (GetPosition.GetValue(context))
-                {
-                    ProcessPosition(context, point, refPointForCurrentFixture, calculateRelative);
-                }
-
-                if (GetColor.GetValue(context)) ProcessColor(context, point);
-                if (GetF1.GetValue(context)) ProcessF1(context, point);
-                if (GetF2.GetValue(context)) ProcessF2(context, point);
+                if (GetF1.GetValue(context)) ProcessF1(context, transformPoint);
+                if (GetF2.GetValue(context)) ProcessF2(context, transformPoint);
 
                 // Custom Variables...
                 if (SetCustomVar1.GetValue(context) && CustomVar1Channel.GetValue(context) > 0) InsertOrSet(CustomVar1Channel.GetValue(context) - 1, CustomVar1.GetValue(context));
@@ -334,7 +326,6 @@ namespace Lib.io.dmx
             SetDmxCoarseFine(tiltValue, TiltChannel.GetValue(context), TiltFineChannel.GetValue(context), tiltMin, tiltMax, tiltMax - tiltMin);
         }
 
-        // Modified: ProcessPosition now takes referencePoint and calculateRelativePosition
         private void ProcessPosition(EvaluationContext context, Point point, Point referencePoint, bool calculateRelativePosition)
         {
             var measureAxis = (AxisModes)PositionMeasureAxis.GetValue(context);
@@ -342,17 +333,15 @@ namespace Lib.io.dmx
             var distanceRange = PositionDistanceRange.GetValue(context);
 
             Vector3 actualPosition = point.Position;
-            Vector3 effectiveReference = Vector3.Zero; // Default to world origin
+            Vector3 effectiveReference = Vector3.Zero;
 
             if (calculateRelativePosition)
             {
-                effectiveReference = referencePoint.Position; // Use the individual reference point's position
+                effectiveReference = referencePoint.Position;
             }
-            // else, effectiveReference remains Vector3.Zero, meaning the position is measured from world origin.
 
             float currentDistance = 0f;
 
-            // Calculate the component of the position relative to the effective reference point
             switch (measureAxis)
             {
                 case AxisModes.X:
@@ -371,18 +360,17 @@ namespace Lib.io.dmx
                 currentDistance = -currentDistance;
             }
 
-            float inMin = distanceRange.X; // This distance value maps to DMX 0
-            float inMax = distanceRange.Y; // This distance value maps to DMX 65535
+            float inMin = distanceRange.X;
+            float inMax = distanceRange.Y;
 
-            if (Math.Abs(inMax - inMin) < 0.0001f) // Avoid division by zero for mapping
+            if (Math.Abs(inMax - inMin) < 0.0001f)
             {
                 Log.Warning("PositionDistanceRange Min and Max values are too close or identical. DMX output for position will be 0.", this);
-                // Set DMX to 0 if the range is invalid
                 SetDmxCoarseFine(0, PositionChannel.GetValue(context), PositionFineChannel.GetValue(context), 0, 1, 1);
                 return;
             }
 
-            float rangeLength = inMax - inMin; // The span of the input distance range
+            float rangeLength = inMax - inMin;
 
             SetDmxCoarseFine(currentDistance, PositionChannel.GetValue(context), PositionFineChannel.GetValue(context), inMin, inMax, rangeLength);
         }
@@ -407,7 +395,7 @@ namespace Lib.io.dmx
             if (Math.Abs(range) < 0.0001f || float.IsNaN(range)) return 0;
 
             var normalizedValue = (value - inMin) / range;
-            return (int)Math.Round(Math.Clamp(normalizedValue, 0f, 1f) * 65535.0f); // Clamp normalized value to 0-1
+            return (int)Math.Round(Math.Clamp(normalizedValue, 0f, 1f) * 65535.0f);
         }
 
         private void ProcessColor(EvaluationContext context, Point point)
@@ -445,17 +433,14 @@ namespace Lib.io.dmx
         }
 
         private enum RotationModes { YXZ, YZX, ZYX, ZXY, XZY, XYZ, LegacyZ, ForReferencePoints }
-        private enum AxisModes { X, Y, Z } // Used for PositionMeasureAxis
+        private enum AxisModes { X, Y, Z }
 
         private readonly List<int> _pointChannelValues = [];
         private readonly StructuredBufferReadAccess _pointsBufferReader = new();
         private readonly StructuredBufferReadAccess _referencePointsBufferReader = new();
 
         [Input(Guid = "61b48e46-c3d1-46e3-a470-810d55f30aa6")]
-        public readonly InputSlot<T3.Core.DataTypes.BufferWithViews> Points = new InputSlot<T3.Core.DataTypes.BufferWithViews>();
-
-        [Input(Guid = "AFD3AA99-C892-4B87-AD3F-F97461E8A934")]
-        public readonly InputSlot<bool> WithReferencePoints = new InputSlot<bool>();
+        public readonly InputSlot<T3.Core.DataTypes.BufferWithViews> EffectedPoints = new InputSlot<T3.Core.DataTypes.BufferWithViews>();
 
         [Input(Guid = "2bea2ccb-89f2-427b-bd9a-95c7038b715e")]
         public readonly InputSlot<T3.Core.DataTypes.BufferWithViews> ReferencePoints = new InputSlot<T3.Core.DataTypes.BufferWithViews>();
@@ -472,23 +457,18 @@ namespace Lib.io.dmx
         [Input(Guid = "df04fce0-c6e5-4039-b03f-e651fc0ec4a9")]
         public readonly InputSlot<bool> GetPosition = new InputSlot<bool>();
 
-        // Reusing GUID for 'SelectAxis' from previous version for PositionMeasureAxis
         [Input(Guid = "628d96a8-466b-4148-9658-7786833ec989", MappedType = typeof(AxisModes))]
         public readonly InputSlot<int> PositionMeasureAxis = new InputSlot<int>();
 
-        // Reusing GUID for 'InvertAxis' from previous version for InvertPositionDirection
         [Input(Guid = "78a7e683-f4e7-4826-8e39-c8de08e50e5e")]
         public readonly InputSlot<bool> InvertPositionDirection = new InputSlot<bool>();
 
-        // Reusing GUID for 'AxisRange' from previous version for PositionDistanceRange
         [Input(Guid = "8880c101-403f-46e0-901e-20ec2dd333e9")]
         public readonly InputSlot<System.Numerics.Vector2> PositionDistanceRange = new InputSlot<System.Numerics.Vector2>();
 
-        // Reusing GUID for 'AxisChannel' from previous version for PositionChannel
         [Input(Guid = "fc3ec0d6-8567-4d5f-9a63-5c69fb5988cb")]
         public readonly InputSlot<int> PositionChannel = new InputSlot<int>();
 
-        // Reusing GUID for 'AxisFineChannel' from previous version for PositionFineChannel
         [Input(Guid = "658a19df-e51b-45b4-9f91-cb97a891255a")]
         public readonly InputSlot<int> PositionFineChannel = new InputSlot<int>();
 
