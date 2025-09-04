@@ -71,7 +71,7 @@ internal static class InfinitySliderOverlay
         //_dampedAngleVelocity = MathUtils.Lerp(_dampedAngleVelocity, (float)deltaX, 0.06f);
 
         // Update radius and value range
-        var normalizedLogDistanceForLog10 = _verticalDistance / Log10YDistance;
+        var normalizedLogDistanceForLog10 = (_verticalDistance / T3Ui.UiScaleFactor) / Log10YDistance;
 
         // Value range and tick interval 
         _dampedModifierScaleFactor = MathUtils.Lerp(_dampedModifierScaleFactor, GetKeyboardScaleFactor(), 0.1f);
@@ -81,7 +81,7 @@ internal static class InfinitySliderOverlay
         // Update value...
         if (!isDraggingWidgetPosition)
         {
-            _value += deltaX / Width * valueRange;
+            _value += deltaX / Width / T3Ui.UiScaleFactor * valueRange;
         }
         _value = MathUtils.OptionalClamp(_value, min, clampMin, max, clampMax);
         
@@ -97,10 +97,10 @@ internal static class InfinitySliderOverlay
         var log10 = Math.Log10(valueRange);
         var iLog10 = Math.Floor(log10);
         var logRemainder = log10 - iLog10;
-        var tickValueInterval = Math.Pow(10, iLog10 - 1);
+        var tickValueInterval = Math.Pow(10, iLog10 - 1) * T3Ui.UiScaleFactor;
         roundedValue = _io.KeyCtrl ? _value : Math.Round(_value / (tickValueInterval / 10)) * (tickValueInterval / 10);
 
-        var rSize = new Vector2(Width, 40);
+        var rSize = new Vector2(Width, 40)  * T3Ui.UiScaleFactor;
         var rCenter = new Vector2(mousePosX, _io.MousePos.Y - rSize.Y);
         var rect = new ImRect(rCenter - rSize / 2, rCenter + rSize / 2);
 
@@ -111,15 +111,15 @@ internal static class InfinitySliderOverlay
         {
             for (var yIndex = -2; yIndex < 4; yIndex++)
             {
-                var centerPoint = new Vector2(mousePosX, _center.Y - Log10YDistance * yIndex);
+                var centerPoint = new Vector2(mousePosX, _center.Y - Log10YDistance * yIndex * T3Ui.UiScaleFactor);
                 var v = Math.Pow(10, yIndex);
                 var label = $"× {v:G5}";
                 var size = ImGui.CalcTextSize(label);
 
                 var fade = (MathF.Abs(centerPoint.Y - rCenter.Y) / 50).Clamp(0, 1);
 
-                var boxSize = new Vector2(80, 100);
-                var labelCenter = centerPoint + new Vector2(10);
+                var boxSize = new Vector2(80, 100) * T3Ui.UiScaleFactor;
+                var labelCenter = centerPoint + new Vector2(10) * T3Ui.UiScaleFactor;
                 drawList.AddRectFilled(centerPoint - boxSize / 2, centerPoint + boxSize / 2 + new Vector2(0, -1), UiColors.BackgroundFull.Fade(0.3f * fade),
                                        3);
                 drawList.AddText(
@@ -145,7 +145,7 @@ internal static class InfinitySliderOverlay
             var fff = MathUtils.SmootherStep(1, 0.8f, (float)logRemainder);
             drawList.AddLine(
                              new Vector2(tickX, rect.Max.Y),
-                             new Vector2(tickX, rect.Max.Y - 10),
+                             new Vector2(tickX, rect.Max.Y - 10 * T3Ui.UiScaleFactor),
                              UiColors.ForegroundFull.Fade(negF * (isPrimary ? 1 : 0.5f * fff)),
                              1
                             );
@@ -163,20 +163,23 @@ internal static class InfinitySliderOverlay
 
                 drawList.AddText(font,
                                  font.FontSize,
-                                 new Vector2(tickX - 1 - size.X / 2, rect.Max.Y - 30),
+                                 new Vector2(tickX - 1 - size.X / 2, 
+                                             rect.Max.Y - 30 * T3Ui.UiScaleFactor),
                                  UiColors.BackgroundFull.Fade(negF * ff),
                                  label);
 
                 drawList.AddText(font,
                                  font.FontSize,
-                                 new Vector2(tickX - size.X / 2 + 1, rect.Max.Y - 30),
+                                 new Vector2(tickX - size.X / 2 + 1, 
+                                             rect.Max.Y - 30 * T3Ui.UiScaleFactor),
                                  UiColors.BackgroundFull.Fade(negF * ff),
                                  label);
 
                 var fadeOut = (isPrimary ? 1 : ff) * 0.7f;
                 drawList.AddText(font,
                                  font.FontSize,
-                                 new Vector2(tickX - size.X / 2, rect.Max.Y - 30),
+                                 new Vector2(tickX - size.X / 2, 
+                                             rect.Max.Y - 30 * T3Ui.UiScaleFactor),
                                  UiColors.ForegroundFull.Fade(negF * (isPrimary2 ? 1 : fadeOut)),
                                  label);
             }
@@ -212,17 +215,17 @@ internal static class InfinitySliderOverlay
             var label = $"{roundedValue:G7}\n";
             var labelSize = ImGui.CalcTextSize(label);
             drawList.AddRectFilled(
-                                   new Vector2(screenX - labelSize.X / 2 - 10, rect.Max.Y),
-                                   new Vector2(screenX + labelSize.X / 2 + 10, rect.Max.Y + 35),
+                                   new Vector2(screenX - labelSize.X / 2 - 10 * T3Ui.UiScaleFactor, rect.Max.Y),
+                                   new Vector2(screenX + labelSize.X / 2 + 10 * T3Ui.UiScaleFactor, rect.Max.Y + 35 * T3Ui.UiScaleFactor),
                                    UiColors.BackgroundFull.Fade(0.8f),
                                    5
                                   );
             drawList.AddLine(new Vector2(screenX, rect.Min.Y),
-                             new Vector2(screenX, rect.Max.Y + 5),
+                             new Vector2(screenX, rect.Max.Y + 5 * T3Ui.UiScaleFactor),
                              UiColors.StatusActivated,
                              1
                             );
-            drawList.AddText(new Vector2(screenX - labelSize.X / 2, rect.Max.Y + 3),
+            drawList.AddText(new Vector2(screenX - labelSize.X / 2, rect.Max.Y + 3 * T3Ui.UiScaleFactor),
                              Color.White.Fade(1),
                              label
                             );
@@ -261,7 +264,7 @@ internal static class InfinitySliderOverlay
         if (!IsValueVisible(v, valueRange))
             return false;
 
-        x = MathF.Floor((float)((v - _value) / valueRange * width + mouseX));
+        x = MathF.Floor((float)((v - _value) / valueRange * width * T3Ui.UiScaleFactor + mouseX));
         return true;
     }
 
