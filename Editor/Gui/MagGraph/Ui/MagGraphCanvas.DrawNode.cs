@@ -251,10 +251,11 @@ internal sealed partial class MagGraphView
                 var labelSize = ImGui.CalcTextSize(name);
                 ImGui.PopFont();
 
-                var paddingForPreview = hasPreview ? MagGraphItem.LineHeight + 10 : 0;
-                var downScale = MathF.Min(1f, (MagGraphItem.Width - paddingForPreview) * 0.9f / labelSize.X);
+                var paddingForPreview = hasPreview ? MagGraphItem.LineHeight + 15 : 0;
+                var downScale =  MathF.Min(1f,  T3Ui.UiScaleFactor * (MagGraphItem.Width - paddingForPreview) * 0.9f / labelSize.X);
 
-                var fontSize = Fonts.FontNormal.FontSize * (1 / T3Ui.UiScaleFactor) * downScale * CanvasScale.Clamp(0.1f, 2f);
+                var fontSize = Fonts.FontNormal.FontSize * (downScale / T3Ui.UiScaleFactor) * CanvasScale.Clamp(0.1f, 2f);
+                
                 var visibleLineHeight = Math.Min((pMaxVisible.Y - pMinVisible.Y), MagGraphItem.LineHeight * CanvasScale);
                 var yCenter = pMin.Y + visibleLineHeight / 2 - fontSize / 2;
                 var labelPos = new Vector2(pMin.X + 8 * CanvasScale, yCenter);
