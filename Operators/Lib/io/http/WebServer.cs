@@ -1,6 +1,9 @@
 #nullable enable
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Net;
+using System.Net.NetworkInformation;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -14,15 +17,15 @@ namespace Lib.io.http;
 /// <summary>
 /// A simple HTTP server operator for T3 to serve a user-provided HTML string.
 /// </summary>
-[Guid("AABBCCDD-EEFF-0011-2233-4455667788AA")]
-internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposable
+[Guid("1D2E3F4A-5B6C-4789-0123-456789ABCDEF")] // Updated GUID
+internal sealed class WebServer : Instance<WebServer>, IStatusProvider, ICustomDropdownHolder, IDisposable // Added ICustomDropdownHolder
 {
     #region Outputs
-    [Output(Guid = "11112222-3333-4444-5555-666677778888")]
+    [Output(Guid = "2A3B4C5D-6E7F-4890-1234-567890ABCDEF")] // Updated GUID
     public readonly Slot<bool> IsRunning = new();
 
-    [Output(Guid = "22223333-4444-5555-6666-777788889999")]
-    public readonly Slot<int> PortOutput = new(); // Renamed to avoid potential conflict
+    [Output(Guid = "3B4C5D6E-7F8A-4901-2345-67890ABCDEF1")] // Updated GUID
+    public readonly Slot<int> PortOutput = new();
     #endregion
 
     #region Constructor
@@ -37,9 +40,11 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
     private HttpListener? _listener;
     private CancellationTokenSource? _cancellationTokenSource;
     private bool _lastListenState;
+    private string? _lastLocalIp; // Added for LocalIpAddress input
     private int _lastPort;
     private string? _lastHtmlContent; // Store last HTML content
     private bool _disposed = false;
+    private bool _printToLog; // Added for PrintToLog functionality
 
     private string _statusMessage = "Not running";
     private IStatusProvider.StatusLevel _statusLevel = IStatusProvider.StatusLevel.Notice;
@@ -50,22 +55,24 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
     {
         if (_disposed) return;
 
+        _printToLog = PrintToLog.GetValue(context); // Update PrintToLog flag
         var shouldListen = Listen.GetValue(context);
+        var localIp = LocalIpAddress.GetValue(context); // Get local IP
         var port = Port.GetValue(context);
         var htmlContent = HtmlContent.GetValue(context); // Get HTML content from input
 
         // Check if settings have changed and require a restart or content update
-        // Note: For simplicity, we only restart if Listen/Port change. Content changes are handled on request.
-        var settingsChanged = shouldListen != _lastListenState || port != _lastPort;
+        var settingsChanged = shouldListen != _lastListenState || localIp != _lastLocalIp || port != _lastPort;
 
         if (settingsChanged)
         {
             StopServer();
             if (shouldListen)
             {
-                StartServer(port);
+                StartServer(localIp, port); // Pass localIp to StartServer
             }
             _lastListenState = shouldListen;
+            _lastLocalIp = localIp; // Store last local IP
             _lastPort = port;
         }
 
@@ -79,10 +86,33 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
     #endregion
 
     #region Server Control Logic
-    private void StartServer(int port)
+    private void StartServer(string? localIpAddress, int port)
     {
-        // Use localhost to avoid needing admin rights for most scenarios
-        var prefix = $"http://localhost:{port}/";
+        IPAddress listenIp;
+        string prefixHost;
+
+        // Determine the IP address to listen on
+        if (string.IsNullOrEmpty(localIpAddress) || localIpAddress == "0.0.0.0 (Any)")
+        {
+            listenIp = IPAddress.Any;
+            prefixHost = "+"; // Use '+' for HttpListener to listen on all interfaces
+        }
+        else if (!IPAddress.TryParse(localIpAddress, out listenIp))
+        {
+            SetStatus($"Invalid Local IP '{localIpAddress}'. Defaulting to listen on all interfaces.", IStatusProvider.StatusLevel.Warning);
+            if (_printToLog)
+            {
+                Log.Warning($"WebServer: Invalid Local IP '{localIpAddress}', defaulting to listen on all interfaces.", this);
+            }
+            listenIp = IPAddress.Any;
+            prefixHost = "+";
+        }
+        else
+        {
+            prefixHost = localIpAddress; // Use the specific IP for the prefix
+        }
+
+        var prefix = $"http://{prefixHost}:{port}/";
 
         _listener = new HttpListener();
         _cancellationTokenSource = new CancellationTokenSource();
@@ -91,22 +121,31 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
         {
             _listener.Prefixes.Add(prefix);
             _listener.Start();
-            SetStatus($"Running on {prefix}", IStatusProvider.StatusLevel.Success);
-            Log.Debug($"WebServer started on {prefix}", this);
+            SetStatus($"Running on {prefix.Replace("+", "localhost")}", IStatusProvider.StatusLevel.Success);
+            if (_printToLog)
+            {
+                Log.Debug($"WebServer started on {prefix.Replace("+", "localhost")}", this);
+            }
 
             // Start the listening loop on a background task
             _ = Task.Run(ListenLoop, _cancellationTokenSource.Token);
         }
         catch (HttpListenerException hlex) when (hlex.ErrorCode == 5) // Access Denied
         {
-            SetStatus($"Access Denied on port {port}. Try port >1024.", IStatusProvider.StatusLevel.Error);
-            Log.Error($"Access Denied starting WebServer on {prefix}: {hlex.Message}", this);
+            SetStatus($"Access Denied on port {port}. Try port >1024 or run as admin. Error: {hlex.Message}", IStatusProvider.StatusLevel.Error);
+            if (_printToLog)
+            {
+                Log.Error($"WebServer: Access Denied starting WebServer on {prefix}: {hlex.Message}", this);
+            }
             CleanupListener();
         }
         catch (Exception e)
         {
             SetStatus($"Failed to start: {e.Message}", IStatusProvider.StatusLevel.Error);
-            Log.Error($"Error starting WebServer: {e.Message}", this);
+            if (_printToLog)
+            {
+                Log.Error($"WebServer: Error starting WebServer: {e.Message}", this);
+            }
             CleanupListener();
         }
     }
@@ -124,33 +163,42 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
                 }
                 catch (ObjectDisposedException)
                 {
+                    if (_printToLog) Log.Debug("WebServer: Listener disposed, exiting ListenLoop.", this);
+                    break; // Listener was disposed, exiting loop gracefully
+                }
+                catch (HttpListenerException hex) when (hex.ErrorCode == 995) // The I/O operation has been aborted because of either a thread exit or an application request.
+                {
+                    if (_printToLog) Log.Debug("WebServer: HttpListenerException 995 (Operation Aborted), likely during shutdown. Exiting ListenLoop.", this);
                     break;
                 }
-                catch (HttpListenerException) when (_cancellationTokenSource.Token.IsCancellationRequested)
+                catch (OperationCanceledException)
                 {
+                    if (_printToLog) Log.Debug("WebServer: ListenLoop cancelled via token. Exiting.", this);
                     break;
                 }
                 catch (Exception ex)
                 {
-                    Log.Warning($"WebServer error getting request context: {ex.Message}", this);
+                    if (_printToLog) Log.Warning($"WebServer: Error getting request context: {ex.Message}", this);
                     continue;
                 }
 
                 // Handle the request asynchronously
+                // Detach from the current task to allow the loop to continue accepting connections
                 _ = Task.Run(() => HandleRequestAsync(context), _cancellationTokenSource.Token);
             }
         }
         catch (Exception e) when (e is OperationCanceledException || e is ObjectDisposedException)
         {
             // Expected during shutdown
+            if (_printToLog) Log.Debug($"WebServer: ListenLoop stopped gracefully due to {e.GetType().Name}.", this);
         }
         catch (Exception e)
         {
-            Log.Warning($"Unexpected error in WebServer ListenLoop: {e.Message}", this);
+            if (_printToLog) Log.Warning($"WebServer: Unexpected error in ListenLoop: {e.Message}", this);
         }
         finally
         {
-            Log.Debug("WebServer ListenLoop finished.", this);
+            if (_printToLog) Log.Debug("WebServer: ListenLoop finished.", this);
         }
     }
 
@@ -161,9 +209,15 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
 
         try
         {
-            Log.Debug($"WebServer received request for '{request.Url?.AbsolutePath}'", this);
+            if (_printToLog) Log.Debug($"WebServer received request for '{request.Url?.AbsolutePath}' from {request.RemoteEndPoint}", this);
 
-            string? urlPath = request.Url?.AbsolutePath ?? "/";
+            // FIX for CS8600: Explicitly handle null for request.Url before accessing AbsolutePath
+            string urlPath = "/"; // Initialize to a non-null default
+            if (request.Url != null)
+            {
+                urlPath = request.Url.AbsolutePath ?? "/"; // Assign after confirming request.Url is not null
+            }
+
             // Serve the HTML content for the root path
             if (string.IsNullOrEmpty(urlPath) || urlPath == "/")
             {
@@ -176,18 +230,18 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
                 response.StatusCode = (int)HttpStatusCode.OK;
 
                 await response.OutputStream.WriteAsync(buffer, 0, buffer.Length);
-                Log.Debug("WebServer served HTML content.", this);
+                if (_printToLog) Log.Debug("WebServer served HTML content.", this);
             }
             else
             {
                 // For any other path, return 404
-                Log.Debug($"WebServer path not found: '{urlPath}'", this);
+                if (_printToLog) Log.Debug($"WebServer: Path not found: '{urlPath}'", this);
                 SendErrorResponse(response, 404, "Not Found");
             }
         }
         catch (Exception ex)
         {
-            Log.Error($"WebServer error handling request for '{request.Url?.AbsolutePath}': {ex.Message}", this);
+            if (_printToLog) Log.Error($"WebServer: Error handling request for '{request.Url?.AbsolutePath}': {ex.Message}", this);
             SendErrorResponse(response, 500, "Internal Server Error");
         }
         finally
@@ -198,12 +252,12 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
             }
             catch (Exception ex)
             {
-                Log.Debug($"WebServer error closing response: {ex.Message}", this);
+                if (_printToLog) Log.Debug($"WebServer: Error closing response: {ex.Message}", this);
             }
         }
     }
 
-    private static void SendErrorResponse(HttpListenerResponse response, int statusCode, string description)
+    private void SendErrorResponse(HttpListenerResponse response, int statusCode, string description)
     {
         try
         {
@@ -213,10 +267,11 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
             response.StatusCode = statusCode;
 
             response.OutputStream.Write(buffer, 0, buffer.Length);
+            response.OutputStream.Close(); // Ensure the stream is closed after writing
         }
         catch (Exception ex)
         {
-            Log.Debug($"WebServer error sending error response ({statusCode}): {ex.Message}", typeof(WebServer));
+            if (_printToLog) Log.Debug($"WebServer: Error sending error response ({statusCode}): {ex.Message}", this);
         }
     }
 
@@ -224,17 +279,22 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
     {
         try
         {
-            _cancellationTokenSource?.Cancel();
+            _cancellationTokenSource?.Cancel(); // Signal cancellation
+            if (_printToLog) Log.Debug("WebServer: Cancellation requested for server.", this);
         }
         catch (Exception ex)
         {
-            Log.Debug($"WebServer error during cancellation: {ex.Message}", this);
+            if (_printToLog) Log.Debug($"WebServer: Error during cancellation: {ex.Message}", this);
         }
 
-        CleanupListener();
+        CleanupListener(); // Stop and close HttpListener
 
         if (!_lastListenState)
             SetStatus("Not running", IStatusProvider.StatusLevel.Notice);
+        else if (_printToLog)
+        {
+            Log.Debug("WebServer: Server stopped.", this);
+        }
 
         IsRunning.DirtyFlag.Invalidate();
         PortOutput.DirtyFlag.Invalidate();
@@ -249,14 +309,16 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
                 if (_listener.IsListening)
                 {
                     _listener.Stop();
+                    if (_printToLog) Log.Debug("WebServer: HttpListener stopped.", this);
                 }
                 _listener.Close();
+                if (_printToLog) Log.Debug("WebServer: HttpListener closed.", this);
                 _listener = null;
             }
         }
         catch (Exception ex)
         {
-            Log.Debug($"WebServer error stopping HttpListener: {ex.Message}", this);
+            if (_printToLog) Log.Debug($"WebServer: Error stopping/closing HttpListener: {ex.Message}", this);
         }
     }
     #endregion
@@ -272,28 +334,64 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
     }
     #endregion
 
+    #region ICustomDropdownHolder Implementation
+    string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+    IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id ? GetLocalIPv4Addresses() : Enumerable.Empty<string>();
+    void ICustomDropdownHolder.HandleResultForInput(Guid id, string? s, bool i)
+    {
+        if (string.IsNullOrEmpty(s) || !i || id != LocalIpAddress.Id) return;
+        LocalIpAddress.SetTypedInputValue(s.Split(' ')[0]);
+    }
+
+    private static IEnumerable<string> GetLocalIPv4Addresses()
+    {
+        yield return "0.0.0.0 (Any)"; // Option to listen on all available interfaces
+        yield return "127.0.0.1"; // Loopback address
+
+        if (!NetworkInterface.GetIsNetworkAvailable()) yield break;
+
+        foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
+        {
+            // Only consider operational and non-loopback interfaces
+            if (ni.OperationalStatus != OperationalStatus.Up || ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
+
+            foreach (var ipInfo in ni.GetIPProperties().UnicastAddresses)
+            {
+                // Only consider IPv4 addresses
+                if (ipInfo.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetwork)
+                {
+                    yield return ipInfo.Address.ToString();
+                }
+            }
+        }
+    }
+    #endregion
+
     #region IDisposable Implementation
     public void Dispose()
     {
         if (_disposed) return;
         _disposed = true;
 
-        StopServer();
-        _cancellationTokenSource?.Dispose();
+        StopServer(); // Stop server and cleanup listener
+        _cancellationTokenSource?.Dispose(); // Dispose CancellationTokenSource
     }
     #endregion
 
     #region Input Slots
-    [Input(Guid = "33334444-5555-6666-7777-88889999AAAA")]
+    [Input(Guid = "4C5D6E7F-8A9B-4012-3456-7890ABCDEF12")] // Updated GUID
     public readonly InputSlot<bool> Listen = new();
 
-    [Input(Guid = "44445555-6666-7777-8888-9999AAAABBBB")]
+    [Input(Guid = "5D6E7F8A-9B0C-4123-4567-890ABCDEF123")] // Updated GUID
+    public readonly InputSlot<string> LocalIpAddress = new("0.0.0.0 (Any)"); // New input slot
+
+    [Input(Guid = "6E7F8A9B-0C1D-4234-5678-90ABCDEF1234")] // Updated GUID
     public readonly InputSlot<int> Port = new(8080);
 
     /// <summary>
     /// The HTML content to serve when the root path (/) is requested.
     /// </summary>
-    [Input(Guid = "55556666-7777-8888-9999-AAAABBBBCCCC")]
+    [Input(Guid = "7F8A9B0C-1D2E-4345-6789-0ABCDEF12345")] // Updated GUID
     public readonly InputSlot<string> HtmlContent = new(@"<!DOCTYPE html>
 <html>
 <head>
@@ -368,5 +466,8 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, IDisposa
     </script>
 </body>
 </html>");
+
+    [Input(Guid = "8A9B0C1D-2E3F-4456-7890-ABCDEF123456")] // New GUID for PrintToLog
+    public readonly InputSlot<bool> PrintToLog = new();
     #endregion
 }

@@ -15,20 +15,20 @@ using T3.Core.Utils;
 
 namespace Lib.io.tcp
 {
-    [Guid("2B1C3D4E-5F6A-7B8C-9D0E-1F2A3B4C5D6E")]
+    [Guid("A2B3C4D5-E6F7-4890-1234-567890ABCDEF")] // Updated GUID
     internal sealed class TcpClient : Instance<TcpClient>
-,IStatusProvider,IDisposable
+, IStatusProvider, IDisposable
     {
-        [Output(Guid = "E7D6C5B4-A987-6543-210F-EDCBA9876543", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
+        [Output(Guid = "F1E0D9C8-7B6A-4543-210F-EDCBA9876543", DirtyFlagTrigger = DirtyFlagTrigger.Animated)] // Updated GUID
         public readonly Slot<string> ReceivedString = new();
 
-        [Output(Guid = "B2C3D4E5-F6A7-B8C9-D0E1-F2A3B4C5D6E7", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
+        [Output(Guid = "D5C4B3A2-E1F0-4987-6543-210FEDCBA987", DirtyFlagTrigger = DirtyFlagTrigger.Animated)] // Updated GUID
         public readonly Slot<List<string>> ReceivedLines = new();
 
-        [Output(Guid = "C9D8E7F6-A5B4-3210-FEDC-BA9876543210", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
+        [Output(Guid = "1A2B3C4D-5E6F-4789-A0B1-C2D3E4F5A6B7", DirtyFlagTrigger = DirtyFlagTrigger.Animated)] // Updated GUID
         public readonly Slot<bool> WasTrigger = new();
 
-        [Output(Guid = "BCDE1234-5678-90AB-CDEF-1234567890AB")]
+        [Output(Guid = "3B4C5D6E-7F8A-4901-2345-67890ABCDEF1")] // Updated GUID
         public readonly Slot<bool> IsConnected = new();
 
         public TcpClient()
@@ -56,7 +56,7 @@ namespace Lib.io.tcp
             if (_disposed)
                 return;
 
-            _printToLog = PrintToLog.GetValue(context);
+            _printToLog = PrintToLog.GetValue(context); // Get value for PrintToLog
             var shouldConnect = Connect.GetValue(context);
             var host = Host.GetValue(context);
             var port = Port.GetValue(context);
@@ -138,14 +138,26 @@ namespace Lib.io.tcp
             try
             {
                 SetStatus($"Connecting to {host}:{port}...", IStatusProvider.StatusLevel.Notice);
+                if (_printToLog)
+                {
+                    Log.Debug($"TCP Client: Attempting to connect to {host}:{port}...", this);
+                }
                 await _socket!.ConnectAsync(host, port, _cts.Token);
                 SetStatus($"Connected to {host}:{port}", IStatusProvider.StatusLevel.Success);
+                if (_printToLog)
+                {
+                    Log.Debug($"TCP Client: Connected to {host}:{port}", this);
+                }
 
                 _ = Task.Run(ReceiveLoop);
             }
             catch (Exception e)
             {
                 SetStatus($"Connect failed: {e.Message}", IStatusProvider.StatusLevel.Error);
+                if (_printToLog)
+                {
+                    Log.Error($"TCP Client: Connect failed to {host}:{port}: {e.Message}", this);
+                }
                 lock (_socketLock)
                 {
                     _socket?.Dispose();
@@ -160,24 +172,52 @@ namespace Lib.io.tcp
 
         private async Task StopAsync()
         {
+            TcpClientSocket? socketToDispose = null;
+            CancellationTokenSource? ctsToDispose = null;
+
+            // Use a lock to safely capture the current socket and CTS
+            lock (_socketLock)
+            {
+                if (_socket != null)
+                {
+                    socketToDispose = _socket;
+                    _socket = null; // Clear it within the lock to prevent further use
+                }
+                if (_cts != null)
+                {
+                    ctsToDispose = _cts;
+                    _cts = null; // Clear it within the lock
+                }
+            }
+
             try
             {
-                lock (_socketLock)
+                // Cancel the token source outside the lock
+                ctsToDispose?.Cancel();
+
+                if (_printToLog)
                 {
-                    _cts?.Cancel();
-                    _socket?.Dispose();
-                    _socket = null;
-                    _cts?.Dispose();
-                    _cts = null;
+                    Log.Debug($"TCP Client: Stopping connection.", this);
                 }
 
+                // Dispose resources outside the lock (they are synchronous here)
+                socketToDispose?.Dispose();
+                ctsToDispose?.Dispose(); // Dispose CTS after cancelling
+
                 SetStatus("Disconnected", IStatusProvider.StatusLevel.Notice);
+                if (_printToLog)
+                {
+                    Log.Debug("TCP Client: Disconnected.", this);
+                }
                 IsConnected.DirtyFlag.Invalidate();
             }
             catch (Exception e)
             {
-                Log.Warning($"Stop error: {e.Message}", this);
+                // Catch any other unexpected errors during the stop process
+                Log.Warning($"TCP Client: Stop error: {e.Message}", this);
             }
+
+            await Task.Yield(); // Add an await to satisfy CS1998 warning
         }
 
         private async Task ReceiveLoop()
@@ -187,15 +227,24 @@ namespace Lib.io.tcp
             {
                 while (true)
                 {
+                    TcpClientSocket? currentSocket;
+                    CancellationToken cancellationToken;
+
                     lock (_socketLock)
                     {
-                        if (_socket == null || !_socket.IsConnected)
+                        currentSocket = _socket;
+                        cancellationToken = _cts?.Token ?? CancellationToken.None; // Capture token safely
+                        if (currentSocket == null || !currentSocket.IsConnected)
                             break;
                     }
 
-                    var bytesRead = await _socket!.ReceiveAsync(buffer, _cts!.Token);
+                    var bytesRead = await currentSocket!.ReceiveAsync(buffer, cancellationToken);
                     if (bytesRead == 0) // Connection closed
                     {
+                        if (_printToLog)
+                        {
+                            Log.Debug("TCP Client: Connection closed by remote host.", this);
+                        }
                         await StopAsync();
                         break;
                     }
@@ -209,16 +258,19 @@ namespace Lib.io.tcp
                     ReceivedString.DirtyFlag.Invalidate();
                 }
             }
-            catch (OperationCanceledException) { /* Expected */ }
+            catch (OperationCanceledException) { /* Expected during cancellation */ }
             catch (Exception ex)
             {
-                if (!(ex is OperationCanceledException))
+                // Catch socket exceptions, network errors, etc.
+                SetStatus($"Receive error: {ex.Message}", IStatusProvider.StatusLevel.Warning);
+                if (_printToLog)
                 {
-                    SetStatus($"Receive error: {ex.Message}", IStatusProvider.StatusLevel.Warning);
+                    Log.Warning($"TCP Client: Receive error: {ex.Message}", this);
                 }
             }
             finally
             {
+                // Ensure StopAsync is called regardless of how the loop exits
                 await StopAsync();
             }
         }
@@ -227,14 +279,16 @@ namespace Lib.io.tcp
         {
             try
             {
+                TcpClientSocket? currentSocket;
                 lock (_socketLock)
                 {
-                    if (_socket == null || !_socket.IsConnected)
+                    currentSocket = _socket;
+                    if (currentSocket == null || !currentSocket.IsConnected)
                         return;
                 }
 
                 var data = Encoding.UTF8.GetBytes(message);
-                await _socket!.SendAsync(data, _cts!.Token);
+                await currentSocket!.SendAsync(data, _cts!.Token);
 
                 if (_printToLog)
                 {
@@ -244,6 +298,10 @@ namespace Lib.io.tcp
             catch (Exception ex)
             {
                 SetStatus($"Send failed: {ex.Message}", IStatusProvider.StatusLevel.Warning);
+                if (_printToLog)
+                {
+                    Log.Warning($"TCP Client: Send failed: {ex.Message}", this);
+                }
                 await StopAsync();
             }
         }
@@ -258,6 +316,10 @@ namespace Lib.io.tcp
             {
                 SetStatus($"Connected to {_lastHost}:{_lastPort}", IStatusProvider.StatusLevel.Success);
             }
+            else
+            {
+                SetStatus($"Connecting to {_lastHost}:{_lastPort}...", IStatusProvider.StatusLevel.Notice);
+            }
         }
 
         public void Dispose()
@@ -265,7 +327,9 @@ namespace Lib.io.tcp
             if (_disposed) return;
             _disposed = true;
 
-            _ = StopAsync();
+            // Do not await StopAsync directly in Dispose as Dispose should not block.
+            // Run it as a fire-and-forget task. The internal StopAsync handles its own exceptions.
+            Task.Run(StopAsync);
             _receivedQueue.Clear();
             _messageHistory.Clear();
         }
@@ -284,68 +348,74 @@ namespace Lib.io.tcp
         public string GetStatusMessage() => _statusMessage;
         #endregion
 
-        [Input(Guid = "EDCBA987-6543-210F-EDCB-A9876543210F")]
+        [Input(Guid = "C2D3E4F5-A6B7-4890-1234-567890ABCDEF")] // Updated GUID
         public readonly InputSlot<bool> Connect = new();
 
-        [Input(Guid = "BA987654-3210-FEDC-BA98-76543210FEDC")]
+        [Input(Guid = "F1E2D3C4-B5A6-4789-0123-456789ABCDEF")] // Updated GUID
         public readonly InputSlot<string> Host = new("localhost");
 
-        [Input(Guid = "3210FEDC-BA98-7654-3210-FEDCBA987654")]
+        [Input(Guid = "A3B4C5D6-E7F8-4901-2345-67890ABCDEF1")] // Updated GUID
         public readonly InputSlot<int> Port = new(8080);
 
-        [Input(Guid = "6543210F-EDCB-A987-6543-210FEDCBA987")]
+        [Input(Guid = "D4E5F6A7-B8C9-4012-3456-7890ABCDEF12")] // Updated GUID
         public readonly InputSlot<int> ListLength = new(10);
 
-        [Input(Guid = "210FEDCB-A987-6543-210F-EDCBA9876543")]
+        [Input(Guid = "B5C6D7E8-F9A0-4123-4567-890ABCDEF123")] // Updated GUID
         public readonly MultiInputSlot<string> MessageParts = new();
 
-        [Input(Guid = "FEDCBA98-7654-3210-FEDC-BA9876543210")]
+        [Input(Guid = "E6F7A8B9-C0D1-4234-5678-90ABCDEF1234")] // Updated GUID
         public readonly InputSlot<string> Separator = new(" ");
 
-        [Input(Guid = "CBA98765-4321-0FED-CBA9-876543210FED")]
+        [Input(Guid = "F7A8B9C0-D1E2-4345-6789-0ABCDEF12345")] // Updated GUID
         public readonly InputSlot<bool> SendOnChange = new(true);
 
-        [Input(Guid = "A9876543-210F-EDCB-A987-6543210FEDCB")]
+        [Input(Guid = "1B2C3D4E-5F6A-4789-0123-456789ABCDEF")] // Updated GUID
         public readonly InputSlot<bool> SendTrigger = new();
 
-        [Input(Guid = "87654321-0FED-CBA9-8765-43210FEDCBA9")]
+        [Input(Guid = "3C4D5E6F-7A8B-4901-2345-67890ABCDEF1")] // Updated GUID
         public readonly InputSlot<bool> PrintToLog = new();
 
         private class TcpClientSocket : IDisposable
         {
             private System.Net.Sockets.TcpClient? _client;
             private NetworkStream? _stream;
-            private readonly object _streamLock = new();
+            private readonly object _streamLock = new(); // Used for stream access synchronization
 
             public bool IsConnected => _client?.Connected ?? false;
 
             public async Task ConnectAsync(string host, int port, CancellationToken ct)
             {
                 _client = new System.Net.Sockets.TcpClient();
-                await _client.ConnectAsync(host, port);
+                await _client.ConnectAsync(host, port); // This is an awaitable call
                 _stream = _client.GetStream();
             }
 
             public async Task<int> ReceiveAsync(byte[] buffer, CancellationToken ct)
             {
-                lock (_streamLock)
+                NetworkStream? currentStream;
+                lock (_streamLock) // Lock for safe access to _stream
                 {
-                    if (_stream == null) return 0;
+                    currentStream = _stream;
+                    if (currentStream == null) return 0;
                 }
-                return await _stream!.ReadAsync(buffer, 0, buffer.Length, ct);
+                return await currentStream.ReadAsync(buffer, 0, buffer.Length, ct); // This is an awaitable call
             }
 
             public async Task SendAsync(byte[] data, CancellationToken ct)
             {
-                lock (_streamLock)
+                NetworkStream? currentStream;
+                lock (_streamLock) // Lock for safe access to _stream
                 {
-                    if (_stream == null) return;
+                    currentStream = _stream;
+                    if (currentStream == null) return;
                 }
-                await _stream!.WriteAsync(data, 0, data.Length, ct);
+                await currentStream.WriteAsync(data, 0, data.Length, ct); // This is an awaitable call
             }
 
             public void Dispose()
             {
+                // Synchronous disposal of underlying resources.
+                // It's generally safe to dispose of NetworkStream and TcpClient synchronously.
                 _stream?.Dispose();
                 _client?.Dispose();
             }
