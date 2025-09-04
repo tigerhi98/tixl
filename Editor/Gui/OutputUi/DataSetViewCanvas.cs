@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿#nullable enable
+
+using System.Text;
 using ImGuiNET;
 using T3.Core.Animation;
 using T3.Core.DataTypes.DataSet;
@@ -16,7 +18,7 @@ namespace T3.Editor.Gui.OutputUi;
 /// </summary>
 internal sealed class DataSetViewCanvas
 {
-    internal void Draw(DataSet dataSet)
+    internal void Draw(DataSet? dataSet)
     {
         if (dataSet == null)
             return;
@@ -90,7 +92,7 @@ internal sealed class DataSetViewCanvas
                                     (sortedMin, sortedMax) = (sortedMax, sortedMin);
                                 }
 
-                                var eventsInRange = channel.Events.Where(e => e.Time >= sortedMin && e.Time <= sortedMax).ToList();
+                                var eventsInRange = channel.Events.Where(e => e?.Time >= sortedMin && e.Time <= sortedMax).ToList();
                                 foreach (var e in eventsInRange)
                                 {
                                     channel.Events.Remove(e);
@@ -137,7 +139,7 @@ internal sealed class DataSetViewCanvas
                             var maxTimeSlotCount = (int)((sortedMax - sortedMin) / timeResolution);
                             if (maxTimeSlotCount > 0 && channelList.Count > 0)
                             {
-                                var timeSlots = new DataEvent[maxTimeSlotCount, channelList.Count];
+                                var timeSlots = new DataEvent?[maxTimeSlotCount, channelList.Count];
 
                                 for (var channelIndex = 0; channelIndex < channelList.Count; channelIndex++)
                                 {
@@ -150,7 +152,7 @@ internal sealed class DataSetViewCanvas
                                     for (var i = minIndex; i < maxIndex; i++)
                                     {
                                         var e = channel.Events[i];
-                                        var timeSlotIndex = (int)((e.Time - sortedMin) / timeResolution);
+                                        var timeSlotIndex = (int)(((e?.Time ?? 0) - sortedMin) / timeResolution);
                                         if (timeSlotIndex >= 0 && timeSlotIndex < maxTimeSlotCount)
                                             timeSlots[timeSlotIndex, channelIndex] = e;
                                     }
@@ -286,7 +288,6 @@ internal sealed class DataSetViewCanvas
             const int filterRecentEventDuration = 10;
             var dataSetChannels = dataSet.Channels.OrderBy(c => string.Join(".", c.Path));
 
-            _visibleChannelCount = 0;
             _activeEventCount = 0;
             _firstEventTime = double.PositiveInfinity;
             _lastEventTime = double.NegativeInfinity;
@@ -309,7 +310,8 @@ internal sealed class DataSetViewCanvas
                 if (_onlyRecentEvents)
                 {
                     var lastEvent = lastEvent1;
-                    var tooOld = (lastEvent == null || lastEvent.Time < currentTime - filterRecentEventDuration);
+                    
+                    var tooOld = (lastEvent.Time < currentTime - filterRecentEventDuration);
                     if (tooOld)
                         continue;
                 }
@@ -319,8 +321,6 @@ internal sealed class DataSetViewCanvas
                     continue;
 
                 var isActive = _selectedChannels.Count == 0 || _selectedChannels.Contains(channel);
-
-                _visibleChannelCount++;
 
                 if (isActive)
                 {
@@ -362,8 +362,8 @@ internal sealed class DataSetViewCanvas
                 {
                     lock (channel.Events)
                     {
-                        _firstEventTime = Math.Min(_firstEventTime, channel.Events[0].Time);
-                        _lastEventTime = Math.Max(_lastEventTime, channel.Events[^1].Time);
+                        _firstEventTime = Math.Min(_firstEventTime, channel.Events[0]?.Time ?? 0);
+                        _lastEventTime = Math.Max(_lastEventTime, channel.Events[^1]?.Time ?? 0);
                     }
                 }
 
@@ -469,7 +469,10 @@ internal sealed class DataSetViewCanvas
                             var index = (int)fIndex;
 
                             var dataEvent = channel.Events[index];
-                            var msg = dataEvent.Value == null ? "NULL" : dataEvent.Value.ToString();
+                            if (dataEvent == null)
+                                continue;
+                            
+                            var msg = ""+dataEvent.Value;
 
                             float markerYInLayer;
                             var value = float.NaN;
@@ -551,6 +554,7 @@ internal sealed class DataSetViewCanvas
                             }
 
                             // Draw label if enough space
+                            if(msg != null) 
                             {
                                 var shortMsg = msg.Length > 20 ? msg.Substring(0, 20) : msg;
                                 var gapSize = lastX - xStart;
@@ -558,7 +562,7 @@ internal sealed class DataSetViewCanvas
 
                                 if (!string.IsNullOrEmpty(shortMsg) && gapSize > 20)
                                 {
-                                    var fade = MathUtils.RemapAndClamp(gapSize, estimatedWidth - 30, estimatedWidth + 60, 0, 1);
+                                    var fade = gapSize.RemapAndClamp(estimatedWidth - 30, estimatedWidth + 60, 0, 1);
                                     dl2.AddText(Fonts.FontSmall, Fonts.FontSmall.FontSize,
                                                 new Vector2(xStart + 8, layerMin.Y + 3),
                                                 randomChannelColor.Fade(0.6f * fade), shortMsg);
@@ -649,7 +653,6 @@ internal sealed class DataSetViewCanvas
     private readonly HashSet<DataChannel> _selectedChannels = new();
     private readonly Dictionary<int, ValueRange> _channelValueRanges = new();
 
-    private int _visibleChannelCount;
     private int _activeEventCount;
 
     private bool _onlyRecentEvents = true;

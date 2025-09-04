@@ -1,4 +1,6 @@
-﻿using System;
+﻿#nullable enable
+
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -12,7 +14,7 @@ namespace T3.Core.DataTypes.DataSet;
 /// <summary>
 /// Defines a set of <see cref="DataChannel"/> event channels. 
 /// </summary>
-public class DataSet
+public sealed class DataSet
 {
     public List<DataChannel> Channels { get; set; } = new();
 
@@ -25,8 +27,8 @@ public class DataSet
     public void WriteToFile()
     {
         using var sw = new StreamWriter("dataset.json");
-        using var writer = new JsonTextWriter(sw) { Formatting = Formatting.Indented };
-
+        using var writer = new JsonTextWriter(sw);
+        
         writer.Formatting = Formatting.Indented;
         writer.WriteStartObject();
         writer.WritePropertyName("Channels");
@@ -42,9 +44,9 @@ public class DataSet
     }
 }
 
-public class DataChannel
+public sealed class DataChannel
 {
-    public DataChannel(Type type)
+    internal DataChannel(Type type)
     {
         _type = type;
 
@@ -56,23 +58,22 @@ public class DataChannel
         _typeName = typeName;
     }
 
-    public List<string> Path { get; set; }
-    public string Name { get; set; }
-    public List<DataEvent> Events { get; set; } = new(100);
+    public required List<string> Path { get; init; }
+    public List<DataEvent?> Events { get; set; } = new(100);
     private readonly Type _type;
     private readonly string _typeName;
 
-    public DataEvent GetLastEvent()
+    public DataEvent? GetLastEvent()
     {
         {
-            if (Events == null || Events.Count == 0)
+            if (Events.Count == 0)
                 return null;
 
             return Events[^1];
         }
     }
 
-    public void WriteToJson(JsonTextWriter writer)
+    internal void WriteToJson(JsonTextWriter writer)
     {
         if (!TypeValueToJsonConverters.Entries.TryGetValue(_type, out var converter))
         {
@@ -91,7 +92,7 @@ public class DataChannel
             {
                 foreach (var dataEvent in Events.ToList())
                 {
-                    dataEvent.ToJson(converter, writer);
+                    dataEvent?.ToJson(converter, writer);
                 }
             }
 
@@ -119,7 +120,7 @@ public class DataChannel
         {
             var middleIndex = (firstIndex + lastIndex) / 2;
 
-            var delta = Events[middleIndex].Time - time;
+            var delta = (Events[middleIndex]?.Time ?? 0) - time;
 
             if (delta < 0)
                 firstIndex = middleIndex;
@@ -133,11 +134,11 @@ public class DataChannel
 public class DataEvent
 {
     public double Time;
-    public double TimeCode;
+    internal double TimeCode;
 
-    public object Value { get; set; }
+    public required object Value { get; set; }
 
-    public virtual void ToJson(Action<JsonTextWriter, object> converter, JsonTextWriter writer)
+    internal virtual void ToJson(Action<JsonTextWriter, object> converter, JsonTextWriter writer)
     {
         writer.WriteStartObject();
         writer.WriteValue("TimeCode", TimeCode);
@@ -161,13 +162,13 @@ public class DataEvent
     }
 }
 
-public class DataIntervalEvent :DataEvent
+public sealed class DataIntervalEvent :DataEvent
 {
     public double EndTime = double.PositiveInfinity;
     
     public bool IsUnfinished => double.IsInfinity(EndTime);
 
-    public void Finish(double someTime)
+    internal void Finish(double someTime)
     {
         if (!IsUnfinished)
         {
@@ -177,7 +178,7 @@ public class DataIntervalEvent :DataEvent
         EndTime = someTime;
     }
 
-    public override void ToJson(Action<JsonTextWriter, object> converter, JsonTextWriter writer)
+    internal override void ToJson(Action<JsonTextWriter, object> converter, JsonTextWriter writer)
     {
         writer.WriteStartObject();
         writer.WriteValue("TimeCode", TimeCode);
