@@ -27,7 +27,7 @@ internal static partial class ProjectSetup
 
     public static string ToBasicVersionString(this Version versionPrefix)
     {
-        return $"{versionPrefix.Major}.{versionPrefix.Minor}.{versionPrefix.Build}";
+        return $"{versionPrefix.Major}.{versionPrefix.Minor}.{versionPrefix.Build}.{versionPrefix.Revision}";
     }
     
     private static void SetEnvironmentVariable(string envVar, string envValue)
