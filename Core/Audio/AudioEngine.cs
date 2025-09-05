@@ -118,6 +118,8 @@ public static class AudioEngine
     {
         var dataFlags = (int)DataFlags.FFT2048; // This will return 1024 values
         
+        int waveSamples = 2048;
+
         // Do not advance playback if we are not in live mode
         if (playback.IsRenderingToFile)
         {
@@ -129,6 +131,11 @@ public static class AudioEngine
         if (playback.Settings is { AudioSource: PlaybackSettings.AudioSources.ProjectSoundTrack })
         {
             _ = Bass.ChannelGetData(soundStreamHandle, AudioAnalysis.FftGainBuffer, dataFlags);
+            var waveResultCode = Bass.ChannelGetData(soundStreamHandle, TempWaveform,  (AudioAnalysis.WaveSamples << 2) << 1);
+            if (waveResultCode > 0)
+            {
+                AudioAnalysis.setWaveformData(TempWaveform);
+            }
         }
     }
 
@@ -159,4 +166,5 @@ public static class AudioEngine
 
     // reused list to avoid allocations
     private static readonly List<AudioClipResourceHandle> _obsoleteHandles = [];
+    private static float[] TempWaveform = new float[AudioAnalysis.WaveSamples << 1];
 }

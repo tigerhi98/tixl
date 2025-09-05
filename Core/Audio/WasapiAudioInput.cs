@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ManagedBass;
 using ManagedBass.Wasapi;
@@ -172,6 +173,9 @@ public static class WasapiAudioInput
         LastUpdateTime = time;
 
         var resultCode = BassWasapi.GetData(AudioAnalysis.FftGainBuffer, (int)(AudioAnalysis.BassFlagForFftBufferSize | DataFlags.FFTRemoveDC));
+        var waveResultCode = BassWasapi.GetData(TempWaveform,  (AudioAnalysis.WaveSamples << 2) << 1);
+        if(waveResultCode > 0) AudioAnalysis.setWaveformData(TempWaveform);
+
         _failedToGetLastFffData = resultCode < 0;
         if (_failedToGetLastFffData)
         {
@@ -219,4 +223,6 @@ public static class WasapiAudioInput
     /// This is only used of the gain meter in the playback settings dialog.
     /// </summary>
     public static float DecayingAudioLevel => (float)(_lastAudioLevel / Math.Max(1, (Playback.RunTimeInSecs - LastUpdateTime) * 100));
+
+    private static float[] TempWaveform = new float[AudioAnalysis.WaveSamples << 1];
 }

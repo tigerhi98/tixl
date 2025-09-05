@@ -189,6 +189,8 @@ public static class AudioAnalysis
     /// Result of the fft analysis in gain
     /// </summary>
     public static readonly float[] FftGainBuffer = new float[FftBufferSize];
+    public static readonly float[] WaveformLeftBuffer = new float[FftBufferSize];
+    public static readonly float[] WaveformRightBuffer = new float[FftBufferSize];
 
     /// <summary>
     /// Result of the fft analysis converted to db and mapped to a normalized range   
@@ -197,4 +199,16 @@ public static class AudioAnalysis
 
     internal const DataFlags BassFlagForFftBufferSize = DataFlags.FFT2048;
     internal const int FftBufferSize = 1024; // For Bass DataFlags.FFT2024
+    public const int WaveSamples = 1024;
+
+    public static void setWaveformData(float[] IN)
+    {
+        int idx = 0;
+        for (int it = 0; it < IN.Length;)
+        {
+            WaveformLeftBuffer[idx] = IN[it++];
+            WaveformRightBuffer[idx] = IN[it++];
+            idx += 1;
+        }
+    }
 }
