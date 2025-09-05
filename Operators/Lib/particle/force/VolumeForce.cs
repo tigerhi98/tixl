@@ -1,4 +1,4 @@
-namespace Lib.point.particle.force;
+namespace Lib.particle.force;
 
 [Guid("fbe1a703-f372-4236-9f20-5d0b69183843")]
 internal sealed class VolumeForce : Instance<VolumeForce>

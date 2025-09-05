@@ -1,6 +1,6 @@
 using T3.Core.DataTypes.ShaderGraph;
 
-namespace Lib.point.particle.force;
+namespace Lib.particle.force;
 
 [Guid("42394232-51fa-4e75-851b-c2bca39de71a")]
 internal sealed class FieldDistanceForce : Instance<FieldDistanceForce>

@@ -1,4 +1,4 @@
-namespace Lib.point.particle.force;
+namespace Lib.particle.force;
 
 [Guid("0f1bf849-949e-4462-a7af-ecb2ff3cd109")]
 internal sealed class DirectionalForce : Instance<DirectionalForce>

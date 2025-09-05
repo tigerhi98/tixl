@@ -1,4 +1,4 @@
-namespace Lib.point.particle.force;
+namespace Lib.particle.force;
 
 [Guid("543a97fb-8319-4767-a248-d0662d2e8781")]
 internal sealed class VerletRibbonForce : Instance<VerletRibbonForce>
