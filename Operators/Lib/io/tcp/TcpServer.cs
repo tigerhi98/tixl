@@ -1,19 +1,7 @@
 #nullable enable
-using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation; // Added for NetworkInterface
 using System.Net.Sockets;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using T3.Core.Logging;
-using T3.Core.Operator;
-using T3.Core.Operator.Attributes;
-using T3.Core.Operator.Slots;
-using T3.Core.Utils;
 
 namespace Lib.io.tcp
 {
@@ -98,7 +86,7 @@ namespace Lib.io.tcp
         {
             if (_listener != null) return;
 
-            IPAddress listenIp = IPAddress.Any; // Initialize to avoid CS8600
+            IPAddress? listenIp; // Initialize to avoid CS8600
             if (string.IsNullOrEmpty(localIpAddress) || localIpAddress == "0.0.0.0 (Any)")
             {
                 listenIp = IPAddress.Any;
@@ -191,7 +179,8 @@ namespace Lib.io.tcp
             var buffer = new byte[8192];
             try
             {
-                using var stream = client.GetStream();
+                await using var stream = client.GetStream();
+                
                 // Capture CancellationTokenSource outside the loop
                 var cts = _cancellationTokenSource;
                 if (cts == null) return;
@@ -342,7 +331,7 @@ namespace Lib.io.tcp
 
         #region ICustomDropdownHolder Implementation
         string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
-        IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id ? GetLocalIPv4Addresses() : Enumerable.Empty<string>();
+        IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id ? GetLocalIPv4Addresses() : [];
         void ICustomDropdownHolder.HandleResultForInput(Guid id, string? s, bool i)
         {
             if (string.IsNullOrEmpty(s) || !i || id != LocalIpAddress.Id) return;

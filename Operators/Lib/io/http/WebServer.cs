@@ -1,16 +1,6 @@
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using T3.Core.Logging;
-using T3.Core.Operator;
-using T3.Core.Operator.Attributes;
-using T3.Core.Operator.Slots;
 
 namespace Lib.io.http;
 
@@ -88,23 +78,21 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, ICustomD
     #region Server Control Logic
     private void StartServer(string? localIpAddress, int port)
     {
-        IPAddress listenIp;
         string prefixHost;
 
         // Determine the IP address to listen on
         if (string.IsNullOrEmpty(localIpAddress) || localIpAddress == "0.0.0.0 (Any)")
         {
-            listenIp = IPAddress.Any;
             prefixHost = "+"; // Use '+' for HttpListener to listen on all interfaces
         }
-        else if (!IPAddress.TryParse(localIpAddress, out listenIp))
+        else if (!IPAddress.TryParse(localIpAddress, out _))
         {
             SetStatus($"Invalid Local IP '{localIpAddress}'. Defaulting to listen on all interfaces.", IStatusProvider.StatusLevel.Warning);
             if (_printToLog)
             {
                 Log.Warning($"WebServer: Invalid Local IP '{localIpAddress}', defaulting to listen on all interfaces.", this);
             }
-            listenIp = IPAddress.Any;
+
             prefixHost = "+";
         }
         else
@@ -204,25 +192,25 @@ internal sealed class WebServer : Instance<WebServer>, IStatusProvider, ICustomD
 
     private async Task HandleRequestAsync(HttpListenerContext context)
     {
-        HttpListenerRequest request = context.Request;
-        HttpListenerResponse response = context.Response;
+        var request = context.Request;
+        var response = context.Response;
 
+        var urlPath = "/"; // Initialize to a non-null default
         try
         {
             if (_printToLog) Log.Debug($"WebServer received request for '{request.Url?.AbsolutePath}' from {request.RemoteEndPoint}", this);
 
             // FIX for CS8600: Explicitly handle null for request.Url before accessing AbsolutePath
-            string urlPath = "/"; // Initialize to a non-null default
             if (request.Url != null)
             {
-                urlPath = request.Url.AbsolutePath ?? "/"; // Assign after confirming request.Url is not null
+                urlPath = request.Url.AbsolutePath; // Assign after confirming request.Url is not null
             }
 
             // Serve the HTML content for the root path
             if (string.IsNullOrEmpty(urlPath) || urlPath == "/")
             {
                 // Get the current HTML content from the stored variable
-                string htmlToServe = _lastHtmlContent ?? "<html><body><h1>No HTML content provided.</h1></body></html>";
+                var htmlToServe = _lastHtmlContent ?? "<html><body><h1>No HTML content provided.</h1></body></html>";
 
                 byte[] buffer = Encoding.UTF8.GetBytes(htmlToServe);
                 response.ContentType = "text/html";
