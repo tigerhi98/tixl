@@ -1,4 +1,4 @@
-namespace Lib.point.particle;
+namespace Lib.particle;
 
 [Guid("e44ae9b6-cd56-4224-8a5d-118eda4cd3f4")]
 internal sealed class ParticleSystem : Instance<ParticleSystem>
