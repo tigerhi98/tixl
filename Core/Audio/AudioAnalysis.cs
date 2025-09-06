@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using ManagedBass;
 using T3.Core.Utils;
@@ -11,6 +11,72 @@ namespace T3.Core.Audio;
 /// </summary>
 public static class AudioAnalysis
 {
+    // Filter state variables for IIR filters (maintains continuity between frames)
+    private static float _lowFilter_y1 = 0f, _lowFilter_x1 = 0f;
+    private static float _midHighPass_y1 = 0f, _midHighPass_x1 = 0f;
+    private static float _midLowPass_y1 = 0f, _midLowPass_x1 = 0f;
+    private static float _highFilter_y1 = 0f, _highFilter_x1 = 0f;
+
+    // Improved filter coefficients (calculated once)
+    private static readonly FilterCoefficients _lowPassCoeffs = CalculateLowPassCoeffs(250f);
+    private static readonly FilterCoefficients _midHighPassCoeffs = CalculateHighPassCoeffs(250f);
+    private static readonly FilterCoefficients _midLowPassCoeffs = CalculateLowPassCoeffs(2000f);
+    private static readonly FilterCoefficients _highPassCoeffs = CalculateHighPassCoeffs(2000f);
+
+    private struct FilterCoefficients
+    {
+        public float A, B;
+
+        public FilterCoefficients(float a, float b)
+        {
+            A = a;
+            B = b;
+        }
+    }
+
+    private static FilterCoefficients CalculateLowPassCoeffs(float cutoffFreq)
+    {
+        const float sampleRate = 48000f;
+        float rc = 1.0f / (2.0f * MathF.PI * cutoffFreq);
+        float dt = 1.0f / sampleRate;
+        float alpha = dt / (rc + dt);
+        return new FilterCoefficients(alpha, 1.0f - alpha);
+    }
+
+    private static FilterCoefficients CalculateHighPassCoeffs(float cutoffFreq)
+    {
+        const float sampleRate = 48000f;
+        float rc = 1.0f / (2.0f * MathF.PI * cutoffFreq);
+        float dt = 1.0f / sampleRate;
+        float alpha = rc / (rc + dt);
+        return new FilterCoefficients(alpha, alpha);
+    }
+
+    // More efficient single-pole IIR filters with state preservation
+    private static void ApplyLowPassFilterImproved(float[] input, float[] output, FilterCoefficients coeffs, ref float y1, ref float x1)
+    {
+        for (int i = 0; i < input.Length; i++)
+        {
+            output[i] = coeffs.A * input[i] + coeffs.B * y1;
+            y1 = output[i];
+        }
+    }
+
+    private static void ApplyHighPassFilterImproved(float[] input, float[] output, FilterCoefficients coeffs, ref float y1, ref float x1)
+    {
+        for (int i = 0; i < input.Length; i++)
+        {
+            output[i] = coeffs.A * (y1 + input[i] - x1);
+            y1 = output[i];
+            x1 = input[i];
+        }
+    }
+
+    private static readonly float[] _lowFilterBuffer = new float[WaveSamples];
+    private static readonly float[] _midFilterBuffer = new float[WaveSamples];
+    private static readonly float[] _highFilterBuffer = new float[WaveSamples];
+    private static readonly float[] _tempBuffer = new float[WaveSamples]; // Reusable temp buffer
+
     internal static void ProcessUpdate(float gainFactor = 1f, float decayFactor = 0.9f)
     {
         var lastTargetIndex = -1;
@@ -40,7 +106,7 @@ public static class AudioAnalysis
         }
 
         UpdateSlidingWindowAverages();
-        
+
         lock (FrequencyBandPeaks)
         {
             // Update Peaks
@@ -54,15 +120,15 @@ public static class AudioAnalysis
                     var currentValue = FrequencyBands[bandIndex];
                     var newPeak = MathF.Max(decayed, currentValue);
                     FrequencyBandPeaks[bandIndex] = newPeak;
-                    
+
                     const float attackAmplification = 4;
                     var newAttack = (newPeak - lastPeak).Clamp(0, 10000) * attackAmplification;
                     var lastAttackDecayed = FrequencyBandAttacks[bandIndex] * decayFactor;
-                    FrequencyBandAttacks[bandIndex] =  MathF.Max(newAttack, lastAttackDecayed);
+                    FrequencyBandAttacks[bandIndex] = MathF.Max(newAttack, lastAttackDecayed);
                 }
-                
+
                 FrequencyBandAttackPeaks[bandIndex] = MathF.Max(FrequencyBandAttackPeaks[bandIndex] * 0.995f, FrequencyBandAttacks[bandIndex]);
-                
+
                 // Compute onsets for BeatSynchronization
                 {
                     var lastValue = _frequencyBandsPrevious[bandIndex];
@@ -104,14 +170,14 @@ public static class AudioAnalysis
                     bandIndex = i - 1;
                     break;
                 default:
-                {
-                    var octave = MathF.Log2(freq / lowestBandFrequency);
-                    var octaveNormalized = octave / maxOctave;
-                    bandIndex = (int)(octaveNormalized * FrequencyBandCount);
-                    if (bandIndex >= FrequencyBandCount)
-                        bandIndex = NoBandIndex;
-                    break;
-                }
+                    {
+                        var octave = MathF.Log2(freq / lowestBandFrequency);
+                        var octaveNormalized = octave / maxOctave;
+                        bandIndex = (int)(octaveNormalized * FrequencyBandCount);
+                        if (bandIndex >= FrequencyBandCount)
+                            bandIndex = NoBandIndex;
+                        break;
+                    }
             }
 
             r[i] = bandIndex;
@@ -121,7 +187,7 @@ public static class AudioAnalysis
     }
 
     #region compute sliding window average for bins
-    
+
     private static Queue<float>[] InitHistoryBuffers()
     {
         var r = new Queue<float>[FrequencyBandCount];
@@ -135,8 +201,8 @@ public static class AudioAnalysis
 
     //private const float AudioUpdatesPerFrame = (float)(60000.0 / 48000);
     private const float EstimatedAudioUpdatePeriod = 0.003f; // roughly 4 sec
-    private const int FrequencyBandHistoryLength = (int)(1/EstimatedAudioUpdatePeriod);
-    
+    private const int FrequencyBandHistoryLength = (int)(1 / EstimatedAudioUpdatePeriod);
+
     private static void UpdateSlidingWindowAverages()
     {
         for (var i = 0; i < FrequencyBandCount; i++)
@@ -159,13 +225,13 @@ public static class AudioAnalysis
             _frequencyBandAverages[i] = averageStrength;
         }
     }
-    
+
     private static readonly Queue<float>[] _frequencyBandHistories = InitHistoryBuffers();
     private static readonly float[] _bandStrengthSums = new float[FrequencyBandHistoryLength];
     private static readonly float[] _frequencyBandAverages = new float[FrequencyBandHistoryLength];
     #endregion
 
-    
+
     private static readonly int[] _bandIndexForFftBinIndices = InitializeBandsLookupsTable();
     private const int NoBandIndex = -1;
 
@@ -177,20 +243,26 @@ public static class AudioAnalysis
 
     private static readonly float[] _frequencyBandsPrevious = new float[FrequencyBandCount];
     public static readonly float[] FrequencyBandAttackPeaks = new float[FrequencyBandCount];
-    
+
     /// <summary>
     /// Used by  BeatSynchronization
     /// </summary>
     public static readonly float[] FrequencyBandOnSets = new float[FrequencyBandCount];
 
-
-
     /// <summary>
     /// Result of the fft analysis in gain
     /// </summary>
     public static readonly float[] FftGainBuffer = new float[FftBufferSize];
+
+    /// <summary>
+    /// Result of the waveform analysis
+    /// </summary>
     public static readonly float[] WaveformLeftBuffer = new float[FftBufferSize];
     public static readonly float[] WaveformRightBuffer = new float[FftBufferSize];
+
+    public static readonly float[] WaveformLowBuffer = new float[WaveSamples];
+    public static readonly float[] WaveformMidBuffer = new float[WaveSamples];
+    public static readonly float[] WaveformHighBuffer = new float[WaveSamples];
 
     /// <summary>
     /// Result of the fft analysis converted to db and mapped to a normalized range   
@@ -210,5 +282,28 @@ public static class AudioAnalysis
             WaveformRightBuffer[idx] = IN[it++];
             idx += 1;
         }
+
+        // Apply improved filters to create frequency-separated waveforms
+        ProcessFilteredWaveformsImproved();
+    }
+
+    private static void ProcessFilteredWaveformsImproved()
+    {
+        // Create mono mix for filtering (reuse temp buffer)
+        for (int i = 0; i < WaveSamples; i++)
+        {
+            _tempBuffer[i] = (WaveformLeftBuffer[i] + WaveformRightBuffer[i]) * 0.5f;
+        }
+
+        // Apply filters with state preservation for better continuity
+        // Low frequencies: Pure low-pass at 250Hz
+        ApplyLowPassFilterImproved(_tempBuffer, WaveformLowBuffer, _lowPassCoeffs, ref _lowFilter_y1, ref _lowFilter_x1);
+
+        // High frequencies: Pure high-pass at 2000Hz
+        ApplyHighPassFilterImproved(_tempBuffer, WaveformHighBuffer, _highPassCoeffs, ref _highFilter_y1, ref _highFilter_x1);
+
+        // Mid frequencies: High-pass at 250Hz, then low-pass at 2000Hz (band-pass)
+        ApplyHighPassFilterImproved(_tempBuffer, _midFilterBuffer, _midHighPassCoeffs, ref _midHighPass_y1, ref _midHighPass_x1);
+        ApplyLowPassFilterImproved(_midFilterBuffer, WaveformMidBuffer, _midLowPassCoeffs, ref _midLowPass_y1, ref _midLowPass_x1);
     }
 }
