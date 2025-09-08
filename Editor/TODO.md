@@ -28,13 +28,32 @@ next:
 - [x] RadialPoints should have Color parameter
 - [x] Improve RadialPoint parameter pair documentation
 - [x] AnimInt should have OpUi and Modulo parameter
-- [ ] Check if [ForwardBeatTap] is still working
+- [x] Check if [ForwardBeatTap] is still working
 - [x] AnimBool visualization should look less scary if not evaluated yet
 - [x] Fix DrawPointsShaded fadeOutToo close parameter
 - [x] Try to improve searching with Ctrl+F focus into view behaviour
 - [x] fix clamping of rounded numbers in infinity slider
 - [x] Connected parameters names should be renamable
 - [x] Check Gradient interpolation override caching with LinearGradient
+
+
+
+- [ ] Move Types, and T3 to TiXL
+
+TixL
+- Lib
+- T3
+- Types
+- Examples
+  - Pixtur
+  - 1x
+
+<currentUser>
+ - MyProject
+
+
+
+
 
 
 # UI
