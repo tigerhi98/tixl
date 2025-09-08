@@ -543,8 +543,8 @@
     {
       "OutputId": "23bc598c-e87d-4993-9e09-b4676e302e61"/*ColorBuffer*/,
       "Position": {
-        "X": 4292.423,
-        "Y": 110.21326
+        "X": 4287.2764,
+        "Y": 60.215057
       }
     }
   ],
@@ -605,7 +605,7 @@
     },
     {
       "Id": "10deadb1-757b-4c5a-a798-7184a5868feb",
-      "Title": "Tooll also provides possibilities for keyframe animations.\nYou can animate any scalar and vector parameter in the parameter window.\n\nAnimated operators have a small orange \"animation\" tag in the corner, \nlike this one:",
+      "Title": "TiXL also provides possibilities for keyframe animations.\nYou can animate any scalar and vector parameter in the parameter window.\n\nAnimated operators have a small orange \"animation\" tag in the corner, \nlike this one:",
       "Color": {
         "X": 0.6,
         "Y": 0.6,
@@ -623,7 +623,7 @@
     },
     {
       "Id": "1e8fabb8-c4ff-42e8-bf8a-a8063a46a54b",
-      "Title": "# Tooll is all about animation, so there are endless possibilities for it. This playground shows some examples. \nTry to select the operators at the end of each graph and play with them.\n\n(please activate the Idle Motion mode in the time controls)",
+      "Title": "# TiXL is all about animation, so there are endless possibilities for it. This playground shows some examples. \nTry to select the operators at the end of each graph and play with them.\n\n(please activate the Idle Motion mode in the time controls)",
       "Color": {
         "X": 0.6,
         "Y": 0.6,
@@ -713,7 +713,7 @@
     },
     {
       "Id": "61c00d70-55f1-496d-ab8b-d75387a440e6",
-      "Title": "Using time. Notice that Tooll's time is not in secs but in musical bars -\n4 beats is 1 bar. 4 bars form a measure. This means that your animation\nwill work for all BPM rates!\n\n\n",
+      "Title": "Using time. Notice that TiXL's time is not in secs but in musical bars -\n4 beats is 1 bar. 4 bars form a measure. This means that your animation\nwill work for all BPM rates!\n\n\n",
       "Color": {
         "X": 0.6,
         "Y": 0.6,
