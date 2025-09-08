@@ -682,7 +682,7 @@
     },
     {
       "Id": "9fc74122-1bcb-42fd-aab5-70a85494da34",
-      "Title": "Tooll is all about drawing (or \"rendering\") realtime content. \nThis playground will give you an introduction. ",
+      "Title": "TiXL is all about drawing (or \"rendering\") realtime content. \nThis playground will give you an introduction. ",
       "Label": "Drawing things...",
       "Color": {
         "X": 0.5847738,
@@ -754,6 +754,25 @@
       "Size": {
         "X": 525.0,
         "Y": 490.0
+      }
+    },
+    {
+      "Id": "f1bf5b85-aca6-4383-84b8-c5b5705b68ea",
+      "Title": "The implementation of drop shadows in TiXL is still somewhat experimental at this time, but it is functional and performs well on a small scale.",
+      "Label": "Drawing things with shadows",
+      "Color": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0,
+        "W": 1.0
+      },
+      "Position": {
+        "X": -2100.0,
+        "Y": 665.03
+      },
+      "Size": {
+        "X": 1575.0,
+        "Y": 125.52081
       }
     },
     {
