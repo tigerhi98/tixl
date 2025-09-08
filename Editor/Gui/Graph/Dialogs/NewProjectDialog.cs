@@ -84,9 +84,13 @@ internal sealed class NewProjectDialog : ModalDialog
             ImGui.TextColored(allValid ? UiColors.TextMuted : UiColors.StatusError, fullName);
             
                 
-            FormInputs.AddCheckBox("Share Resources", ref _shareResources, "Enabling this allows anyone with this package to reference shaders, " +
-                                                                           "images, and other resources that belong to this package in other projects.\n" +
-                                                                           "It is recommended that you leave this option enabled.");
+            FormInputs.AddCheckBox("Share Resources", ref _shareResources, 
+                                   """
+                                   Enabling this allows anyone with this package to reference shaders, 
+                                   images, and other resources that belong to this package in other projects.
+                                   
+                                   It is recommended that you leave this option enabled.
+                                   """);
 
             if (_shareResources == false)
             {
@@ -109,9 +113,11 @@ internal sealed class NewProjectDialog : ModalDialog
                 }
                 else
                 {
-                    var message = $"Failed to create project \"{_newProjectName}\" in \"{_newSubNamespace}\".\n\n" +
-                                  "This should never happen - please file a bug report.\n" +
-                                  "Currently this error is unhandled, so you will want to manually delete the project from disk.";
+                    var message = $"""
+                                   Failed to create project "{_newProjectName}" in "{_newSubNamespace}".
+                                   This should never happen - please file a bug report.
+                                   Currently this error is unhandled, so you will want to manually delete the project from disk.
+                                   """;
                         
                     Log.Error(message);
                     BlockingWindow.Instance.ShowMessageBox(message, "Failed to create new project");
@@ -123,10 +129,15 @@ internal sealed class NewProjectDialog : ModalDialog
             {
                 ImGui.CloseCurrentPopup();
             }
-                
+
+            
             FormInputs.SetIndentToLeft();
-            FormInputs.AddHint("Creates a new project. Projects are used to group operators and resources. " +
-                               "You can find your project in \\Documents\\T3Projects\\");
+            var projectFolder = System.IO.Path.Combine(UserSettings.Config.ProjectsFolder, _newProjectName);
+            FormInputs.AddHint($"""
+                                Creates a new project. Projects are used to group operators and resources. 
+                                You can find your project in "{projectFolder}".
+                                """); 
+
                 
             FormInputs.SetIndentToParameters();                
 
