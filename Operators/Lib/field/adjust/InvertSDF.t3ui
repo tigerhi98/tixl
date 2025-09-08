@@ -1,6 +1,6 @@
 {
   "Id": "0707a816-d118-4419-84d6-7bdcbeee318d"/*InvertSDF*/,
-  "Description": "",
+  "Description": "Inverts the incoming SDF field.\nExample: A cube in infinite empty space thus becomes a cut-out space in infinite matter.\n\nHelpful combination: [CombineSDF] ",
   "InputUis": [
     {
       "InputId": "532b4f4f-59b3-4f1d-8bca-f61c3e6a9e16"/*InputField*/,
