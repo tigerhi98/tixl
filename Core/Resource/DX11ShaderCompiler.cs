@@ -20,6 +20,7 @@ namespace T3.Core.Resource;
 /// <summary>
 /// An implementation of the <see cref="ShaderCompiler"/> class that uses the DirectX 11 shader compiler from SharpDX
 /// </summary>
+// ReSharper disable once InconsistentNaming
 public sealed partial class DX11ShaderCompiler : ShaderCompiler
 {
     public Device Device { get; set; }
@@ -29,7 +30,7 @@ public sealed partial class DX11ShaderCompiler : ShaderCompiler
         CompilationResult compilationResult = null;
         string resultMessage;
         bool success;
-        var profile = ShaderProfiles[typeof(TShader)];
+        var profile = _shaderProfiles[typeof(TShader)];
         try
         {
             ShaderFlags flags = ShaderFlags.None;
@@ -78,7 +79,7 @@ public sealed partial class DX11ShaderCompiler : ShaderCompiler
         // As shader type is generic we've to use Activator and PropertyInfo to create/set the shader object
         var shaderType = typeof(TShader);
 
-        shader = (TShader)ShaderConstructors[shaderType].Invoke(Device, blob);
+        shader = (TShader)_shaderConstructors[shaderType].Invoke(Device, blob);
         
         var debugNameInfo = shaderType.GetProperty("DebugName");
         debugNameInfo?.SetValue(shader, name);
@@ -105,7 +106,7 @@ public sealed partial class DX11ShaderCompiler : ShaderCompiler
     [GeneratedRegex(@"(.*?)\((.*)\):(.*)")]
     private static partial Regex ShaderErrorPatternRegex();
 
-    private static readonly IReadOnlyDictionary<Type, Func<Device, byte[], AbstractShader> > ShaderConstructors = new Dictionary<Type, Func<Device, byte[], AbstractShader>>()
+    private static readonly IReadOnlyDictionary<Type, Func<Device, byte[], AbstractShader> > _shaderConstructors = new Dictionary<Type, Func<Device, byte[], AbstractShader>>()
                                                                                    {
                                                                                        { typeof(T3.Core.DataTypes.VertexShader), (device, data) => new DataTypes.VertexShader(new VertexShader(device, data, null), data) },
                                                                                        { typeof(T3.Core.DataTypes.PixelShader), (device, data) => new DataTypes.PixelShader(new PixelShader(device, data, null), data) },
@@ -113,7 +114,7 @@ public sealed partial class DX11ShaderCompiler : ShaderCompiler
                                                                                        { typeof(T3.Core.DataTypes.GeometryShader), (device, data) => new DataTypes.GeometryShader(new GeometryShader(device, data, null), data) },
                                                                                    };
     
-    private static readonly IReadOnlyDictionary<Type, string> ShaderProfiles = new Dictionary<Type, string>()
+    private static readonly IReadOnlyDictionary<Type, string> _shaderProfiles = new Dictionary<Type, string>()
                                                                                    {
                                                                                        { typeof(T3.Core.DataTypes.VertexShader), "vs_5_0" },
                                                                                        { typeof(T3.Core.DataTypes.PixelShader), "ps_5_0" },
