@@ -239,7 +239,7 @@
     {
       "ChildId": "787be188-3863-47b0-a2c4-fa123903e814"/*TorusMesh*/,
       "Position": {
-        "X": -1890.9462,
+        "X": -1907.5249,
         "Y": 316.52582
       }
     },
@@ -695,8 +695,8 @@
         "Y": 1157.3247
       },
       "Size": {
-        "X": 994.79694,
-        "Y": 288.01804
+        "X": 995.57806,
+        "Y": 347.6753
       }
     },
     {
@@ -791,7 +791,7 @@
     },
     {
       "Id": "f2ae8a9c-8d73-4698-9e04-e8fab0ac2797",
-      "Title": "Everything in T3 is made out of operators. These operators can be structured into the following categories.",
+      "Title": "Everything in TiXL is made out of operators. These operators can be structured into the following categories.",
       "Color": {
         "X": 0.6,
         "Y": 0.6,
