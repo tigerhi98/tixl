@@ -1,7 +1,7 @@
 namespace Lib.point.generate;
 
 [Guid("780edb20-f83f-494c-ab17-7015e2311250")]
-internal sealed class RepeatAtGPoints : Instance<RepeatAtGPoints>
+internal sealed class RepeatAtPoints : Instance<RepeatAtPoints>
 {
 
     [Output(Guid = "3ac76b2a-7b1c-4762-a3f6-50529cd42fa8")]
