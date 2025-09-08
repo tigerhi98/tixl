@@ -1,6 +1,6 @@
 {
-  "Id": "780edb20-f83f-494c-ab17-7015e2311250"/*RepeatAtGPoints*/,
-  "Description": "Repeats a list of GPU points at positions provided by another list of points. The orientation of the target points can be applied, so this operator can be used to create point instantiation.\n\nIf the ApplyTargetScaleW parameter is activated, the W attribute of the target points is used as a scale factor.",
+  "Id": "780edb20-f83f-494c-ab17-7015e2311250"/*RepeatAtPoints*/,
+  "Description": "Repeats a list of GPU points at positions provided by another list of points. The orientation of the target points can be applied, so this operator can be used to create point instantiation.\n\nIf the ApplyTargetScaleW parameter is activated, the W attribute of the target points is used as a scale factor.\n\nUseful combinations: [CommonPointSets] [DrawLines] [DrawPoints]",
   "SymbolTags": "1",
   "InputUis": [
     {
@@ -17,7 +17,8 @@
       "Position": {
         "X": -887.99097,
         "Y": 1247.366
-      }
+      },
+      "Description": "Defines what set of points is being distributed"
     },
     {
       "InputId": "5247aeb2-7e69-4ff3-b432-77319f9b2467"/*SetF1To*/,
@@ -69,7 +70,8 @@
       "Position": {
         "X": -897.46545,
         "Y": 1411.7963
-      }
+      },
+      "Description": "The incoming points define the position at which other points will be distributed"
     },
     {
       "InputId": "f15a003c-7969-4505-b598-6c6c4b5a3bbe"/*ApplyOrientation*/,
