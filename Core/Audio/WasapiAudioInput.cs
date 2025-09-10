@@ -140,7 +140,7 @@ public static class WasapiAudioInput
         
     private static void InitializeInputDeviceList()
     {
-        _inputDevices = new List<WasapiInputDevice>();
+        _inputDevices = [];
 
         // Keep in local variable to avoid double evaluation
         var deviceCount = BassWasapi.DeviceCount;
@@ -172,10 +172,14 @@ public static class WasapiAudioInput
         TimeSinceLastUpdate = time - LastUpdateTime;
         LastUpdateTime = time;
 
+        if (WaveFormProcessing.RequestedOnce)
+        {
+            var sizeInBytes = WaveFormProcessing.WaveSampleCount << 2 << 1;
+            WaveFormProcessing.LastFetchResultCode = BassWasapi.GetData(WaveFormProcessing.InterleavenSampleBuffer,  
+                                                                        sizeInBytes);
+        }
+        
         var resultCode = BassWasapi.GetData(AudioAnalysis.FftGainBuffer, (int)(AudioAnalysis.BassFlagForFftBufferSize | DataFlags.FFTRemoveDC));
-        var waveResultCode = BassWasapi.GetData(TempWaveform,  (AudioAnalysis.WaveSamples << 2) << 1);
-        if(waveResultCode > 0) AudioAnalysis.SetWaveformData(TempWaveform);
-
         _failedToGetLastFffData = resultCode < 0;
         if (_failedToGetLastFffData)
         {
@@ -211,9 +215,9 @@ public static class WasapiAudioInput
     }
 
     private static List<WasapiInputDevice> _inputDevices;
-    private static readonly float[] _fftIntermediate = new float[AudioAnalysis.FftBufferSize];
-    public static double TimeSinceLastUpdate;
-    public static double LastUpdateTime;
+    internal static double TimeSinceLastUpdate;
+    internal static double LastUpdateTime;
+    //private static readonly float[] _fftIntermediate = new float[AudioAnalysis.FftBufferSize];
     internal static long SampleRate = 48000;
 
     public static string ActiveInputDeviceName { get; private set; }
@@ -223,6 +227,4 @@ public static class WasapiAudioInput
     /// This is only used of the gain meter in the playback settings dialog.
     /// </summary>
     public static float DecayingAudioLevel => (float)(_lastAudioLevel / Math.Max(1, (Playback.RunTimeInSecs - LastUpdateTime) * 100));
-
-    private static float[] TempWaveform = new float[AudioAnalysis.WaveSamples << 1];
 }

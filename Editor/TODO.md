@@ -37,6 +37,7 @@ next:
 - [x] Check Gradient interpolation override caching with LinearGradient
 
 
+
 # UI
 
 - add color preview to vec4 (and maybe a history gradient?)

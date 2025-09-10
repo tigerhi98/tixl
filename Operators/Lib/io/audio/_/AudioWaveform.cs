@@ -21,6 +21,7 @@ internal sealed class AudioWaveform : Instance<AudioWaveform>
     
     [Output(Guid = "6BBCA7C1-822F-41E2-B821-BEA066CB5AF3", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
     public readonly Slot<List<float>> High = new();
+    
     public AudioWaveform()
     {
         Left.UpdateAction = Update;
@@ -32,14 +33,12 @@ internal sealed class AudioWaveform : Instance<AudioWaveform>
 
     private void Update(EvaluationContext context)
     {
-        Left.Value  =  AudioAnalysis.WaveformLeftBuffer.ToList();
-        Right.Value = AudioAnalysis.WaveformRightBuffer.ToList();
-        Low.Value = AudioAnalysis.WaveformLowBuffer.ToList();
-        Mid.Value = AudioAnalysis.WaveformMidBuffer.ToList();
-        High.Value   = AudioAnalysis.WaveformHighBuffer.ToList();
-    }
-    /*private void UpdateRight(EvaluationContext context)
-    {
+        WaveFormProcessing.UpdateWaveformData();
         
-    }*/
+        Left.Value  =  WaveFormProcessing.WaveformLeftBuffer.ToList();
+        Right.Value = WaveFormProcessing.WaveformRightBuffer.ToList();
+        Low.Value = WaveFormProcessing.WaveformLowBuffer.ToList();
+        Mid.Value = WaveFormProcessing.WaveformMidBuffer.ToList();
+        High.Value   = WaveFormProcessing.WaveformHighBuffer.ToList();
+    }
 }
