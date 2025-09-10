@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using ManagedBass;
 using ManagedBass.Wasapi;
@@ -139,7 +140,7 @@ public static class WasapiAudioInput
         
     private static void InitializeInputDeviceList()
     {
-        _inputDevices = new List<WasapiInputDevice>();
+        _inputDevices = [];
 
         // Keep in local variable to avoid double evaluation
         var deviceCount = BassWasapi.DeviceCount;
@@ -171,6 +172,13 @@ public static class WasapiAudioInput
         TimeSinceLastUpdate = time - LastUpdateTime;
         LastUpdateTime = time;
 
+        if (WaveFormProcessing.RequestedOnce)
+        {
+            var sizeInBytes = WaveFormProcessing.WaveSampleCount << 2 << 1;
+            WaveFormProcessing.LastFetchResultCode = BassWasapi.GetData(WaveFormProcessing.InterleavenSampleBuffer,  
+                                                                        sizeInBytes);
+        }
+        
         var resultCode = BassWasapi.GetData(AudioAnalysis.FftGainBuffer, (int)(AudioAnalysis.BassFlagForFftBufferSize | DataFlags.FFTRemoveDC));
         _failedToGetLastFffData = resultCode < 0;
         if (_failedToGetLastFffData)
@@ -207,9 +215,9 @@ public static class WasapiAudioInput
     }
 
     private static List<WasapiInputDevice> _inputDevices;
-    private static readonly float[] _fftIntermediate = new float[AudioAnalysis.FftBufferSize];
-    public static double TimeSinceLastUpdate;
-    public static double LastUpdateTime;
+    internal static double TimeSinceLastUpdate;
+    internal static double LastUpdateTime;
+    //private static readonly float[] _fftIntermediate = new float[AudioAnalysis.FftBufferSize];
     internal static long SampleRate = 48000;
 
     public static string ActiveInputDeviceName { get; private set; }

@@ -118,6 +118,7 @@ public static class AudioEngine
     {
         var dataFlags = (int)DataFlags.FFT2048; // This will return 1024 values
         
+        
         // Do not advance playback if we are not in live mode
         if (playback.IsRenderingToFile)
         {
@@ -126,10 +127,23 @@ public static class AudioEngine
             dataFlags |= DataFlag_BASS_DATA_NOREMOVE;
         }
 
-        if (playback.Settings is { AudioSource: PlaybackSettings.AudioSources.ProjectSoundTrack })
-        {
-            _ = Bass.ChannelGetData(soundStreamHandle, AudioAnalysis.FftGainBuffer, dataFlags);
-        }
+        if (playback.Settings is not { AudioSource: PlaybackSettings.AudioSources.ProjectSoundTrack }) 
+            return;
+        
+        // Get FftGainBuffer
+        _ = Bass.ChannelGetData(soundStreamHandle, AudioAnalysis.FftGainBuffer, dataFlags);
+
+        
+        // If requested, also fetch WaveFormData 
+        if (!WaveFormProcessing.RequestedOnce) 
+            return;
+        
+        const int lengthInBytes = WaveFormProcessing.WaveSampleCount << 2 << 1;
+        
+        // This will later be processed in WaveFormProcessing
+        WaveFormProcessing.LastFetchResultCode = Bass.ChannelGetData(soundStreamHandle, 
+                                                                     WaveFormProcessing.InterleavenSampleBuffer,  
+                                                                     lengthInBytes);
     }
 
     public static int GetClipChannelCount(AudioClipResourceHandle? handle)

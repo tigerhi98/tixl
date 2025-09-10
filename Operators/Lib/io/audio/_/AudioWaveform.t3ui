@@ -1,0 +1,23 @@
+{
+    "Id": "55E338F7-6D8C-4B61-8E10-9BB4D5FCFF91" /*AudioWaveform*/,
+    "Description": "",
+    "SymbolTags": "128",
+    "InputUis": [],
+    "SymbolChildUis": [],
+    "OutputUis": [
+        {
+            "OutputId": "AB0976EB-2B14-4AA2-A12C-398310A6E07B" /*Left*/,
+            "Position": {
+                "X": 0.0,
+                "Y": 45.0
+            }
+        },
+        {
+            "OutputId": "71310214-FD15-49EE-9C25-6200AA1E8566" /*Right*/,
+            "Position": {
+                "X": 0.0,
+                "Y": 0.0
+            }
+        }
+    ]
+}
