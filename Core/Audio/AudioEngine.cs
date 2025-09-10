@@ -134,7 +134,7 @@ public static class AudioEngine
             var waveResultCode = Bass.ChannelGetData(soundStreamHandle, TempWaveform,  (AudioAnalysis.WaveSamples << 2) << 1);
             if (waveResultCode > 0)
             {
-                AudioAnalysis.setWaveformData(TempWaveform);
+                AudioAnalysis.SetWaveformData(TempWaveform);
             }
         }
     }

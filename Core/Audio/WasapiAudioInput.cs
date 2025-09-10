@@ -174,7 +174,7 @@ public static class WasapiAudioInput
 
         var resultCode = BassWasapi.GetData(AudioAnalysis.FftGainBuffer, (int)(AudioAnalysis.BassFlagForFftBufferSize | DataFlags.FFTRemoveDC));
         var waveResultCode = BassWasapi.GetData(TempWaveform,  (AudioAnalysis.WaveSamples << 2) << 1);
-        if(waveResultCode > 0) AudioAnalysis.setWaveformData(TempWaveform);
+        if(waveResultCode > 0) AudioAnalysis.SetWaveformData(TempWaveform);
 
         _failedToGetLastFffData = resultCode < 0;
         if (_failedToGetLastFffData)
