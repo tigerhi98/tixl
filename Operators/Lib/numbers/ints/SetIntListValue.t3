@@ -1,0 +1,29 @@
+{
+  "Id": "ba0ce504-a515-437f-a8d5-7889fe50d32c"/*SetIntListValue*/,
+  "Inputs": [
+    {
+      "Id": "003d2e69-2ee6-44eb-a903-b9a0ecc7bb0a"/*Value*/,
+      "DefaultValue": 0.0
+    },
+    {
+      "Id": "5bdb001b-e83e-4db1-a543-e95c22002751"/*Mode*/,
+      "DefaultValue": 0
+    },
+    {
+      "Id": "5d42b93a-6973-4d6f-b2bf-3314b67c3a26"/*TriggerSet*/,
+      "DefaultValue": false
+    },
+    {
+      "Id": "8cbfa5d0-c5f7-4c40-8143-67b0548481f9"/*Index*/,
+      "DefaultValue": 0
+    },
+    {
+      "Id": "f5d7ae34-29b7-4d0e-940a-54bc49f58c28"/*FloatList*/,
+      "DefaultValue": {
+        "Values": []
+      }
+    }
+  ],
+  "Children": [],
+  "Connections": []
+}
