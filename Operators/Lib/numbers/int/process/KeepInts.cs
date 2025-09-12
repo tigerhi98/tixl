@@ -1,6 +1,6 @@
 using T3.Core.Utils;
 
-namespace Lib;
+namespace Lib.numbers.@int.process;
 
 [Guid("209aa9d9-0ba8-42da-8a6a-5ff9fdf09f0c")]
 internal sealed class KeepInts : Instance<KeepInts>

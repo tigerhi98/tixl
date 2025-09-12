@@ -10,13 +10,6 @@
       }
     },
     {
-      "InputId": "4104b926-71a9-40e4-92a9-e5f504bc4828"/*Value*/,
-      "Position": {
-        "X": -200.0,
-        "Y": 0.0
-      }
-    },
-    {
       "InputId": "65e2ef46-fe76-47a8-9c61-58db4992230a"/*BufferLength*/,
       "Position": {
         "X": -200.0,
@@ -29,15 +22,22 @@
         "X": -200.0,
         "Y": 45.0
       }
+    },
+    {
+      "InputId": "f9598f16-8fdb-40ca-809a-13af7b818ad9"/*Value*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 0.0
+      }
     }
   ],
   "SymbolChildUis": [],
   "OutputUis": [
     {
-      "OutputId": "126ec3f6-1d89-4537-8aac-771fed23b18b"/*Result*/,
+      "OutputId": "89ea9253-5aa3-440c-b15b-54b195b7435f"/*Result*/,
       "Position": {
-        "X": 0.0,
-        "Y": 0.0
+        "X": 300.0,
+        "Y": 200.0
       }
     }
   ]

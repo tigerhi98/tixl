@@ -4,18 +4,31 @@
   "InputUis": [],
   "SymbolChildUis": [
     {
-      "ChildId": "018e0408-fac8-42f0-a17c-b9c0bb5ab5b7"/*SampleGradient*/,
-      "Comment": "Here we sample a gradient with that value.\n\nYou can use the upper area for dragging the operator and the lower area to adjust the gradients.\nAlso try to right-click the lower area to open the context menu with presets and further options.\n\nTip: You can remove a step from the gradient by dragging it down until the remove icon appears.",
+      "ChildId": "06e7e6eb-127f-b56d-ade1-e93d0369d080"/*HowToDrawThings*/,
       "Position": {
-        "X": -730.53064,
+        "X": -625.672,
+        "Y": 672.6001
+      }
+    },
+    {
+      "ChildId": "0e5a775b-c408-4fdd-a8d5-003d341969f4"/*OrbitCamera*/,
+      "Position": {
+        "X": -430.53003,
         "Y": 390.34015
       }
     },
     {
-      "ChildId": "2fe00e23-ee4a-4234-a0dc-213b9a6ca9fe"/*OrbitCamera*/,
+      "ChildId": "168fdc00-13d9-4dbb-1b89-d0dd85a18353"/*HowToUseOperators*/,
       "Position": {
-        "X": -430.53003,
-        "Y": 390.34015
+        "X": -475.672,
+        "Y": 672.6001
+      }
+    },
+    {
+      "ChildId": "2ab34afd-10e4-6c93-2b2b-6bafad806302"/*HowToUsePoints*/,
+      "Position": {
+        "X": -325.672,
+        "Y": 672.6001
       }
     },
     {
@@ -26,38 +39,11 @@
       }
     },
     {
-      "ChildId": "64fe5405-7f98-4303-b2a5-f53db065740c"/*TorusMesh*/,
+      "ChildId": "64e888aa-bc52-8508-d642-dd4f94a66e8f"/*DrawMesh*/,
+      "Comment": "We use the color sampled from the gradient to draw a torus mesh.",
       "Position": {
-        "X": -730.5311,
-        "Y": 453.34015
-      }
-    },
-    {
-      "ChildId": "665d7961-58a9-4181-94f1-eb40af17cdc7"/*HowToAnimate*/,
-      "Position": {
-        "X": -925.672,
-        "Y": 672.6001
-      }
-    },
-    {
-      "ChildId": "73956a9d-0756-4d9c-a11b-ca59b3ee16fb"/*HowToDrawThings*/,
-      "Position": {
-        "X": -625.672,
-        "Y": 672.6001
-      }
-    },
-    {
-      "ChildId": "91042db3-81d6-4a17-8cef-423811aabb17"/*HowToUsePoints*/,
-      "Position": {
-        "X": -325.672,
-        "Y": 672.6001
-      }
-    },
-    {
-      "ChildId": "91dc79a2-ed7a-41dc-8245-2d3011f4aebe"/*HowToUseOperators*/,
-      "Position": {
-        "X": -475.672,
-        "Y": 672.6001
+        "X": -580.53,
+        "Y": 390.34015
       }
     },
     {
@@ -65,6 +51,14 @@
       "Position": {
         "X": -175.672,
         "Y": 672.6001
+      }
+    },
+    {
+      "ChildId": "a1e79183-3d1f-28a6-9601-2b2e365778fd"/*SampleGradient*/,
+      "Comment": "Here we sample a gradient with that value.\n\nYou can use the upper area for dragging the operator and the lower area to adjust the gradients.\nAlso try to right-click the lower area to open the context menu with presets and further options.\n\nTip: You can remove a step from the gradient by dragging it down until the remove icon appears.",
+      "Position": {
+        "X": -730.53064,
+        "Y": 390.34015
       }
     },
     {
@@ -76,14 +70,7 @@
       }
     },
     {
-      "ChildId": "acbc034c-3c0d-4f7e-ac09-39cfd702f601"/*HowToUseImageEffects*/,
-      "Position": {
-        "X": -775.672,
-        "Y": 672.6001
-      }
-    },
-    {
-      "ChildId": "d31691f2-3f93-474e-9327-b28281c057f3"/*FluidFeedback*/,
+      "ChildId": "a93f427d-f181-f99c-8387-d9c0b2ff3dc5"/*FluidFeedback*/,
       "Comment": "A simple feedback effect. \n\nNote that generating live preset thumbnails with feedbacks is not supported.",
       "Position": {
         "X": -280.53003,
@@ -91,15 +78,7 @@
       }
     },
     {
-      "ChildId": "dda89242-8a90-4442-b3df-ed2d855e32a4"/*DrawMesh*/,
-      "Comment": "We use the color sampled from the gradient to draw a torus mesh.",
-      "Position": {
-        "X": -580.53,
-        "Y": 390.34015
-      }
-    },
-    {
-      "ChildId": "ecaa1d12-625b-46c0-9148-454dfc40b576"/*HowToUseTooll*/,
+      "ChildId": "be6a8af9-3edf-d6d4-8d11-50bd9c7c5a45"/*HowToUseTixl*/,
       "Style": "Resizable",
       "Size": {
         "X": 176.34798,
@@ -109,6 +88,27 @@
       "Position": {
         "X": -500.54578,
         "Y": 154.50812
+      }
+    },
+    {
+      "ChildId": "c9cc4551-b4b6-f40d-2add-aa3a32301867"/*HowToUseImageEffects*/,
+      "Position": {
+        "X": -775.672,
+        "Y": 672.6001
+      }
+    },
+    {
+      "ChildId": "cda5bc13-bb35-6517-5c84-c194a3a2dcd4"/*HowToAnimate*/,
+      "Position": {
+        "X": -925.672,
+        "Y": 672.6001
+      }
+    },
+    {
+      "ChildId": "fc4b8e28-f76b-8a96-82e7-9c86d16375ba"/*TorusMesh*/,
+      "Position": {
+        "X": -730.5311,
+        "Y": 453.34015
       }
     }
   ],

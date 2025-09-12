@@ -382,7 +382,7 @@
       }
     },
     {
-      "ChildId": "bb53a634-03f4-4355-8fb7-fcffc76ec650"/*RepeatAtGPoints*/,
+      "ChildId": "bb53a634-03f4-4355-8fb7-fcffc76ec650"/*RepeatAtPoints*/,
       "Comment": "We add some streaks. Note how we disabled apply target orientation.",
       "Position": {
         "X": 83.67212,

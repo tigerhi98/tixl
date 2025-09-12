@@ -225,7 +225,7 @@
       }
     },
     {
-      "ChildId": "4b5d1741-0dbb-4739-802b-156f6c080a09"/*RepeatAtGPoints*/,
+      "ChildId": "4b5d1741-0dbb-4739-802b-156f6c080a09"/*RepeatAtPoints*/,
       "Position": {
         "X": 668.91034,
         "Y": 1427.3164

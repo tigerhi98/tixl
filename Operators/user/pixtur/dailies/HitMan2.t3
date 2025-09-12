@@ -65,7 +65,7 @@
       ]
     },
     {
-      "Id": "1478d172-cf64-4216-a913-d6fdf85463b6"/*RepeatAtGPoints*/,
+      "Id": "1478d172-cf64-4216-a913-d6fdf85463b6"/*RepeatAtPoints*/,
       "SymbolId": "780edb20-f83f-494c-ab17-7015e2311250",
       "InputValues": [],
       "Outputs": []

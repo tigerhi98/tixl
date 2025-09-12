@@ -4,7 +4,7 @@
   "InputUis": [],
   "SymbolChildUis": [
     {
-      "ChildId": "012d8e62-39e4-4e04-9acb-dabaf4eb4815"/*RepeatAtGPoints*/,
+      "ChildId": "012d8e62-39e4-4e04-9acb-dabaf4eb4815"/*RepeatAtPoints*/,
       "Position": {
         "X": -580.2011,
         "Y": 118.008896
