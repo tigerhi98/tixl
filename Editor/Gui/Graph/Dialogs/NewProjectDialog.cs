@@ -122,34 +122,17 @@ internal sealed class NewProjectDialog : ModalDialog
                                    """;
                         
                     Log.Error(message);
+                    
+        
                     const string button = "Copy error and go to report page";
                     const string buttonWithEnvironmentVariables = "Copy error + environment variables and go to report page\n" +
-                                                                  "(Warning: check your list of variables before submitting to avoid leaking sensitive " +
-                                                                  "information)";
-                    
+                                                                  "(Most helpful, but check your list of variables before submitting to avoid leaking " +
+                                                                  "sensitive information)";
                     var result = BlockingWindow.Instance.ShowMessageBox(message, "Failed to create new project", buttons: button);
-                    const string issueUrl = "https://github.com/tixl3d/tixl/issues/738#:rps:";
-                    if (result == button)
-                    {
-                        EditorUi.Instance.SetClipboardText(failureLog);
-                        EditorUi.Instance.OpenWithDefaultApplication(issueUrl);
-                    }
-                    else if (buttonWithEnvironmentVariables == result)
-                    {
-                        string envVars;
-                        try
-                        {
-                            var environmentVariables = Environment.GetEnvironmentVariables();
-                            envVars = string.Join('\n', environmentVariables);
-                        }
-                        catch (Exception e)
-                        {
-                            envVars = "Could not retrieve environment variables: " + e.Message;
-                        }
-
-                        EditorUi.Instance.SetClipboardText(failureLog + "\n\n Environment variables:\n" + envVars);
-                        EditorUi.Instance.OpenWithDefaultApplication(issueUrl);   
-                    }
+                    var hasResult = !string.IsNullOrWhiteSpace(result);
+                    ReportError(report: hasResult, 
+                                includeEnvVars: result == buttonWithEnvironmentVariables || !hasResult, 
+                                failureLog, fullName);
                 }
             }
 
@@ -174,6 +157,46 @@ internal sealed class NewProjectDialog : ModalDialog
         }
 
         EndDialog();
+        return;
+
+        void ReportError(bool report, bool includeEnvVars, string failureLog, string fullProjectName)
+        {
+            var envVars = "\n\n## Environment variables:\n";
+            try
+            {
+                var environmentVariables = Environment.GetEnvironmentVariables();
+                envVars += string.Join('\n', environmentVariables);
+            }
+            catch (Exception e)
+            {
+                envVars += "Could not retrieve environment variables: " + e.Message;
+            }
+
+            var reportText = includeEnvVars ? failureLog + envVars : failureLog;
+            var detailsText = $"## Failure Log: {reportText} \n" +
+                              "--- \n" +
+                              "## Project details\n" +
+                              $"Tixl username:{_userName}\n" +
+                              $"Project namespace:{_newSubNamespace}\n" +
+                              $"Project name:{_newProjectName}\n" +
+                              $"Project full name:{fullProjectName}\n" +
+                              $"Projects directory:{UserSettings.Config.ProjectsFolder}\n" +
+                              "--- \n" +
+                              "## Additional details" +
+                              "<!--Insert any relevant additional details here, if any-->\n\n";
+
+            if (report)
+            {
+                EditorUi.Instance.SetClipboardText(detailsText);
+
+                const string issueUrl = "https://github.com/tixl3d/tixl/issues/738#:rps:";
+                EditorUi.Instance.OpenWithDefaultApplication(issueUrl);
+            }
+            else
+            {
+                Log.Debug(includeEnvVars ? detailsText : detailsText + envVars);
+            }
+        }
     }
         
     private static bool DoesProjectWithNameExists(string name)
