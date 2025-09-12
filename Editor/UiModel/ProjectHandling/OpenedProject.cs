@@ -23,6 +23,7 @@ internal sealed class OpenedProject
         
         if (!project.HasHomeSymbol(out failureLog))
         {
+            failureLog ??= "project has no home?";
             openedProject = null;
             return false;
         }
