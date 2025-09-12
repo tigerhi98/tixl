@@ -284,17 +284,18 @@ internal class EditorSymbolPackage : SymbolPackage
     {
         get
         {
-            if (!HasHomeSymbol(out var error))
-            {
-                Log.Warning(error);
-                return false;
-            }
+            if (HasHomeSymbol(out var error)) 
+                return true;
             
-            return true;
+            if (error != null)
+                Log.Warning(error);
+
+            return false;
+
         }
     }
 
-    public bool HasHomeSymbol([NotNullWhen(false)] out string? error)
+    public bool HasHomeSymbol(out string? error)
     {
         error = null;
         
@@ -302,18 +303,13 @@ internal class EditorSymbolPackage : SymbolPackage
         {
             var releaseInfo = ReleaseInfo;
             if (releaseInfo.HomeGuid == Guid.Empty)
-            {
-                error = "No home symbol's guid is defined";
                 return false;
-            }
 
-            if (!Symbols.ContainsKey(releaseInfo.HomeGuid))
-            {
-                error = $"Home symbol {releaseInfo.HomeGuid} not found";
-                return false;
-            }
-
-            return true;
+            if (Symbols.ContainsKey(releaseInfo.HomeGuid)) 
+                return true;
+            
+            error = $"Home symbol {releaseInfo.HomeGuid} not found";
+            return false;
         }
         catch (Exception e)
         {
