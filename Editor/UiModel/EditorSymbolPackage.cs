@@ -284,16 +284,41 @@ internal class EditorSymbolPackage : SymbolPackage
     {
         get
         {
-            try
+            if (!HasHomeSymbol(out var error))
             {
-                var releaseInfo = ReleaseInfo;
-                return releaseInfo.HomeGuid != Guid.Empty && Symbols.ContainsKey(releaseInfo.HomeGuid);
-            }
-            catch (Exception e)
-            {
-                Log.Warning("Failed to parse project:" + e.Message);
+                Log.Warning(error);
                 return false;
             }
+            
+            return true;
+        }
+    }
+
+    public bool HasHomeSymbol([NotNullWhen(false)] out string? error)
+    {
+        error = null;
+        
+        try
+        {
+            var releaseInfo = ReleaseInfo;
+            if (releaseInfo.HomeGuid == Guid.Empty)
+            {
+                error = "No home symbol's guid is defined";
+                return false;
+            }
+
+            if (!Symbols.ContainsKey(releaseInfo.HomeGuid))
+            {
+                error = $"Home symbol {releaseInfo.HomeGuid} not found";
+                return false;
+            }
+
+            return true;
+        }
+        catch (Exception e)
+        {
+            error = "Failed to parse project: " + e.Message;
+            return false;
         }
     }
 

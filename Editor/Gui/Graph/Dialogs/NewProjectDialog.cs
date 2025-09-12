@@ -4,6 +4,7 @@ using T3.Core.SystemUi;
 using T3.Editor.Compilation;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
+using T3.Editor.SystemUi;
 using T3.Editor.UiModel;
 using GraphUtils = T3.Editor.UiModel.Helpers.GraphUtils;
 
@@ -101,7 +102,7 @@ internal sealed class NewProjectDialog : ModalDialog
                                                   isEnabled: allValid,
                                                   enableTriggerWithReturn: false))
             {
-                if (ProjectSetup.TryCreateProject(fullName, _shareResources, out var project))
+                if (ProjectSetup.TryCreateProject(fullName, _shareResources, out var project, out var failureLog))
                 {
                     T3Ui.Save(false); // todo : this is probably not needed
                     ImGui.CloseCurrentPopup();
@@ -116,11 +117,39 @@ internal sealed class NewProjectDialog : ModalDialog
                     var message = $"""
                                    Failed to create project "{_newProjectName}" in "{_newSubNamespace}".
                                    This should never happen - please file a bug report.
-                                   Currently this error is unhandled, so you will want to manually delete the project from disk.
+                                   Currently this error is unhandled, so you may want to manually delete the project from disk if it still does not work after 
+                                   an application restart.
                                    """;
                         
                     Log.Error(message);
-                    BlockingWindow.Instance.ShowMessageBox(message, "Failed to create new project");
+                    const string button = "Copy error and go to report page";
+                    const string buttonWithEnvironmentVariables = "Copy error + environment variables and go to report page\n" +
+                                                                  "(Warning: check your list of variables before submitting to avoid leaking sensitive " +
+                                                                  "information)";
+                    
+                    var result = BlockingWindow.Instance.ShowMessageBox(message, "Failed to create new project", buttons: button);
+                    const string issueUrl = "https://github.com/tixl3d/tixl/issues/738#:rps:";
+                    if (result == button)
+                    {
+                        EditorUi.Instance.SetClipboardText(failureLog);
+                        EditorUi.Instance.OpenWithDefaultApplication(issueUrl);
+                    }
+                    else if (buttonWithEnvironmentVariables == result)
+                    {
+                        string envVars;
+                        try
+                        {
+                            var environmentVariables = Environment.GetEnvironmentVariables();
+                            envVars = string.Join('\n', environmentVariables);
+                        }
+                        catch (Exception e)
+                        {
+                            envVars = "Could not retrieve environment variables: " + e.Message;
+                        }
+
+                        EditorUi.Instance.SetClipboardText(failureLog + "\n\n Environment variables:\n" + envVars);
+                        EditorUi.Instance.OpenWithDefaultApplication(issueUrl);   
+                    }
                 }
             }
 
