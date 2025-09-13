@@ -94,7 +94,18 @@ public static partial class ResourceManager
                                                                                  ? Directory.EnumerateDirectories
                                                                                  : Directory.EnumerateFiles;
         
-        foreach (var path in searchFunc(package.ResourcesFolder, "*", SearchOption.AllDirectories))
+        IEnumerable<string> paths;
+        try
+        {
+            paths = searchFunc(package.ResourcesFolder, "*", SearchOption.AllDirectories);
+        }
+        catch (Exception e)
+        {
+            Log.Debug("Failed to scan resources: " + e.Message);
+            yield break; // can't even start enumeration
+        }
+        
+        foreach (var path in paths)
         {
             path.ToForwardSlashesUnsafe();
             var lastSlashIndex = path.LastIndexOf('/');
