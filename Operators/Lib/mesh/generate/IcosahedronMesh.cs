@@ -1,8 +1,5 @@
-using Lib.numbers.@float.adjust;
-using System;
 using T3.Core.Rendering;
 using T3.Core.Utils;
-using T3.Core.Utils.Geometry;
 
 namespace Lib.mesh.generate;
 [Guid("E0CEAD3C-E19C-4726-8B5C-A9FEFBF96AB9")]
