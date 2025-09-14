@@ -1567,13 +1567,7 @@
     {
       "Id": "71bec9b9-958d-4bb9-b5b1-915db0c19e42"/*RepeatMeshAtPoints*/,
       "SymbolId": "ab496711-8b99-4463-aac9-b41fdf46608d",
-      "InputValues": [
-        {
-          "Id": "adfa0cb7-257f-4f03-b847-99a6bb317992"/*UseWForSize*/,
-          "Type": "System.Boolean",
-          "Value": true
-        }
-      ],
+      "InputValues": [],
       "Outputs": []
     },
     {
@@ -2625,11 +2619,6 @@
           "Id": "abd961af-e76f-415b-a6ac-afb1cf08a1de"/*Scale*/,
           "Type": "System.Single",
           "Value": 3.17
-        },
-        {
-          "Id": "adfa0cb7-257f-4f03-b847-99a6bb317992"/*UseWForSize*/,
-          "Type": "System.Boolean",
-          "Value": true
         }
       ],
       "Outputs": []

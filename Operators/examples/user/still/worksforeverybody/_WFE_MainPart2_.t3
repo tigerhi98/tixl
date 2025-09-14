@@ -1165,13 +1165,7 @@
     {
       "Id": "226f2b2f-f0ee-44b2-bbd9-22388fb97230"/*RepeatMeshAtPoints*/,
       "SymbolId": "ab496711-8b99-4463-aac9-b41fdf46608d",
-      "InputValues": [
-        {
-          "Id": "adfa0cb7-257f-4f03-b847-99a6bb317992"/*UseWForSize*/,
-          "Type": "System.Boolean",
-          "Value": true
-        }
-      ],
+      "InputValues": [],
       "Outputs": []
     },
     {
