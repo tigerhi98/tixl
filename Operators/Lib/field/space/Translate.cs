@@ -3,12 +3,18 @@ using T3.Core.DataTypes.ShaderGraph;
 namespace Lib.field.space;
 
 [Guid("7b81d100-b5a6-4a0e-8900-0d6418146b41")]
-internal sealed class Translate : Instance<Translate>
+internal sealed class Translate : Instance<Translate>, ITransformable
 ,IGraphNodeOp
 {
     [Output(Guid = "bf2ac5fa-f77c-4f7c-bffb-b2a97cf57971")]
     public readonly Slot<ShaderGraphNode> Result = new();
 
+    IInputSlot ITransformable.TranslationInput => Translation;
+    IInputSlot ITransformable.RotationInput => null;
+    IInputSlot ITransformable.ScaleInput => null;
+    
+    public Action<Instance, EvaluationContext> TransformCallback { get; set; }
+    
     public Translate()
     {
         ShaderNode = new ShaderGraphNode(this, null, InputField);
@@ -18,6 +24,7 @@ internal sealed class Translate : Instance<Translate>
 
     private void Update(EvaluationContext context)
     {
+        TransformCallback?.Invoke(this, context);
         ShaderNode.Update(context);
     }
 
