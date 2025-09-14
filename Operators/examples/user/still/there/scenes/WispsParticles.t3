@@ -714,8 +714,8 @@
           "Id": "b4a8c16d-5a0f-4867-ae03-92a675abe709"/*Translation*/,
           "Type": "System.Numerics.Vector3",
           "Value": {
-            "X": 0.0,
-            "Y": 0.0,
+            "X": -0.03159237,
+            "Y": 0.021564245,
             "Z": -10.0
           }
         }
