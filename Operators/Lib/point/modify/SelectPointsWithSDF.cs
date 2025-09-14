@@ -40,7 +40,7 @@ internal sealed class SelectPointsWithSDF : Instance<SelectPointsWithSDF>
         public readonly InputSlot<float> Scatter = new InputSlot<float>();
 
         [Input(Guid = "03558959-4190-4b5b-a544-b17d56fb77da")]
-        public readonly InputSlot<bool> ClampResult = new InputSlot<bool>();
+        public readonly InputSlot<bool> ClampNegative = new InputSlot<bool>();
 
         [Input(Guid = "bc002ec2-cd53-4cf3-800c-868f2cacbb0c")]
         public readonly InputSlot<bool> DiscardNonSelected = new InputSlot<bool>();
