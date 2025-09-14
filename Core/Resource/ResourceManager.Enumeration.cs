@@ -93,6 +93,11 @@ public static partial class ResourceManager
         Func<string, string, SearchOption, IEnumerable<string>> searchFunc = useFolder
                                                                                  ? Directory.EnumerateDirectories
                                                                                  : Directory.EnumerateFiles;
+
+        if (!Directory.Exists(package.ResourcesFolder))
+        {
+            yield break;
+        }
         
         IEnumerable<string> paths;
         try
