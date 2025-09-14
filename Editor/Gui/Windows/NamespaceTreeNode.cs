@@ -44,7 +44,7 @@ internal sealed class NamespaceTreeNode
     private static readonly List<string> _rootProjectNames = [
             "Lib.",
             "Types.",
-            "Example.",
+            "Examples.",
             "t3.",
         ]; 
     
