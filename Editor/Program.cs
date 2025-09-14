@@ -63,7 +63,7 @@ internal static class Program
             #if DEBUG
             const string buildTypeSuffix = " Debug";
             #else
-            const var buildTypeSuffix = "";
+            const string buildTypeSuffix = "";
             #endif
             
             _readableVersion = $"v{_readableVersion} {shortenedSha}{buildTypeSuffix}";
