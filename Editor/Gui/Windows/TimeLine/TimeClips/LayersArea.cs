@@ -8,6 +8,7 @@ using T3.Core.Utils;
 using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Keyboard;
 using T3.Editor.Gui.Interaction.Snapping;
+using T3.Editor.Gui.MagGraph.Model;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel;
@@ -299,7 +300,7 @@ internal sealed class LayersArea : ITimeObjectManipulation, IValueSnapAttractor
 
             var originalName = symbolChildUi.SymbolChild.ReadableName;
             var newPos = symbolChildUi.PosOnCanvas;
-            newPos.Y += symbolChildUi.Size.Y + 15.0f;
+            newPos.Y += MagGraphItem.GridSize.Y;
             var cmd = new CopySymbolChildrenCommand(compositionSymbolUi,
                                                     new[] { symbolChildUi },
                                                     null,
