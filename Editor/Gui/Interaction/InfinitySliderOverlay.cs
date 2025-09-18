@@ -87,6 +87,8 @@ internal static class InfinitySliderOverlay
         
         DrawUi(out roundedValue, min, max, valueRange, mousePosX, drawList);
         
+        roundedValue = MathUtils.OptionalClamp(roundedValue, min, clampMin, max, clampMax);
+        
         if (!_isManipulating)
             roundedValue = _originalValue;
     }
