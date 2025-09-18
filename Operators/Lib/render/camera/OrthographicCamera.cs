@@ -76,21 +76,20 @@ internal sealed class OrthographicCamera : Instance<OrthographicCamera>, ICamera
     // Implement ICamera 
     public Vector3 CameraPosition
     {
-        get { return Position.Value;} 
-        set { Animator.UpdateVector3InputValue(Position, value); }
+        get => Position.Value;
+        set => Animator.UpdateVector3InputValue(Position, value);
     }
 
     public Vector3 CameraTarget
     {
-        get { return Target.Value;} 
-        set { Animator.UpdateVector3InputValue(Target, value); }
+        get => Target.Value;
+        set => Animator.UpdateVector3InputValue(Target, value);
     }
 
     public float CameraRoll
     {
-        get { return Roll.Value;} 
-        set { Animator.UpdateFloatInputValue(Roll, value); }
-
+        get => Roll.Value;
+        set => Animator.UpdateFloatInputValue(Roll, value);
     }
 
     public CameraDefinition CameraDefinition => new();  // Not implemented
