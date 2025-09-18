@@ -103,7 +103,10 @@ public sealed class SequenceAnim : Instance<SequenceAnim>
             return;
         }
 
-        var time = context.LocalFxTime * _rate;
+        var phase = Phase.GetValue(context);
+        //var phaseShift = MathF.Abs(_rate) < 0.0001 ? 0 : phase / _rate;  
+        
+        var time = context.LocalFxTime * _rate + phase;
         if (OverrideTime.HasInputConnections)
         {
             var overrideTime = OverrideTime.GetValue(context);
@@ -334,6 +337,9 @@ public sealed class SequenceAnim : Instance<SequenceAnim>
     [Input(Guid = "F0AE47AE-5849-4D81-BAE0-9B6EC44949EF")]
     public readonly InputSlot<float> Rate = new();
 
+    [Input(Guid = "3BC4BEEC-A11F-4F89-A38F-16FD59F5F605")]
+    public readonly InputSlot<float> Phase = new();
+    
     [Input(Guid = "5B86B2EC-1043-4A90-9A45-F629CFB7F713", MappedType = typeof(OutputModes))]
     public readonly InputSlot<int> OutputMode = new();
 
