@@ -26,6 +26,13 @@ internal sealed class DuplicateSymbolDialog : ModalDialog
         if(selectedChildUis.Count != 1)
             return result;
 
+
+        var s = selectedChildUis[0].SymbolChild.Symbol;
+        if (_selectedSymbolId != s.Id)
+        {
+            _projectToCopyTo = s.SymbolPackage as EditableSymbolProject;
+            _selectedSymbolId = s.Id;
+        }
         
         if(isReload && !_completedReloadPrompt)
         {
@@ -109,4 +116,5 @@ internal sealed class DuplicateSymbolDialog : ModalDialog
 
     private EditableSymbolProject? _projectToCopyTo;
     private bool _completedReloadPrompt;
+    private Guid _selectedSymbolId;
 }
