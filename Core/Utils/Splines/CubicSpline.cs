@@ -27,9 +27,10 @@
 
 using System;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace T3.Core.Utils.CubicSplines;
+namespace T3.Core.Utils.Splines;
 
 /// <summary>
 /// Cubic spline interpolation.
@@ -48,17 +49,18 @@ namespace T3.Core.Utils.CubicSplines;
 /// You must provide points in X sort order.
 /// </para>
 /// </remarks>
-public class CubicSpline
+[SuppressMessage("ReSharper", "MemberCanBeInternal")]
+public sealed class CubicSpline
 {
     #region Fields
 
     // N-1 spline coefficients for N points
-    private float[] a;
-    private float[] b;
+    private float[] _a;
+    private float[] _b;
 
     // Save the original x and y for Eval
-    private float[] xOrig;
-    private float[] yOrig;
+    private float[] _xOrig;
+    private float[] _yOrig;
 
     #endregion
 
@@ -93,10 +95,10 @@ public class CubicSpline
     /// </summary>
     private void CheckAlreadyFitted()
     {
-        if (a == null) throw new Exception("Fit must be called before you can evaluate.");
+        if (_a == null) throw new Exception("Fit must be called before you can evaluate.");
     }
 
-    private int _lastIndex = 0;
+    private int _lastIndex;
 
     /// <summary>
     /// Find where in xOrig the specified x falls, by simultaneous traverse.
@@ -105,12 +107,12 @@ public class CubicSpline
     /// </summary>
     private int GetNextXIndex(float x)
     {
-        if (x < xOrig[_lastIndex])
+        if (x < _xOrig[_lastIndex])
         {
             throw new ArgumentException("The X values to evaluate must be sorted.");
         }
 
-        while ((_lastIndex < xOrig.Length - 2) && (x > xOrig[_lastIndex + 1]))
+        while ((_lastIndex < _xOrig.Length - 2) && (x > _xOrig[_lastIndex + 1]))
         {
             _lastIndex++;
         }
@@ -127,9 +129,9 @@ public class CubicSpline
     /// <returns>The y value.</returns>
     private float EvalSpline(float x, int j, bool debug = false)
     {
-        float dx = xOrig[j + 1] - xOrig[j];
-        float t = (x - xOrig[j]) / dx;
-        float y = (1 - t) * yOrig[j] + t * yOrig[j + 1] + t * (1 - t) * (a[j] * (1 - t) + b[j] * t); // equation 9
+        var dx = _xOrig[j + 1] - _xOrig[j];
+        var t = (x - _xOrig[j]) / dx;
+        var y = (1 - t) * _yOrig[j] + t * _yOrig[j + 1] + t * (1 - t) * (_a[j] * (1 - t) + _b[j] * t); // equation 9
         if (debug) Console.WriteLine("xs = {0}, j = {1}, t = {2}", x, j, t);
         return y;
     }
@@ -151,7 +153,7 @@ public class CubicSpline
     /// <param name="endSlope">Optional slope constraint for the final point. Single.NaN means no constraint.</param>
     /// <param name="debug">Turn on console output. Default is false.</param>
     /// <returns>The computed y values for each xs.</returns>
-    public float[] FitAndEval(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
+    private float[] FitAndEval(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
     {
         Fit(x, y, startSlope, endSlope, debug);
         return Eval(xs, debug);
@@ -168,7 +170,7 @@ public class CubicSpline
     /// <param name="startSlope">Optional slope constraint for the first point. Single.NaN means no constraint.</param>
     /// <param name="endSlope">Optional slope constraint for the final point. Single.NaN means no constraint.</param>
     /// <param name="debug">Turn on console output. Default is false.</param>
-    public void Fit(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
+    private void Fit(float[] x, float[] y, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
     {
         if (Single.IsInfinity(startSlope) || Single.IsInfinity(endSlope))
         {
@@ -176,13 +178,13 @@ public class CubicSpline
         }
 
         // Save x and y for eval
-        this.xOrig = x;
-        this.yOrig = y;
+        _xOrig = x;
+        _yOrig = y;
 
-        int n = x.Length;
-        float[] r = new float[n]; // the right hand side numbers: wikipedia page overloads b
+        var n = x.Length;
+        var r = new float[n]; // the right hand side numbers: wikipedia page overloads b
 
-        TriDiagonalMatrixF m = new TriDiagonalMatrixF(n);
+        var m = new TriDiagonalMatrixF(n);
         float dx1, dx2, dy1, dy2;
 
         // First row is different (equation 16 from the article)
@@ -200,7 +202,7 @@ public class CubicSpline
         }
 
         // Body rows (equation 15 from the article)
-        for (int i = 1; i < n - 1; i++)
+        for (var i = 1; i < n - 1; i++)
         {
             dx1 = x[i] - x[i - 1];
             dx2 = x[i + 1] - x[i];
@@ -233,19 +235,19 @@ public class CubicSpline
         // if (debug) Console.WriteLine("r: {0}", ArrayUtil.ToString<float>(r));
 
         // k is the solution to the matrix
-        float[] k = m.Solve(r);
+        var k = m.Solve(r);
         // if (debug) Console.WriteLine("k = {0}", ArrayUtil.ToString<float>(k));
 
         // a and b are each spline's coefficients
-        this.a = new float[n - 1];
-        this.b = new float[n - 1];
+        _a = new float[n - 1];
+        _b = new float[n - 1];
 
-        for (int i = 1; i < n; i++)
+        for (var i = 1; i < n; i++)
         {
             dx1 = x[i] - x[i - 1];
             dy1 = y[i] - y[i - 1];
-            a[i - 1] = k[i - 1] * dx1 - dy1; // equation 10 from the article
-            b[i - 1] = -k[i] * dx1 + dy1; // equation 11 from the article
+            _a[i - 1] = k[i - 1] * dx1 - dy1; // equation 10 from the article
+            _b[i - 1] = -k[i] * dx1 + dy1; // equation 11 from the article
         }
 
         // if (debug) Console.WriteLine("a: {0}", ArrayUtil.ToString<float>(a));
@@ -269,14 +271,14 @@ public class CubicSpline
     {
         CheckAlreadyFitted();
 
-        int n = x.Length;
-        float[] y = new float[n];
+        var n = x.Length;
+        var y = new float[n];
         _lastIndex = 0; // Reset simultaneous traversal in case there are multiple calls
 
-        for (int i = 0; i < n; i++)
+        for (var i = 0; i < n; i++)
         {
             // Find which spline can be used to compute this x (by simultaneous traverse)
-            int j = GetNextXIndex(x[i]);
+            var j = GetNextXIndex(x[i]);
 
             // Evaluate using j'th spline
             y[i] = EvalSpline(x[i], j, debug);
@@ -299,24 +301,24 @@ public class CubicSpline
     {
         CheckAlreadyFitted();
 
-        int n = x.Length;
-        float[] qPrime = new float[n];
+        var n = x.Length;
+        var qPrime = new float[n];
         _lastIndex = 0; // Reset simultaneous traversal in case there are multiple calls
 
-        for (int i = 0; i < n; i++)
+        for (var i = 0; i < n; i++)
         {
             // Find which spline can be used to compute this x (by simultaneous traverse)
-            int j = GetNextXIndex(x[i]);
+            var j = GetNextXIndex(x[i]);
 
             // Evaluate using j'th spline
-            float dx = xOrig[j + 1] - xOrig[j];
-            float dy = yOrig[j + 1] - yOrig[j];
-            float t = (x[i] - xOrig[j]) / dx;
+            var dx = _xOrig[j + 1] - _xOrig[j];
+            var dy = _yOrig[j + 1] - _yOrig[j];
+            var t = (x[i] - _xOrig[j]) / dx;
 
             // From equation 5 we could also compute q' (qp) which is the slope at this x
             qPrime[i] = dy / dx
-                        + (1 - 2 * t) * (a[j] * (1 - t) + b[j] * t) / dx
-                        + t * (1 - t) * (b[j] - a[j]) / dx;
+                        + (1 - 2 * t) * (_a[j] * (1 - t) + _b[j] * t) / dx
+                        + t * (1 - t) * (_b[j] - _a[j]) / dx;
 
             if (debug) Console.WriteLine("[{0}]: xs = {1}, j = {2}, t = {3}", i, x[i], j, t);
         }
@@ -340,7 +342,7 @@ public class CubicSpline
     /// <returns>The computed y values for each xs.</returns>
     public static float[] Compute(float[] x, float[] y, float[] xs, float startSlope = float.NaN, float endSlope = float.NaN, bool debug = false)
     {
-        CubicSpline spline = new CubicSpline();
+        var spline = new CubicSpline();
         return spline.FitAndEval(x, y, xs, startSlope, endSlope, debug);
     }
 
@@ -365,26 +367,26 @@ public class CubicSpline
                                      float firstDx = Single.NaN, float firstDy = Single.NaN, float lastDx = Single.NaN, float lastDy = Single.NaN)
     {
         // Compute distances
-        int n = x.Length;
-        float[] dists = new float[n]; // cumulative distance
+        var n = x.Length;
+        var dists = new float[n]; // cumulative distance
         dists[0] = 0;
         float totalDist = 0;
 
-        for (int i = 1; i < n; i++)
+        for (var i = 1; i < n; i++)
         {
-            float dx = x[i] - x[i - 1];
-            float dy = y[i] - y[i - 1];
-            float dist = (float)Math.Sqrt(dx * dx + dy * dy);
+            var dx = x[i] - x[i - 1];
+            var dy = y[i] - y[i - 1];
+            var dist = (float)Math.Sqrt(dx * dx + dy * dy);
             totalDist += dist;
             dists[i] = totalDist;
         }
 
         // Create 'times' to interpolate to
-        float dt = totalDist / (nOutputPoints - 1);
-        float[] times = new float[nOutputPoints];
+        var dt = totalDist / (nOutputPoints - 1);
+        var times = new float[nOutputPoints];
         times[0] = 0;
 
-        for (int i = 1; i < nOutputPoints; i++)
+        for (var i = 1; i < nOutputPoints; i++)
         {
             times[i] = times[i - 1] + dt;
         }
@@ -394,10 +396,10 @@ public class CubicSpline
         NormalizeVector(ref lastDx, ref lastDy);
 
         // Spline fit both x and y to times
-        CubicSpline xSpline = new CubicSpline();
+        var xSpline = new CubicSpline();
         xs = xSpline.FitAndEval(dists, x, times, firstDx / dt, lastDx / dt);
 
-        CubicSpline ySpline = new CubicSpline();
+        var ySpline = new CubicSpline();
         ys = ySpline.FitAndEval(dists, y, times, firstDy / dt, lastDy / dt);
     }
 
@@ -405,7 +407,7 @@ public class CubicSpline
     {
         if (!Single.IsNaN(dx) && !Single.IsNaN(dy))
         {
-            float d = (float)Math.Sqrt(dx * dx + dy * dy);
+            var d = (float)Math.Sqrt(dx * dx + dy * dy);
 
             if (d > Single.Epsilon) // probably not conservative enough, but catches the (0,0) case at least
             {
@@ -443,30 +445,27 @@ public class CubicSpline
 /// That means that A[0] is not actually on the matrix and is therefore never used, and same with C[N-1].
 /// </para>
 /// </remarks>
-public class TriDiagonalMatrixF
+internal sealed class TriDiagonalMatrixF
 {
     /// <summary>
     /// The values for the sub-diagonal. A[0] is never used.
     /// </summary>
-    public float[] A;
+    public readonly float[] A;
 
     /// <summary>
     /// The values for the main diagonal.
     /// </summary>
-    public float[] B;
+    public readonly float[] B;
 
     /// <summary>
     /// The values for the super-diagonal. C[C.Length-1] is never used.
     /// </summary>
-    public float[] C;
+    public readonly float[] C;
 
     /// <summary>
     /// The width and height of this matrix.
     /// </summary>
-    public int N
-    {
-        get { return (A != null ? A.Length : 0); }
-    }
+    private int N => A?.Length ?? 0;
 
     /// <summary>
     /// Indexer. Setter throws an exception if you try to set any not on the super, main, or sub diagonals.
@@ -475,23 +474,21 @@ public class TriDiagonalMatrixF
     {
         get
         {
-            int di = row - col;
+            var di = row - col;
 
-            if (di == 0)
+            switch (di)
             {
-                return B[row];
+                case 0:
+                    return B[row];
+                case -1:
+                    Debug.Assert(row < N - 1);
+                    return C[row];
+                case 1:
+                    Debug.Assert(row > 0);
+                    return A[row];
+                default:
+                    return 0;
             }
-            else if (di == -1)
-            {
-                Debug.Assert(row < N - 1);
-                return C[row];
-            }
-            else if (di == 1)
-            {
-                Debug.Assert(row > 0);
-                return A[row];
-            }
-            else return 0;
         }
         set
         {
@@ -523,9 +520,9 @@ public class TriDiagonalMatrixF
     /// </summary>
     public TriDiagonalMatrixF(int n)
     {
-        this.A = new float[n];
-        this.B = new float[n];
-        this.C = new float[n];
+        A = new float[n];
+        B = new float[n];
+        C = new float[n];
     }
 
     /// <summary>
@@ -533,32 +530,29 @@ public class TriDiagonalMatrixF
     /// </summary>
     /// <param name="fmt">Optional. For String.Format. Must include the colon. Examples are ':0.000' and ',5:0.00' </param>
     /// <param name="prefix">Optional. Per-line indentation prefix.</param>
-    public string ToDisplayString(string fmt = "", string prefix = "")
+    public  string ToString(string fmt = "", string prefix = "")
     {
-        if (this.N > 0)
+        if (N <= 0) 
+            return prefix + "0x0 Matrix";
+        
+        var s = new StringBuilder();
+        var formatString = "{0" + fmt + "}";
+
+        for (int r = 0; r < N; r++)
         {
-            var s = new StringBuilder();
-            string formatString = "{0" + fmt + "}";
+            s.Append(prefix);
 
-            for (int r = 0; r < N; r++)
+            for (int c = 0; c < N; c++)
             {
-                s.Append(prefix);
-
-                for (int c = 0; c < N; c++)
-                {
-                    s.AppendFormat(formatString, this[r, c]);
-                    if (c < N - 1) s.Append(", ");
-                }
-
-                s.AppendLine();
+                s.AppendFormat(formatString, this[r, c]);
+                if (c < N - 1) s.Append(", ");
             }
 
-            return s.ToString();
+            s.AppendLine();
         }
-        else
-        {
-            return prefix + "0x0 Matrix";
-        }
+
+        return s.ToString();
+
     }
 
     /// <summary>
@@ -571,7 +565,7 @@ public class TriDiagonalMatrixF
     /// <param name="d">Right side of the equation.</param>
     public float[] Solve(float[] d)
     {
-        int n = this.N;
+        int n = N;
 
         if (d.Length != n)
         {
