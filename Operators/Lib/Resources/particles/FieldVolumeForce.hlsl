@@ -5,7 +5,6 @@
 
 /*{ADDITIONAL_INCLUDES}*/
 
-
 cbuffer Params : register(b0)
 {
     /*{FLOAT_PARAMS}*/
@@ -35,13 +34,12 @@ cbuffer Params : register(b2)
 }
 
 RWStructuredBuffer<Particle> Particles : u0;
-//StructuredBuffer<PbrVertex> Vertices : t0;
+// StructuredBuffer<PbrVertex> Vertices : t0;
 
-//StructuredBuffer<int3> Indices : t1;
+// StructuredBuffer<int3> Indices : t1;
 
 sampler ClampedSampler : s0;
 sampler WrappedSampler : s1;
-
 
 //=== Additional Resources ==========================================
 /*{RESOURCES(t0)}*/
@@ -113,11 +111,6 @@ float4 q_from_tangentAndNormal(float3 dx, float3 dz)
     float3 force = 0;
     surfaceN *= InvertVolumeFactor;
 
-    //force += -surfaceN * 0.1;
-
-    //Particles[gi].Velocity += force * Amount;
-    //return;
-
     // Reflect if distance changes
     if (sign(distance * distanceNext) < 0 && distance * InvertVolumeFactor > 0)
     {
@@ -128,10 +121,10 @@ float4 q_from_tangentAndNormal(float3 dx, float3 dz)
 
         velocity = lerp(velocity,
                         //
-                        v * Bounciness         //
-                            * (RandomizeBounce //
-                                   * (rand.z - 0.5) +
-                               1), //
+                        (v * Bounciness     //
+                         * (RandomizeBounce //
+                                * (rand.z - 0.5) +
+                            1)), //
                         Amount);
 
         if (true)
@@ -150,7 +143,7 @@ float4 q_from_tangentAndNormal(float3 dx, float3 dz)
         {
             force = -surfaceN * Attraction / (1 + distance * AttractionDecay);
         }
-        velocity += force * Amount;
+        velocity += force * Amount * SpeedFactor;
     }
 
     if (!isnan(velocity.x) && !isnan(velocity.y) && !isnan(velocity.z))
