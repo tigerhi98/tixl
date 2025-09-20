@@ -1,0 +1,93 @@
+{
+  "Id": "6f65e325-21cc-4bc5-9aea-4a691476e3bf"/*SampleCpuPoints*/,
+  "Description": "Samples a list of line points with cubic bezier spline interpolation. \nThis can useful to animate cameras and other objects.",
+  "InputUis": [
+    {
+      "InputId": "247f7a76-779e-4539-9547-fdb726f59730"/*LensShift*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 525.0
+      }
+    },
+    {
+      "InputId": "5dbb4b9e-d19b-4904-875e-a388c8a930b4"/*FieldOfView*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 150.0
+      }
+    },
+    {
+      "InputId": "6412d80e-d6fd-4c47-a8a4-6b88b5da95a5"/*SamplePos*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 75.0
+      }
+    },
+    {
+      "InputId": "669c5234-a22e-49fa-baf3-1c352bec6df5"/*RotationOffset*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 450.0
+      }
+    },
+    {
+      "InputId": "7167d457-a581-4e84-b583-e56933dba500"/*AlsoOffsetTarget*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 375.0
+      }
+    },
+    {
+      "InputId": "8336ae9b-b4d0-48e0-be0c-666999b5de91"/*PositionOffset*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 300.0
+      }
+    },
+    {
+      "InputId": "8cf06759-9c93-438f-ae5f-12a55a29b347"/*PointList*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 0.0
+      }
+    },
+    {
+      "InputId": "b1e85783-bc00-4f82-bd2a-255d4ac0b7af"/*Up*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 750.0
+      }
+    },
+    {
+      "InputId": "cab66cd0-d7b1-43d4-9584-7f840c3ae6ee"/*Roll*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 225.0
+      }
+    },
+    {
+      "InputId": "f220f039-67ea-474e-9bd6-3b9ca2d416cc"/*ClipPlanes*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 600.0
+      }
+    },
+    {
+      "InputId": "f8c629a9-d234-4c35-9173-a47216baf0b5"/*AspectRatio*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 675.0
+      }
+    }
+  ],
+  "SymbolChildUis": [],
+  "OutputUis": [
+    {
+      "OutputId": "5c602150-c152-400d-beaf-8bd12ebae966"/*CamReference*/,
+      "Position": {
+        "X": 300.0,
+        "Y": 200.0
+      }
+    }
+  ]
+}

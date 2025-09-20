@@ -45,7 +45,7 @@
       }
     },
     {
-      "InputId": "b8dce7d9-8316-493f-b7fb-3bdcf08c9ff8"/*PointList*/,
+      "InputId": "b8dce7d9-8316-493f-b7fb-3bdcf08c9ff8"/*CamPointBuffer*/,
       "Position": {
         "X": -200.0,
         "Y": 0.0

@@ -32,7 +32,7 @@
       }
     },
     {
-      "Id": "b8dce7d9-8316-493f-b7fb-3bdcf08c9ff8"/*PointList*/,
+      "Id": "b8dce7d9-8316-493f-b7fb-3bdcf08c9ff8"/*CamPointBuffer*/,
       "DefaultValue": null
     },
     {

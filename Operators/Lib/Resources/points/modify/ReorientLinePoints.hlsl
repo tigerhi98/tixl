@@ -51,7 +51,7 @@ float4 qAlignForward(float4 q, float3 newForward)
 // points towards newForward
 float4 qAlignForward2(float4 q, float3 newForward)
 {
-    newForward = -normalize(newForward);
+    newForward = normalize(newForward);
 
     // old up from current orientation (+Y rotated by q)
     float3 oldUp = qRotateVec3(float3(0, 1, 0), q);

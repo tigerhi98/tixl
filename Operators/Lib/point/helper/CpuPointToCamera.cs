@@ -6,34 +6,37 @@ using Utilities = T3.Core.Utils.Utilities;
 namespace Lib.point.helper;
 
 [Guid("0cfc80fc-7b98-4cf7-982f-1aa42697bb76")]
-internal sealed class SplintPointsToCamera : Instance<SplintPointsToCamera>, ICamera, ICameraPropertiesProvider
+internal sealed class CpuPointToCamera : Instance<CpuPointToCamera>
+,ICamera,ICameraPropertiesProvider
 {
     [Output(Guid = "A94FD64D-14D7-479F-BA9F-2BFD161CC80A")]
     public readonly Slot<Object> CamReference = new();
     
     
-    public SplintPointsToCamera()
+    public CpuPointToCamera()
     {
         CamReference.UpdateAction += Update;
     }
         
     private void Update(EvaluationContext context)
     {
-        var points = PointList.GetValue(context);
+        var points = CamPointBuffer.GetValue(context);
         if (points is not StructuredList<Point> pointList || pointList.NumElements == 0)
             return;
 
-        var f = SamplePos.GetValue(context).Clamp(0,points.NumElements-1);
-        var i0 = (int)f.ClampMin(0);
-        var i1 = (i0+1).ClampMax(points.NumElements-1);
-        var a = pointList.TypedElements[i0];
-        var b = pointList.TypedElements[i1];
-        var t = f - i0;
-        var p = new Point
-                    {
-                        Position = Vector3.Lerp(a.Position, b.Position,t),
-                        Orientation = Quaternion.Slerp(a.Orientation, b.Orientation,t),
-                    };
+        var p = pointList.TypedElements[0];        
+
+        // var f = SamplePos.GetValue(context).Clamp(0,points.NumElements-1);
+        // var i0 = (int)f.ClampMin(0);
+        // var i1 = (i0+1).ClampMax(points.NumElements-1);
+        // var a = pointList.TypedElements[i0];
+        // var b = pointList.TypedElements[i1];
+        // var t = f - i0;
+        // var p = new Point
+        //             {
+        //                 Position = Vector3.Lerp(a.Position, b.Position,t),
+        //                 Orientation = Quaternion.Slerp(a.Orientation, b.Orientation,t),
+        //             };
         
         var aspectRatio = AspectRatio.GetValue(context);
         if (aspectRatio < 0.0001f)
@@ -42,10 +45,10 @@ internal sealed class SplintPointsToCamera : Instance<SplintPointsToCamera>, ICa
         }
 
         var position = p.Position;
-        Vector3 forward = Vector3.Transform(-Vector3.UnitZ, p.Orientation);
+        Vector3 forward = Vector3.Transform(Vector3.UnitZ, p.Orientation);
         
         var target = position + forward;
-        var up = Vector3.Transform(-Vector3.UnitY, p.Orientation);
+        var up = Vector3.Transform(Vector3.UnitY, p.Orientation);
         
         
         
@@ -76,7 +79,7 @@ internal sealed class SplintPointsToCamera : Instance<SplintPointsToCamera>, ICa
     }
     
     [Input(Guid = "B8DCE7D9-8316-493F-B7FB-3BDCF08C9FF8")]
-    public readonly InputSlot<StructuredList> PointList = new();
+    public readonly InputSlot<StructuredList> CamPointBuffer = new();
 
     [Input(Guid = "7B957556-29DC-451E-91BD-C859C19C7CA0")]
     public readonly InputSlot<float> SamplePos = new();

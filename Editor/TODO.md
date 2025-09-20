@@ -22,6 +22,7 @@
 - [ ] add color preview to vec4 (and maybe a history gradient?)
 - [ ] Create [HowToUseVariables]
 - [ ] Scaling color to zero clears hue and saturation.
+- [ ] PointList parameter needs max height
 
 ## Project handling / Project HUB
 

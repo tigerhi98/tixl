@@ -1,0 +1,69 @@
+{
+  "Id": "6f65e325-21cc-4bc5-9aea-4a691476e3bf"/*SampleCpuPoints*/,
+  "Inputs": [
+    {
+      "Id": "247f7a76-779e-4539-9547-fdb726f59730"/*LensShift*/,
+      "DefaultValue": {
+        "X": 0.0,
+        "Y": 0.0
+      }
+    },
+    {
+      "Id": "5dbb4b9e-d19b-4904-875e-a388c8a930b4"/*FieldOfView*/,
+      "DefaultValue": 45.0
+    },
+    {
+      "Id": "6412d80e-d6fd-4c47-a8a4-6b88b5da95a5"/*SamplePos*/,
+      "DefaultValue": 0.0
+    },
+    {
+      "Id": "669c5234-a22e-49fa-baf3-1c352bec6df5"/*RotationOffset*/,
+      "DefaultValue": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      }
+    },
+    {
+      "Id": "7167d457-a581-4e84-b583-e56933dba500"/*AlsoOffsetTarget*/,
+      "DefaultValue": false
+    },
+    {
+      "Id": "8336ae9b-b4d0-48e0-be0c-666999b5de91"/*PositionOffset*/,
+      "DefaultValue": {
+        "X": 0.0,
+        "Y": 0.0,
+        "Z": 0.0
+      }
+    },
+    {
+      "Id": "8cf06759-9c93-438f-ae5f-12a55a29b347"/*PointList*/,
+      "DefaultValue": null
+    },
+    {
+      "Id": "b1e85783-bc00-4f82-bd2a-255d4ac0b7af"/*Up*/,
+      "DefaultValue": {
+        "X": 0.0,
+        "Y": 1.0,
+        "Z": 0.0
+      }
+    },
+    {
+      "Id": "cab66cd0-d7b1-43d4-9584-7f840c3ae6ee"/*Roll*/,
+      "DefaultValue": 0.0
+    },
+    {
+      "Id": "f220f039-67ea-474e-9bd6-3b9ca2d416cc"/*ClipPlanes*/,
+      "DefaultValue": {
+        "X": 0.01,
+        "Y": 1000.0
+      }
+    },
+    {
+      "Id": "f8c629a9-d234-4c35-9173-a47216baf0b5"/*AspectRatio*/,
+      "DefaultValue": -1.0
+    }
+  ],
+  "Children": [],
+  "Connections": []
+}

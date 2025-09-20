@@ -17,11 +17,11 @@ public static class BezierPointSpline
 
         // Pre-sample bezier curve for even distribution
         var totalLength = 0f;
-        var lastPoint = SampleCubicBezier(0, curvature, ref sourcePoints);
+        var lastPoint = SampleCubicBezier(0, curvature,  sourcePoints);
         for (var preSampleIndex = 1; preSampleIndex < preSampleSteps; preSampleIndex++)
         {
             var t = (float)preSampleIndex / preSampleSteps;
-            var newPoint = SampleCubicBezier(t, curvature, ref sourcePoints);
+            var newPoint = SampleCubicBezier(t, curvature,  sourcePoints);
             var stepLength = Vector3.Distance(newPoint, lastPoint);
             lastPoint = newPoint;
             totalLength += stepLength;
@@ -30,7 +30,7 @@ public static class BezierPointSpline
 
         var walkedIndex = 0;
 
-        Vector3 lastPos = SampleCubicBezier(0, curvature, ref sourcePoints);
+        Vector3 lastPos = SampleCubicBezier(0, curvature,  sourcePoints);
 
         for (var index = 0; index < count; index++)
         {
@@ -49,7 +49,7 @@ public static class BezierPointSpline
             var fraction = (wantedLength - l0) / (deltaL + 0.00001f);
 
             var t = (walkedIndex + fraction) / (preSampleSteps - 1);
-            var pos = SampleCubicBezier(t - 0.0002f, curvature, ref sourcePoints);
+            var pos = SampleCubicBezier(t - 0.0002f, curvature, sourcePoints);
             result[index].Position = pos;
 
             var d = pos - lastPos;
@@ -112,18 +112,18 @@ public static class BezierPointSpline
     }
 
 
-    public static Vector3 SampleCubicBezier(float t, float curvature, ref Point[] points)
+    public static Vector3 SampleCubicBezier(float t, float curvature, Point[] points)
     {
         int i;
 
         if (t >= 1f)
         {
             t = 1f;
-            i = points.Length - 1;
+            i = points.Length - 2;
         }
         else
         {
-            float tt = t * (points.Length - 1);
+            float tt = t * (points.Length - 2);
             i = (int)tt;
             t = tt - i;
         }
@@ -161,7 +161,7 @@ public static class BezierPointSpline
         {
             var t = (float)index / count;
 
-            result[index].Position = SampleCubicBezier(t, 4, ref sourcePoints);
+            result[index].Position = SampleCubicBezier(t, 4, sourcePoints);
             result[index].F1 = 1;
         }
 
