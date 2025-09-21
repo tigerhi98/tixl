@@ -138,7 +138,8 @@ internal static class InputPicking
 
             if (isSlotVisible)
             {
-                isMultiInput = visibleInputLines[insertionLineIndex].InputUi.InputDefinition.IsMultiInput;
+                var visibleInputLine = visibleInputLines[insertionLineIndex];
+                isMultiInput = visibleInputLine.InputUi.InputDefinition.IsMultiInput;
                 
                 // Go through end of visible input group (could be multiple lines for multiInputs)
                 while (insertionLineIndex < visibleInputLines.Length && visibleInputLines[insertionLineIndex].Input.Id == slotId)
@@ -157,7 +158,7 @@ internal static class InputPicking
                 break;
         }
 
-        shouldPushDown = !isSlotVisible || isMultiInput;
+        shouldPushDown = !isSlotVisible || (isMultiInput && isConnected);
 
         if (isSlotVisible && !isConnected)
             insertionLineIndex--;
