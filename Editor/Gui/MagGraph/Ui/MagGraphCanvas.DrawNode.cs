@@ -771,6 +771,10 @@ internal sealed partial class MagGraphView
                         fillColor = ColorVariations.Highlight.Apply(type2UiProperties.Color).Fade(Blink);
                         InputSnapper.RegisterAsPotentialTargetInput(item, center, inputAnchor.SlotId);
                     }
+                    else if (inputAnchor.InputLine.ConnectionIn != null)
+                    {
+                        fillColor = fillColor = ColorVariations.OperatorLabel.Apply(type2UiProperties.Color).Fade(0.1f);
+                    }
                 }
 
                 if (showTriangleAnchor)
