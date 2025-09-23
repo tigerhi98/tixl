@@ -17,6 +17,10 @@
 - [ ] Fix tiny node-text with 200% display-scaling
 - [ ] Focus selected op in SymbolLibrary
 - [ ] Collapse Symbol Library
+- [ ] Add Voronoi Pattern Shader
+- [ ] Add Project image to SdfMaterial
+- 
+
 
 # UI
 - [ ] add color preview to vec4 (and maybe a history gradient?)
