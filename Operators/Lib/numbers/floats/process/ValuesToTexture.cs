@@ -1,3 +1,4 @@
+#nullable enable
 using SharpDX;
 using T3.Core.Utils;
 using Utilities = T3.Core.Utils.Utilities;
@@ -14,8 +15,6 @@ internal sealed class ValuesToTexture : Instance<ValuesToTexture>
     {
         CurveTexture.UpdateAction += Update;
     }
-
-    private float[] _floatBuffer = new float[0];
 
     private void Update(EvaluationContext context)
     {
@@ -40,59 +39,69 @@ internal sealed class ValuesToTexture : Instance<ValuesToTexture>
         var pow = Pow.GetValue(context);
 
         if (Math.Abs(pow) < 0.001f)
-        {
             return;
-        }
 
         if (rangeEnd < rangeStart)
-        {
             (rangeEnd, rangeStart) = (rangeStart, rangeEnd);
-        }
 
         var sampleCount = (rangeEnd - rangeStart) + 1;
-        var entrySizeInBytes = sizeof(float);
-        var listSizeInBytes = sampleCount * entrySizeInBytes;
-        var bufferSizeInBytes = 1 * listSizeInBytes;
+        const int entrySizeInBytes = sizeof(float);
+        var rowPitch = useHorizontal ? sampleCount * entrySizeInBytes : entrySizeInBytes;
 
-        using (var dataStream = new DataStream(bufferSizeInBytes, true, true))
+        // Ensure buffer large enough
+        if (_floatBuffer.Length < sampleCount)
         {
-            var texDesc = new Texture2DDescription()
-                              {
-                                  Width = useHorizontal ? sampleCount : 1,
-                                  Height = useHorizontal ? 1 : sampleCount,
-                                  ArraySize = 1,
-                                  BindFlags = BindFlags.ShaderResource,
-                                  Usage = ResourceUsage.Default,
-                                  MipLevels = 1,
-                                  CpuAccessFlags = CpuAccessFlags.None,
-                                  Format = Format.R32_Float,
-                                  SampleDescription = new SampleDescription(1, 0),
-                              };
+            if (_floatBufferHandle.IsAllocated)
+                _floatBufferHandle.Free();
 
-            for (var sampleIndex = rangeStart; sampleIndex <= rangeEnd; sampleIndex++)
-            {
-                float v = (float)Math.Pow(values[sampleIndex] * gain, pow);
-                dataStream.Write(v);
-            }
-
-            try
-            {
-                dataStream.Position = 0;
-                var dataRectangles = new DataRectangle[]
-                                         {
-                                             new(
-                                                 dataPointer: dataStream.DataPointer, 
-                                                 pitch: useHorizontal ? listSizeInBytes : 1 * entrySizeInBytes)
-                                         };
-                Utilities.Dispose(ref CurveTexture.Value);
-                CurveTexture.Value = Texture2D.CreateTexture2D(texDesc, dataRectangles);
-            }
-            catch (Exception e)
-            {
-                Log.Warning("Can't create texture from values :" + e.Message, this);
-            }
+            _floatBuffer = new float[sampleCount];
+            _floatBufferHandle = GCHandle.Alloc(_floatBuffer, GCHandleType.Pinned);
+            _floatBufferPtr = _floatBufferHandle.AddrOfPinnedObject();
         }
+
+        // Fill buffer
+        for (var i = 0; i < sampleCount; i++)
+        {
+            var v = (float)Math.Pow(values[rangeStart + i] * gain, pow);
+            _floatBuffer[i] = v;
+        }
+
+        // Row pitch is bytes per row (stride)
+        var height = useHorizontal ? 1 : sampleCount;
+
+        // Create texture if needed (no initial data)
+        if (CurveTexture.Value == null ||
+            CurveTexture.Value.Description.Width != (useHorizontal ? sampleCount : 1) ||
+            CurveTexture.Value.Description.Height != (useHorizontal ? 1 : sampleCount))
+        {
+            if (CurveTexture.Value != null)
+                Utilities.Dispose(ref CurveTexture.Value);
+
+            var texture2DDescription = new Texture2DDescription
+                                           {
+                                               Width = useHorizontal ? sampleCount : 1,
+                                               Height = useHorizontal ? 1 : sampleCount,
+                                               ArraySize = 1,
+                                               BindFlags = BindFlags.ShaderResource,
+                                               Usage = ResourceUsage.Default,
+                                               MipLevels = 1,
+                                               CpuAccessFlags = CpuAccessFlags.None,
+                                               Format = Format.R32_Float,
+                                               SampleDescription = new SampleDescription(1, 0),
+                                           };
+            CurveTexture.Value = Texture2D.CreateTexture2D(texture2DDescription);
+        }
+
+        // Upload with DataBox (not DataRectangle)
+        var dataBox = new DataBox(_floatBufferPtr, rowPitch, rowPitch * height);
+        ResourceManager.Device.ImmediateContext.UpdateSubresource(dataBox, CurveTexture.Value, 0);
     }
+
+    // Reused, pinned upload buffer (avoid per-frame allocations)
+    private GCHandle _floatBufferHandle;
+    private IntPtr _floatBufferPtr = IntPtr.Zero;
+
+    private float[] _floatBuffer = [];
 
     [Input(Guid = "092C8D1F-A70E-4298-B5DF-52C9D62F8E04")]
     public readonly InputSlot<List<float>> Values = new();
