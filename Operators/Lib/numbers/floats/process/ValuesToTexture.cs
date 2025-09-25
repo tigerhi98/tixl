@@ -1,6 +1,5 @@
 #nullable enable
 using SharpDX;
-using T3.Core.Utils;
 using Utilities = T3.Core.Utils.Utilities;
 
 namespace Lib.numbers.floats.process;
@@ -9,102 +8,141 @@ namespace Lib.numbers.floats.process;
 internal sealed class ValuesToTexture : Instance<ValuesToTexture>
 {
     [Output(Guid = "f01099a0-a196-4689-9900-edac07908714")]
-    public readonly Slot<Texture2D> CurveTexture = new();
+    public readonly Slot<Texture2D> ValuesTexture = new();
 
     public ValuesToTexture()
     {
-        CurveTexture.UpdateAction += Update;
+        ValuesTexture.UpdateAction += Update;
     }
 
     private void Update(EvaluationContext context)
     {
-        if (!Values.HasInputConnections)
-            return;
+        _valueListsTmp.Clear();
 
         var useHorizontal = Direction.GetValue(context) == 0;
-        var values = Values.GetValue(context);
-        if (values == null || values.Count == 0)
-            return;
 
-        var rangeStart = RangeStart.GetValue(context).Clamp(0, values.Count - 1);
-        var rangeEnd = RangeEnd.GetValue(context).Clamp(0, values.Count - 1);
-
-        if (UseFullList.GetValue(context))
+        int listCount;
+        if (Values.HasInputConnections)
         {
-            rangeStart = 0;
-            rangeEnd = values.Count - 1;
+            listCount = Values.CollectedInputs.Count;
+            if (listCount == 0)
+                return;
+
+            foreach (var vi in Values.CollectedInputs)
+            {
+                var v = vi.GetValue(context);
+                if (v != null && v.Count > 0)
+                    _valueListsTmp.Add(v);
+            }
+
+            listCount = _valueListsTmp.Count;
+            if (listCount == 0)
+                return;
         }
+        else
+        {
+            var v = Values.GetValue(context);
+            if (v == null || v.Count == 0)
+                return;
+            listCount = 1;
+            _valueListsTmp.Add(v);
+        }
+
+        // Use the longest list as sampleCount
+        var sampleCount = 0;
+        foreach (var list in _valueListsTmp)
+            sampleCount = Math.Max(sampleCount, list.Count);
+
+        if (sampleCount == 0)
+            return;
 
         var gain = Gain.GetValue(context);
         var pow = Pow.GetValue(context);
-
         if (Math.Abs(pow) < 0.001f)
             return;
 
-        if (rangeEnd < rangeStart)
-            (rangeEnd, rangeStart) = (rangeStart, rangeEnd);
-
-        var sampleCount = (rangeEnd - rangeStart) + 1;
-        const int entrySizeInBytes = sizeof(float);
-        var rowPitch = useHorizontal ? sampleCount * entrySizeInBytes : entrySizeInBytes;
-
-        // Ensure buffer large enough
-        if (_floatBuffer.Length < sampleCount)
+        var requiredFloats = listCount * sampleCount;
+        if (_uploadBuffer.Length < requiredFloats)
         {
-            if (_floatBufferHandle.IsAllocated)
-                _floatBufferHandle.Free();
+            if (_uploadHandle.IsAllocated)
+                _uploadHandle.Free();
 
-            _floatBuffer = new float[sampleCount];
-            _floatBufferHandle = GCHandle.Alloc(_floatBuffer, GCHandleType.Pinned);
-            _floatBufferPtr = _floatBufferHandle.AddrOfPinnedObject();
+            _uploadBuffer = new float[requiredFloats];
+            _uploadHandle = GCHandle.Alloc(_uploadBuffer, GCHandleType.Pinned);
+            _uploadPtr = _uploadHandle.AddrOfPinnedObject();
         }
 
-        // Fill buffer
-        for (var i = 0; i < sampleCount; i++)
+        // Fill buffer: write row by row (each input list = one row if horizontal)
+        int o = 0;
+        if (useHorizontal)
         {
-            var v = (float)Math.Pow(values[rangeStart + i] * gain, pow);
-            _floatBuffer[i] = v;
+            foreach (var list in _valueListsTmp)
+            {
+                for (int i = 0; i < sampleCount; i++)
+                {
+                    float v = i < list.Count ? (float)Math.Pow(list[i] * gain, pow) : 0f;
+                    _uploadBuffer[o++] = v;
+                }
+            }
+        }
+        else
+        {
+            for (int i = 0; i < sampleCount; i++)
+            {
+                foreach (var list in _valueListsTmp)
+                {
+                    float v = i < list.Count ? (float)Math.Pow(list[i] * gain, pow) : 0f;
+                    _uploadBuffer[o++] = v;
+                }
+            }
         }
 
-        // Row pitch is bytes per row (stride)
-        var height = useHorizontal ? 1 : sampleCount;
+        var width  = useHorizontal ? sampleCount : listCount;
+        var height = useHorizontal ? listCount   : sampleCount;
 
-        // Create texture if needed (no initial data)
-        if (CurveTexture.Value == null ||
-            CurveTexture.Value.Description.Width != (useHorizontal ? sampleCount : 1) ||
-            CurveTexture.Value.Description.Height != (useHorizontal ? 1 : sampleCount))
+        if (ValuesTexture.Value == null ||
+            ValuesTexture.Value.Description.Width  != width ||
+            ValuesTexture.Value.Description.Height != height)
         {
-            if (CurveTexture.Value != null)
-                Utilities.Dispose(ref CurveTexture.Value);
+            if (ValuesTexture.Value != null)
+                Utilities.Dispose(ref ValuesTexture.Value);
 
-            var texture2DDescription = new Texture2DDescription
-                                           {
-                                               Width = useHorizontal ? sampleCount : 1,
-                                               Height = useHorizontal ? 1 : sampleCount,
-                                               ArraySize = 1,
-                                               BindFlags = BindFlags.ShaderResource,
-                                               Usage = ResourceUsage.Default,
-                                               MipLevels = 1,
-                                               CpuAccessFlags = CpuAccessFlags.None,
-                                               Format = Format.R32_Float,
-                                               SampleDescription = new SampleDescription(1, 0),
-                                           };
-            CurveTexture.Value = Texture2D.CreateTexture2D(texture2DDescription);
+            var desc = new Texture2DDescription
+            {
+                Width = width,
+                Height = height,
+                ArraySize = 1,
+                BindFlags = BindFlags.ShaderResource,
+                Usage = ResourceUsage.Default,
+                MipLevels = 1,
+                CpuAccessFlags = CpuAccessFlags.None,
+                Format = Format.R32_Float,
+                SampleDescription = new SampleDescription(1, 0),
+            };
+            ValuesTexture.Value = Texture2D.CreateTexture2D(desc);
         }
 
-        // Upload with DataBox (not DataRectangle)
-        var dataBox = new DataBox(_floatBufferPtr, rowPitch, rowPitch * height);
-        ResourceManager.Device.ImmediateContext.UpdateSubresource(dataBox, CurveTexture.Value, 0);
+        
+        const int bytesPerTexel = sizeof(float);
+        var rowPitch   = width * bytesPerTexel;
+        
+        var slicePitch = rowPitch * height;
+        var dataBox = new DataBox(_uploadPtr, rowPitch, slicePitch);
+        ResourceManager.Device.ImmediateContext.UpdateSubresource(dataBox, ValuesTexture.Value, 0);
+
+        Values.DirtyFlag.Clear();
     }
-
+    
     // Reused, pinned upload buffer (avoid per-frame allocations)
-    private GCHandle _floatBufferHandle;
-    private IntPtr _floatBufferPtr = IntPtr.Zero;
+    private float[] _uploadBuffer = [];
+    private GCHandle _uploadHandle;
+    private IntPtr _uploadPtr = IntPtr.Zero;
 
     private float[] _floatBuffer = [];
+    private readonly List<List<float>> _valueListsTmp = new();
 
     [Input(Guid = "092C8D1F-A70E-4298-B5DF-52C9D62F8E04")]
-    public readonly InputSlot<List<float>> Values = new();
+    public readonly MultiInputSlot<List<float>> Values = new();
 
     [Input(Guid = "165F7E0E-6EF0-4BE1-8ED3-61ED0DB752ED")]
     public readonly InputSlot<bool> UseFullList = new();
