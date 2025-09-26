@@ -269,11 +269,6 @@
           "Value": 0.93
         },
         {
-          "Id": "ddd93b06-118e-43e0-85f6-c150faf91d04"/*Offset*/,
-          "Type": "System.Single",
-          "Value": -0.004000002
-        },
-        {
           "Id": "f12fee9a-dd91-40c2-9aa5-ea34804a858d"/*Bias*/,
           "Type": "System.Single",
           "Value": 0.09
@@ -3126,7 +3121,7 @@
         {
           "Id": "458891b9-0244-401a-b0a5-3a7ee365e7cb"/*Y*/,
           "Type": "System.Single",
-          "Value": 14.0
+          "Value": 5.450255
         },
         {
           "Id": "627f766e-056c-413e-8530-838d673bd031"/*Z*/,
