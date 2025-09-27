@@ -68,7 +68,7 @@
     {
       "ChildId": "03b45052-9ad5-438c-8f38-a7fcd8c807b8"/*TriggerAnim*/,
       "Position": {
-        "X": 1974.4174,
+        "X": 1929.2186,
         "Y": 533.5635
       }
     },
@@ -206,7 +206,7 @@
     {
       "ChildId": "3cb75bd8-3420-4a75-a8f5-5bad9a772ffc"/*TriggerAnim*/,
       "Position": {
-        "X": 1974.4175,
+        "X": 1929.2188,
         "Y": 463.56348
       }
     },
@@ -223,6 +223,14 @@
         "X": 2913.168,
         "Y": -736.19867
       }
+    },
+    {
+      "ChildId": "45035aba-b815-4515-a248-dbd7c6d81f61"/*PickString*/,
+      "Position": {
+        "X": 2022.137,
+        "Y": -536.7929
+      },
+      "SnapshotGroupIndex": "1"
     },
     {
       "ChildId": "468e8d90-c581-4f61-a413-5bfdec69617d"/*Multiply*/,
@@ -327,8 +335,8 @@
     {
       "ChildId": "72cb828b-0c0e-440e-93d1-b20f098a196d"/*FilesInFolder*/,
       "Position": {
-        "X": 2216.7158,
-        "Y": -431.0288
+        "X": 2022.137,
+        "Y": -466.7929
       }
     },
     {
@@ -385,6 +393,18 @@
       "Position": {
         "X": 2076.7158,
         "Y": -361.0288
+      }
+    },
+    {
+      "ChildId": "8eabaacd-1e8b-45e5-b0c3-4ef9d0598ebb"/*Folder*/,
+      "Style": "Resizable",
+      "Size": {
+        "X": 120.0,
+        "Y": 80.0
+      },
+      "Position": {
+        "X": 1882.137,
+        "Y": -536.7929
       }
     },
     {
@@ -449,6 +469,18 @@
       "Position": {
         "X": 1713.9656,
         "Y": 872.9063
+      }
+    },
+    {
+      "ChildId": "a186aab6-9148-494f-97c9-ec9bdeffc2a0"/*Folder*/,
+      "Style": "Resizable",
+      "Size": {
+        "X": 120.0,
+        "Y": 80.0
+      },
+      "Position": {
+        "X": 1882.137,
+        "Y": -501.7929
       }
     },
     {
@@ -546,7 +578,7 @@
     {
       "ChildId": "d141ef03-f738-404f-a6a1-2a44cc0d45b2"/*Sum*/,
       "Position": {
-        "X": 2114.4175,
+        "X": 2069.2188,
         "Y": 498.56348
       }
     },
@@ -596,7 +628,7 @@
     {
       "ChildId": "e7c3a407-3139-41bb-b9eb-b160b9c715ba"/*Remap*/,
       "Position": {
-        "X": 2114.4175,
+        "X": 2069.2188,
         "Y": 463.56348
       }
     },
