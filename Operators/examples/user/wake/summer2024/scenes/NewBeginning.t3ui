@@ -543,7 +543,7 @@
   "Annotations": [
     {
       "Id": "06824659-5a0f-491d-a4af-1d5b24cfbeea",
-      "Title": "1 - Spin\n2 - Pull (start centered)\n3 - ",
+      "Title": "1 - Spin (start up)\n2 - Pull (start centered)\n3 - ",
       "Label": "MIDI Sliders",
       "Color": {
         "X": 0.6,
