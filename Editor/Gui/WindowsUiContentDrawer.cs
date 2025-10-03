@@ -116,7 +116,6 @@ public sealed class WindowsUiContentDrawer : IUiContentDrawer<Device>
             }
             
             ImGui.NewFrame();
-            ProgramWindows.Main.PrepareRenderingFrame();
             
             // Render 2nd view
             ProgramWindows.Viewer.SetVisible(T3Ui.ShowSecondaryRenderWindow);
@@ -129,36 +128,44 @@ public sealed class WindowsUiContentDrawer : IUiContentDrawer<Device>
                 ProgramWindows.SetVertexShader(SharedResources.FullScreenVertexShaderResource);
                 ProgramWindows.SetPixelShader(SharedResources.FullScreenPixelShaderResource);
                 
-                if (viewer.Texture is { IsDisposed: false })
+                
+                if (UserSettings.Config.MirrorUiOnSecondView)
                 {
-                    //Log.Debug($"using TextureId:{resourceManager.SecondRenderWindowTexture}, debug name:{resourceManager.SecondRenderWindowTexture.DebugName}");
-                    if (_viewWindowBackgroundSrv == null ||
-                        _viewWindowBackgroundSrv.Resource.NativePointer != viewer.Texture.NativePointer)
-                    {
-                        _viewWindowBackgroundSrv?.Dispose();
-                        _viewWindowBackgroundSrv = new ShaderResourceView(Program.Device, viewer.Texture);
-                    }
+                    ProgramWindows.RebuildUiCopyTextureIfRequired();
+                    ProgramWindows.CopyUiContentToShareTexture();
                     
-                    ProgramWindows.SetRasterizerState(SharedResources.ViewWindowRasterizerState);
-                    ProgramWindows.SetPixelShaderSRV(_viewWindowBackgroundSrv);
-                }
-                else if (SharedResources.ViewWindowDefaultTextureSrv != null)
-                {
-                    ProgramWindows.SetPixelShaderSRV(SharedResources.ViewWindowDefaultTextureSrv);
+                    if (ProgramWindows.UiCopyTextureSrv != null && !ProgramWindows.UiCopyTextureSrv.IsDisposed)
+                    {
+                        ProgramWindows.SetRasterizerState(SharedResources.ViewWindowRasterizerState);
+                        ProgramWindows.SetPixelShaderSRV(ProgramWindows.UiCopyTextureSrv);
+                        ProgramWindows.DrawTextureToSecondaryRenderOutput();
+                    }
                 }
                 else
                 {
-                    Log.Debug($"Null {nameof(ShaderResourceView)} for 2nd render view");
+                    if (viewer.Texture is { IsDisposed: false })
+                    {
+                        if (_viewWindowBackgroundSrv == null ||
+                            _viewWindowBackgroundSrv.Resource.NativePointer != viewer.Texture.NativePointer)
+                        {
+                            _viewWindowBackgroundSrv?.Dispose();
+                            _viewWindowBackgroundSrv = new ShaderResourceView(Program.Device, viewer.Texture);
+                        }
+
+                        ProgramWindows.SetRasterizerState(SharedResources.ViewWindowRasterizerState);
+                        ProgramWindows.SetPixelShaderSRV(_viewWindowBackgroundSrv);
+                        ProgramWindows.DrawTextureToSecondaryRenderOutput();
+                    }
+                    else
+                    {
+                        Log.Debug($"Null {nameof(ShaderResourceView)} for 2nd render view");
+                    }
                 }
-                ////Todo: @pixtur. Clarify this
-                //Log.Warning("Render 2nd view is currently broken.");
-                ProgramWindows.DrawTextureToSecondaryRenderOutput();
-                //ProgramWindows.CopyToSecondaryRenderOutput();
-                //ProgramWindows.CopyUiContentToShareTexture();
             }
-            
+            ProgramWindows.Main.PrepareRenderingFrame();
+
+            // Clear the main window buffer for next frame
             T3Ui.ProcessFrame();
-            
             ProgramWindows.RefreshViewport();
             
             ImGui.Render();
