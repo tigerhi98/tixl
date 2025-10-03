@@ -1,6 +1,7 @@
 {
   "Id": "0f1bf849-949e-4462-a7af-ecb2ff3cd109"/*DirectionalForce*/,
   "Description": "Generates a force acting on particles in a defined direction in space.\n\nUseful for simulating gravity, wind or attractive forces.",
+  "SymbolTags": "1",
   "InputUis": [
     {
       "InputId": "56b551e9-47aa-4d19-954b-367c4d96e5d8"/*Direction*/,
