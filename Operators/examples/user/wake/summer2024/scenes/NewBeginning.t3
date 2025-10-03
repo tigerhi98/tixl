@@ -47,7 +47,7 @@
         {
           "Id": "4f9ab443-3885-4a57-9116-6be5824bd95b"/*Amount*/,
           "Type": "System.Single",
-          "Value": 0.42
+          "Value": 0.32857004
         }
       ],
       "Outputs": []
@@ -190,6 +190,11 @@
             "Z": 1.0,
             "W": 1.0
           }
+        },
+        {
+          "Id": "c78378f5-8306-4586-af6b-99cea40fa9a9"/*FadeOutTooLong*/,
+          "Type": "System.Single",
+          "Value": 0.14
         }
       ],
       "Outputs": []
@@ -1258,7 +1263,7 @@
         {
           "Id": "cc98bda7-34a5-4c18-9b9e-fabe51b02d71"/*Amount*/,
           "Type": "System.Single",
-          "Value": 0.03
+          "Value": 0.10556194
         },
         {
           "Id": "ecdccc3c-b7a4-43f7-a4c8-0269ecff916a"/*Variation*/,

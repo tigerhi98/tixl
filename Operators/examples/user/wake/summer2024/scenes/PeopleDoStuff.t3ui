@@ -21,6 +21,14 @@
   ],
   "SymbolChildUis": [
     {
+      "ChildId": "00e108d4-075f-4e76-8e60-0fabb8ce9b22"/*Adjust Position*/,
+      "Comment": "For letter boxed",
+      "Position": {
+        "X": 837.2585,
+        "Y": 53.218094
+      }
+    },
+    {
       "ChildId": "067d1e81-966d-41bc-ae94-c46d3059e7ee"/*SplitString*/,
       "Position": {
         "X": 308.75598,
