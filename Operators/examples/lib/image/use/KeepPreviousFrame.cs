@@ -3,7 +3,7 @@ using T3.Core.Utils;
 namespace Examples.Lib.image.use;
 
 [Guid("57c1fe66-d8bc-4ea5-ad25-6986d4c2bba4")]
- internal sealed class KeepPreviousFrame2 : Instance<KeepPreviousFrame2>
+ internal sealed class KeepPreviousFrame : Instance<KeepPreviousFrame>
 {
     [Output(Guid = "7ba708e0-1cbb-411a-aa2c-bc78d248d761")]
     public readonly Slot<Texture2D> TextureA = new();
@@ -11,7 +11,7 @@ namespace Examples.Lib.image.use;
     [Output(Guid = "B8C943B7-A402-4AE1-A489-EEFF900889CD")]
     public readonly Slot<Texture2D> TextureB = new();
 
-    public KeepPreviousFrame2()
+    public KeepPreviousFrame()
     {
         TextureA.UpdateAction += UpdateTexture;
         TextureB.UpdateAction += UpdateTexture;
