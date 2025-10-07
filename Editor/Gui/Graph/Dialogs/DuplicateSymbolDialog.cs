@@ -26,7 +26,11 @@ internal sealed class DuplicateSymbolDialog : ModalDialog
         if(selectedChildUis.Count != 1)
             return result;
 
-
+        if (selectedChildUis[0]?.SymbolChild?.Symbol == null)
+        {
+            return result;
+        }
+        
         var s = selectedChildUis[0].SymbolChild.Symbol;
         if (_selectedSymbolId != s.Id)
         {
