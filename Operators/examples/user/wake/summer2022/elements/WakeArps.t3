@@ -525,9 +525,9 @@
           "Type": "System.Numerics.Vector4",
           "Value": {
             "X": 1.0,
-            "Y": 1.0,
-            "Z": 1.0,
-            "W": 1.0
+            "Y": 0.8067013,
+            "Z": 0.8358826,
+            "W": 0.38
           }
         },
         {
@@ -598,7 +598,7 @@
         {
           "Id": "3dd7c779-7982-4e7c-b4ce-f1915f477ad0"/*Radius*/,
           "Type": "System.Single",
-          "Value": 0.50397205
+          "Value": 3.0
         },
         {
           "Id": "ca582e39-37d7-4df6-b942-e2330f2bf2c6"/*Center*/,
@@ -1641,24 +1641,9 @@
       "SymbolId": "599ada75-b2ac-4f6c-ac98-f7b4bb6cf47d",
       "InputValues": [
         {
-          "Id": "02eb5c6b-3995-409b-bd18-9e5c3d58364a"/*Attraction*/,
-          "Type": "System.Single",
-          "Value": 0.20333654
-        },
-        {
-          "Id": "0f929afe-8ba0-479f-adae-d96f89f86266"/*Repulsion*/,
-          "Type": "System.Single",
-          "Value": 0.10794412
-        },
-        {
           "Id": "86f4bbf4-26a4-4dd7-9a23-3ef1a6c5a13b"/*Amount*/,
           "Type": "System.Single",
-          "Value": 0.15155801
-        },
-        {
-          "Id": "97334c3a-7d1b-4990-a541-70f6ef040197"/*ReflectOnCollision*/,
-          "Type": "System.Boolean",
-          "Value": true
+          "Value": 0.5
         }
       ],
       "Outputs": []
@@ -3280,7 +3265,7 @@
         {
           "Id": "458891b9-0244-401a-b0a5-3a7ee365e7cb"/*Y*/,
           "Type": "System.Single",
-          "Value": 45.548965
+          "Value": 78.0
         },
         {
           "Id": "627f766e-056c-413e-8530-838d673bd031"/*Z*/,
