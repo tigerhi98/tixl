@@ -22,8 +22,11 @@
 - [ ] Duplicate as new type should also duplicate variations and snapshot enabled ops!
 - [ ] Variations should be stored at project folder
 - [ ] !!! Indicate read-only operators
-- 
 
+- [ ] Fix: Turbulence force Amount from Velocity
+- [ ] Fix: Rename Direction "RandomAmount" -> Variation
+- [ ] Idea: Add option to switch space of SnapToAnglesForce 
+- [ ] Fix: SwitchParticleForce filtering with -1 and -2
 
 # UI
 - [ ] add color preview to vec4 (and maybe a history gradient?)
@@ -34,7 +37,7 @@
 - [ ] Idea: bookmark / navigation panel
 - [ ] Snapshots: Somehow fix usecase "update set this parameter for these snapshots"
 - [ ] Snapshots: Layout snapshots like on Controller
-- [ ] 
+- [ ] Fix: Raymarch point
 
 ## Project handling / Project HUB
 
