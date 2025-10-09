@@ -1,43 +1,18 @@
 #nullable enable
-using System;
-using System.IO;
-using System.Net;
 using System.Net.Sockets;
-using System.Numerics;
-using System.Runtime.InteropServices;
 using System.Threading;
-using SharpDX.Direct3D11;
-using T3.Core.DataTypes;
-using T3.Core.Logging;
-using T3.Core.Operator;
-using T3.Core.Operator.Attributes;
-using T3.Core.Operator.Slots;
-using T3.Core.Resource;
-using Operators.Utils;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.NetworkInformation;
+// ReSharper disable SuggestVarOrType_BuiltInTypes
 
 namespace Lib.io.posistage
 {
-    [StructLayout(LayoutKind.Sequential)]
-    public struct PsnPoint
-    {
-        public Vector3 Position;
-        public float F1; // Used for ID
-        public Vector4 Orientation; // Quaternion
-        public Vector4 Color;
-        public Vector3 Scale;
-        public float F2;
 
-        public static readonly int Stride = 64;
-    }
 
     [Guid("A9E8D7C6-B5A4-4E1A-8D0F-3C5A7B9E2D1F")]
-    internal sealed class PosiStageInput : Instance<PosiStageInput>, IStatusProvider, ICustomDropdownHolder, IDisposable
+    internal sealed class PosiStageInput : Instance<PosiStageInput>, IStatusProvider, ICustomDropdownHolder
     {
         [Output(Guid = "C8C4D0F7-C06E-4B1A-9D6C-6F5E4D3C2B1B", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
-        public readonly Slot<BufferWithViews> TrackersAsBuffer = new();
+        public readonly Slot<BufferWithViews?> TrackersAsBuffer = new();
 
         [Output(Guid = "E4B3A2C1-D0E9-4F8A-7B6C-5D4E3F2A1B0C", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
         public readonly Slot<Dict<float>> TrackersAsDict = new();
@@ -174,12 +149,12 @@ namespace Lib.io.posistage
 
                 if (_printToLog) Log.Debug($"PSN Input: Bound to {localIp}:{port} and joined group {multicastIp}.", this);
 
-                var remoteEP = new IPEndPoint(IPAddress.Any, 0);
+                var remoteEp = new IPEndPoint(IPAddress.Any, 0);
                 while (_runListener)
                 {
                     try
                     {
-                        var data = _udpClient.Receive(ref remoteEP);
+                        var data = _udpClient.Receive(ref remoteEp);
                         ParsePsnDataPacket(data);
                         TrackersAsBuffer.DirtyFlag.Invalidate();
                     }
@@ -233,11 +208,22 @@ namespace Lib.io.posistage
                             uint fieldHeader = reader.ReadUInt32();
                             ushort fieldId = (ushort)(fieldHeader & 0xFFFF);
                             ushort fieldLen = (ushort)((fieldHeader >> 16) & 0x7FFF);
-                            if (reader.BaseStream.Position + fieldLen > trackerEndPos) break;
+                            
+                            if (reader.BaseStream.Position + fieldLen > trackerEndPos) 
+                                break;
 
-                            if (fieldId == 0x0000) newPos = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                            else if (fieldId == 0x0002) newOri = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
-                            else reader.BaseStream.Position += fieldLen;
+                            switch (fieldId)
+                            {
+                                case 0x0000:
+                                    newPos = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                                    break;
+                                case 0x0002:
+                                    newOri = new Vector3(reader.ReadSingle(), reader.ReadSingle(), reader.ReadSingle());
+                                    break;
+                                default:
+                                    reader.BaseStream.Position += fieldLen;
+                                    break;
+                            } 
                         }
                         _trackedValues[trackerId] = new TrackerData(newPos, newOri);
                         reader.BaseStream.Position = trackerEndPos;
@@ -249,17 +235,18 @@ namespace Lib.io.posistage
 
         private static void UpdateGpuBuffer(ref BufferWithViews? buffer, PsnPoint[] array)
         {
-            int num = array.Length;
-            if (num != (buffer?.Buffer.Description.SizeInBytes / PsnPoint.Stride ?? 0))
+            int count = array.Length;
+            if (count != (buffer?.Buffer.Description.SizeInBytes / PsnPoint.Stride ?? 0))
             {
                 buffer?.Dispose();
                 buffer = new BufferWithViews();
-                ResourceManager.SetupStructuredBuffer(array, PsnPoint.Stride * num, PsnPoint.Stride, ref buffer.Buffer);
+                ResourceManager.SetupStructuredBuffer(array, PsnPoint.Stride * count, PsnPoint.Stride, ref buffer.Buffer);
                 ResourceManager.CreateStructuredBufferSrv(buffer.Buffer, ref buffer.Srv);
                 ResourceManager.CreateStructuredBufferUav(buffer.Buffer, UnorderedAccessViewBufferFlags.None, ref buffer.Uav);
             }
-            else
+            else if(buffer != null)
             {
+                
                 ResourceManager.Device.ImmediateContext.UpdateSubresource(array, buffer.Buffer);
             }
         }
@@ -278,14 +265,14 @@ namespace Lib.io.posistage
         {
             Vector3 angles;
             const float radToDeg = 180.0f / MathF.PI;
-            float sinp = 2 * (q.W * q.X + q.Y * q.Z);
+            var sinp = 2 * (q.W * q.X + q.Y * q.Z);
             angles.X = (MathF.Abs(sinp) >= 1) ? MathF.CopySign(MathF.PI / 2, sinp) : MathF.Asin(sinp);
-            float siny_cosp = 2 * (q.W * q.Y - q.Z * q.X);
-            float cosy_cosp = 1 - 2 * (q.X * q.X + q.Y * q.Y);
-            angles.Y = MathF.Atan2(siny_cosp, cosy_cosp);
-            float sinr_cosp = 2 * (q.W * q.Z + q.X * q.Y);
-            float cosr_cosp = 1 - 2 * (q.Z * q.Z + q.X * q.X);
-            angles.Z = MathF.Atan2(sinr_cosp, cosr_cosp);
+            var sinyCosp = 2 * (q.W * q.Y - q.Z * q.X);
+            var cosyCosp = 1 - 2 * (q.X * q.X + q.Y * q.Y);
+            angles.Y = MathF.Atan2(sinyCosp, cosyCosp);
+            var sinrCosp = 2 * (q.W * q.Z + q.X * q.Y);
+            var cosrCosp = 1 - 2 * (q.Z * q.Z + q.X * q.X);
+            angles.Z = MathF.Atan2(sinrCosp, cosrCosp);
             return angles * radToDeg;
         }
 
@@ -295,24 +282,43 @@ namespace Lib.io.posistage
             var bytes = ip.GetAddressBytes();
             return bytes[0] >= 224 && bytes[0] <= 239;
         }
+        
+        protected override void Dispose(bool isDisposing)
+        {
+            if (!isDisposing)
+                return;
 
-        public void Dispose() { StopListening(); _outputBuffer?.Dispose(); }
-
+            StopListening(); 
+            _outputBuffer?.Dispose();
+        }
+        
         #region ICustomDropdownHolder implementation
         string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
-        IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id ? GetLocalIPv4Addresses() : Enumerable.Empty<string>();
-        void ICustomDropdownHolder.HandleResultForInput(Guid id, string? s, bool i) { if (!string.IsNullOrEmpty(s) && i && id == LocalIpAddress.Id) LocalIpAddress.SetTypedInputValue(s.Split(' ')[0]); }
+        IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id 
+                                                                                     ? GetLocalIPv4Addresses() 
+                                                                                     : [];
+
+        void ICustomDropdownHolder.HandleResultForInput(Guid id, string? s, bool i)
+        {
+            if (!string.IsNullOrEmpty(s) && i && id == LocalIpAddress.Id) 
+                LocalIpAddress.SetTypedInputValue(s.Split(' ')[0]);
+        }
 
         private static IEnumerable<string> GetLocalIPv4Addresses()
         {
             yield return "0.0.0.0"; // Any
-            if (!NetworkInterface.GetIsNetworkAvailable()) yield break;
+            
+            if (!NetworkInterface.GetIsNetworkAvailable()) 
+                yield break;
+            
             foreach (var ni in NetworkInterface.GetAllNetworkInterfaces())
             {
                 if (ni.OperationalStatus != OperationalStatus.Up) continue;
                 foreach (var ipInfo in ni.GetIPProperties().UnicastAddresses)
+                {
                     if (ipInfo.Address.AddressFamily == AddressFamily.InterNetwork)
                         yield return ipInfo.Address.ToString();
+                }
             }
         }
         #endregion
@@ -320,15 +326,42 @@ namespace Lib.io.posistage
         #region IStatusProvider
         private string? _statusMessage = "Not listening.";
         private IStatusProvider.StatusLevel _statusLevel = IStatusProvider.StatusLevel.Notice;
-        public void SetStatus(string m, IStatusProvider.StatusLevel l) { _statusMessage = m; _statusLevel = l; }
+
+        private void SetStatus(string m, IStatusProvider.StatusLevel l)
+        {
+            _statusMessage = m; _statusLevel = l;
+        }
         public IStatusProvider.StatusLevel GetStatusLevel() => _statusLevel;
         public string? GetStatusMessage() => _statusMessage;
         #endregion
 
-        [Input(Guid = "0944714D-693D-4251-93A6-E22A2DB64F20")] public readonly InputSlot<bool> Listen = new();
-        [Input(Guid = "9E23335A-D63A-4286-930E-C63E86D0E6F0")] public readonly InputSlot<string> LocalIpAddress = new("0.0.0.0");
-        [Input(Guid = "46C2BF8B-3E0C-4856-AA4A-32943A4B0223")] public readonly InputSlot<string> MulticastIpAddress = new("236.10.10.10");
-        [Input(Guid = "2EBE418D-407E-46D8-B274-13B41C52ACCF")] public readonly InputSlot<int> Port = new(56565);
-        [Input(Guid = "5E725916-4143-4759-8651-E12185C658D3")] public readonly InputSlot<bool> PrintToLog = new();
+        [Input(Guid = "0944714D-693D-4251-93A6-E22A2DB64F20")]
+        public readonly InputSlot<bool> Listen = new();
+        
+        [Input(Guid = "9E23335A-D63A-4286-930E-C63E86D0E6F0")]
+        public readonly InputSlot<string> LocalIpAddress = new("0.0.0.0");
+        
+        [Input(Guid = "46C2BF8B-3E0C-4856-AA4A-32943A4B0223")]
+        public readonly InputSlot<string> MulticastIpAddress = new("236.10.10.10");
+        
+        [Input(Guid = "2EBE418D-407E-46D8-B274-13B41C52ACCF")]
+        public readonly InputSlot<int> Port = new(56565);
+        
+        [Input(Guid = "5E725916-4143-4759-8651-E12185C658D3")]
+        public readonly InputSlot<bool> PrintToLog = new();
+        
+    }
+    
+    [StructLayout(LayoutKind.Sequential)]
+    internal struct PsnPoint
+    {
+        public Vector3 Position;
+        public float F1; // Used for ID
+        public Vector4 Orientation; // Quaternion
+        public Vector4 Color;
+        public Vector3 Scale;
+        public float F2;
+
+        internal const int Stride = 64;
     }
 }

@@ -13,13 +13,13 @@ using T3.Core.Utils;
 namespace Lib.io.video
 {
     [Guid("D9A7233D-5D03-4268-A58B-465972852A5B")]
-    internal sealed class VideoStreamInput : Instance<VideoStreamInput>, IStatusProvider, IDisposable
+    internal sealed class VideoStreamInput : Instance<VideoStreamInput>, IStatusProvider
     {
         [Output(Guid = "2E7E2404-5881-4327-9653-CA9533B856A9", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
         public readonly Slot<Texture2D?> Texture = new();
 
         [Output(Guid = "B0E4313B-A746-4444-934E-14285D42DADB", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
-        public readonly Slot<string> Status = new();
+        public new readonly Slot<string> Status = new();
 
         [Output(Guid = "3F6A960C-906A-4073-A338-ABB785869062", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
         public readonly Slot<Int2> Resolution = new();
@@ -38,7 +38,7 @@ namespace Lib.io.video
         private CancellationTokenSource? _cancellationTokenSource;
         private VideoCapture? _capture;
 
-        private readonly object _lockObject = new();
+        private readonly Lock _lockObject = new();
         private Mat? _sharedBgraMat;
 
         private Texture2D? _gpuTexture;
@@ -46,7 +46,7 @@ namespace Lib.io.video
         private string _lastUrl = string.Empty;
         private bool _lastConnectState;
         private volatile string _lastStatusMessage = "Not connected.";
-        private bool _disposed;
+        //private bool _disposed;
 
         private void SetStatus(string message) => _lastStatusMessage = message;
 
@@ -219,25 +219,26 @@ namespace Lib.io.video
             ResourceManager.Device.ImmediateContext.UpdateSubresource(dataBox, _gpuTexture, 0);
         }
 
-        public void Dispose()
-        {
-            Dispose(true);
-            GC.SuppressFinalize(this);
-        }
+        // public void Dispose()
+        // {
+        //     Dispose(true);
+        //     GC.SuppressFinalize(this);
+        // }
 
-        private void Dispose(bool disposing)
+        protected override void Dispose(bool isDisposing)
         {
-            if (_disposed) return;
-            if (disposing)
+            if (IsDisposed)
+                return;
+            
+            if (!isDisposing)
+                return;
+            
+            StopCaptureThread();
+            Utilities.Dispose(ref _gpuTexture);
+            lock (_lockObject)
             {
-                StopCaptureThread();
-                Utilities.Dispose(ref _gpuTexture);
-                lock (_lockObject)
-                {
-                    _sharedBgraMat?.Dispose();
-                }
+                _sharedBgraMat?.Dispose();
             }
-            _disposed = true;
         }
 
         public IStatusProvider.StatusLevel GetStatusLevel() => _lastStatusMessage.StartsWith("Error") ? IStatusProvider.StatusLevel.Error : IStatusProvider.StatusLevel.Success;

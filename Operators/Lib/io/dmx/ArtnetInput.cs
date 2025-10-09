@@ -8,11 +8,8 @@ using T3.Core.Utils;
 namespace Lib.io.dmx;
 
 [Guid("fc03dcd0-6f2f-4507-be06-1ed105607489")]
-internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICustomDropdownHolder, IDisposable
+internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICustomDropdownHolder
 {
-    private const int ArtNetPort = 6454;
-    private static readonly byte[] ArtnetId = "Art-Net\0"u8.ToArray();
-
     [Output(Guid = "d3c09c87-c508-4621-a54d-f14d85c3f75f", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
     public readonly Slot<List<int>> Result = new();
 
@@ -56,6 +53,7 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
                 {
                     for (var j = 0; j < 512; ++j) dmxSnapshot[j] = universeData.DmxData[j];
                 }
+
                 combinedDmxData.AddRange(dmxSnapshot);
             }
             else
@@ -63,6 +61,7 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
                 combinedDmxData.AddRange(Enumerable.Repeat(0, 512));
             }
         }
+
         Result.Value = combinedDmxData;
         UpdateStatusMessage(numUniverses, startUniverse);
     }
@@ -87,6 +86,7 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
         {
             Log.Debug("Artnet Input: Stopping listener.", this);
         }
+
         _udpClient?.Close(); // This will unblock the Receive call in ListenLoop
         _listenerThread?.Join(200); // Give the thread a moment to shut down
         _listenerThread = null;
@@ -125,7 +125,7 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
                     if (_udpClient == null) break; // Check if client was disposed externally
                     var data = _udpClient.Receive(ref remoteEndPoint);
 
-                    if (data.Length < 18 || !data.AsSpan(0, 8).SequenceEqual(ArtnetId) || data[8] != 0x00 || data[9] != 0x50) continue;
+                    if (data.Length < 18 || !data.AsSpan(0, 8).SequenceEqual(_artnetId) || data[8] != 0x00 || data[9] != 0x50) continue;
 
                     var universe = data[14] | (data[15] << 8);
                     var length = (data[16] << 8) | data[17];
@@ -137,6 +137,7 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
                         System.Buffer.BlockCopy(data, 18, universeData.DmxData, 0, length);
                         if (length < 512) Array.Clear(universeData.DmxData, length, 512 - length);
                     }
+
                     universeData.LastReceivedTicks = Stopwatch.GetTimestamp();
                     Result.DirtyFlag.Invalidate();
 
@@ -151,6 +152,7 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
                     {
                         Log.Warning($"Artnet Input receive socket error: {ex.Message} (Error Code: {ex.ErrorCode})", this);
                     }
+
                     break;
                 }
                 catch (Exception e)
@@ -208,7 +210,8 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
             var receivedCount = _receivedUniverses.Count;
             if (receivedCount == 0)
             {
-                SetStatus($"Listening on {localIpDisplay.Split(' ')[0]}:{ArtNetPort} for {numUniverses} universes (from {startUniverse})... No packets received.", IStatusProvider.StatusLevel.Warning);
+                SetStatus($"Listening on {localIpDisplay.Split(' ')[0]}:{ArtNetPort} for {numUniverses} universes (from {startUniverse})... No packets received.",
+                          IStatusProvider.StatusLevel.Warning);
             }
             else
             {
@@ -217,9 +220,20 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
         }
     }
 
-    public void Dispose() { StopListening(); }
+    protected override void Dispose(bool isDisposing)
+    {
+        if (!isDisposing)
+            return;
 
-    private sealed class UniverseData { public readonly byte[] DmxData = new byte[512]; public long LastReceivedTicks; }
+        StopListening();
+    }
+    
+    private sealed class UniverseData
+    {
+        public readonly byte[] DmxData = new byte[512];
+        public long LastReceivedTicks;
+    }
+
     private Thread? _listenerThread;
     private volatile bool _runListener;
     private UdpClient? _udpClient;
@@ -228,17 +242,25 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
     #region IStatusProvider & ICustomDropdownHolder
     private string _lastStatusMessage = "Inactive";
     private IStatusProvider.StatusLevel _lastStatusLevel = IStatusProvider.StatusLevel.Notice;
-    public void SetStatus(string m, IStatusProvider.StatusLevel l) { _lastStatusMessage = m; _lastStatusLevel = l; }
+
+    public void SetStatus(string m, IStatusProvider.StatusLevel l)
+    {
+        _lastStatusMessage = m;
+        _lastStatusLevel = l;
+    }
+
     public IStatusProvider.StatusLevel GetStatusLevel() => _lastStatusLevel;
     public string GetStatusMessage() => _lastStatusMessage;
 
     string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
     IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id ? GetLocalIPv4Addresses() : Enumerable.Empty<string>();
+
     void ICustomDropdownHolder.HandleResultForInput(Guid id, string? s, bool i)
     {
         if (string.IsNullOrEmpty(s) || !i || id != LocalIpAddress.Id) return;
         LocalIpAddress.SetTypedInputValue(s.Split(' ')[0]);
     }
+
     private static IEnumerable<string> GetLocalIPv4Addresses()
     {
         yield return "0.0.0.0 (Any)";
@@ -248,19 +270,33 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
         {
             if (ni.OperationalStatus != OperationalStatus.Up || ni.NetworkInterfaceType == NetworkInterfaceType.Loopback) continue;
             foreach (var ipInfo in ni.GetIPProperties().UnicastAddresses)
+            {
                 if (ipInfo.Address.AddressFamily == AddressFamily.InterNetwork)
                     yield return ipInfo.Address.ToString();
+            }
         }
     }
     #endregion
 
+    private const int ArtNetPort = 6454;
+    private static readonly byte[] _artnetId = "Art-Net\0"u8.ToArray();
+
     // Unique GUID for LocalIpAddress in ArtnetInput
-    [Input(Guid = "24B5D450-4E83-49DB-88B1-7D688E64585D")] public readonly InputSlot<string> LocalIpAddress = new("0.0.0.0 (Any)");
-    [Input(Guid = "3d085f6f-6f4a-4876-805f-22f25497a731")] public readonly InputSlot<bool> Active = new();
-    [Input(Guid = "19bde769-3992-4cf0-a0b4-e3ae25c03c79")] public readonly InputSlot<int> StartUniverse = new(1);
-    [Input(Guid = "c18a9359-3ef8-4e0d-85d8-51f725357388")] public readonly InputSlot<int> NumUniverses = new(1);
-    [Input(Guid = "a38c29b6-057d-4883-9366-139366113b63")] public readonly InputSlot<float> Timeout = new(1.2f);
-    // New InputSlot for PrintToLog
-    [Input(Guid = "A5B6C7D8-E9F0-4123-4567-890ABCDEF123")] // New GUID
+    [Input(Guid = "24B5D450-4E83-49DB-88B1-7D688E64585D")]
+    public readonly InputSlot<string> LocalIpAddress = new("0.0.0.0 (Any)");
+
+    [Input(Guid = "3d085f6f-6f4a-4876-805f-22f25497a731")]
+    public readonly InputSlot<bool> Active = new();
+
+    [Input(Guid = "19bde769-3992-4cf0-a0b4-e3ae25c03c79")]
+    public readonly InputSlot<int> StartUniverse = new(1);
+
+    [Input(Guid = "c18a9359-3ef8-4e0d-85d8-51f725357388")]
+    public readonly InputSlot<int> NumUniverses = new(1);
+
+    [Input(Guid = "a38c29b6-057d-4883-9366-139366113b63")]
+    public readonly InputSlot<float> Timeout = new(1.2f);
+
+    [Input(Guid = "A5B6C7D8-E9F0-4123-4567-890ABCDEF123")]
     public readonly InputSlot<bool> PrintToLog = new();
 }

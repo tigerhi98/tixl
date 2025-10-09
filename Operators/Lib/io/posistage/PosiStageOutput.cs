@@ -1,25 +1,14 @@
 #nullable enable
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Net;
 using System.Net.NetworkInformation;
 using System.Net.Sockets;
-using System.Numerics;
 using SharpDX;
 using SharpDX.Direct3D11;
-using T3.Core.DataTypes;
-using T3.Core.Logging;
-using T3.Core.Operator;
-using T3.Core.Operator.Attributes;
-using T3.Core.Operator.Slots;
-using T3.Core.Resource;
+using Exception = System.Exception;
 
 namespace Lib.io.posistage
 {
     [Guid("F1B2A3C4-D5E6-4F7A-8B9C-0D1E2F3A4B5C")]
-    internal sealed class PosiStageOutput : Instance<PosiStageOutput>, IStatusProvider, ICustomDropdownHolder, IDisposable
+    internal sealed class PosiStageOutput : Instance<PosiStageOutput>, IStatusProvider, ICustomDropdownHolder
     {
         [Output(Guid = "AABBCCDD-EEFF-4012-3456-7890ABCDEF12")]
         public readonly Slot<Command> Command = new();
@@ -76,46 +65,49 @@ namespace Lib.io.posistage
 
             var manualTrigger = SendTrigger.GetValue(context);
 
-            if (IsConnected.Value && (manualTrigger || SendOnChange.GetValue(context)))
+            if (IsConnected.Value && (manualTrigger || SendOnChange.GetValue(context)) && _cpuSidePoints != null)
             {
-                if (manualTrigger) SendTrigger.SetTypedInputValue(false);
+                if (manualTrigger) 
+                    SendTrigger.SetTypedInputValue(false);
 
                 if (!IPAddress.TryParse(targetIp, out var targetIpAddr))
                 {
                     SetStatus($"Invalid Target IP '{targetIp}'", IStatusProvider.StatusLevel.Error);
                     return;
                 }
+                
                 _multicastEndPoint = new IPEndPoint(targetIpAddr, targetPort);
 
                 var frameId = _frameIdCounter++;
                 var packetBytes = BuildPsnDataPacket(_cpuSidePoints, pointCount, frameId);
-                if (packetBytes != null)
+                try
                 {
-                    try
-                    {
-                        _udpClient!.Send(packetBytes, packetBytes.Length, _multicastEndPoint);
-                        SetStatus($"Sent 1 packet with {pointCount} trackers for frame {frameId}.", IStatusProvider.StatusLevel.Success);
-                        if (_printToLog) Log.Debug($"Sent 1 PSN_DATA packet with {pointCount} trackers for frame {frameId}.", this);
-                    }
-                    catch (Exception e)
-                    {
-                        SetStatus($"UDP send error: {e.Message}", IStatusProvider.StatusLevel.Warning);
-                        return;
-                    }
+                    _udpClient!.Send(packetBytes, packetBytes.Length, _multicastEndPoint);
+                    SetStatus($"Sent 1 packet with {pointCount} trackers for frame {frameId}.", IStatusProvider.StatusLevel.Success);
+                    if (_printToLog) Log.Debug($"Sent 1 PSN_DATA packet with {pointCount} trackers for frame {frameId}.", this);
+                }
+                catch (Exception e)
+                {
+                    SetStatus($"UDP send error: {e.Message}", IStatusProvider.StatusLevel.Warning);
+                    return;
                 }
 
-                if (_infoPacketStopwatch.Elapsed.TotalSeconds > 1.0)
+                if (!(_infoPacketStopwatch.Elapsed.TotalSeconds > 1.0)) 
+                    return;
+                
+                var names = Names.GetCollectedTypedInputs();
+                var serverName = ServerName.GetValue(context);
+                var infoPacket = BuildPsnInfoPacket(pointCount, names, context, serverName);
+                try
                 {
-                    var names = Names.GetCollectedTypedInputs();
-                    var serverName = ServerName.GetValue(context);
-                    var infoPacket = BuildPsnInfoPacket(_cpuSidePoints, pointCount, names, context, serverName);
-                    try { _udpClient!.Send(infoPacket, infoPacket.Length, _multicastEndPoint); } catch { /* ignored */ }
-                    _infoPacketStopwatch.Restart();
-                }
+                    _udpClient!.Send(infoPacket, infoPacket.Length, _multicastEndPoint);
+                } 
+                catch { /* ignored */ }
+                _infoPacketStopwatch.Restart();
             }
         }
 
-        private byte[]? BuildPsnDataPacket(PsnPoint[] points, int pointCount, byte frameId)
+        private byte[] BuildPsnDataPacket(PsnPoint[] points, int pointCount, byte frameId)
         {
             using var packetStream = new MemoryStream();
             using var writer = new BinaryWriter(packetStream, System.Text.Encoding.ASCII, leaveOpen: true);
@@ -170,7 +162,7 @@ namespace Lib.io.posistage
             return finalPacket.ToArray();
         }
 
-        private byte[] BuildPsnInfoPacket(PsnPoint[] points, int pointCount, List<Slot<string>> names, EvaluationContext context, string serverName)
+        private byte[] BuildPsnInfoPacket(int pointCount, List<Slot<string>> names, EvaluationContext context, string serverName)
         {
             using var packetStream = new MemoryStream();
             using var writer = new BinaryWriter(packetStream, System.Text.Encoding.ASCII, leaveOpen: true);
@@ -281,8 +273,14 @@ namespace Lib.io.posistage
             if (s < 0.001f) return Vector3.Zero;
             return new Vector3(q.X / s, q.Y / s, q.Z / s) * angle;
         }
+        
+        protected override void Dispose(bool isDisposing)
+        {
+            if (!isDisposing)
+                return;
 
-        public void Dispose() { CloseSocket(); }
+            CloseSocket();
+        }
 
         #region ICustomDropdownHolder
         string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
@@ -296,8 +294,10 @@ namespace Lib.io.posistage
             {
                 if (ni.OperationalStatus != OperationalStatus.Up) continue;
                 foreach (var ipInfo in ni.GetIPProperties().UnicastAddresses)
+                {
                     if (ipInfo.Address.AddressFamily == AddressFamily.InterNetwork)
                         yield return ipInfo.Address.ToString();
+                }
             }
         }
         #endregion
@@ -305,20 +305,40 @@ namespace Lib.io.posistage
         #region IStatusProvider
         private string? _statusMessage = "Not connected.";
         private IStatusProvider.StatusLevel _statusLevel = IStatusProvider.StatusLevel.Notice;
-        public void SetStatus(string m, IStatusProvider.StatusLevel l) { _statusMessage = m; _statusLevel = l; }
+        private void SetStatus(string m, IStatusProvider.StatusLevel l) { _statusMessage = m; _statusLevel = l; }
         public IStatusProvider.StatusLevel GetStatusLevel() => _statusLevel;
         public string? GetStatusMessage() => _statusMessage;
         #endregion
 
-        [Input(Guid = "7AB8F2A6-4874-4235-85A5-D0E1F30C0446")] public readonly InputSlot<bool> Connect = new();
-        [Input(Guid = "9E23335A-D63A-4286-930E-C63E86D0E6F0")] public readonly InputSlot<string> LocalIpAddress = new("127.0.0.1");
-        [Input(Guid = "24B5D450-4E83-49DB-88B1-7D688E64585D")] public readonly InputSlot<string> TargetIpAddress = new("236.10.10.10");
-        [Input(Guid = "36C2BF8B-3E0C-4856-AA4A-32943A4B0223")] public readonly InputSlot<int> TargetPort = new(56565);
-        [Input(Guid = "B16A0356-EF4A-413A-A656-7497127E31D4")] public readonly InputSlot<bool> SendOnChange = new(true);
-        [Input(Guid = "D7AC22C0-A31E-41F6-B29D-D40956E6688B")] public readonly InputSlot<bool> SendTrigger = new();
-        [Input(Guid = "C8C4D0F7-C06E-4B1A-9D6C-6F5E4D3C2B1B")] public readonly InputSlot<BufferWithViews> TrackerData = new();
-        [Input(Guid = "5E725916-4143-4759-8651-E12185C658D3")] public readonly InputSlot<bool> PrintToLog = new();
-        [Input(Guid = "4A9E2D3B-8C6F-4B1D-8D7E-9F3A5B2C1D0E")] public readonly InputSlot<string> ServerName = new("T3 PSN Output");
-        [Input(Guid = "B2B8C4F1-6D0E-4B3A-9C8E-7F1A0D9E6B5B")] public readonly MultiInputSlot<string> Names = new();
+        [Input(Guid = "7AB8F2A6-4874-4235-85A5-D0E1F30C0446")]
+        public readonly InputSlot<bool> Connect = new();
+        
+        [Input(Guid = "9E23335A-D63A-4286-930E-C63E86D0E6F0")]
+        public readonly InputSlot<string> LocalIpAddress = new("127.0.0.1");
+        
+        [Input(Guid = "24B5D450-4E83-49DB-88B1-7D688E64585D")]
+        public readonly InputSlot<string> TargetIpAddress = new("236.10.10.10");
+        
+        [Input(Guid = "36C2BF8B-3E0C-4856-AA4A-32943A4B0223")]
+        public readonly InputSlot<int> TargetPort = new(56565);
+        
+        [Input(Guid = "B16A0356-EF4A-413A-A656-7497127E31D4")]
+        public readonly InputSlot<bool> SendOnChange = new(true);
+        
+        [Input(Guid = "D7AC22C0-A31E-41F6-B29D-D40956E6688B")]
+        public readonly InputSlot<bool> SendTrigger = new();
+        
+        [Input(Guid = "C8C4D0F7-C06E-4B1A-9D6C-6F5E4D3C2B1B")]
+        public readonly InputSlot<BufferWithViews> TrackerData = new();
+        
+        [Input(Guid = "5E725916-4143-4759-8651-E12185C658D3")]
+        public readonly InputSlot<bool> PrintToLog = new();
+        
+        [Input(Guid = "4A9E2D3B-8C6F-4B1D-8D7E-9F3A5B2C1D0E")]
+        public readonly InputSlot<string> ServerName = new("T3 PSN Output");
+        
+        [Input(Guid = "B2B8C4F1-6D0E-4B3A-9C8E-7F1A0D9E6B5B")]
+        public readonly MultiInputSlot<string> Names = new();
+        
     }
 }
