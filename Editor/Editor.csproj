@@ -139,16 +139,6 @@
 
     <!-- Specify the operator packages in the Operators directory to be included in Release builds - 
     their csproj file name should match their directory name -->
-    <ItemGroup>
-        <PackageNames Include="lib" />
-        <PackageNames Include="examples" />
-        <PackageNames Include="TypeOperators" />
-        <!-- <PackageNames Include="pixtur"/>-->
-        <PackageNames Include="unsplash" />
-        <PackageNames Include="spout" />
-        <PackageNames Include="ndi" />
-        <!-- Add more as needed -->
-    </ItemGroup>
 
     <PropertyGroup>
         <OperatorDirectoryName>Operators</OperatorDirectoryName>
