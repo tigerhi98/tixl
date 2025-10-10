@@ -8,7 +8,7 @@ using Device = SharpDX.Direct3D11.Device;
 namespace Lib.io.video;
 
 [Guid("cd5a182e-254b-4e65-820b-ff754122614c")]
-public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolder, IDisposable
+public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolder
 {
     // Output slots
     [Output(Guid = "1d0159cc-33d2-46b1-9c0c-7054aa560df5", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
@@ -23,69 +23,8 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
     [Output(Guid = "A1B2C3D4-5678-90EF-1234-567890ABCDEF", DirtyFlagTrigger = DirtyFlagTrigger.Animated)]
     public new readonly Slot<string> Status = new();
 
-        [Input(Guid = "236D4C5C-0022-4416-A22C-D6DF73C306E2")]
-        public readonly InputSlot<bool> Active = new InputSlot<bool>();
 
-        [Input(Guid = "f5b900ec-ee17-123e-9972-cdd0580c104e")]
-        public readonly InputSlot<string> InputDeviceName = new InputSlot<string>();
 
-        [Input(Guid = "22513B82-E77A-417A-8A46-24E677F072D4")]
-        public readonly InputSlot<bool> DeactivateWhenNotShowing = new InputSlot<bool>();
-
-        [Input(Guid = "49019D29-873E-4B7C-A897-C575A384A650", MappedType = typeof(ResolutionFpsTypeEnum))]
-        public readonly InputSlot<int> ResolutionFpsType = new InputSlot<int>();
-
-        [Input(Guid = "C9E1C1F6-3A18-4A1C-8A5E-4B4119965B6E")]
-        public readonly InputSlot<T3.Core.DataTypes.Vector.Int2> CustomResolution = new InputSlot<T3.Core.DataTypes.Vector.Int2>();
-
-        [Input(Guid = "11F7432D-31F1-44B9-8F75-B1569B314B13")]
-        public readonly InputSlot<int> CustomFps = new InputSlot<int>();
-
-        [Input(Guid = "A57E815D-70C9-4D3B-998C-D13506B8F56E")]
-        public readonly InputSlot<bool> FlipHorizontally = new InputSlot<bool>();
-
-        [Input(Guid = "3022DE8A-5D88-4A37-9799-780F2A838A5F")]
-        public readonly InputSlot<bool> FlipVertically = new InputSlot<bool>();
-
-        [Input(Guid = "3022DE8A-5D88-4A37-9799-780F2A838A6E")]
-        public readonly InputSlot<float> ApplyRotationData = new InputSlot<float>();
-
-        [Input(Guid = "8D2C28C7-1234-40E2-9388-75574519543D")]
-        public readonly InputSlot<bool> OpenSettings = new InputSlot<bool>();
-
-        [Input(Guid = "F187A997-7E4A-48C6-81F9-2A27F150A68A")]
-        public readonly InputSlot<System.Numerics.Vector2> Reposition = new InputSlot<System.Numerics.Vector2>();
-
-        [Input(Guid = "805602D5-52B2-4A73-A337-12E00C3C91F2")]
-        public readonly InputSlot<System.Numerics.Vector2> Scale = new InputSlot<System.Numerics.Vector2>();
-
-        [Input(Guid = "67E149A5-F7B6-47BC-B147-3B9B11C19C29")]
-        public readonly InputSlot<bool> Reconnect = new InputSlot<bool>();
-
-    // Static device information
-    public static List<WebcamWithIndex> WebcamWithIndices;
-    public static Dictionary<string, List<(int Width, int Height, double Fps)>> WebcamCapabilities;
-    private static readonly object _capabilitiesLock = new();
-    private static readonly object _staticInitLock = new();
-    private static bool _devicesScanned;
-
-    // Instance variables
-    private VideoCapture _capture;
-    private int _storeDeviceIndex = -1;
-    private readonly object _lockObject = new();
-    private readonly object _captureDeviceLock = new();
-    private Mat _sharedMat;
-    private Thread _captureThread;
-    private CancellationTokenSource _cancellationTokenSource;
-    private Texture2D _gpuTexture;
-    private int _width;
-    private int _height;
-    private volatile string _lastStatusMessage = "";
-    private bool _disposed;
-
-    // Transformation cache
-    private Mat _transformationMatrix;
-    private const float Epsilon = 1e-4f;
 
     public VideoDeviceInput()
     {
@@ -105,9 +44,9 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
         ScanWebCamDevices();
 
         var deviceName = InputDeviceName.GetValue(context);
-        if (string.IsNullOrEmpty(deviceName) && WebcamWithIndices?.Count > 0)
+        if (string.IsNullOrEmpty(deviceName) && _webcamWithIndices?.Count > 0)
         {
-            deviceName = WebcamWithIndices[0].Name;
+            deviceName = _webcamWithIndices[0].Name;
         }
 
         if (!TryGetIndexForDeviceName(deviceName, out var selectedDeviceIndex))
@@ -258,7 +197,8 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
                     var actualHeight = (int)_capture.Get(VideoCaptureProperties.FrameHeight);
                     var actualFps = _capture.Get(VideoCaptureProperties.Fps);
 
-                    if (actualWidth != settings.CustomResolution.X || actualHeight != settings.CustomResolution.Y || Math.Abs(actualFps - settings.CustomFps) > 0.01)
+                    if (actualWidth != settings.CustomResolution.X || actualHeight != settings.CustomResolution.Y ||
+                        Math.Abs(actualFps - settings.CustomFps) > 0.01)
                     {
                         SetStatus($"Warning: Using {actualWidth}x{actualHeight}@{actualFps:F2}fps (requested {settings.CustomResolution.X}x{settings.CustomResolution.Y}@{settings.CustomFps}fps).");
                     }
@@ -311,11 +251,8 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
                             SetStatus(_lastStatusMessage + " (Software resize)");
                         }
                     }
-                    
-                    if (currentFrame == null)
-                    {
-                        currentFrame = bgraMat;
-                    }
+
+                    currentFrame ??= bgraMat;
 
                     if (settings.HasTransformation())
                     {
@@ -329,6 +266,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
                                 _sharedMat?.Dispose();
                                 _sharedMat = new Mat(newSize, MatType.CV_8UC4);
                             }
+
                             Cv2.WarpAffine(currentFrame, _sharedMat, _transformationMatrix, newSize);
                         }
                     }
@@ -341,6 +279,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
                                 _sharedMat?.Dispose();
                                 _sharedMat = new Mat(currentFrame.Height, currentFrame.Width, MatType.CV_8UC4);
                             }
+
                             currentFrame.CopyTo(_sharedMat);
                         }
                     }
@@ -369,6 +308,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
                 _capture?.Dispose();
                 _capture = null;
             }
+
             _transformationMatrix?.Dispose();
         }
     }
@@ -382,12 +322,12 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
         var angleRad = settings.Rotation * Math.PI / 180.0;
         var cos = (float)Math.Cos(angleRad);
         var sin = (float)Math.Sin(angleRad);
-        
+
         _transformationMatrix.Set(0, 0, cos * settings.Scale.X);
         _transformationMatrix.Set(0, 1, sin * settings.Scale.Y);
         _transformationMatrix.Set(1, 0, -sin * settings.Scale.X);
         _transformationMatrix.Set(1, 1, cos * settings.Scale.Y);
-        
+
         var tx = (1.0f - cos * settings.Scale.X) * center.X - sin * settings.Scale.Y * center.Y;
         var ty = sin * settings.Scale.X * center.X + (1.0f - cos * settings.Scale.Y) * center.Y;
 
@@ -395,7 +335,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
         _transformationMatrix.Set(1, 2, settings.Reposition.Y + ty);
     }
 
-    public void UploadMat(Device device, Mat mat)
+    private void UploadMat(Device device, Mat mat)
     {
         if (mat == null || mat.Empty())
         {
@@ -405,7 +345,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
 
         var width = mat.Width;
         var height = mat.Height;
-        
+
         if (_gpuTexture == null || _width != width || _height != height)
         {
             _gpuTexture?.Dispose();
@@ -435,38 +375,28 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
 
     protected override void Dispose(bool disposing)
     {
-        if (_disposed || !disposing)
+        if (!disposing)
             return;
 
-        if (disposing)
+        StopCaptureThread();
+
+        _gpuTexture?.Dispose();
+        _gpuTexture = null;
+
+        _transformationMatrix?.Dispose();
+        _transformationMatrix = null;
+
+        lock (_lockObject)
         {
-            StopCaptureThread();
-
-            _gpuTexture?.Dispose();
-            _gpuTexture = null;
-
-            _transformationMatrix?.Dispose();
-            _transformationMatrix = null;
-
-            lock (_lockObject)
-            {
-                _sharedMat?.Dispose();
-                _sharedMat = null;
-            }
+            _sharedMat?.Dispose();
+            _sharedMat = null;
         }
-        
-        _disposed = true;
-        base.Dispose(disposing);
     }
 
-    public void Dispose()
-    {
-        Dispose(true);
-        GC.SuppressFinalize(this);
-    }
+
 
     #region Device Configuration UI
-    public void OpenVideoSettings()
+    private void OpenVideoSettings()
     {
         try
         {
@@ -507,13 +437,13 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
     {
         if (inputId == InputDeviceName.Id)
         {
-            if (WebcamWithIndices == null || WebcamWithIndices.Count == 0)
+            if (_webcamWithIndices == null || _webcamWithIndices.Count == 0)
             {
                 yield return "No devices found";
                 yield break;
             }
 
-            foreach (var (webcam, _) in WebcamWithIndices)
+            foreach (var (webcam, _) in _webcamWithIndices)
                 yield return webcam;
         }
         else if (inputId == CustomResolution.Id)
@@ -521,9 +451,9 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
             var deviceName = InputDeviceName.Value;
             lock (_capabilitiesLock)
             {
-                if (WebcamCapabilities != null && WebcamCapabilities.ContainsKey(deviceName))
+                if (_webcamCapabilities != null && _webcamCapabilities.ContainsKey(deviceName))
                 {
-                    foreach (var (w, h, _) in WebcamCapabilities[deviceName].DistinctBy(c => (c.Width, c.Height)))
+                    foreach (var (w, h, _) in _webcamCapabilities[deviceName].DistinctBy(c => (c.Width, c.Height)))
                         yield return $"{w}x{h}";
                 }
                 else
@@ -535,9 +465,9 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
             var deviceName = InputDeviceName.Value;
             lock (_capabilitiesLock)
             {
-                if (WebcamCapabilities != null && WebcamCapabilities.ContainsKey(deviceName))
+                if (_webcamCapabilities != null && _webcamCapabilities.ContainsKey(deviceName))
                 {
-                    foreach (var (_, _, fps) in WebcamCapabilities[deviceName].DistinctBy(c => c.Fps))
+                    foreach (var (_, _, fps) in _webcamCapabilities[deviceName].DistinctBy(c => c.Fps))
                         yield return $"{fps:F0}";
                 }
                 else
@@ -564,7 +494,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
                     var deviceName = InputDeviceName.Value;
                     lock (_capabilitiesLock)
                     {
-                        if (WebcamCapabilities.TryGetValue(deviceName, out var caps) &&
+                        if (_webcamCapabilities.TryGetValue(deviceName, out var caps) &&
                             !caps.Any(c => c.Width == w && c.Height == h))
                         {
                             SetStatus("Warning: Unsupported resolution—may fallback.");
@@ -591,10 +521,10 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
             if (_devicesScanned)
                 return;
 
-            WebcamWithIndices = new List<WebcamWithIndex>();
+            _webcamWithIndices = new List<WebcamWithIndex>();
             lock (_capabilitiesLock)
             {
-                WebcamCapabilities = new Dictionary<string, List<(int Width, int Height, double Fps)>>();
+                _webcamCapabilities = new Dictionary<string, List<(int Width, int Height, double Fps)>>();
             }
 
             try
@@ -603,7 +533,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
                 for (var i = 0; i < videoInputDevices.Length; i++)
                 {
                     var device = videoInputDevices[i];
-                    WebcamWithIndices.Add(new WebcamWithIndex(device.Name, i));
+                    _webcamWithIndices.Add(new WebcamWithIndex(device.Name, i));
 
                     var capabilities = new List<(int Width, int Height, double Fps)>();
                     try
@@ -667,6 +597,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
 
                             Marshal.ReleaseComObject(pins[0]);
                         }
+
                         Marshal.ReleaseComObject(enumPins);
                         Marshal.ReleaseComObject(captureFilter);
                     }
@@ -674,9 +605,10 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
                     {
                         Log.Debug($"Failed to get capabilities for {device.Name}: {e.Message}");
                     }
+
                     lock (_capabilitiesLock)
                     {
-                        WebcamCapabilities.Add(device.Name, capabilities);
+                        _webcamCapabilities.Add(device.Name, capabilities);
                     }
                 }
             }
@@ -684,6 +616,7 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
             {
                 Log.Debug("Failed to scan webcams: " + e.Message);
             }
+
             _devicesScanned = true;
         }
     }
@@ -691,9 +624,9 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
     private static bool TryGetIndexForDeviceName(string deviceName, out int index)
     {
         index = -1;
-        if (WebcamWithIndices == null) return false;
+        if (_webcamWithIndices == null) return false;
 
-        var device = WebcamWithIndices.FirstOrDefault(d => d.Name == deviceName);
+        var device = _webcamWithIndices.FirstOrDefault(d => d.Name == deviceName);
         if (device != null)
         {
             index = device.Index;
@@ -742,4 +675,69 @@ public class VideoDeviceInput : Instance<VideoDeviceInput>, ICustomDropdownHolde
         DeviceDefault = 0,
         Custom = 1
     }
+    
+    
+    // Static device information
+    private static List<WebcamWithIndex> _webcamWithIndices;
+    private static Dictionary<string, List<(int Width, int Height, double Fps)>> _webcamCapabilities;
+    private static readonly object _capabilitiesLock = new();
+    private static readonly Lock _staticInitLock = new();
+    private static bool _devicesScanned;
+
+    // Instance variables
+    private VideoCapture _capture;
+    private int _storeDeviceIndex = -1;
+    private readonly Lock _lockObject = new();
+    private readonly Lock _captureDeviceLock = new();
+    private Mat _sharedMat;
+    private Thread _captureThread;
+    private CancellationTokenSource _cancellationTokenSource;
+    private Texture2D _gpuTexture;
+    private int _width;
+    private int _height;
+    private volatile string _lastStatusMessage = "";
+
+    // Transformation cache
+    private Mat _transformationMatrix;
+    private const float Epsilon = 1e-4f;
+    
+    [Input(Guid = "236D4C5C-0022-4416-A22C-D6DF73C306E2")]
+    public readonly InputSlot<bool> Active = new();
+
+    [Input(Guid = "f5b900ec-ee17-123e-9972-cdd0580c104e")]
+    public readonly InputSlot<string> InputDeviceName = new();
+
+    [Input(Guid = "22513B82-E77A-417A-8A46-24E677F072D4")]
+    public readonly InputSlot<bool> DeactivateWhenNotShowing = new();
+
+    [Input(Guid = "49019D29-873E-4B7C-A897-C575A384A650", MappedType = typeof(ResolutionFpsTypeEnum))]
+    public readonly InputSlot<int> ResolutionFpsType = new();
+
+    [Input(Guid = "C9E1C1F6-3A18-4A1C-8A5E-4B4119965B6E")]
+    public readonly InputSlot<T3.Core.DataTypes.Vector.Int2> CustomResolution = new();
+
+    [Input(Guid = "11F7432D-31F1-44B9-8F75-B1569B314B13")]
+    public readonly InputSlot<int> CustomFps = new();
+
+    [Input(Guid = "A57E815D-70C9-4D3B-998C-D13506B8F56E")]
+    public readonly InputSlot<bool> FlipHorizontally = new();
+
+    [Input(Guid = "3022DE8A-5D88-4A37-9799-780F2A838A5F")]
+    public readonly InputSlot<bool> FlipVertically = new();
+
+    [Input(Guid = "3022DE8A-5D88-4A37-9799-780F2A838A6E")]
+    public readonly InputSlot<float> ApplyRotationData = new();
+
+    [Input(Guid = "8D2C28C7-1234-40E2-9388-75574519543D")]
+    public readonly InputSlot<bool> OpenSettings = new();
+
+    [Input(Guid = "F187A997-7E4A-48C6-81F9-2A27F150A68A")]
+    public readonly InputSlot<System.Numerics.Vector2> Reposition = new();
+
+    [Input(Guid = "805602D5-52B2-4A73-A337-12E00C3C91F2")]
+    public readonly InputSlot<System.Numerics.Vector2> Scale = new();
+
+    [Input(Guid = "67E149A5-F7B6-47BC-B147-3B9B11C19C29")]
+    public readonly InputSlot<bool> Reconnect = new();
+    
 }
