@@ -44,7 +44,7 @@ cbuffer FogParams : register(b3)
     float4 FogColor;
     float FogDistance;
     float FogBias;
-} 
+}
 
 cbuffer PointLights : register(b4)
 {
@@ -70,7 +70,7 @@ TextureCube<float4> PrefilteredSpecular : register(t5);
 
 sampler ClampedSampler : register(s0);
 sampler WrappedSampler : register(s1);
-//static sampler LinearSampler = TexSampler;
+// static sampler LinearSampler = TexSampler;
 //--------------------
 
 struct vsOutput
@@ -186,6 +186,19 @@ float3 UnpackNormal(float4 packedNormal)
     return normalize(normal);
 }
 
+// Returns T,B given unit N so that cross(T,B)=N (right-handed)
+// Stable ONB in HLSL (Frisvad/Duff)
+void stable_ONB(float3 N, out float3 T, out float3 B)
+{
+    // Use +/-1 (never 0) to avoid degeneracy when N.z == 0
+    float s = (N.z >= 0.0) ? 1.0 : -1.0;
+    float a = -1.0 / (s + N.z);
+    float b = N.x * N.y * a;
+
+    T = float3(1.0 + s * N.x * N.x * a, s * b, -s * N.x);
+    B = float3(b, s + N.y * N.y * a, -N.y);
+}
+
 #include "shared/pbr-render.hlsl"
 
 PSOutput psMain(vsOutput input)
@@ -257,7 +270,7 @@ PSOutput psMain(vsOutput input)
                                                                                                : p.xy / TextureScale;
 #elif MAPPING_LOCAL_TRIPLANAR
     float2 uv = (absN.x > absN.y && absN.x > absN.z) ? fieldPos.yz / TextureScale : (absN.y > absN.z) ? fieldPos.zx / TextureScale
-                                                                                                     : fieldPos.xy / TextureScale;
+                                                                                                      : fieldPos.xy / TextureScale;
 
 #elif MAPPING_XY
     float2 uv = fieldPos.xy / TextureScale;
@@ -266,45 +279,36 @@ PSOutput psMain(vsOutput input)
 #else
     float2 uv = fieldPos.yz / TextureScale;
 #endif
-    // Flip Y for correct orientation
+
     uv = uv * float2(1, -1) + 0.5;
-    // Sample and unpack normal map
-    float4 normalMapSample = NormalMap.Sample(WrappedSampler, uv);
-    float3 tangentNormal = UnpackNormal(normalMapSample);
 
-    // Create tangent space matrix with consistent orientation
     float3 N = normalize(normal);
-    
-    // Choose a reference vector that's unlikely to be parallel to N
-    float3 up = abs(N.y) < 0.999 ? float3(0, 1, 0) : float3(1, 0, 0);
-    
-    // Create tangent and bitangent
-    float3 T = normalize(cross(up, N));
-    float3 B = normalize(cross(N, T));
-    
-    // Ensure consistent handedness for tri-planar mapping
-    float3 blendWeights = absN / (absN.x + absN.y + absN.z);
-    if (absN.x > absN.y && absN.x > absN.z) {
-        // X-dominant face
-        T = normalize(float3(0, sign(N.x), 0));
-        B = normalize(cross(N, T));
-    } else if (absN.y > absN.z) {
-        // Y-dominant face
-        T = normalize(float3(1, 0, 0));
-        B = normalize(cross(N, T));
-    } else {
-        // Z-dominant face
-        T = normalize(float3(1, 0, 0));
-        B = normalize(cross(N, T));
+    float3 aN = abs(N);
+
+    float3 T, B;
+
+    if (aN.x > aN.y && aN.x > aN.z)
+    {
+        T = float3(0, 1, 0);
+        B = float3(0, 0, 1);
     }
-    
-    float3x3 TBN = float3x3(T, B, N);
+    else if (aN.y > aN.z)
+    {
+        T = float3(0, 0, 1);
+        B = float3(1, 0, 0);
+    }
+    else
+    {
+        float s = sign(N.z);
+        T = float3(1, 0, 0);
+        B = float3(0, 1, 0);
+    }
 
-    // Transform normal from tangent space to world space
-    float3 finalNormal = normalize(mul(tangentNormal, TBN));
+    float3x3 tbnRows = float3x3(T, B, N);
+    float3 tgn = UnpackNormal(NormalMap.Sample(WrappedSampler, uv)); // [-1..1]
 
-    // Use the final normal in all subsequent calculations
-    normal = finalNormal;
+    normal = normalize(mul(tgn, tbnRows));
+    float4 DEBUG_RESULT = float4(normal, 1);
 
     float4 fieldColor = float4(GetField(float4(p, 1)).rgb, 1);
 
@@ -336,9 +340,9 @@ PSOutput psMain(vsOutput input)
 
     PSOutput result;
     result.color = clamp(litColor, 0, float4(1000, 1000, 1000, 1));
+    // result.color = DEBUG_RESULT;
 
     float viewZ = mul(float4(p, 1), WorldToCamera).z;
     result.depth = ComputeDepthFromViewZ(viewZ);
     return result;
 }
-
