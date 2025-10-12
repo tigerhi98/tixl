@@ -2,7 +2,7 @@
   "Id": "c7752832-7155-4082-acd5-276c1abe7eb4"/*KeepPreviousPointBuffer*/,
   "Inputs": [
     {
-      "Id": "07ca7e81-02b8-4cb4-92f4-7afaaa07b751"/*ImageA*/,
+      "Id": "07ca7e81-02b8-4cb4-92f4-7afaaa07b751"/*InputBuffer*/,
       "DefaultValue": null
     },
     {

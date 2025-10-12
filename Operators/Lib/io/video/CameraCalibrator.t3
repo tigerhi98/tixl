@@ -1,5 +1,5 @@
 {
-  "Id": "7b4d3c2a-5b16-4b2a-8f3a-7e8c9d0b1a2b"/**/,
+  "Id": "7b4d3c2a-5b16-4b2a-8f3a-7e8c9d0b1a2b"/*CameraCalibrator*/,
   "Inputs": [
     {
       "Id": "1a2b3c4d-5e6f-4a1b-8c9d-0e1f2a3b4c5d"/*UndistortMethod*/,

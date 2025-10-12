@@ -1,5 +1,5 @@
 {
-  "Id": "98efc7c8-cafd-45ee-8746-14f37e9f59f8"/**/,
+  "Id": "98efc7c8-cafd-45ee-8746-14f37e9f59f8"/*ArtnetOutput*/,
   "Inputs": [
     {
       "Id": "0fc76369-788a-4ffe-9dde-8eea5f10cf32"/*TargetIpAddress*/,

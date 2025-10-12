@@ -248,18 +248,6 @@
       "Outputs": []
     },
     {
-      "Id": "a19c52dc-b78d-4dc7-be90-5c97e8a6dfba"/*VideoDeviceInput*/,
-      "SymbolId": "cd5a182e-254b-4e65-820b-ff754112614c",
-      "InputValues": [
-        {
-          "Id": "f5b900ec-ee17-123e-9972-cdd0580c104e"/*InputDeviceName*/,
-          "Type": "System.String",
-          "Value": "HD Pro Webcam C920"
-        }
-      ],
-      "Outputs": []
-    },
-    {
       "Id": "a38308de-db06-4064-900a-b993155d45ab"/*SSAO*/,
       "SymbolId": "13d5260d-4e50-48f8-909c-7d84d6f0a43f",
       "InputValues": [

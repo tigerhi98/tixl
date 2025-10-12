@@ -260,7 +260,7 @@
       "Outputs": []
     },
     {
-      "Id": "3f299cab-3785-4b51-a574-4076e7fc64cb"/*SDFToColor*/,
+      "Id": "3f299cab-3785-4b51-a574-4076e7fc64cb"/*_SDFToColor_Old*/,
       "SymbolId": "eff96322-0e4e-42d6-93de-18451b56ae31",
       "InputValues": [
         {

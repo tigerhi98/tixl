@@ -102,13 +102,6 @@
       }
     },
     {
-      "ChildId": "a19c52dc-b78d-4dc7-be90-5c97e8a6dfba"/*VideoDeviceInput*/,
-      "Position": {
-        "X": 0.0,
-        "Y": 0.0
-      }
-    },
-    {
       "ChildId": "a38308de-db06-4064-900a-b993155d45ab"/*SSAO*/,
       "Position": {
         "X": 846.4834,
