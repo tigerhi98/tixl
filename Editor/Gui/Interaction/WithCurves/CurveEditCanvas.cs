@@ -28,7 +28,8 @@ internal abstract class CurveEditCanvas : ScalableCanvas, ITimeObjectManipulatio
         ImGui.BeginChild(ImGuiTitle, new Vector2(0, height), true,
                          ImGuiWindowFlags.NoScrollbar | 
                          ImGuiWindowFlags.NoMove | 
-                         ImGuiWindowFlags.NoScrollWithMouse);
+                         ImGuiWindowFlags.NoScrollWithMouse |
+                         ImGuiWindowFlags.NoBackground);
         {
             Drawlist = ImGui.GetWindowDrawList();
             UpdateCanvas(out var interactionState, flags);

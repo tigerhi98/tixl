@@ -37,7 +37,9 @@ internal sealed class SettingsWindow : Window
     {
         var changed = false;
 
-        ImGui.BeginChild("categories", new Vector2(120 * T3Ui.UiScaleFactor, -1), true, ImGuiWindowFlags.NoScrollbar);
+        ImGui.BeginChild("categories", new Vector2(120 * T3Ui.UiScaleFactor, -1), 
+                         true, 
+                         ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoBackground);
         {
             ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(0, 0.5f));
             FormInputs.AddSegmentedButtonWithLabel(ref _activeCategory, "", 110 * T3Ui.UiScaleFactor);
@@ -47,7 +49,7 @@ internal sealed class SettingsWindow : Window
 
         ImGui.SameLine();
         ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(20, 5));
-        ImGui.BeginChild("content", new Vector2(0, 0), true);
+        ImGui.BeginChild("content", new Vector2(0, 0), true, ImGuiWindowFlags.NoBackground);
         {
             FormInputs.SetIndentToParameters();
             switch (_activeCategory)

@@ -93,7 +93,7 @@ internal static class ParameterPopUp
                              true,
                              preventTabbingIntoUnfocusedStringInputs
                              | ImGuiWindowFlags.NoScrollWithMouse
-                             | ImGuiWindowFlags.NoScrollbar ))
+                             | ImGuiWindowFlags.NoScrollbar))
         {
             if (ImGui.IsKeyDown(ImGuiKey.Escape))
             {

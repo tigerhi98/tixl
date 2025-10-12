@@ -73,25 +73,26 @@ internal sealed class SymbolLibrary : Window
         {
             _libraryFiltering.DrawSymbolFilters();
         }
+        
 
-        ImGui.BeginChild("scrolling");
+        ImGui.BeginChild("scrolling", Vector2.Zero, false, ImGuiWindowFlags.NoBackground);
         {
-            if (_libraryFiltering.AnyFilterActive)
-            {
-                DrawNode(FilteredTree);
-            }
-            else if (string.IsNullOrEmpty(_filter.SearchString))
-            {
-                DrawNode(_treeNode);
-            }
-            else if (_filter.SearchString.Contains('?'))
-            {
-                _randomPromptGenerator.DrawRandomPromptList();
-            }
-            else
-            {
-                DrawFilteredList();
-            }
+             if (_libraryFiltering.AnyFilterActive)
+             {
+                 DrawNode(FilteredTree);
+             }
+             else if (string.IsNullOrEmpty(_filter.SearchString))
+             {
+                 DrawNode(_treeNode);
+             }
+             else if (_filter.SearchString.Contains('?'))
+             {
+                 _randomPromptGenerator.DrawRandomPromptList();
+             }
+             else
+             {
+                 DrawFilteredList();
+             }
         }
         ImGui.EndChild();
     }

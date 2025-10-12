@@ -393,7 +393,7 @@ internal sealed class ParameterWindow : Window
         }
         
         ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(5, 5));
-        ImGui.BeginChild("parameters", Vector2.Zero, false, ImGuiWindowFlags.AlwaysUseWindowPadding);
+        ImGui.BeginChild("parameters", Vector2.Zero, false, ImGuiWindowFlags.AlwaysUseWindowPadding| ImGuiWindowFlags.NoBackground);
 
         // Scroll back up on operator change
         if (_selectionChanged)
