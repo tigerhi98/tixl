@@ -44,7 +44,7 @@
     },
     {
       "Id": "6f6087e6-b912-4431-a64f-36bf9061b9e8"/*VelocityStretch*/,
-      "DefaultValue": 1.0
+      "DefaultValue": 5.0
     },
     {
       "Id": "768bc509-107f-48ab-a588-a36791edadb6"/*VelocityThickness*/,
