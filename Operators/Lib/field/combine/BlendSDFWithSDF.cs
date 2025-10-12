@@ -2,7 +2,7 @@
 using T3.Core.DataTypes.ShaderGraph;
 using T3.Core.Utils;
 
-namespace Lib.field.adjust;
+namespace Lib.field.combine;
 
 [Guid("dbef3c50-ada6-437d-adac-62824daa9b6b")]
 internal sealed class BlendSDFWithSDF : Instance<BlendSDFWithSDF>

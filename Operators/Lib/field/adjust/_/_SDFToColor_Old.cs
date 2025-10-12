@@ -1,4 +1,4 @@
-namespace Lib.field.adjust;
+namespace Lib.field.adjust._;
 
 /// <summary>
 /// This operator only contains the shader setup to prepare a structuredBuffer with transform matrices
