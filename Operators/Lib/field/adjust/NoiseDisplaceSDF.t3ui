@@ -20,6 +20,19 @@
       "AddPadding": "True"
     },
     {
+      "InputId": "2d258b34-d45a-475e-987f-ea16cd4d5292"/*StepFactor*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 360.0
+      },
+      "GroupTitle": "Raymarching",
+      "Description": "Reduce step size to avoid raymarching artifacts.",
+      "Min": 0.0,
+      "Max": 1.0,
+      "ClampMin": true,
+      "ClampMax": true
+    },
+    {
       "InputId": "6cd7b3ca-323c-4a69-989b-1b10009b8a90"/*Offset*/,
       "Position": {
         "X": -200.0,

@@ -30,6 +30,19 @@
         "X": -200.0,
         "Y": 0.0
       }
+    },
+    {
+      "InputId": "ad43a4c4-3439-46c5-986d-c654a56d296a"/*StepFactor*/,
+      "Position": {
+        "X": -200.0,
+        "Y": 150.0
+      },
+      "GroupTitle": "Raymarching",
+      "Description": "Decrease step size to avoid raymarching artifacts.",
+      "Min": 0.0,
+      "Max": 1.0,
+      "ClampMin": true,
+      "ClampMax": true
     }
   ],
   "SymbolChildUis": [],
