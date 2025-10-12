@@ -221,7 +221,7 @@ internal sealed class UiElements
 
         FormInputs.AddVerticalSpace(20);
         
-        ImGui.BeginChild("content", new Vector2(0, 0), true);
+        ImGui.BeginChild("content", new Vector2(0, 0), true, ImGuiWindowFlags.NoBackground);
         {
             var dl = ImGui.GetWindowDrawList();
             ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(5, 5));

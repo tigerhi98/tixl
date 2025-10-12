@@ -88,7 +88,11 @@ internal sealed class OutputWindow : Window
         ImGui.BeginChild("##content",
                          new Vector2(0, ImGui.GetWindowHeight()),
                          false,
-                         ImGuiWindowFlags.NoScrollbar | ImGuiWindowFlags.NoMove | ImGuiWindowFlags.NoScrollWithMouse);
+                         ImGuiWindowFlags.NoScrollbar | 
+                         ImGuiWindowFlags.NoMove | 
+                         ImGuiWindowFlags.NoScrollWithMouse| 
+                         ImGuiWindowFlags.NoBackground
+                         );
         {
             // Very ugly hack to prevent scaling the output above window size
             var keepScale = T3Ui.UiScaleFactor;
