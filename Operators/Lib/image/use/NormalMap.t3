@@ -15,7 +15,7 @@
     },
     {
       "Id": "82464caa-a407-4f6d-a062-cef322d131f0"/*Twist*/,
-      "DefaultValue": 0.0
+      "DefaultValue": 180.0
     },
     {
       "Id": "ab21289c-f91c-4991-a7e5-ecb0c0954f02"/*Impact*/,
