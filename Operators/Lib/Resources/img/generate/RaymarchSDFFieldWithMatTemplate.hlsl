@@ -129,6 +129,7 @@ vsOutput vsMain4(uint vertexId : SV_VertexID)
 //-------------------------------------------------------------------
 float4 GetField(float4 p)
 {
+    // ToDo: Should be done only if required
     p.xyz = mul(float4(p.xyz, 1), WorldToObject).xyz;
     float4 f = 1;
     /*{FIELD_CALL}*/
@@ -467,8 +468,8 @@ PSOutput psMain(vsOutput input)
 
     litColor.rgb = lerp(litColor.rgb * fieldColor.rgb, FogColor.rgb, fog * FogColor.a);
 
-    litColor += float4(EmissiveColorMap.Sample(WrappedSampler, uv).rgb * EmissiveColor.rgb, 0);
-    litColor.a *= frag.albedo.a;
+    // litColor += float4(EmissiveColorMap.Sample(WrappedSampler, uv).rgb * EmissiveColor.rgb, 0);
+    // litColor.a *= frag.albedo.a;
 
     litColor.rgb = lerp(AmbientOcclusion.rgb, litColor.rgb, ComputeAO(p, normal, AODistance, 3, AmbientOcclusion.a * (1 - fog)));
 
