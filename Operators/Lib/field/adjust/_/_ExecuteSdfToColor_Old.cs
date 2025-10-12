@@ -5,13 +5,13 @@ using T3.Core.DataTypes.ShaderGraph;
 namespace Lib.field.adjust._;
 
 [Guid("c0045cbb-7eaf-438e-872e-9e0ba08040a4")]
-internal sealed class ExecuteSdfToColor : Instance<ExecuteSdfToColor>
-                                        , IGraphNodeOp
+internal sealed class _ExecuteSdfToColor_Old : Instance<_ExecuteSdfToColor_Old>
+,IGraphNodeOp
 {
     [Output(Guid = "8325c723-06f0-400a-adf2-a494ea161def")]
     public readonly Slot<ShaderGraphNode> Result = new();
 
-    public ExecuteSdfToColor()
+    public _ExecuteSdfToColor_Old()
     {
         ShaderNode = new ShaderGraphNode(this, null, InputField);
 

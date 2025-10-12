@@ -21,10 +21,10 @@
   "SymbolChildUis": [],
   "OutputUis": [
     {
-      "OutputId": "3815ee51-cbd2-403e-9328-521adcf62b6b"/*Result*/,
+      "OutputId": "5306fbe2-4839-4bf3-9c20-e67718fddb5a"/*Result*/,
       "Position": {
-        "X": 0.0,
-        "Y": 0.0
+        "X": 300.0,
+        "Y": 200.0
       }
     }
   ]

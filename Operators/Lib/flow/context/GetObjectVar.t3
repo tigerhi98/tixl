@@ -7,7 +7,7 @@
     },
     {
       "Id": "b25a15c9-9e51-492c-b563-2cfdf81df4a4"/*FallbackDefault*/,
-      "DefaultValue": 0.0
+      "DefaultValue": null
     }
   ],
   "Children": [],

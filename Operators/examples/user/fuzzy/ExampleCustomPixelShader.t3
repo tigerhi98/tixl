@@ -1,11 +1,6 @@
 {
   "Id": "3ff59cf2-33c3-4dd3-bcf8-83b88f8282e1"/*ExampleCustomPixelShader*/,
-  "Inputs": [
-    {
-      "Id": "5e63605a-be4d-4d6c-b950-4d26b7d74a9c"/*TemplatedOrCustom*/,
-      "DefaultValue": false
-    }
-  ],
+  "Inputs": [],
   "Children": [
     {
       "Id": "21bb7f77-b970-43df-80f9-c07c282ecc3a"/*BoolToInt*/,
