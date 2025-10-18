@@ -39,6 +39,15 @@
 - [ ] Snapshots: Layout snapshots like on Controller
 - [ ] Fix: Raymarch point
 
+## Feedback from Alex 2
+- [ ] Try to get rid of console
+- [ ] Import / Load projects to library 
+- [x] Press P again to unpin
+- [ ] Provide warning if project folder is owned by OneCloud
+- [ ] AssetHandling: Import multiple assets or even folders through drag&drop
+- [ ] Idea: Op templates?
+- [ ] Idea: Cursor Up/Down in parameter input widget to modify numerical values
+
 ## Project handling / Project HUB
 
 - [ ] Project settings should save output resolution

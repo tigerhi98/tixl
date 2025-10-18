@@ -239,8 +239,16 @@ internal sealed class ViewSelectionPinning
         return false;
     }
 
-    public void PinInstance(Instance? instance, ProjectView canvas)
+    public void PinInstance(Instance? instance, ProjectView canvas, bool unpinIfAlreadyPinned= false)
     {
+        var path = instance != null ? instance.InstancePath : [];
+        var alreadyPinned = path.SequenceEqual(_pinnedInstancePath);
+        if (alreadyPinned && unpinIfAlreadyPinned)
+        {
+            Unpin();
+            return;
+        }
+        
         _pinnedInstancePath = instance != null ? instance.InstancePath : [];
         _pinnedProjectView = canvas;
         _isPinned = true;

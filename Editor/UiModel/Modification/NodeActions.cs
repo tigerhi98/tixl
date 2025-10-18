@@ -143,7 +143,7 @@ internal static class NodeActions
         return annotation;
     }
 
-    public static void PinSelectedToOutputWindow(ProjectView components, NodeSelection nodeSelection, Instance compositionOp)
+    public static void PinSelectedToOutputWindow(ProjectView components, NodeSelection nodeSelection, Instance compositionOp, bool unpinIfAlreadySelected =false)
     {
         var outputWindow = OutputWindow.OutputWindowInstances.FirstOrDefault(ow => ow.Config.Visible) as OutputWindow;
         if (outputWindow == null)
@@ -169,7 +169,7 @@ internal static class NodeActions
         {
             if (compositionOp.Children.TryGetChildInstance(selection[0].Id, out var child))
             {
-                outputWindow.Pinning.PinInstance(child, components);
+                outputWindow.Pinning.PinInstance(child, components, unpinIfAlreadySelected);
             }
         }
 
