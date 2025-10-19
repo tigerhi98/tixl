@@ -3,12 +3,14 @@ using System.Threading;
 using ImGuiNET;
 using SilkWindows;
 using SilkWindows.Implementations.FileManager;
+using T3.Core.Operator;
 using T3.Core.Operator.Interfaces;
 using T3.Core.Resource;
 using T3.Core.Utils;
 using T3.Editor.Gui.Styling;
 using T3.Editor.UiModel.InputsAndTypes;
 using T3.Editor.UiModel.ProjectHandling;
+using ResourceInputWithTypeAheadSearch = T3.Editor.Gui.Input.ResourceInputWithTypeAheadSearch;
 
 namespace T3.Editor.Gui.UiHelpers;
 
@@ -17,7 +19,7 @@ namespace T3.Editor.Gui.UiHelpers;
 /// </summary>
 internal static class FilePickingUi
 {
-    public static InputEditStateFlags DrawTypeAheadSearch(FileOperations.FilePickerTypes type, string? fileFilter, ref string? value)
+    public static InputEditStateFlags DrawTypeAheadSearch(FileOperations.FilePickerTypes type, string? fileFilter, ref string? filterAndSelectedPath)
     {
         ImGui.SetNextItemWidth(-70 * T3Ui.UiScaleFactor);
 
@@ -46,7 +48,7 @@ internal static class FilePickingUi
             
             
         var isFolder = type == FileOperations.FilePickerTypes.Folder;
-        var exists = ResourceManager.TryResolvePath(value, SearchResourceConsumer, out _, out _, isFolder);
+        var exists = ResourceManager.TryResolvePath(filterAndSelectedPath, SearchResourceConsumer, out _, out _, isFolder);
             
         var warning = type switch
                           {
@@ -59,53 +61,35 @@ internal static class FilePickingUi
             ImGui.PushStyleColor(ImGuiCol.Text, UiColors.StatusAnimated.Rgba);
 
         var fileManagerOpen = _fileManagerOpen;
-            
         if (fileManagerOpen)
         {
             ImGui.BeginDisabled();
         }
-            
-        string[] uiFilter;
-        if(fileFilter == null)
-            uiFilter = Array.Empty<string>();
-        else if (!fileFilter.Contains('|'))
-            uiFilter = [fileFilter];
-        else
-            uiFilter = fileFilter.Split('|')[1].Split(';');
-
-        var fileFiltersInCommon = selectedInstances
-                                 .Where(x => x is IDescriptiveFilename)
-                                 .Cast<IDescriptiveFilename>()
-                                 .Select(x => x.FileFilter)
-                                 .Aggregate(Enumerable.Empty<string>(), (a, b) => a.Intersect(b))
-                                 .Concat(uiFilter)
-                                 .Where(s => !string.IsNullOrWhiteSpace(s))
-                                 .Distinct()
-                                 .ToArray();
+        
+        var fileFiltersInCommon = ExtendFileFilterWithSelectedOps(fileFilter, selectedInstances);
 
         var inputEditStateFlags = InputEditStateFlags.Nothing;
-        if(value != null && SearchResourceConsumer != null)
+        if(filterAndSelectedPath != null && SearchResourceConsumer != null)
         {
-            InputRequest request = new InputRequest(value, fileFiltersInCommon, isFolder, ShowWarning: !exists, SearchResourceConsumer);
-            var fileExtensionFilters = request.FileExtensionFilters;
-            var value1 = request.Value;
-                
-            var drawnItems = ResourceManager.EnumerateResources(fileExtensionFilters, request.IsFolder, request.ResourcePackageContainer.AvailableResourcePackages, ResourceManager.PathMode.Aliased);
+            var allItems = ResourceManager.EnumerateResources(fileFiltersInCommon, 
+                                                                isFolder, 
+                                                                SearchResourceConsumer.AvailableResourcePackages, 
+                                                                ResourceManager.PathMode.Aliased);
 
-            var changed = ResourceInputWithTypeAheadSearch.Draw("##filePathSearch", drawnItems, request.ShowWarning, ref value1, out _);
+            var changed = ResourceInputWithTypeAheadSearch.Draw("##filePathSearch", allItems, !exists, ref filterAndSelectedPath, out _);
             
-            var result = new InputResult(changed, value1);
-            value = result.Value;
+            var result = new InputResult(changed, filterAndSelectedPath);
+            filterAndSelectedPath = result.Value;
             inputEditStateFlags = result.Modified ? InputEditStateFlags.Modified : InputEditStateFlags.Nothing;
         }
 
         if (warning != string.Empty)
             ImGui.PopStyleColor();
 
-        if (ImGui.IsItemHovered() && value != null && value.Length > 0 && ImGui.CalcTextSize(value).X > ImGui.GetItemRectSize().X)
+        if (ImGui.IsItemHovered() && filterAndSelectedPath != null && filterAndSelectedPath.Length > 0 && ImGui.CalcTextSize(filterAndSelectedPath).X > ImGui.GetItemRectSize().X)
         {
             ImGui.BeginTooltip();
-            ImGui.TextUnformatted(warning + value);
+            ImGui.TextUnformatted(warning + filterAndSelectedPath);
             ImGui.EndTooltip();
         }
             
@@ -138,11 +122,11 @@ internal static class FilePickingUi
             _latestFileManagerResult = null;
         }
             
-        var valueIsUpdated = !string.IsNullOrEmpty(fileManValue) && fileManValue != value;
+        var valueIsUpdated = !string.IsNullOrEmpty(fileManValue) && fileManValue != filterAndSelectedPath;
             
         if (valueIsUpdated)
         {
-            value = fileManValue;
+            filterAndSelectedPath = fileManValue;
             inputEditStateFlags |= InputEditStateFlags.Modified;
         }
             
@@ -153,6 +137,35 @@ internal static class FilePickingUi
         }
             
         return inputEditStateFlags;
+    }
+
+    /// <remarks>
+    /// Tom: I think this method is overengineered and introduces a lot of dependencies:
+    /// - We can't assume that <see cref="IDescriptiveFilename"/> is used for all ops (and yes, the interface's name is not ideal)
+    /// - At the current state, only a single parameter of an operator can be invoked for file picking, which already have the
+    /// fileFilter accessible.
+    /// - The whole notion and format of Microsoft's file filter API seems dated, and error-prone.
+    /// </remarks>
+    private static string[] ExtendFileFilterWithSelectedOps(string? fileFilter, Instance[] selectedInstances)
+    {
+        string[] uiFilter;
+        if(fileFilter == null)
+            uiFilter = [];
+        else if (!fileFilter.Contains('|'))
+            uiFilter = [fileFilter];
+        else
+            uiFilter = fileFilter.Split('|')[1].Split(';');
+
+        var fileFiltersInCommon = selectedInstances
+                                 .Where(x => x is IDescriptiveFilename)
+                                 .Cast<IDescriptiveFilename>()
+                                 .Select(x => x.FileFilter)
+                                 .Aggregate(Enumerable.Empty<string>(), (a, b) => a.Intersect(b))
+                                 .Concat(uiFilter)
+                                 .Where(s => !string.IsNullOrWhiteSpace(s))
+                                 .Distinct()
+                                 .ToArray();
+        return fileFiltersInCommon;
     }
 
     private static void OpenFileManager(FileOperations.FilePickerTypes type, IEnumerable<IResourcePackage> packagesInCommon, string[] fileFiltersInCommon, bool isFolder, bool async)
@@ -222,14 +235,13 @@ internal static class FilePickingUi
             _hasClosedFileManager = true;
         }
     }
+    
+    public static TempResourceConsumer? SearchResourceConsumer;
 
     private static string? _latestFileManagerResult;
     private static bool _fileManagerOpen;
     private static readonly Lock _fileManagerResultLock = new();
     private static bool _hasClosedFileManager;
-    public static TempResourceConsumer? SearchResourceConsumer;
 
     private readonly record struct InputResult(bool Modified, string Value);
-
-    private readonly record struct InputRequest(string Value, string[] FileExtensionFilters, bool IsFolder, bool ShowWarning, IResourceConsumer ResourcePackageContainer);
 }
