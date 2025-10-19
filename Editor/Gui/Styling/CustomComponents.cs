@@ -147,14 +147,15 @@ internal static class CustomComponents
         
         ImGui.PushStyleColor(ImGuiCol.Text, stateTextColor);
 
-        var align = string.IsNullOrEmpty(label) ? new Vector2(0.1f, 0.5f) : new Vector2(0.5f, 0.5f);
-        align = new Vector2(0.5f, 0.25f);
+        var yAlign = (ImGui.GetFrameHeight() / Icons.FontSize) / 4 ;
+        
+        var align = string.IsNullOrEmpty(label) ? new Vector2(0.1f, yAlign) : new Vector2(0.5f, yAlign);
         ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, align);
         ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, Vector2.Zero);
 
         ImGui.PushFont(Icons.IconFont);
 
-        //ImGui.AlignTextToFramePadding();
+        ImGui.AlignTextToFramePadding();
         if (ImGui.Button($"{(char)icon}##label", size))
         {
             isSelected = !isSelected;
@@ -237,9 +238,9 @@ internal static class CustomComponents
         }
 
         ImGui.PushFont(Icons.IconFont);
-        var yAlign = ImGui.GetFrameHeight() / Icons.FontSize ;
+        var yAlign = (ImGui.GetFrameHeight() / Icons.FontSize) / 2.25f;
         
-        ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(0.5f, yAlign/2.25f));
+        ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(0.5f, yAlign));
         ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, Vector2.Zero);
 
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, UiColors.BackgroundButtonActivated.Rgba);
