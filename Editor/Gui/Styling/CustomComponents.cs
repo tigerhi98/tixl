@@ -141,18 +141,20 @@ internal static class CustomComponents
     public static bool ToggleIconButton(Icon icon, string label, ref bool isSelected, Vector2 size, bool trigger = false)
     {
         var clicked = false;
-
         var stateTextColor = isSelected
                                  ? UiColors.StatusActivated.Rgba
                                  : UiColors.TextDisabled.Rgba;
+        
         ImGui.PushStyleColor(ImGuiCol.Text, stateTextColor);
 
         var align = string.IsNullOrEmpty(label) ? new Vector2(0.1f, 0.5f) : new Vector2(0.5f, 0.5f);
+        align = new Vector2(0.5f, 0.25f);
         ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, align);
         ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, Vector2.Zero);
 
         ImGui.PushFont(Icons.IconFont);
 
+        //ImGui.AlignTextToFramePadding();
         if (ImGui.Button($"{(char)icon}##label", size))
         {
             isSelected = !isSelected;
@@ -235,7 +237,9 @@ internal static class CustomComponents
         }
 
         ImGui.PushFont(Icons.IconFont);
-        ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(0.5f, 0.5f));
+        var yAlign = ImGui.GetFrameHeight() / Icons.FontSize ;
+        
+        ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(0.5f, yAlign/2.25f));
         ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, Vector2.Zero);
 
         ImGui.PushStyleColor(ImGuiCol.ButtonActive, UiColors.BackgroundButtonActivated.Rgba);

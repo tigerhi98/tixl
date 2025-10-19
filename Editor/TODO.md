@@ -63,6 +63,7 @@
 - [ ] Panning/Zooming in CurveEdit-Popup opened from SampleCurveOp is broken 
 - [ ] Create connections from dragging out of parameter window
 - [ ] Refactor IStatusMessageProvider "Success" indication #714
+- [ ] Add shortcut to insert op on the right side
 
 ## UI-Scaling Issues (at x1.5):
 
