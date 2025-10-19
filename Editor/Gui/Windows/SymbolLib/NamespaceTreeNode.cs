@@ -4,7 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using T3.Core.Operator;
 using T3.Editor.UiModel;
 
-namespace T3.Editor.Gui.Windows;
+namespace T3.Editor.Gui.Windows.SymbolLib;
 
 /// <summary>
 /// A nested container that can contain further instances of <see cref="NamespaceTreeNode"/>

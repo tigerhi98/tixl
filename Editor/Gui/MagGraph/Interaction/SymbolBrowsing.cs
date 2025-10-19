@@ -2,6 +2,7 @@
 using System.Text;
 using ImGuiNET;
 using T3.Core.DataTypes;
+using T3.Editor.Gui.Input;
 using T3.Editor.Gui.MagGraph.States;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;

@@ -4,6 +4,7 @@ using Newtonsoft.Json.Linq;
 using T3.Core.Animation;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
+using T3.Editor.Gui.Input;
 using T3.Editor.Gui.Styling;
 using T3.Editor.UiModel.InputsAndTypes;
 using T3.Serialization;

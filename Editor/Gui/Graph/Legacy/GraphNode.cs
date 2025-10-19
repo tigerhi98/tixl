@@ -12,6 +12,7 @@ using T3.Editor.Gui.OpUis;
 using T3.Editor.Gui.Graph.Dialogs;
 using T3.Editor.Gui.Graph.Legacy.Interaction;
 using T3.Editor.Gui.Graph.Legacy.Interaction.Connections;
+using T3.Editor.Gui.Input;
 using T3.Editor.Gui.Interaction.TransformGizmos;
 using T3.Editor.Gui.MagGraph.Interaction;
 using T3.Editor.Gui.OutputUi;

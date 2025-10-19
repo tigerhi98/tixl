@@ -9,6 +9,7 @@ using T3.Core.Audio;
 using T3.Core.IO;
 using T3.Core.Operator;
 using T3.Editor.Gui.Audio;
+using T3.Editor.Gui.Input;
 using T3.Editor.Gui.Interaction.Timing;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;

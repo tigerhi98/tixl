@@ -1,10 +1,11 @@
 #nullable enable
 using ImGuiNET;
 using T3.Editor.Gui.Interaction;
+using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel.InputsAndTypes;
 
-namespace T3.Editor.Gui.Styling;
+namespace T3.Editor.Gui.Input;
 
 /// <summary>
 /// A set of custom widgets that allow to quickly draw dialogs with a more "traditional" labels on the left side of input fields.

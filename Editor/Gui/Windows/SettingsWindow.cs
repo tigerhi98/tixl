@@ -4,6 +4,7 @@ using Operators.Utils;
 using T3.Core.IO;
 using T3.Core.UserData;
 using T3.Core.Utils;
+using T3.Editor.Gui.Input;
 using T3.Editor.Gui.Interaction.Keyboard;
 using T3.Editor.Gui.Interaction.Midi;
 using T3.Editor.Gui.Styling;

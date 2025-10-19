@@ -7,6 +7,7 @@ using T3.Core.Operator.Slots;
 using T3.Core.Resource;
 using T3.Core.SystemUi;
 using T3.Core.Utils;
+using T3.Editor.Gui.Input;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel;

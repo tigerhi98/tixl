@@ -1,8 +1,9 @@
 ﻿using ImGuiNET;
+using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.SystemUi;
 
-namespace T3.Editor.Gui.Styling;
+namespace T3.Editor.Gui.Input;
 
 public static class SearchableDropDown
 {

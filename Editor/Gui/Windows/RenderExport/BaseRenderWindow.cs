@@ -5,6 +5,7 @@ using T3.Core.Audio;
 using T3.Core.DataTypes;
 using T3.Core.SystemUi;
 using T3.Core.Utils;
+using T3.Editor.Gui.Input;
 using T3.Editor.Gui.Interaction.Timing;
 using T3.Editor.Gui.Styling;
 using T3.Editor.UiModel.ProjectHandling;
