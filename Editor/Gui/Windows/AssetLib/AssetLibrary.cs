@@ -6,7 +6,6 @@ using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Resource;
 using T3.Editor.Gui.Styling;
-using T3.Editor.Gui.Windows.SymbolLib;
 using T3.Editor.UiModel.Helpers;
 using T3.Editor.UiModel.ProjectHandling;
 
@@ -21,7 +20,6 @@ internal sealed class AssetLibrary : Window
     {
         _filter.SearchString = "";
         Config.Title = "Assets";
-        _treeNode.PopulateCompleteTree();
     }
 
     internal override List<Window> GetInstances()
@@ -40,23 +38,29 @@ internal sealed class AssetLibrary : Window
 
     private void DrawView()
     {
+        UpdateAssetsIfRequired();
+        
         var iconCount = 1;
 
         CustomComponents.DrawInputFieldWithPlaceholder("Search symbols...", ref _filter.SearchString, -ImGui.GetFrameHeight() * iconCount + 16);
 
         ImGui.BeginChild("scrolling", Vector2.Zero, false, ImGuiWindowFlags.NoBackground);
         {
-            UpdateAssetsIfRequired();
 
-            foreach (var fa in _allAssets)
-            {
-                ImGui.TextUnformatted(fa.FileAliasPath);
-                ImGui.SameLine(0, 20);
-                ImGui.TextUnformatted("" + fa.FileInfo.Length);
-            }
+            DrawFolder(_rootNode);
+
+
+            // foreach (var fa in _allAssets)
+            // {
+            //     ImGui.TextUnformatted(fa.FileAliasPath);
+            //     ImGui.SameLine(0, 20);
+            //     ImGui.TextUnformatted("" + fa.FileInfo.Length);
+            // }
         }
         ImGui.EndChild();
     }
+    
+    #region legacy for reference
 
     // private void DrawFilteredList()
     // {
@@ -67,69 +71,70 @@ internal sealed class AssetLibrary : Window
     //     }
     // }
 
-    private void DrawFolder(NamespaceTreeNode subtree)
+    private void DrawFolder(AssetTreeFolder subtree)
     {
-        // if (subtree.Name == NamespaceTreeNode.RootNodeId)
-        // {
-        //     DrawNodeItems(subtree);
-        // }
-        // else
-        // {
-        //     ImGui.PushID(subtree.Name);
-        //     ImGui.SetNextItemWidth(10);
-        //     if (subtree.Name == "Lib" && !_openedLibFolderOnce)
-        //     {
-        //         ImGui.SetNextItemOpen(true);
-        //         _openedLibFolderOnce = true;
-        //     }
-        //
-        //     var isOpen = ImGui.TreeNode(subtree.Name);
-        //     CustomComponents.ContextMenuForItem(() =>
-        //                                         {
-        //                                             if (ImGui.MenuItem("Rename Namespace"))
-        //                                             {
-        //                                                 _subtreeNodeToRename = subtree;
-        //                                                 _renameNamespaceDialog.ShowNextFrame();
-        //                                             }
-        //                                         });
-        //
-        //     if (isOpen)
-        //     {
-        //         HandleDropTarget(subtree);
-        //
-        //         DrawNodeItems(subtree);
-        //
-        //         ImGui.TreePop();
-        //     }
-        //     else
-        //     {
-        //         if (DragAndDropHandling.IsDragging)
-        //         {
-        //             ImGui.SameLine();
-        //             ImGui.PushID("DropButton");
-        //             ImGui.Button("  <-", new Vector2(50, 15));
-        //             HandleDropTarget(subtree);
-        //             ImGui.PopID();
-        //         }
-        //     }
-        //
-        //     ImGui.PopID();
-        // }
+        if (subtree.Name == AssetTreeFolder.RootNodeId)
+        {
+            DrawNodeItems(subtree);
+        }
+        else
+        {
+            ImGui.PushID(subtree.Name);
+            ImGui.SetNextItemWidth(10);
+            if (subtree.Name == "Lib" && !_openedLibFolderOnce)
+            {
+                ImGui.SetNextItemOpen(true);
+                _openedLibFolderOnce = true;
+            }
+        
+            var isOpen = ImGui.TreeNode(subtree.Name);
+            // CustomComponents.ContextMenuForItem(() =>
+            //                                     {
+            //                                         if (ImGui.MenuItem("Rename Namespace"))
+            //                                         {
+            //                                             _subtreeNodeToRename = subtree;
+            //                                             _renameNamespaceDialog.ShowNextFrame();
+            //                                         }
+            //                                     });
+        
+            if (isOpen)
+            {
+                // HandleDropTarget(subtree);
+        
+                DrawNodeItems(subtree);
+        
+                ImGui.TreePop();
+            }
+            // else
+            // {
+            //     if (DragAndDropHandling.IsDragging)
+            //     {
+            //         ImGui.SameLine();
+            //         ImGui.PushID("DropButton");
+            //         ImGui.Button("  <-", new Vector2(50, 15));
+            //         HandleDropTarget(subtree);
+            //         ImGui.PopID();
+            //     }
+            // }
+        
+            ImGui.PopID();
+        }
     }
 
-    private void DrawNodeItems(NamespaceTreeNode subtree)
+    private void DrawNodeItems(AssetTreeFolder subtree)
     {
         // Using a for loop to prevent modification during iteration exception
-        for (var index = 0; index < subtree.Children.Count; index++)
+        for (var index = 0; index < subtree.SubFolders.Count; index++)
         {
-            var subspace = subtree.Children[index];
+            var subspace = subtree.SubFolders[index];
             DrawFolder(subspace);
         }
 
-        for (var index = 0; index < subtree.Symbols.ToList().Count; index++)
+        for (var index = 0; index < subtree.FolderAssets.ToList().Count; index++)
         {
-            var symbol = subtree.Symbols.ToList()[index];
-            DrawAssetItem(symbol);
+            var asset = subtree.FolderAssets.ToList()[index];
+            //DrawAssetItem(symbol);
+            ImGui.TextUnformatted(asset.FileInfo.Name);
         }
     }
 
@@ -275,6 +280,8 @@ internal sealed class AssetLibrary : Window
     //     return false;
     // }
 
+    #endregion
+    
     private void UpdateAssetsIfRequired()
     {
         var compositionInstance = ProjectView.Focused?.CompositionInstance;
@@ -302,18 +309,35 @@ internal sealed class AssetLibrary : Window
                     continue;
                 }
 
+                ParsePath(aliasedPath, out var packageName, out var folders);
+                
                 asset = new FileAsset
                             {
                                 FileAliasPath = aliasedPath,
                                 FileInfo = new FileInfo(absolutePath),
                                 Package = package,
+                                PackageName = packageName,
+                                Folders = folders,
                             };
+                _assetCache[aliasedPath] = asset;
             }
 
             _allAssets.Add(asset);
         }
+        
+        _rootNode.PopulateCompleteTree(filterAction:null,_allAssets);
     }
 
+    private static void ParsePath(string path, out string package, out List<string> folders)
+    {
+        var parts = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+        package = parts.Length > 0 ? parts[0] : string.Empty;
+        folders = parts.Length > 2
+                      ? parts[0..^1].ToList()
+                      : [];
+    }
+    
     /// <summary>
     /// Useful for checking if a reference has changed without keeping an GC reference. 
     /// </summary>
@@ -329,13 +353,14 @@ internal sealed class AssetLibrary : Window
 
     private int? _lastCompositionObjId = 0;
 
-    private readonly AssetTreeFolder _treeNode = new(AssetTreeFolder.RootNodeId);
+    private readonly AssetTreeFolder _rootNode = new(AssetTreeFolder.RootNodeId);
     private readonly SymbolFilter _filter = new();
 
     private readonly List<FileAsset> _allAssets = [];
     private int _lastFileWatcherState = -1;
 
     private readonly Dictionary<string, FileAsset> _assetCache = [];
+    private bool _openedLibFolderOnce;
 }
 
 internal sealed class FileAsset
@@ -343,4 +368,6 @@ internal sealed class FileAsset
     public required string FileAliasPath;
     public IResourcePackage? Package;
     public required FileInfo FileInfo;
+    public required List<string> Folders;
+    public required string PackageName;
 }

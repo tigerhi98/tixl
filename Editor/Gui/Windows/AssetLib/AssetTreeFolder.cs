@@ -16,7 +16,7 @@ namespace T3.Editor.Gui.Windows.AssetLib;
 internal sealed class AssetTreeFolder
 {
     internal string Name { get; private set; }
-    internal List<AssetTreeFolder> ChildFolder { get; } = [];
+    internal List<AssetTreeFolder> SubFolders { get; } = [];
     private AssetTreeFolder? Parent { get; }
 
     internal enum FolderTypes
@@ -34,23 +34,23 @@ internal sealed class AssetTreeFolder
         Parent = parent;
     }
 
-    internal string GetAsString()
-    {
-        var list = new List<string>();
-        var t = this;
-        while (t.Parent != null)
-        {
-            list.Insert(0, t.Name);
-            t = t.Parent;
-        }
-
-        return string.Join(".", list);
-    }
+    // internal string GetAsString()
+    // {
+    //     var list = new List<string>();
+    //     var t = this;
+    //     while (t.Parent != null)
+    //     {
+    //         list.Insert(0, t.Name);
+    //         t = t.Parent;
+    //     }
+    //
+    //     return string.Join(ResourceManager.PathSeparator, list);
+    // }
 
     private void Clear()
     {
-        ChildFolder.Clear();
-        FilePaths.Clear();
+        SubFolders.Clear();
+        FolderAssets.Clear();
     }
 
     private static readonly List<string> _rootProjectNames = [
@@ -60,13 +60,9 @@ internal sealed class AssetTreeFolder
             "t3.",
         ]; 
     
-    internal void PopulateCompleteTree()
-    {
-        PopulateCompleteTree(filterAction: null);
-    }
     
     // Define an action delegate that takes a Symbol and returns a bool
-    internal void PopulateCompleteTree(Predicate<string>? filterAction)
+    internal void PopulateCompleteTree(Predicate<FileAsset>? filterAction, List<FileAsset> allAssetsOrdered)
     {
         Name = RootNodeId;
         Clear();
@@ -75,10 +71,10 @@ internal sealed class AssetTreeFolder
         if (compositionInstance == null) 
             return;
         
-        var allFiles = ResourceManager.EnumerateResources(null,
-                                                          isFolder:false,
-                                                          compositionInstance.AvailableResourcePackages,
-                                                          ResourceManager.PathMode.Aliased);
+        // var allFiles = ResourceManager.EnumerateResources(null,
+        //                                                   isFolder:false,
+        //                                                   compositionInstance.AvailableResourcePackages,
+        //                                                   ResourceManager.PathMode.Aliased);
         
         // var ordered = EditorSymbolPackage.AllSymbolUis
         //                                  .OrderBy(ui =>
@@ -93,65 +89,73 @@ internal sealed class AssetTreeFolder
         //                                               return (index, ns + ui.Symbol.Name);
         //                                           });        
         
-        foreach (var file in allFiles)
+        foreach (var file in allAssetsOrdered)
         {
             var keep = filterAction == null || filterAction(file);
             if (!keep)
                 continue;
             
-            SortInResource(file);
+            SortInAssets(file);
         }
     }
 
-    private void SortInResource(string file)
+
+    
+    private void SortInAssets(FileAsset asset)
     {
-        // if(file.ResourcePackage.RootNamespace)
-        //
-        //
-        // if (file.Namespace == null)
+        //if(asset.Package.RootNamespace)
+        
+        // if (asset.Package == null)
         // {
         //     return;
         // }
-        //
-        // var spaces = file.Namespace.Split('.');
-        //
-        // var currentNode = this;
-        // var expandingSubTree = false;
-        //
-        // foreach (var spaceName in spaces)
+        
+        //var spaces = asset.Namespace.Split('.');
+
+        // var segments = asset.FileAliasPath.Split(ResourceManager.PathSeparator);
+        // if (segments.Length < 2)
         // {
-        //     if (spaceName == "")
-        //         continue;
-        //
-        //     if (!expandingSubTree)
-        //     {
-        //         if(currentNode.TryFindNodeDataByName(spaceName, out var node))
-        //         {
-        //             currentNode = node;
-        //         }
-        //         else
-        //         {
-        //             expandingSubTree = true;
-        //         }
-        //     }
-        //
-        //     if (!expandingSubTree)
-        //         continue;
-        //
-        //     var newNode = new AssetTreeFolder(spaceName, currentNode);
-        //     currentNode.ChildFolder.Add(newNode);
-        //     currentNode = newNode;
+        //     Log.Warning("Invalid path " + asset.FileAliasPath);
+        //     return;
         // }
-        //
-        // currentNode.FileResources.Add(file);
+        
+        var currentNode = this;
+        var expandingSubTree = false;
+        
+        foreach (var folderName in asset.Folders)
+        {
+            if (folderName == "")
+                continue;
+        
+            if (!expandingSubTree)
+            {
+                if(currentNode.TryFindNodeDataByName(folderName, out var node))
+                {
+                    currentNode = node;
+                }
+                else
+                {
+                    expandingSubTree = true;
+                }
+            }
+        
+            if (!expandingSubTree)
+                continue;
+        
+            var newNode = new AssetTreeFolder(folderName, currentNode);
+            currentNode.SubFolders.Add(newNode);
+            currentNode = newNode;
+        }
+        
+        currentNode.FolderAssets.Add(asset);
     }
 
     private bool TryFindNodeDataByName(string name, [NotNullWhen(true)]out  AssetTreeFolder? node)
     {
-        node=ChildFolder.FirstOrDefault(n => n.Name == name);
+        node=SubFolders.FirstOrDefault(n => n.Name == name);
         return node != null;
     }
 
-    internal readonly List<string> FilePaths = [];
+    internal readonly List<FileAsset> FolderAssets = [];
     internal const string RootNodeId = "root";
 }
