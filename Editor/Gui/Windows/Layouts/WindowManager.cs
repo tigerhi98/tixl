@@ -4,9 +4,11 @@ using T3.Editor.Gui.Graph.Window;
 using T3.Editor.Gui.Interaction;
 using T3.Editor.Gui.Interaction.Keyboard;
 using T3.Editor.Gui.UiHelpers;
+using T3.Editor.Gui.Windows.AssetLib;
 using T3.Editor.Gui.Windows.Exploration;
 using T3.Editor.Gui.Windows.Output;
 using T3.Editor.Gui.Windows.RenderExport;
+using T3.Editor.Gui.Windows.SymbolLib;
 using T3.Editor.Gui.Windows.Variations;
 
 namespace T3.Editor.Gui.Windows.Layouts;
@@ -21,7 +23,7 @@ internal static partial class WindowManager
             
         LayoutHandling.ProcessKeyboardShortcuts();
 
-        if (KeyActionHandling.Triggered(UserActions.ToggleVariationsWindow))
+        if (UserActions.ToggleVariationsWindow.Triggered())
         {
             ToggleWindowTypeVisibility<VariationsWindow>();
         }
@@ -56,6 +58,7 @@ internal static partial class WindowManager
                 new GraphWindow(),
                 new ParameterWindow(),
                 new SymbolLibrary(),
+                new AssetLibrary(),
                 new VariationsWindow(),
                 new ExplorationWindow(),
                 new RenderWindow(),

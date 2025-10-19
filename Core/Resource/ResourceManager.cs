@@ -55,14 +55,14 @@ public static partial class ResourceManager
 
         if (packages != null)
         {
-            if (DoesRelativePathExist(relativePath, packages, out absolutePath, out resourceContainer, isFolder))
+            if (CheckRelativeFilePath(relativePath, packages, out absolutePath, out resourceContainer, isFolder))
                 return true;
 
             backCompatPaths ??= PopulateBackCompatPaths(relativePath, backCompatRanges);
 
             foreach (var backCompatPath in backCompatPaths)
             {
-                if (DoesRelativePathExist(backCompatPath, packages, out absolutePath, out resourceContainer, isFolder))
+                if (CheckRelativeFilePath(backCompatPath, packages, out absolutePath, out resourceContainer, isFolder))
                     return true;
             }
         }
@@ -70,7 +70,7 @@ public static partial class ResourceManager
         // TODO: What is that "*.hlsl" extension here? This method should be file type agnostic.
         var sharedResourcePackages = relativePath.EndsWith(".hlsl") ? _shaderPackages : _sharedResourcePackages;
 
-        if (DoesRelativePathExist(relativePath, sharedResourcePackages, out absolutePath, out resourceContainer, isFolder))
+        if (CheckRelativeFilePath(relativePath, sharedResourcePackages, out absolutePath, out resourceContainer, isFolder))
         {
             return true;
         }
@@ -79,7 +79,7 @@ public static partial class ResourceManager
 
         foreach (var backCompatPath in backCompatPaths)
         {
-            if (DoesRelativePathExist(backCompatPath, sharedResourcePackages, out absolutePath, out resourceContainer, isFolder))
+            if (CheckRelativeFilePath(backCompatPath, sharedResourcePackages, out absolutePath, out resourceContainer, isFolder))
                 return true;
         }
 
@@ -92,7 +92,7 @@ public static partial class ResourceManager
                                                                            ? Directory.Exists(absolutePath) 
                                                                            : File.Exists(absolutePath);
 
-    private static bool DoesRelativePathExist(string relativePath, 
+    private static bool CheckRelativeFilePath(string relativePath, 
                                               IEnumerable<IResourcePackage> resourceContainers, 
                                               out string absolutePath,
                                               out IResourcePackage? resourceContainer, 
@@ -136,7 +136,7 @@ public static partial class ResourceManager
         {
             foreach (var container in resourceContainers)
             {
-                if (TestAlias(container, alias, relativePathWithoutAlias, out absolutePath, isFolder))
+                if (CheckAliasPath(container, alias, relativePathWithoutAlias, out absolutePath, isFolder))
                 {
                     resourceContainer = container;
                     return true;
@@ -147,7 +147,7 @@ public static partial class ResourceManager
         var sharedResourcePackages = relativePathAliased.EndsWith(".hlsl") ? _shaderPackages : _sharedResourcePackages;
         foreach (var container in sharedResourcePackages)
         {
-            if(TestAlias(container, alias, relativePathWithoutAlias, out absolutePath, isFolder))
+            if(CheckAliasPath(container, alias, relativePathWithoutAlias, out absolutePath, isFolder))
             {
                 resourceContainer = container;
                 return true;
@@ -158,7 +158,7 @@ public static partial class ResourceManager
         resourceContainer = null;
         return false;
 
-        static bool TestAlias(IResourcePackage container, ReadOnlySpan<char> alias, string relativePathWithoutAlias, out string absolutePath, bool isFolder)
+        static bool CheckAliasPath(IResourcePackage container, ReadOnlySpan<char> alias, string relativePathWithoutAlias, out string absolutePath, bool isFolder)
         {
             var containerAlias = container.Alias;
             if (containerAlias == null)
