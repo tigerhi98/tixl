@@ -26,7 +26,7 @@ internal static class FilePickingUi
         var nodeSelection = ProjectView.Focused?.NodeSelection;
         if (ProjectView.Focused?.CompositionInstance == null || nodeSelection == null)
             return InputEditStateFlags.Nothing;
-        
+
         var selectedInstances = nodeSelection.GetSelectedInstances().ToArray();
         var needsToGatherPackages = true; //SearchResourceConsumer is null;
 
@@ -45,11 +45,10 @@ internal static class FilePickingUi
                 SearchResourceConsumer = new TempResourceConsumer(packagesInCommon);
             }
         }
-            
-            
+
         var isFolder = type == FileOperations.FilePickerTypes.Folder;
         var exists = ResourceManager.TryResolvePath(filterAndSelectedPath, SearchResourceConsumer, out _, out _, isFolder);
-            
+
         var warning = type switch
                           {
                               FileOperations.FilePickerTypes.File when !exists   => "File doesn't exist:\n",
@@ -65,19 +64,19 @@ internal static class FilePickingUi
         {
             ImGui.BeginDisabled();
         }
-        
+
         var fileFiltersInCommon = ExtendFileFilterWithSelectedOps(fileFilter, selectedInstances);
 
         var inputEditStateFlags = InputEditStateFlags.Nothing;
-        if(filterAndSelectedPath != null && SearchResourceConsumer != null)
+        if (filterAndSelectedPath != null && SearchResourceConsumer != null)
         {
-            var allItems = ResourceManager.EnumerateResources(fileFiltersInCommon, 
-                                                                isFolder, 
-                                                                SearchResourceConsumer.AvailableResourcePackages, 
-                                                                ResourceManager.PathMode.Aliased);
+            var allItems = ResourceManager.EnumerateResources(fileFiltersInCommon,
+                                                              isFolder,
+                                                              SearchResourceConsumer.AvailableResourcePackages,
+                                                              ResourceManager.PathMode.Aliased);
 
             var changed = ResourceInputWithTypeAheadSearch.Draw("##filePathSearch", allItems, !exists, ref filterAndSelectedPath, out _);
-            
+
             var result = new InputResult(changed, filterAndSelectedPath);
             filterAndSelectedPath = result.Value;
             inputEditStateFlags = result.Modified ? InputEditStateFlags.Modified : InputEditStateFlags.Nothing;
@@ -86,16 +85,17 @@ internal static class FilePickingUi
         if (warning != string.Empty)
             ImGui.PopStyleColor();
 
-        if (ImGui.IsItemHovered() && filterAndSelectedPath != null && filterAndSelectedPath.Length > 0 && ImGui.CalcTextSize(filterAndSelectedPath).X > ImGui.GetItemRectSize().X)
+        if (ImGui.IsItemHovered() && filterAndSelectedPath != null && filterAndSelectedPath.Length > 0 &&
+            ImGui.CalcTextSize(filterAndSelectedPath).X > ImGui.GetItemRectSize().X)
         {
             ImGui.BeginTooltip();
             ImGui.TextUnformatted(warning + filterAndSelectedPath);
             ImGui.EndTooltip();
         }
-            
+
         ImGui.SameLine();
         //var modifiedByPicker = FileOperations.DrawFileSelector(type, ref value, filter);
-            
+
         if (ImGui.Button("...##fileSelector"))
         {
             if (SearchResourceConsumer != null)
@@ -107,35 +107,35 @@ internal static class FilePickingUi
                 Log.Warning("Can open file manager with undefined resource consumer");
             }
         }
-            
+
         if (fileManagerOpen)
         {
             ImGui.EndDisabled();
         }
-            
+
         // refresh value because 
-            
+
         string? fileManValue;
         lock (_fileManagerResultLock)
         {
             fileManValue = _latestFileManagerResult;
             _latestFileManagerResult = null;
         }
-            
+
         var valueIsUpdated = !string.IsNullOrEmpty(fileManValue) && fileManValue != filterAndSelectedPath;
-            
+
         if (valueIsUpdated)
         {
             filterAndSelectedPath = fileManValue;
             inputEditStateFlags |= InputEditStateFlags.Modified;
         }
-            
+
         if (_hasClosedFileManager)
         {
             _hasClosedFileManager = false;
             inputEditStateFlags |= InputEditStateFlags.Finished;
         }
-            
+
         return inputEditStateFlags;
     }
 
@@ -149,7 +149,7 @@ internal static class FilePickingUi
     private static string[] ExtendFileFilterWithSelectedOps(string? fileFilter, Instance[] selectedInstances)
     {
         string[] uiFilter;
-        if(fileFilter == null)
+        if (fileFilter == null)
             uiFilter = [];
         else if (!fileFilter.Contains('|'))
             uiFilter = [fileFilter];
@@ -168,23 +168,21 @@ internal static class FilePickingUi
         return fileFiltersInCommon;
     }
 
-    private static void OpenFileManager(FileOperations.FilePickerTypes type, IEnumerable<IResourcePackage> packagesInCommon, string[] fileFiltersInCommon, bool isFolder, bool async)
+    private static void OpenFileManager(FileOperations.FilePickerTypes type, IEnumerable<IResourcePackage> packagesInCommon, string[] fileFiltersInCommon,
+                                        bool isFolder, bool async)
     {
-        var managedDirectories = packagesInCommon
+        var rootDirectories = packagesInCommon
                                 .Concat(ResourceManager.GetSharedPackagesForFilters(fileFiltersInCommon, isFolder, out var culledFilters))
                                 .Distinct()
                                 .OrderBy(package => !package.IsReadOnly)
                                 .Select(package => new ManagedDirectory(package.ResourcesFolder, package.IsReadOnly, !package.IsReadOnly, package.Alias));
-            
+
         var fileManagerMode = type == FileOperations.FilePickerTypes.File ? FileManagerMode.PickFile : FileManagerMode.PickDirectory;
-            
+
         Func<string, bool> filterFunc = culledFilters.Length == 0
                                             ? _ => true
-                                            : str =>
-                                              {
-                                                  return culledFilters.Any(filter => StringUtils.MatchesSearchFilter(str, filter, ignoreCase: true));
-                                              };
-            
+                                            : str => { return culledFilters.Any(filter => StringUtils.MatchesSearchFilter(str, filter, ignoreCase: true)); };
+
         var options = new SimpleWindowOptions(new Vector2(960, 600), 60, true, true, false);
         if (!async)
         {
@@ -194,12 +192,12 @@ internal static class FilePickingUi
         {
             StartFileManagerAsync();
         }
-            
+
         return;
-            
+
         void StartFileManagerAsync()
         {
-            var fileManager = new FileManager(fileManagerMode, managedDirectories, filterFunc)
+            var fileManager = new FileManager(fileManagerMode, rootDirectories, filterFunc)
                                   {
                                       CloseOnResult = false,
                                       ClosingCallback = () =>
@@ -211,19 +209,19 @@ internal static class FilePickingUi
             _fileManagerOpen = true;
             _ = ImGuiWindowService.Instance.ShowAsync("Select a path", fileManager, (result) =>
                                                                                     {
-                                                                                        lock(_fileManagerResultLock)
-                                                                                            _latestFileManagerResult = result.RelativePathWithAlias ?? result.RelativePath;
-                                                                                            
+                                                                                        lock (_fileManagerResultLock)
+                                                                                            _latestFileManagerResult =
+                                                                                                result.RelativePathWithAlias ?? result.RelativePath;
                                                                                     }, options);
         }
-            
+
         void StartFileManagerBlocking()
         {
-            var fileManager = new FileManager(fileManagerMode, managedDirectories, filterFunc);
+            var fileManager = new FileManager(fileManagerMode, rootDirectories, filterFunc);
             _fileManagerOpen = true;
             var fileManagerResult = ImGuiWindowService.Instance.Show("Select a path", fileManager, options);
             _fileManagerOpen = false;
-                
+
             if (fileManagerResult != null)
             {
                 lock (_fileManagerResultLock) // unnecessary, but consistent
@@ -231,11 +229,11 @@ internal static class FilePickingUi
                     _latestFileManagerResult = fileManagerResult.RelativePathWithAlias ?? fileManagerResult.RelativePath;
                 }
             }
-                
+
             _hasClosedFileManager = true;
         }
     }
-    
+
     public static TempResourceConsumer? SearchResourceConsumer;
 
     private static string? _latestFileManagerResult;

@@ -22,7 +22,11 @@ public static partial class ResourceManager
             
     }
         
-    public static bool TryResolvePath(string? relativePath, IResourceConsumer? consumer, out string absolutePath, out IResourcePackage? resourceContainer, bool isFolder = false)
+    public static bool TryResolvePath(string? relativePath, 
+                                      IResourceConsumer? consumer, 
+                                      out string absolutePath, 
+                                      out IResourcePackage? resourceContainer, 
+                                      bool isFolder = false)
     {
         var packages = consumer?.AvailableResourcePackages.ToArray();
         if (string.IsNullOrWhiteSpace(relativePath))
@@ -51,14 +55,14 @@ public static partial class ResourceManager
 
         if (packages != null)
         {
-            if (TestPath(relativePath, packages, out absolutePath, out resourceContainer, isFolder))
+            if (DoesRelativePathExist(relativePath, packages, out absolutePath, out resourceContainer, isFolder))
                 return true;
 
             backCompatPaths ??= PopulateBackCompatPaths(relativePath, backCompatRanges);
 
             foreach (var backCompatPath in backCompatPaths)
             {
-                if (TestPath(backCompatPath, packages, out absolutePath, out resourceContainer, isFolder))
+                if (DoesRelativePathExist(backCompatPath, packages, out absolutePath, out resourceContainer, isFolder))
                     return true;
             }
         }
@@ -66,7 +70,7 @@ public static partial class ResourceManager
         // TODO: What is that "*.hlsl" extension here? This method should be file type agnostic.
         var sharedResourcePackages = relativePath.EndsWith(".hlsl") ? _shaderPackages : _sharedResourcePackages;
 
-        if (TestPath(relativePath, sharedResourcePackages, out absolutePath, out resourceContainer, isFolder))
+        if (DoesRelativePathExist(relativePath, sharedResourcePackages, out absolutePath, out resourceContainer, isFolder))
         {
             return true;
         }
@@ -75,7 +79,7 @@ public static partial class ResourceManager
 
         foreach (var backCompatPath in backCompatPaths)
         {
-            if (TestPath(backCompatPath, sharedResourcePackages, out absolutePath, out resourceContainer, isFolder))
+            if (DoesRelativePathExist(backCompatPath, sharedResourcePackages, out absolutePath, out resourceContainer, isFolder))
                 return true;
         }
 
@@ -84,15 +88,20 @@ public static partial class ResourceManager
         return false;
     }
 
-    private static bool Exists(string absolutePath, bool isFolder) =>  isFolder ? Directory.Exists(absolutePath) : File.Exists(absolutePath);
+    private static bool Exists(string absolutePath, bool isFolder) =>  isFolder 
+                                                                           ? Directory.Exists(absolutePath) 
+                                                                           : File.Exists(absolutePath);
 
-    private static bool TestPath(string relative, IEnumerable<IResourcePackage> resourceContainers, out string absolutePath,
-                                 out IResourcePackage? resourceContainer, bool isFolder)
+    private static bool DoesRelativePathExist(string relativePath, 
+                                              IEnumerable<IResourcePackage> resourceContainers, 
+                                              out string absolutePath,
+                                              out IResourcePackage? resourceContainer, 
+                                              bool isFolder)
     {
         foreach (var package in resourceContainers)
         {
             var resourcesFolder = package.ResourcesFolder;
-            var path = Path.Combine(resourcesFolder, relative);
+            var path = Path.Combine(resourcesFolder, relativePath);
 
             if (Exists(path, isFolder))
             {
