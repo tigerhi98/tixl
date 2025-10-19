@@ -138,6 +138,8 @@ internal static class CustomComponents
         return clicked;
     }
 
+    
+    
     public static bool ToggleIconButton(Icon icon, string label, ref bool isSelected, Vector2 size, bool trigger = false)
     {
         var clicked = false;
@@ -146,9 +148,9 @@ internal static class CustomComponents
                                  : UiColors.TextDisabled.Rgba;
         
         ImGui.PushStyleColor(ImGuiCol.Text, stateTextColor);
-
-        var yAlign = (ImGui.GetFrameHeight() / Icons.FontSize) / 4 ;
         
+        var yAlign = ComputeVerticalIconAlign(size.Y);
+
         var align = string.IsNullOrEmpty(label) ? new Vector2(0.1f, yAlign) : new Vector2(0.5f, yAlign);
         ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, align);
         ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, Vector2.Zero);
@@ -168,6 +170,14 @@ internal static class CustomComponents
         ImGui.PopStyleColor(1);
 
         return clicked;
+    }
+
+    internal static float ComputeVerticalIconAlign(float frameHeight)
+    {
+        var iconFontSize = Icons.IconFont.FontSize + 1; // Sadly, this seems to be locked at 13px with some weird offset to align it :-(
+        var iconHeight = Icons.FontSize;
+        var yAlign = (frameHeight - iconHeight) / (2 * (frameHeight - iconFontSize));
+        return yAlign;
     }
 
     public enum ButtonStates
@@ -238,7 +248,15 @@ internal static class CustomComponents
         }
 
         ImGui.PushFont(Icons.IconFont);
-        var yAlign = (ImGui.GetFrameHeight() / Icons.FontSize) / 2.25f;
+        var yAlign = ComputeVerticalIconAlign(size.Y);
+
+        // Draw some debug vis
+        // {
+        //     var drawList = ImGui.GetForegroundDrawList();
+        //     var p = ImGui.GetCursorScreenPos();
+        //     drawList.AddRect(p, p + new Vector2(3, size.Y), UiColors.StatusActivated);
+        //     drawList.AddRect(p, p + new Vector2(5, Icons.FontSize), UiColors.StatusAnimated);
+        // }
         
         ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(0.5f, yAlign));
         ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, Vector2.Zero);

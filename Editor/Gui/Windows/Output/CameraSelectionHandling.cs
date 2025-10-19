@@ -277,9 +277,11 @@ internal sealed class CameraSelectionHandling
         var isAuto = _controlMode == ControlModes.AutoUseFirstCam;
 
         var width = ImGui.GetFrameHeight() * 5;
-        ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, Vector2.Zero);
+        var vAlign = CustomComponents.ComputeVerticalIconAlign(ImGui.GetFrameHeight());
+        ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(0, 0.5f));
         var labelColor = isAuto ? UiColors.TextMuted : UiColors.ForegroundFull;
         ImGui.PushStyleColor(ImGuiCol.Text, labelColor.Rgba);
+        
         var isClicked = ImGui.Button($"     {label}##CameraMode", new Vector2(width, ImGui.GetFrameHeight()));
         ImGui.PopStyleColor();
         ImGui.PopStyleVar();
@@ -291,7 +293,8 @@ internal sealed class CameraSelectionHandling
             ImGui.SetNextWindowPos(new Vector2(min.X, max.Y));
         }
 
-        Icons.DrawIconAtScreenPosition(Icon.Camera, min + new Vector2(5, 7) * T3Ui.UiScaleFactor, ImGui.GetWindowDrawList(), labelColor);
+        var verticalOffset = (ImGui.GetFrameHeight() -  Icons.FontSize) /2 + 1;
+        Icons.DrawIconAtScreenPosition(Icon.Camera, min + new Vector2(5 * T3Ui.UiScaleFactor, verticalOffset), ImGui.GetWindowDrawList(), labelColor);
 
         if (ImGui.BeginPopup("cameraPopup", ImGuiWindowFlags.None))
         {

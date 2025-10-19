@@ -47,8 +47,7 @@ internal static class FontAtlasGenerator
         var iconFilePath = GetIconPathForScale(scaleFactor, out var iconScaleFactor);
 
         Icons.IconFont = io.Fonts.AddFontDefault();
-        Icons.FontSize = 16 * iconScaleFactor;
-        //Icons.IconFont.Scale /= iconScaleFactor;
+        Icons.FontSize = 15 * iconScaleFactor;
         
         var glyphIds
             = Icons.CustomIcons
