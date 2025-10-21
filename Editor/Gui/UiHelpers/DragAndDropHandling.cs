@@ -17,7 +17,7 @@ internal static class DragAndDropHandling
         {
             FreeData();
             _stopRequested = false;
-            IsDragging = false;
+            _activeDraggingId = string.Empty;
         }
     }
     
@@ -35,7 +35,7 @@ internal static class DragAndDropHandling
                 FreeData();
             
             _dropData = Marshal.StringToHGlobalUni(data);
-            IsDragging = true;
+            _activeDraggingId = dragId;
 
             ImGui.SetDragDropPayload(dragId, _dropData, (uint)((data.Length +1) * sizeof(char)));
 
@@ -89,7 +89,7 @@ internal static class DragAndDropHandling
             {
                 Log.Warning("No data for drop?");
             }
-            IsDragging = false;
+            _activeDraggingId = string.Empty;
         }
 
         ImGui.EndDragDropTarget();
@@ -99,7 +99,7 @@ internal static class DragAndDropHandling
     
     /// <summary>
     /// To prevent inconsistencies related to the order of window processing,
-    /// we have to deferred the end until beginning of 
+    /// we have to defer the end until beginning of 
     /// </summary>
     private static void StopDragging()
     {
@@ -115,12 +115,20 @@ internal static class DragAndDropHandling
         _dropData = IntPtr.Zero; // Prevent double free
     }
 
-    private static bool HasData => _dropData != IntPtr.Zero;
+
+    private static string _activeDraggingId = string.Empty; 
+    internal static bool IsDragging => !string.IsNullOrEmpty(_activeDraggingId);
+
+    internal static bool IsDraggingWith(string dragId)
+    {
+        return _activeDraggingId == dragId;
+    }
     
-    internal static bool IsDragging { get; private set; }
+    private static bool HasData => _dropData != IntPtr.Zero;
 
     private static IntPtr _dropData = new(0);
     private static bool _stopRequested;
 
     internal const string SymbolDraggingId = "symbol";
+    internal const string AssetDraggingId = "fileAsset";
 }
