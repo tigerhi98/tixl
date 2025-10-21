@@ -266,8 +266,11 @@ namespace Lib.io.dmx
             }
         }
 
-        private void OnPointsReadComplete(StructuredBufferReadAccess.ReadRequestItem readItem, IntPtr dataPointer, DataStream dataStream)
+        private void OnPointsReadComplete(StructuredBufferReadAccess.ReadRequestItem readItem, IntPtr dataPointer, DataStream? dataStream)
         {
+            if (dataStream == null)
+                return;
+            
             int count = readItem.ElementCount;
             if (_points.Length != count)
                 _points = new Point[count];
@@ -277,8 +280,11 @@ namespace Lib.io.dmx
             }
         }
 
-        private void OnReferencePointsReadComplete(StructuredBufferReadAccess.ReadRequestItem readItem, IntPtr dataPointer, DataStream dataStream)
+        private void OnReferencePointsReadComplete(StructuredBufferReadAccess.ReadRequestItem readItem, IntPtr dataPointer, DataStream? dataStream)
         {
+            if (dataStream == null)
+                return;
+            
             int count = readItem.ElementCount;
             if (_referencePoints.Length != count)
                 _referencePoints = new Point[count];
