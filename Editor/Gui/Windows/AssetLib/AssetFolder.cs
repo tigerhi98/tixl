@@ -17,6 +17,11 @@ internal sealed class AssetFolder
     internal string Name { get; private set; }
     internal List<AssetFolder> SubFolders { get; } = [];
     private AssetFolder? Parent { get; }
+    
+    /// <summary>
+    /// This could later be used for UI to distinguish projects from folders 
+    /// </summary>
+    internal FolderTypes FolderType;
 
     internal enum FolderTypes
     {
@@ -24,13 +29,13 @@ internal sealed class AssetFolder
         Project,
         Directory
     }
-
-    internal FolderTypes FolderType;
     
-    internal AssetFolder(string name, AssetFolder? parent = null)
+    
+    internal AssetFolder(string name, AssetFolder? parent = null, FolderTypes type= FolderTypes.Directory)
     {
         Name = name;
         Parent = parent;
+        FolderType = type;
     }
 
     internal string GetAliasPath()
@@ -69,13 +74,6 @@ internal sealed class AssetFolder
         FolderAssets.Clear();
     }
 
-    private static readonly List<string> _rootProjectNames = [
-            "Lib.",
-            "Types.",
-            "Examples.",
-            "t3.",
-        ]; 
-    
     
     // Define an action delegate that takes a Symbol and returns a bool
     internal static void PopulateCompleteTree(AssetFolder root, Predicate<AssetItem>? filterAction, List<AssetItem> allAssetsOrdered)
@@ -86,24 +84,6 @@ internal sealed class AssetFolder
         var compositionInstance = ProjectView.Focused?.CompositionInstance;
         if (compositionInstance == null) 
             return;
-        
-        // var allFiles = ResourceManager.EnumerateResources(null,
-        //                                                   isFolder:false,
-        //                                                   compositionInstance.AvailableResourcePackages,
-        //                                                   ResourceManager.PathMode.Aliased);
-        
-        // var ordered = EditorSymbolPackage.AllSymbolUis
-        //                                  .OrderBy(ui =>
-        //                                           {
-        //                                               var ns = ui.Symbol.Namespace ?? string.Empty;
-        //
-        //                                               // Find matching root index
-        //                                               var index = _rootProjectNames.FindIndex(p => ns.StartsWith(p, StringComparison.Ordinal));
-        //                                               if (index < 0)
-        //                                                   index = int.MaxValue;
-        //
-        //                                               return (index, ns + ui.Symbol.Name);
-        //                                           });        
         
         foreach (var file in allAssetsOrdered)
         {
@@ -145,7 +125,7 @@ internal sealed class AssetFolder
             if (!expandingSubTree)
                 continue;
         
-            var newFolderNode = new AssetFolder(pathPart, currentFolder);
+            var newFolderNode = new AssetFolder(pathPart,  currentFolder);
             currentFolder.SubFolders.Add(newFolderNode);
             currentFolder = newFolderNode;
         }
