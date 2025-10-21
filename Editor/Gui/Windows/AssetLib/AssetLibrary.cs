@@ -2,10 +2,7 @@
 
 using System.IO;
 using System.Runtime.CompilerServices;
-using ImGuiNET;
-using T3.Core.Operator;
 using T3.Core.Resource;
-using T3.Editor.Gui.Styling;
 using T3.Editor.UiModel.Helpers;
 using T3.Editor.UiModel.ProjectHandling;
 
@@ -14,7 +11,7 @@ namespace T3.Editor.Gui.Windows.AssetLib;
 /// <summary>
 /// Shows a tree of all defined symbols sorted by namespace 
 /// </summary>
-internal sealed class AssetLibrary : Window
+internal sealed partial class AssetLibrary : Window
 {
     internal AssetLibrary()
     {
@@ -25,117 +22,6 @@ internal sealed class AssetLibrary : Window
     internal override List<Window> GetInstances()
     {
         return [];
-    }
-
-    protected override void DrawContent()
-    {
-        ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 10);
-
-        DrawView();
-
-        ImGui.PopStyleVar(1);
-    }
-
-    private void DrawView()
-    {
-        UpdateAssetsIfRequired();
-        
-        var iconCount = 1;
-
-        CustomComponents.DrawInputFieldWithPlaceholder("Search symbols...", ref _filter.SearchString, -ImGui.GetFrameHeight() * iconCount + 16);
-
-        ImGui.BeginChild("scrolling", Vector2.Zero, false, ImGuiWindowFlags.NoBackground);
-        {
-
-            DrawFolder(_rootNode);
-
-
-            // foreach (var fa in _allAssets)
-            // {
-            //     ImGui.TextUnformatted(fa.FileAliasPath);
-            //     ImGui.SameLine(0, 20);
-            //     ImGui.TextUnformatted("" + fa.FileInfo.Length);
-            // }
-        }
-        ImGui.EndChild();
-    }
-    
-    #region legacy for reference
-
-    // private void DrawFilteredList()
-    // {
-    //     _filter.UpdateIfNecessary(null);
-    //     foreach (var symbolUi in _filter.MatchingSymbolUis)
-    //     {
-    //         DrawAssetItem(symbolUi.Symbol);
-    //     }
-    // }
-
-    private void DrawFolder(AssetTreeFolder subtree)
-    {
-        if (subtree.Name == AssetTreeFolder.RootNodeId)
-        {
-            DrawNodeItems(subtree);
-        }
-        else
-        {
-            ImGui.PushID(subtree.Name);
-            ImGui.SetNextItemWidth(10);
-            if (subtree.Name == "Lib" && !_openedLibFolderOnce)
-            {
-                ImGui.SetNextItemOpen(true);
-                _openedLibFolderOnce = true;
-            }
-        
-            var isOpen = ImGui.TreeNode(subtree.Name);
-            // CustomComponents.ContextMenuForItem(() =>
-            //                                     {
-            //                                         if (ImGui.MenuItem("Rename Namespace"))
-            //                                         {
-            //                                             _subtreeNodeToRename = subtree;
-            //                                             _renameNamespaceDialog.ShowNextFrame();
-            //                                         }
-            //                                     });
-        
-            if (isOpen)
-            {
-                // HandleDropTarget(subtree);
-        
-                DrawNodeItems(subtree);
-        
-                ImGui.TreePop();
-            }
-            // else
-            // {
-            //     if (DragAndDropHandling.IsDragging)
-            //     {
-            //         ImGui.SameLine();
-            //         ImGui.PushID("DropButton");
-            //         ImGui.Button("  <-", new Vector2(50, 15));
-            //         HandleDropTarget(subtree);
-            //         ImGui.PopID();
-            //     }
-            // }
-        
-            ImGui.PopID();
-        }
-    }
-
-    private void DrawNodeItems(AssetTreeFolder subtree)
-    {
-        // Using a for loop to prevent modification during iteration exception
-        for (var index = 0; index < subtree.SubFolders.Count; index++)
-        {
-            var subspace = subtree.SubFolders[index];
-            DrawFolder(subspace);
-        }
-
-        for (var index = 0; index < subtree.FolderAssets.ToList().Count; index++)
-        {
-            var asset = subtree.FolderAssets.ToList()[index];
-            //DrawAssetItem(symbol);
-            ImGui.TextUnformatted(asset.FileInfo.Name);
-        }
     }
 
     // private static void HandleDropTarget(NamespaceTreeNode subtree)
@@ -172,63 +58,6 @@ internal sealed class AssetLibrary : Window
     //
     //     return EditableSymbolProject.ChangeSymbolNamespace(symbolUi.Symbol, nameSpace, out reason);
     // }
-
-    internal static void DrawAssetItem(Symbol symbol)
-    {
-        // ImGui.PushID(symbol.Id.GetHashCode());
-        // {
-        //     var color = symbol.OutputDefinitions.Count > 0
-        //                     ? TypeUiRegistry.GetPropertiesForType(symbol.OutputDefinitions[0]?.ValueType).Color
-        //                     : UiColors.Gray;
-        //
-        //     var symbolUi = symbol.GetSymbolUi();
-        //
-        //     // var state = ParameterWindow.GetButtonStatesForSymbolTags(symbolUi.Tags);
-        //     // if (CustomComponents.IconButton(Icon.Bookmark, Vector2.Zero, state))
-        //     // {
-        //     //     
-        //     // }
-        //     if (ParameterWindow.DrawSymbolTagsButton(symbolUi))
-        //         symbolUi.FlagAsModified();
-        //
-        //     ImGui.SameLine();
-        //
-        //     ImGui.PushStyleColor(ImGuiCol.Button, ColorVariations.OperatorBackground.Apply(color).Rgba);
-        //     ImGui.PushStyleColor(ImGuiCol.ButtonHovered, ColorVariations.OperatorBackgroundHover.Apply(color).Rgba);
-        //     ImGui.PushStyleColor(ImGuiCol.ButtonActive, ColorVariations.OperatorBackgroundHover.Apply(color).Rgba);
-        //     ImGui.PushStyleColor(ImGuiCol.Text, ColorVariations.OperatorLabel.Apply(color).Rgba);
-        //
-        //     if (ImGui.Button(symbol.Name))
-        //     {
-        //         //_selectedSymbol = symbol;
-        //     }
-        //
-        //     if (ImGui.IsItemHovered())
-        //     {
-        //         ImGui.SetMouseCursor(ImGuiMouseCursor.ResizeAll);
-        //
-        //         if (!string.IsNullOrEmpty(symbolUi.Description))
-        //         {
-        //             ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(4, 4));
-        //             ImGui.BeginTooltip();
-        //             ImGui.PushTextWrapPos(ImGui.GetFontSize() * 25.0f);
-        //             ImGui.TextUnformatted(symbolUi.Description);
-        //             ImGui.PopTextWrapPos();
-        //             ImGui.PopStyleVar();
-        //             ImGui.EndTooltip();
-        //         }
-        //     }
-        //
-        //     ImGui.PopStyleColor(4);
-        //     //HandleDragAndDropForSymbolItem(symbol);
-        //
-        //     CustomComponents.ContextMenuForItem(drawMenuItems: () => CustomComponents.DrawSymbolCodeContextMenuItem(symbol),
-        //                                         title: symbol.Name,
-        //                                         id: "##symbolTreeSymbolContextMenu");
-        //     //
-        // }
-        // ImGui.PopID();
-    }
 
     // internal static void HandleDragAndDropForSymbolItem(Symbol symbol)
     // {
@@ -280,8 +109,6 @@ internal sealed class AssetLibrary : Window
     //     return false;
     // }
 
-    #endregion
-    
     private void UpdateAssetsIfRequired()
     {
         var compositionInstance = ProjectView.Focused?.CompositionInstance;
@@ -311,13 +138,13 @@ internal sealed class AssetLibrary : Window
 
                 ParsePath(aliasedPath, out var packageName, out var folders);
                 
-                asset = new FileAsset
+                asset = new AssetItem
                             {
                                 FileAliasPath = aliasedPath,
                                 FileInfo = new FileInfo(absolutePath),
                                 Package = package,
                                 PackageName = packageName,
-                                Folders = folders,
+                                FilePathFolders = folders,
                             };
                 _assetCache[aliasedPath] = asset;
             }
@@ -325,7 +152,7 @@ internal sealed class AssetLibrary : Window
             _allAssets.Add(asset);
         }
         
-        _rootNode.PopulateCompleteTree(filterAction:null,_allAssets);
+        AssetFolder.PopulateCompleteTree(_rootNode, filterAction:null,_allAssets);
     }
 
     private static void ParsePath(string path, out string package, out List<string> folders)
@@ -353,21 +180,12 @@ internal sealed class AssetLibrary : Window
 
     private int? _lastCompositionObjId = 0;
 
-    private readonly AssetTreeFolder _rootNode = new(AssetTreeFolder.RootNodeId);
+    private readonly AssetFolder _rootNode = new(AssetFolder.RootNodeId);
     private readonly SymbolFilter _filter = new();
 
-    private readonly List<FileAsset> _allAssets = [];
+    private readonly List<AssetItem> _allAssets = [];
     private int _lastFileWatcherState = -1;
 
-    private readonly Dictionary<string, FileAsset> _assetCache = [];
+    private readonly Dictionary<string, AssetItem> _assetCache = [];
     private bool _openedLibFolderOnce;
-}
-
-internal sealed class FileAsset
-{
-    public required string FileAliasPath;
-    public IResourcePackage? Package;
-    public required FileInfo FileInfo;
-    public required List<string> Folders;
-    public required string PackageName;
 }

@@ -1,23 +1,22 @@
 ﻿#nullable enable
 
 using System.Diagnostics.CodeAnalysis;
-using T3.Core.Operator;
+using System.Text;
 using T3.Core.Resource;
 using T3.Editor.Gui.Windows.SymbolLib;
-using T3.Editor.UiModel;
 using T3.Editor.UiModel.ProjectHandling;
 
 namespace T3.Editor.Gui.Windows.AssetLib;
 
 /// <summary>
-/// A nested container that can contain further instances of <see cref="AssetTreeFolder"/>
+/// A nested container that can contain further instances of <see cref="AssetFolder"/>
 /// Used to structure the <see cref="SymbolLibrary"/>.
 /// </summary>
-internal sealed class AssetTreeFolder
+internal sealed class AssetFolder
 {
     internal string Name { get; private set; }
-    internal List<AssetTreeFolder> SubFolders { get; } = [];
-    private AssetTreeFolder? Parent { get; }
+    internal List<AssetFolder> SubFolders { get; } = [];
+    private AssetFolder? Parent { get; }
 
     internal enum FolderTypes
     {
@@ -28,24 +27,41 @@ internal sealed class AssetTreeFolder
 
     internal FolderTypes FolderType;
     
-    internal AssetTreeFolder(string name, AssetTreeFolder? parent = null)
+    internal AssetFolder(string name, AssetFolder? parent = null)
     {
         Name = name;
         Parent = parent;
     }
 
-    // internal string GetAsString()
-    // {
-    //     var list = new List<string>();
-    //     var t = this;
-    //     while (t.Parent != null)
-    //     {
-    //         list.Insert(0, t.Name);
-    //         t = t.Parent;
-    //     }
-    //
-    //     return string.Join(ResourceManager.PathSeparator, list);
-    // }
+    internal string GetAliasPath()
+    {
+        // estimate capacity if you can
+        var sb = new StringBuilder();
+
+        var stack = new Stack<string>();
+        var t = this;
+        while (t != null)
+        {
+            stack.Push(t.Name);
+            t = t.Parent;
+        }
+
+        bool first = true;
+        while (stack.Count > 0)
+        {
+            if (!first)
+                sb.Append(ResourceManager.PathSeparator);
+            first = false;
+            sb.Append(stack.Pop());
+        }
+
+        return sb.ToString();
+    }
+
+    internal bool TryGetAbsolutePath(out string path)
+    {
+        return ResourceManager.TryResolvePath(GetAliasPath(), null, out path, out _, isFolder:true);
+    }
 
     private void Clear()
     {
@@ -62,10 +78,10 @@ internal sealed class AssetTreeFolder
     
     
     // Define an action delegate that takes a Symbol and returns a bool
-    internal void PopulateCompleteTree(Predicate<FileAsset>? filterAction, List<FileAsset> allAssetsOrdered)
+    internal static void PopulateCompleteTree(AssetFolder root, Predicate<AssetItem>? filterAction, List<AssetItem> allAssetsOrdered)
     {
-        Name = RootNodeId;
-        Clear();
+        root.Name = RootNodeId;
+        root.Clear();
 
         var compositionInstance = ProjectView.Focused?.CompositionInstance;
         if (compositionInstance == null) 
@@ -95,43 +111,30 @@ internal sealed class AssetTreeFolder
             if (!keep)
                 continue;
             
-            SortInAssets(file);
+            root.SortInAssets(file);
         }
     }
 
-
-    
-    private void SortInAssets(FileAsset asset)
+    /// <summary>
+    /// Build up folder structure by sorting in one asset at a time
+    /// creating required sub folders on the way.
+    /// </summary>
+    private void SortInAssets(AssetItem assetItem)
     {
-        //if(asset.Package.RootNamespace)
-        
-        // if (asset.Package == null)
-        // {
-        //     return;
-        // }
-        
-        //var spaces = asset.Namespace.Split('.');
-
-        // var segments = asset.FileAliasPath.Split(ResourceManager.PathSeparator);
-        // if (segments.Length < 2)
-        // {
-        //     Log.Warning("Invalid path " + asset.FileAliasPath);
-        //     return;
-        // }
-        
-        var currentNode = this;
+        // Roll out recursion
+        var currentFolder = this;
         var expandingSubTree = false;
         
-        foreach (var folderName in asset.Folders)
+        foreach (var pathPart in assetItem.FilePathFolders)
         {
-            if (folderName == "")
+            if (string.IsNullOrEmpty(pathPart))
                 continue;
         
             if (!expandingSubTree)
             {
-                if(currentNode.TryFindNodeDataByName(folderName, out var node))
+                if(currentFolder.TryGetSubFolder(pathPart, out var folder))
                 {
-                    currentNode = node;
+                    currentFolder = folder;
                 }
                 else
                 {
@@ -142,20 +145,20 @@ internal sealed class AssetTreeFolder
             if (!expandingSubTree)
                 continue;
         
-            var newNode = new AssetTreeFolder(folderName, currentNode);
-            currentNode.SubFolders.Add(newNode);
-            currentNode = newNode;
+            var newFolderNode = new AssetFolder(pathPart, currentFolder);
+            currentFolder.SubFolders.Add(newFolderNode);
+            currentFolder = newFolderNode;
         }
         
-        currentNode.FolderAssets.Add(asset);
+        currentFolder.FolderAssets.Add(assetItem);
     }
 
-    private bool TryFindNodeDataByName(string name, [NotNullWhen(true)]out  AssetTreeFolder? node)
+    private bool TryGetSubFolder(string folderName, [NotNullWhen(true)]out  AssetFolder? subFolder)
     {
-        node=SubFolders.FirstOrDefault(n => n.Name == name);
-        return node != null;
+        subFolder=SubFolders.FirstOrDefault(n => n.Name == folderName);
+        return subFolder != null;
     }
 
-    internal readonly List<FileAsset> FolderAssets = [];
+    internal readonly List<AssetItem> FolderAssets = [];
     internal const string RootNodeId = "root";
 }
