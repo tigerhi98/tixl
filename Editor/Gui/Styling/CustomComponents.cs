@@ -349,7 +349,8 @@ internal static class CustomComponents
             if (wasDraggingRight)
                 return;
         }
-
+        
+        ImGui.PushStyleVar(ImGuiStyleVar.WindowPadding, new Vector2(6, 6));
         ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(6, 6));
 
         if (ImGui.BeginPopupContextItem(id, flags))
@@ -371,7 +372,7 @@ internal static class CustomComponents
             ImGui.EndPopup();
         }
 
-        ImGui.PopStyleVar(1);
+        ImGui.PopStyleVar(2);
     }
 
     public static void DrawContextMenuForScrollCanvas(Action drawMenuContent, ref bool contextMenuIsOpen)

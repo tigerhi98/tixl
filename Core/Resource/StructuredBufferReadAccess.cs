@@ -27,7 +27,7 @@ public sealed class StructuredBufferReadAccess : IDisposable
         internal bool IsObsolete => RequestIndex < BufferReadAccess._frameCounter - (BufferCount - 2);
     }
 
-    public delegate void OnReadComplete(ReadRequestItem readItem, IntPtr dataPointer, DataStream? dataStream);
+    public delegate void OnReadComplete(ReadRequestItem readItem, IntPtr dataPointer, DataStream dataStream);
 
     public void Update()
     {

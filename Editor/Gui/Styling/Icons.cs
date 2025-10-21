@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using System.Runtime.CompilerServices;
 using ImGuiNET;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Resource;
@@ -18,7 +19,7 @@ internal static class Icons
     /** Draws icon vertically aligned to current font */
     public static void Draw(this Icon icon)
     {
-        var defaultFontSize = ImGui.GetFontSize();
+        var defaultFontSize = ImGui.GetFrameHeight();// ImGui.GetFontSize();
         var glyph = IconFont.FindGlyph((char)icon);
         var iconHeight = glyph.Y0 ; // Not sure if this is correct
         var dy = (int)((defaultFontSize - iconHeight) / 2) + 2;
@@ -42,15 +43,7 @@ internal static class Icons
         Draw(icon, screenPosition);
         ImGui.PopStyleColor();
     }
-
-    public static void Draw(Icon icon, ImRect area)
-    {
-        var fonts = ImGui.GetIO().Fonts;
-        var g = IconFont.FindGlyph((char)icon);
-        ImGui.SetCursorScreenPos(area.Min);
-        ImGui.Image(fonts.TexID, area.GetSize(), new Vector2(g.V0, g.U0), new Vector2(g.V1, g.U1));
-    }
-
+    
     public static void DrawIconAtScreenPosition(Icon icon, Vector2 screenPos)
     {
         GetGlyphDefinition(icon, out var uvRange, out var size);
@@ -111,7 +104,8 @@ internal static class Icons
                                            color);
     }
 
-    private static void GetGlyphDefinition(Icon icon, out ImRect uvRange, out Vector2 size)
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    internal static void GetGlyphDefinition(Icon icon, out ImRect uvRange, out Vector2 size)
     {
         ImFontGlyphPtr g = IconFont.FindGlyph((char)icon);
         uvRange = GetCorrectUvRangeFromBrokenGlyphStructure(g);
@@ -121,6 +115,7 @@ internal static class Icons
     /// <summary>
     /// It looks like ImGui.net v1.83 returns a somewhat strange glyph definition. 
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static ImRect GetCorrectUvRangeFromBrokenGlyphStructure(ImFontGlyphPtr g)
     {
         return new ImRect( //-- U  -- V ---
@@ -132,6 +127,7 @@ internal static class Icons
     /// <summary>
     /// It looks like ImGui.net v1.77 returns a somewhat corrupted glyph. 
     /// </summary>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static Vector2 GetCorrectSizeFromBrokenGlyphStructure(ImFontGlyphPtr g)
     {
         return new Vector2(g.X0, g.Y0);
