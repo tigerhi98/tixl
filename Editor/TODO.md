@@ -85,7 +85,8 @@
 - [ ] Deprecate DrawPoints2
 - [ ] Cleanup *-template.hlsl -> -gs.hlsl
 - [ ] [Set-] and [BlendSnapshots] (see API mock examples)
-    
+- [ ] ExecuteTextureUpdate should be a multiInput 
+   
 ### Particles
 - [ ] Provide optional reference to points in [GetParticleComponents]
 - 
