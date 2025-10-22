@@ -48,6 +48,7 @@ internal sealed class ParameterWindow : Window
         new ParameterWindow(); // Required to call constructor
     }
 
+
     protected override void DrawContent()
     {
         // Insert invisible spill over input to catch accidental imgui focus attempts
@@ -60,44 +61,29 @@ internal sealed class ParameterWindow : Window
             ImGui.SameLine();
         }
 
-        var components = ProjectView.Focused;
-        if (components == null)
-            return;
-
-        var nodeSelection = components.NodeSelection;
-        if (DrawSettingsForSelectedAnnotations(nodeSelection))
-            return;
-
-        var instance = nodeSelection.GetSelectedInstanceWithoutComposition()
-                       ?? nodeSelection.GetSelectedComposition();
-
-        var id = instance?.SymbolChildId ?? Guid.Empty;
-
-        _selectionChanged = id != _lastSelectedInstanceId;
-        if (_selectionChanged)
+        if (!NodeSelection.TryGetSelectedInstanceOrInput(out var instance, out var inputUi, out _selectionChanged))
         {
-            _lastSelectedInstanceId = id;
-            _viewMode = ViewModes.Parameters;
-        }
-
-        if (instance == null)
-        {
-            var selectedInputs = nodeSelection.GetSelectedNodes<IInputUi>().ToList();
-            if (selectedInputs.Count > 0)
-            {
-                instance = components.CompositionInstance;
-                var inputUi = selectedInputs.First();
-                _viewMode = ViewModes.Settings;
-                _parameterSettings.SelectInput(inputUi.Id);
-            }
-        }
-
-        if (instance == null)
+            if (ProjectView.Focused?.NodeSelection != null)
+                DrawSettingsForSelectedAnnotations(ProjectView.Focused.NodeSelection);
+            
+            _lastSelectedInstanceId = Guid.Empty;
             return;
-
+        }
+        
+        if (inputUi != null)
+        {
+            _viewMode = ViewModes.Settings;
+            _parameterSettings.SelectInput(inputUi.Id);
+        }
+        else if (_selectionChanged)
+        {
+            _viewMode = ViewModes.Parameters; // Switch back from documentation
+        }
+        
         var symbol = instance.Symbol;
         var parentSymbol = instance.Parent?.Symbol;
         var path = instance.InstancePath;
+        
         // ReSharper disable once RedundantAssignment
         instance = null; //allow to unload of instance type in case a recompilation occurs
         
@@ -130,7 +116,7 @@ internal sealed class ParameterWindow : Window
                 DrawParametersArea(instance, symbolChildUi, symbolUi);
                 break;
             case ViewModes.Settings:
-                modified |= _parameterSettings.DrawContent(symbolUi, nodeSelection);
+                modified |= _parameterSettings.DrawContent(symbolUi, ProjectView.Focused!.NodeSelection);
                 break;
             case ViewModes.Help:
                 using (new ChildWindowScope("help", Vector2.Zero, ImGuiWindowFlags.None, Color.Transparent))

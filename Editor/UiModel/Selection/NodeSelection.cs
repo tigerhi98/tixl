@@ -1,9 +1,13 @@
 ﻿#nullable enable
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
+using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Interfaces;
 using T3.Editor.Gui.Interaction.TransformGizmos;
 using T3.Editor.Gui.UiHelpers;
+using T3.Editor.Gui.Windows;
+using T3.Editor.UiModel.InputsAndTypes;
 using T3.Editor.UiModel.ProjectHandling;
 
 namespace T3.Editor.UiModel.Selection;
@@ -259,12 +263,62 @@ internal sealed class NodeSelection : ISelection
         return bounds;
     }
     
+    public static bool TryGetSelectedInstanceOrInput([NotNullWhen(true)] out Instance? instance, out IInputUi? inputUi, out bool selectionChanged)
+    {
+        selectionChanged = false;
+        inputUi = null;
+        instance = null;
+        Guid id;
+        
+        var projectView = ProjectView.Focused;
+        var nodeSelection = projectView?.NodeSelection;
+
+        if (nodeSelection == null)
+            return false;
+        
+        instance = nodeSelection.GetSelectedInstanceWithoutComposition()
+                   ?? nodeSelection.GetSelectedComposition();
+
+        if (instance == null)
+        {
+            var selectedInputs = nodeSelection.GetSelectedNodes<IInputUi>().ToList();
+            if (selectedInputs.Count == 0)
+                return false;
+
+            instance = projectView?.CompositionInstance;
+            if (instance == null)
+                return false;
+            
+            inputUi = selectedInputs[0];
+            id = inputUi.Id;
+        }
+        else
+        {
+            id = instance.SymbolChildId;
+        }
+
+        selectionChanged = id != _lastSelectionId;
+
+        if (ImGui.GetFrameCount() == _lastFrameCount) 
+            return true;
+        
+        _lastFrameCount = ImGui.GetFrameCount();
+        _lastSelectionId = id;
+        return true;
+    }
     
     public readonly NavigationHistory NavigationHistory;
     private readonly Structure _structure;
 
     //TODO: This should be a dict because selecting many (> 500) ops will lead to framedrops
-    public readonly List<ISelectableCanvasObject> Selection = new();
+    public readonly List<ISelectableCanvasObject> Selection = [];
     private IReadOnlyList<Guid>? _selectedCompositionPath;
     private readonly Dictionary<SymbolUi.Child, IReadOnlyList<Guid>> _childUiInstanceIdPaths = new();
+
+    
+
+    
+    private static int _lastFrameCount;
+    private static Guid _lastSelectionId = Guid.Empty;
+
 }
