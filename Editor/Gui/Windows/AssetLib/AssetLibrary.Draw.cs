@@ -1,5 +1,7 @@
 ﻿using System.Runtime.CompilerServices;
 using ImGuiNET;
+using T3.Core.DataTypes.Vector;
+using T3.Core.Operator;
 using T3.Core.SystemUi;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
@@ -8,18 +10,11 @@ namespace T3.Editor.Gui.Windows.AssetLib;
 
 internal sealed partial class AssetLibrary
 {
-    protected override void DrawContent()
-    {
-        ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 10);
 
-        DrawLibContent();
-
-        ImGui.PopStyleVar(1);
-    }
 
     private void DrawLibContent()
     {
-        UpdateAssetsIfRequired();
+        
 
         var iconCount = 1;
 
@@ -104,9 +99,9 @@ internal sealed partial class AssetLibrary
     }
 
     // TODO: Clean up and move to custom components
-    private static bool ButtonWithIcon(string id, string label, Icon icon)
+    private static bool ButtonWithIcon(string id, string label, Icon icon, Color color)
     {
-        Vector2 cursorPos = ImGui.GetCursorScreenPos();
+        var cursorPos = ImGui.GetCursorScreenPos();
         var frameHeight = ImGui.GetFrameHeight();
 
         var dummyDim = new Vector2(frameHeight);
@@ -136,21 +131,53 @@ internal sealed partial class AssetLibrary
                                            iconPos + iconDim,
                                            uvRange.Min,
                                            uvRange.Max,
-                                           UiColors.ForegroundFull.Fade(0.5f));
+                                           color.Fade(0.5f));
 
         Vector2 textPos = new(iconPos.X + iconDim.X + padding,
                               buttonMin.Y + (buttonSize.Y - textSize.Y) * 0.5f);
 
-        ImGui.GetWindowDrawList().AddText(textPos, UiColors.Text, label);
+        ImGui.GetWindowDrawList().AddText(textPos, color, label);
         return pressed;
     }
 
-    private static void DrawAssetItem(AssetItem asset)
+    private void InvalidateInstances( Symbol inputParentSymbol, Symbol.Child symbolChild)
+    {
+    }
+    
+    private void DrawAssetItem(AssetItem asset)
     {
         ImGui.PushID(RuntimeHelpers.GetHashCode(asset));
         {
             var defaultId = string.Empty;
-            ButtonWithIcon(defaultId, asset.FileInfo.Name, Icon.FileImage);
+            var isSelected = asset.AbsolutePath == _activeAbsolutePath;
+            if (isSelected)
+            {
+                Log.Debug("selected");
+            }
+
+            if (ButtonWithIcon(defaultId, asset.FileInfo.Name, Icon.FileImage, isSelected ? UiColors.StatusAnimated : UiColors.Text))
+            {
+                if (_activeInput != null && !isSelected)
+                {
+                    _activeInput.TypedInputValue.Value = asset.FileAliasPath;
+                    //_activeInput.DirtyFlag.Invalidate();
+                    _activeInput.Input.IsDefault = false;
+                    _activeInput.SetTypedInputValue(asset.FileAliasPath);
+                    _activeInput.DirtyFlag.ForceInvalidate();
+                    _activeInput?.Parent?.Parent?.Symbol.InvalidateInputInAllChildInstances(_activeInput);
+                    
+                    // Invalidate instances                    
+                    var symbolChildId = _activeInput.Parent.SymbolChildId;
+                    foreach (var parentInstance in _activeInput.Parent.Parent.Symbol.InstancesOfSelf)
+                    {
+                        var instance = parentInstance.Children[symbolChildId];
+                        var inputSlot = instance.Inputs.Single(slot => slot.Id == _activeInput.Id);
+                        inputSlot.DirtyFlag.ForceInvalidate();
+                    }
+
+                    
+                }
+            }
 
             CustomComponents.ContextMenuForItem(drawMenuItems: () =>
                                                                {

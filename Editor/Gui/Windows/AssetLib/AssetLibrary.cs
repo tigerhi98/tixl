@@ -2,9 +2,16 @@
 
 using System.IO;
 using System.Runtime.CompilerServices;
+using ImGuiNET;
+using T3.Core.Operator;
+using T3.Core.Operator.Slots;
 using T3.Core.Resource;
+using T3.Editor.Gui.InputUi.SimpleInputUis;
+using T3.Editor.UiModel;
 using T3.Editor.UiModel.Helpers;
+using T3.Editor.UiModel.InputsAndTypes;
 using T3.Editor.UiModel.ProjectHandling;
+using T3.Editor.UiModel.Selection;
 
 namespace T3.Editor.Gui.Windows.AssetLib;
 
@@ -24,7 +31,51 @@ internal sealed partial class AssetLibrary : Window
         return [];
     }
     
+    
+    
+    protected override void DrawContent()
+    {
+        // Init current frame
+        UpdateAssetsIfRequired();
+        
+        if (NodeSelection.TryGetSelectedInstanceOrInput(out _selectedInstance, out _, out var selectionChanged)
+            )
+        {
+            _activeInput = null;
+            _activeAbsolutePath = null;
+            
+            var symbolUi = _selectedInstance.GetSymbolUi();
 
+            foreach (var input in _selectedInstance.Inputs)
+            {
+                if (input is not InputSlot<string> stringInput)
+                    continue;
+
+                var inputUi = symbolUi.InputUis[input.Id];
+                if (inputUi is not StringInputUi { Usage: StringInputUi.UsageType.FilePath })
+                    continue;
+
+                _activeInput = stringInput;
+                var filePath = _activeInput.GetCurrentValue();
+
+                var valid = ResourceManager.TryResolvePath(filePath, null, out _activeAbsolutePath, out _);
+                if (valid)
+                {
+                    Log.Debug("Active path: " + _activeAbsolutePath);
+                }
+                
+                break; // only take first file path
+            }
+        }
+        
+        
+        // Draw
+        ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 10);
+        DrawLibContent();
+        ImGui.PopStyleVar(1);
+    }
+    
+    
     private void UpdateAssetsIfRequired()
     {
         var compositionInstance = ProjectView.Focused?.CompositionInstance;
@@ -61,6 +112,7 @@ internal sealed partial class AssetLibrary : Window
                                 Package = package,
                                 PackageName = packageName,
                                 FilePathFolders = folders,
+                                AbsolutePath = absolutePath, // Has forward slashes
                             };
                 _assetCache[aliasedPath] = asset;
             }
@@ -104,4 +156,8 @@ internal sealed partial class AssetLibrary : Window
 
     private readonly Dictionary<string, AssetItem> _assetCache = [];
     private bool _openedLibFolderOnce;
+    private Instance? _selectedInstance;
+    private InputSlot<string> _activeInput;
+    //private string _activeRequestedFilePath;
+    private string _activeAbsolutePath;
 }

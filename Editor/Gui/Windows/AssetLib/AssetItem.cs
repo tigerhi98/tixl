@@ -11,4 +11,5 @@ internal sealed class AssetItem
     public required FileInfo FileInfo;
     public required List<string> FilePathFolders;
     public required string PackageName;
+    public required string AbsolutePath;
 }
