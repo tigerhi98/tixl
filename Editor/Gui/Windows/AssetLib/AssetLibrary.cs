@@ -2,6 +2,7 @@
 
 using System.IO;
 using System.Runtime.CompilerServices;
+using System.Text;
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
@@ -9,7 +10,6 @@ using T3.Core.Resource;
 using T3.Editor.Gui.InputUi.SimpleInputUis;
 using T3.Editor.UiModel;
 using T3.Editor.UiModel.Helpers;
-using T3.Editor.UiModel.InputsAndTypes;
 using T3.Editor.UiModel.ProjectHandling;
 using T3.Editor.UiModel.Selection;
 
@@ -30,7 +30,11 @@ internal sealed partial class AssetLibrary : Window
     {
         return [];
     }
-    
+
+    /// <summary>
+    /// List of extensions than can be opened by selected operator
+    /// </summary>
+    internal  static List<int> CompatibleExtensionIds = [];
     
     
     protected override void DrawContent()
@@ -38,36 +42,61 @@ internal sealed partial class AssetLibrary : Window
         // Init current frame
         UpdateAssetsIfRequired();
         
-        if (NodeSelection.TryGetSelectedInstanceOrInput(out _selectedInstance, out _, out var selectionChanged)
-            )
+        if (NodeSelection.TryGetSelectedInstanceOrInput(out var selectedInstance, out _, out var selectionChanged))
         {
-            _activeInput = null;
-            _activeAbsolutePath = null;
+            selectionChanged = selectedInstance != _selectedInstance; 
             
-            var symbolUi = _selectedInstance.GetSymbolUi();
-
-            foreach (var input in _selectedInstance.Inputs)
+            if (selectionChanged)
             {
-                if (input is not InputSlot<string> stringInput)
-                    continue;
-
-                var inputUi = symbolUi.InputUis[input.Id];
-                if (inputUi is not StringInputUi { Usage: StringInputUi.UsageType.FilePath })
-                    continue;
-
-                _activeInput = stringInput;
-                var filePath = _activeInput.GetCurrentValue();
-
-                var valid = ResourceManager.TryResolvePath(filePath, _selectedInstance, out _activeAbsolutePath, out _);
-                if (valid)
-                {
-                    //Log.Debug("Active path: " + _activeAbsolutePath);
-                }
+                _selectedInstance = selectedInstance;
+                CompatibleExtensionIds.Clear();
+                Log.Debug("@@@ Selection changed");
                 
-                break; // only take first file path
+                _activePathInput = null;
+                _activeAbsolutePath = null;
+            
+                var symbolUi = _selectedInstance.GetSymbolUi();
+
+                foreach (var input in _selectedInstance.Inputs)
+                {
+                    if (input is not InputSlot<string> stringInput)
+                        continue;
+
+                    var inputUi = symbolUi.InputUis[input.Id];
+                    if (inputUi is not StringInputUi { Usage: StringInputUi.UsageType.FilePath } stringInputUi)
+                        continue;
+
+                    // Found a file path input in selected op
+                    _activePathInput = stringInput;
+
+                    FileExtensionRegistry.IdsFromFileFilter(stringInputUi.FileFilter, ref CompatibleExtensionIds);
+                    var sb = new StringBuilder();
+                    foreach (var id in CompatibleExtensionIds)
+                    {
+                        if (FileExtensionRegistry.TryGetExtensionForId(id, out var ext))
+                        {
+                            sb.Append(ext);
+                            sb.Append(", ");
+                        }
+                        else
+                        {
+                            sb.Append($"#{id}");
+                        }
+                    }
+                    Log.Debug("matching extensions " + sb);
+                    
+                
+                    var filePath = _activePathInput.GetCurrentValue();
+                    var valid = ResourceManager.TryResolvePath(filePath, _selectedInstance, out _activeAbsolutePath, out _);
+                    if (!valid)
+                    {
+                        //Log.Debug("Active path: " + _activeAbsolutePath);
+                    }
+                
+                    break; // only take first file path
+                }
             }
         }
-        
         
         // Draw
         ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 10);
@@ -82,7 +111,8 @@ internal sealed partial class AssetLibrary : Window
         if (compositionInstance == null)
             return;
 
-        if (_lastFileWatcherState == ResourceFileWatcher.FileStateChangeCounter && !HasObjectChanged(compositionInstance, ref _lastCompositionObjId))
+        if (_lastFileWatcherState == ResourceFileWatcher.FileStateChangeCounter 
+            && !HasObjectChanged(compositionInstance, ref _lastCompositionObjId))
             return;
 
         _lastFileWatcherState = ResourceFileWatcher.FileStateChangeCounter;
@@ -104,15 +134,18 @@ internal sealed partial class AssetLibrary : Window
                 }
 
                 ParsePath(aliasedPath, out var packageName, out var folders);
-                
+
+                var fileInfo = new FileInfo(absolutePath);
+                var fileInfoExtension = fileInfo.Extension.Length < 1 ? string.Empty : fileInfo.Extension[1..];
                 asset = new AssetItem
                             {
                                 FileAliasPath = aliasedPath,
-                                FileInfo = new FileInfo(absolutePath),
+                                FileInfo = fileInfo,
                                 Package = package,
                                 PackageName = packageName,
                                 FilePathFolders = folders,
-                                AbsolutePath = absolutePath, // Has forward slashes
+                                AbsolutePath = absolutePath, // With forward slashes
+                                FileExtensionId = FileExtensionRegistry.GetId(fileInfoExtension)
                             };
                 _assetCache[aliasedPath] = asset;
             }
@@ -120,7 +153,7 @@ internal sealed partial class AssetLibrary : Window
             _allAssets.Add(asset);
         }
         
-        AssetFolder.PopulateCompleteTree(_rootNode, filterAction:null,_allAssets);
+        AssetFolder.PopulateCompleteTree(_rootNode, compositionInstance, filterAction:null,_allAssets);
     }
 
     private static void ParsePath(string path, out string package, out List<string> folders)
@@ -148,7 +181,7 @@ internal sealed partial class AssetLibrary : Window
 
     private int? _lastCompositionObjId = 0;
 
-    private readonly AssetFolder _rootNode = new(AssetFolder.RootNodeId);
+    private readonly AssetFolder _rootNode = new(AssetFolder.RootNodeId, null);
     private readonly SymbolFilter _filter = new();
 
     private readonly List<AssetItem> _allAssets = [];
@@ -157,7 +190,6 @@ internal sealed partial class AssetLibrary : Window
     private readonly Dictionary<string, AssetItem> _assetCache = [];
     private bool _openedLibFolderOnce;
     private Instance? _selectedInstance;
-    private InputSlot<string>? _activeInput;
-    //private string _activeRequestedFilePath;
-    private string _activeAbsolutePath;
+    private InputSlot<string>? _activePathInput;
+    private string? _activeAbsolutePath;
 }
