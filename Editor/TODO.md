@@ -28,6 +28,38 @@
 - [ ] Idea: Add option to switch space of SnapToAnglesForce 
 - [ ] Fix: SwitchParticleForce filtering with -1 and -2
 
+
+# Asset-Lib
+- [x] Undo/Do for changing
+- [ ] Indicate hidden file reference for selected op
+- [ ] Reveal hidden
+- [ ] AssetsTypeRegistry
+- [ ] Indicate matching types
+- [ ] Drag and Drop to Graph
+  - [ ] Link Image -> [LoadImage]
+- [ ] Toolbar
+  - [ ] Collapse all
+  - [ ] Context menu
+    - [ ] Action...
+      - [ ] Review in Explorer
+      - [ ] Edit externally
+      - [ ] Delete
+      - [ ] Add to graph -> Create and select op
+      - [ ] Later: find references
+      - [ ] Group selecting into Folder
+      - [ ] Create Folder
+    - [ ] Filter with counts
+      - [ ] List derived from AssetTypeRegistry
+- [ ] Select multiple (e.g. Shift)
+- [ ] Keyboard navigation Up/Down Left/Right for collapse
+- [ ] Search / Filter
+- [ ] Show preview on hover?
+
+
+
+
+
+
 # UI
 - [ ] add color preview to vec4 (and maybe a history gradient?)
 - [ ] Create [HowToUseVariables]

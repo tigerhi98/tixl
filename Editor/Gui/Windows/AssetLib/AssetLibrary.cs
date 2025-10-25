@@ -58,10 +58,10 @@ internal sealed partial class AssetLibrary : Window
                 _activeInput = stringInput;
                 var filePath = _activeInput.GetCurrentValue();
 
-                var valid = ResourceManager.TryResolvePath(filePath, null, out _activeAbsolutePath, out _);
+                var valid = ResourceManager.TryResolvePath(filePath, _selectedInstance, out _activeAbsolutePath, out _);
                 if (valid)
                 {
-                    Log.Debug("Active path: " + _activeAbsolutePath);
+                    //Log.Debug("Active path: " + _activeAbsolutePath);
                 }
                 
                 break; // only take first file path
@@ -157,7 +157,7 @@ internal sealed partial class AssetLibrary : Window
     private readonly Dictionary<string, AssetItem> _assetCache = [];
     private bool _openedLibFolderOnce;
     private Instance? _selectedInstance;
-    private InputSlot<string> _activeInput;
+    private InputSlot<string>? _activeInput;
     //private string _activeRequestedFilePath;
     private string _activeAbsolutePath;
 }

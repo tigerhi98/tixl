@@ -2,9 +2,12 @@
 using ImGuiNET;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Operator;
+using T3.Core.Operator.Slots;
 using T3.Core.SystemUi;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
+using T3.Editor.UiModel.Commands;
+using T3.Editor.UiModel.Commands.Graph;
 
 namespace T3.Editor.Gui.Windows.AssetLib;
 
@@ -150,32 +153,15 @@ internal sealed partial class AssetLibrary
         {
             var defaultId = string.Empty;
             var isSelected = asset.AbsolutePath == _activeAbsolutePath;
-            if (isSelected)
-            {
-                Log.Debug("selected");
-            }
 
-            if (ButtonWithIcon(defaultId, asset.FileInfo.Name, Icon.FileImage, isSelected ? UiColors.StatusAnimated : UiColors.Text))
+            if (ButtonWithIcon(defaultId, asset.FileInfo.Name, Icon.FileImage, isSelected ? UiColors.StatusActivated : UiColors.Text))
             {
-                if (_activeInput != null && !isSelected)
+                var stringInput = _activeInput;
+                if (stringInput != null && !isSelected)
                 {
-                    _activeInput.TypedInputValue.Value = asset.FileAliasPath;
-                    //_activeInput.DirtyFlag.Invalidate();
-                    _activeInput.Input.IsDefault = false;
-                    _activeInput.SetTypedInputValue(asset.FileAliasPath);
-                    _activeInput.DirtyFlag.ForceInvalidate();
-                    _activeInput?.Parent?.Parent?.Symbol.InvalidateInputInAllChildInstances(_activeInput);
-                    
-                    // Invalidate instances                    
-                    var symbolChildId = _activeInput.Parent.SymbolChildId;
-                    foreach (var parentInstance in _activeInput.Parent.Parent.Symbol.InstancesOfSelf)
-                    {
-                        var instance = parentInstance.Children[symbolChildId];
-                        var inputSlot = instance.Inputs.Single(slot => slot.Id == _activeInput.Id);
-                        inputSlot.DirtyFlag.ForceInvalidate();
-                    }
+                    _activeAbsolutePath = asset.AbsolutePath;
 
-                    
+                    ApplyResourcePath(asset, stringInput);
                 }
             }
 
@@ -224,6 +210,31 @@ internal sealed partial class AssetLibrary
         }
 
         ImGui.PopID();
+    }
+
+    private static void ApplyResourcePath(AssetItem asset, InputSlot<string> inputSlot)
+    {
+        var instance = inputSlot.Parent;
+        var composition = instance.Parent;
+        if (composition == null)
+        {
+            Log.Warning("Can't find composition to apply resource path");
+            return;
+        }
+        
+        inputSlot.Input.IsDefault = false;
+
+        var changeInputValueCommand = new ChangeInputValueCommand(composition.Symbol, 
+                                                                  instance.SymbolChildId, 
+                                                                  inputSlot.Input, 
+                                                                  inputSlot.Input.Value);
+        // warning: we must not use Value because this will use by abstract resource to detect changes
+        inputSlot.TypedInputValue.Value = asset.FileAliasPath;
+                    
+        inputSlot.DirtyFlag.ForceInvalidate();
+        inputSlot.Parent.Parent?.Symbol.InvalidateInputInAllChildInstances(inputSlot);
+        changeInputValueCommand.AssignNewValue(inputSlot.Input.Value);
+        UndoRedoStack.Add(changeInputValueCommand);
     }
 
     private static void HandleDropTarget(AssetFolder subtree)
