@@ -1,3 +1,4 @@
+#nullable enable
 using System;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -7,6 +8,7 @@ using T3.Core.Operator.Interfaces;
 using T3.Core.Stats;
 using T3.Core.Utils;
 // ReSharper disable FieldCanBeMadeReadOnly.Local
+// ReSharper disable InconsistentNaming
 
 // ReSharper disable ConvertToAutoPropertyWhenPossible
 // ReSharper disable ForCanBeConvertedToForeach
@@ -19,6 +21,7 @@ public class Slot<T> : ISlot
     public Guid Id;
     private readonly Type _valueType;
     Type ISlot.ValueType => _valueType;
+    
     public Instance Parent
     {
         get => _parent;
@@ -33,7 +36,7 @@ public class Slot<T> : ISlot
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private protected DirtyFlag _dirtyFlag = new();
         
-    public T Value;
+    public T? Value;
 
     protected bool _isDisabled;
 
@@ -170,10 +173,10 @@ public class Slot<T> : ISlot
         
     protected void ByPassUpdate(EvaluationContext context)
     {
-        Value = _targetInputForBypass.GetValue(context);
+        Value = _targetInputForBypass!.GetValue(context);
     }
 
-    public T GetValue(EvaluationContext context)
+    public T? GetValue(EvaluationContext context)
     {
         Update(context);
 
@@ -212,7 +215,7 @@ public class Slot<T> : ISlot
         ArrayUtils.InsertAtIndexOrEnd(ref InputConnections, (Slot<T>)sourceSlot, index);
     }
 
-    private Action<EvaluationContext> _actionBeforeAddingConnecting;
+    private Action<EvaluationContext>? _actionBeforeAddingConnecting;
 
     public void RemoveConnection(int index = 0)
     {
@@ -245,9 +248,9 @@ public class Slot<T> : ISlot
 
     public bool HasInputConnections => InputConnections.Length > 0;
 
-    public ISlot FirstConnection => InputConnections[0];
+    public ISlot? FirstConnection => InputConnections.Length > 0 ? InputConnections[0] : null;
 
-    public bool TryGetFirstConnection(out ISlot connectedSlot)
+    public bool TryGetFirstConnection(out ISlot? connectedSlot)
     {
         if(InputConnections.Length > 0)
         {
@@ -328,18 +331,18 @@ public class Slot<T> : ISlot
     DirtyFlag ISlot.DirtyFlag => DirtyFlag;
 
     // todo - this should be an action list or event? ordered execution can be important
-    public virtual Action<EvaluationContext> UpdateAction { get; set; }
+    public virtual Action<EvaluationContext>? UpdateAction { get; set; }
 
-    protected Action<EvaluationContext> _keepOriginalUpdateAction;
+    protected Action<EvaluationContext>? _keepOriginalUpdateAction;
     private DirtyFlagTrigger _keepDirtyFlagTrigger;
-    protected Slot<T> _targetInputForBypass;
+    protected Slot<T>? _targetInputForBypass;
         
     private bool _isInputSlot;
     private bool _isMultiInput;
     public bool IsMultiInput => _isMultiInput;
-    private MultiInputSlot<T> _thisAsMultiInputSlot;
+    private MultiInputSlot<T> _thisAsMultiInputSlot = null!;
     protected MultiInputSlot<T> ThisAsMultiInputSlot => _thisAsMultiInputSlot;
-    private Instance _parent;
+    private Instance _parent = null!;
     private bool _valueIsCommand;
     private protected bool HasInvalidationOverride;
     private bool _parentIsICompoundWithUpdate;
