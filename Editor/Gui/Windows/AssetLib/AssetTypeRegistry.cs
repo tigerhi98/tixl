@@ -118,6 +118,16 @@ public static class AssetTypeRegistry
                         Color = UiColors.ColorForString,
                         Icon = Icon.FileDocument,
                     },
+                
+                new AssetType("TiXLFont", [FileExtensionRegistry.GetId("fnt")])
+                    {
+                        PrimaryOperators =
+                            [
+                                new Guid("fd31d208-12fe-46bf-bfa3-101211f8f497"), // Text
+                            ],
+                        Color = UiColors.ColorForCommands,
+                        Icon = Icon.FileT3Font,
+                    },
             ];
     }
 

@@ -1,6 +1,7 @@
 ﻿#nullable enable
 using System.Runtime.CompilerServices;
 using ImGuiNET;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Operator.Slots;
 using T3.Core.SystemUi;
@@ -162,21 +163,29 @@ internal sealed partial class AssetLibrary
 
     private void DrawAssetItem(AssetItem asset)
     {
+        var isSelected = asset.AbsolutePath == _state.ActiveAbsolutePath;
+        
+        var fileConsumerOpSelected = AssetLibState.CompatibleExtensionIds.Count > 0;
+        var fileConsumerOpIsCompatible =  fileConsumerOpSelected 
+                                          && AssetLibState.CompatibleExtensionIds.Contains(asset.FileExtensionId);
+
+        // Skip not matching asset
+        if (fileConsumerOpSelected && !fileConsumerOpIsCompatible)
+            return;
+        
         ImGui.PushID(RuntimeHelpers.GetHashCode(asset));
         {
-            var defaultId = string.Empty;
-            var isSelected = asset.AbsolutePath == _state.ActiveAbsolutePath;
-
-            var fade = AssetLibState.CompatibleExtensionIds.Count == 0
+            
+            var fade = !fileConsumerOpSelected
                            ? 0.8f
-                           : !AssetLibState.CompatibleExtensionIds.Contains(asset.FileExtensionId)
-                               ? 0.2f
-                               : 1f;
+                           : fileConsumerOpIsCompatible
+                               ? 1f
+                               : 0.2f;
 
             var iconColor = ColorVariations.OperatorLabel.Apply(asset.AssetType?.Color ?? UiColors.Text);
             var icon = asset.AssetType?.Icon ?? Icon.FileImage;
             ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 5);
-            if (ButtonWithIcon(defaultId,
+            if (ButtonWithIcon(string.Empty,
                                asset.FileInfo.Name,
                                icon,
                                iconColor.Fade(fade),
@@ -185,7 +194,7 @@ internal sealed partial class AssetLibrary
                               ))
             {
                 var stringInput = _state.ActivePathInput;
-                if (stringInput != null && !isSelected)
+                if (stringInput != null && !isSelected && fileConsumerOpIsCompatible)
                 {
                     _state.ActiveAbsolutePath = asset.AbsolutePath;
 
@@ -238,15 +247,15 @@ internal sealed partial class AssetLibrary
                 }
             }
 
-            // Click
-            if (ImGui.IsItemDeactivated())
-            {
-                var wasClick = ImGui.GetMouseDragDelta().Length() < 4;
-                if (wasClick)
-                {
-                    // TODO: implement
-                }
-            }
+            // // Click
+            // if (ImGui.IsItemDeactivated())
+            // {
+            //     var wasClick = ImGui.GetMouseDragDelta().Length() < 4;
+            //     if (wasClick)
+            //     {
+            //         // TODO: implement
+            //     }
+            // }
         }
 
         ImGui.PopID();

@@ -272,6 +272,7 @@ internal static class Icons
             new(Icon.FileVideo, slotIndex: 112),
             new(Icon.FileGeometry, slotIndex: 113),
             new(Icon.FileShader, slotIndex: 114),
+            new(Icon.FileT3Font, slotIndex: 115),
             // Intentionally left black
             new(Icon.FileDocument, slotIndex: 117),
             new(Icon.ScrollLog, slotIndex: 118),
@@ -399,15 +400,16 @@ public enum Icon
     Dependencies,
     Referenced,
     AddFolder,
-    Folder,
     FolderOpen,
+    Hub,
+    Folder,
     FileImage,
     FileDocument,
-    Hub,
     FileAudio,
     FileVideo,
     FileGeometry,
     FileShader,
+    FileT3Font,
     ScrollLog,
     ClearLog,
     CopyToClipboard,
@@ -418,5 +420,5 @@ public enum Icon
     RotateClockwise,
     RotateCounterClockwise,
     ConnectedOutput,
-    ViewCanvas
+    ViewCanvas,
 }
