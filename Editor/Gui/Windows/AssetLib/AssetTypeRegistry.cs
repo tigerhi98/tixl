@@ -49,8 +49,8 @@ public static class AssetTypeRegistry
                     {
                         PrimaryOperators =
                             [
-                                new Guid("92b18d2b-1022-488f-ab8e-a4dcca346a23"), // LoadGltf
                                 new Guid("00618c91-f39a-44ea-b9d8-175c996460dc"), // LoadGltfScene
+                                new Guid("92b18d2b-1022-488f-ab8e-a4dcca346a23"), // LoadGltf
                                 // TODO: add more
                             ],
                         Color = UiColors.ColorForGpuData,

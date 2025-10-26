@@ -47,8 +47,11 @@ internal sealed partial class AssetLibrary : Window
 
         // Draw
         ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 10);
+        ImGui.PushStyleVar(ImGuiStyleVar.FramePadding, new Vector2(0));
+        ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(0));
+        //ImGui.PushStyleVar(ImGuiStyleVar.ItemInnerSpacing, new Vector2(0));
         DrawLibContent();
-        ImGui.PopStyleVar(1);
+        ImGui.PopStyleVar(3);
     }
 
     private void UpdateAssetsIfRequired()
