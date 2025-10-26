@@ -598,7 +598,7 @@ internal static class FormInputs
         ImGui.PushStyleVar(ImGuiStyleVar.Alpha, 0.5f * ImGui.GetStyle().Alpha);
         ImGui.PushStyleVar(ImGuiStyleVar.ItemSpacing, new Vector2(10, 20));
 
-        AddIcon(Icon.Hint);
+        AddIcon(Icon.Tip);
 
         ImGui.SameLine();
         ImGui.TextWrapped(label);

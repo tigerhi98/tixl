@@ -699,14 +699,14 @@ internal sealed class ParameterWindow : Window
             ImGui.Separator();
             FormInputs.AddVerticalSpace();
             ImGui.PushStyleColor(ImGuiCol.Text, UiColors.TextMuted.Rgba);
-            CustomComponents.IconButton(Icon.Hint,new Vector2(20,20)* T3Ui.UiScaleFactor);
+            CustomComponents.IconButton(Icon.Tip,new Vector2(20,20)* T3Ui.UiScaleFactor);
             ImGui.SameLine();
             ImGui.TextWrapped("How to create an Annotation:\n" +
                 "1.Select the operators you want to include in the annotation.\n" +
                 "2.Shift + A to add the annotation." );
 
             FormInputs.AddVerticalSpace();
-            CustomComponents.IconButton(Icon.Hint, new Vector2(20, 20) * T3Ui.UiScaleFactor);
+            CustomComponents.IconButton(Icon.Tip, new Vector2(20, 20) * T3Ui.UiScaleFactor);
             ImGui.SameLine();
             ImGui.TextWrapped("How to edit an Annotation:\n" +
                 "1.Double click on the header.\n" +

@@ -310,8 +310,8 @@ internal static class CustomComponents
     {
         return state switch
                    {
-                       ButtonStates.Dimmed         => UiColors.TextMuted.Fade(0.5f),
-                       ButtonStates.Disabled       => UiColors.TextDisabled,
+                       ButtonStates.Dimmed         => UiColors.TextMuted.Fade(0.8f),
+                       ButtonStates.Disabled       => UiColors.TextDisabled.Fade(0.6f),
                        ButtonStates.Activated      => UiColors.StatusActivated,
                        ButtonStates.NeedsAttention => UiColors.StatusAttention,
                        _                           => UiColors.Text

@@ -137,18 +137,18 @@ internal sealed partial class AssetLibrary
             var isSelected = asset.AbsolutePath == _activeAbsolutePath;
 
             var fade = CompatibleExtensionIds.Count == 0
-                           ? 0.7f 
+                           ? 0.8f 
                             : !CompatibleExtensionIds.Contains(asset.FileExtensionId) ? 0.2f : 1f;
 
 
-            var defaultColor = asset.AssetType?.Color ?? UiColors.Text;
+            var iconColor = ColorVariations.OperatorLabel.Apply(asset.AssetType?.Color ?? UiColors.Text);
             //var iconColor = isSelected ? UiColors.StatusActivated : defaultColor.Fade(fade);
             var icon = asset.AssetType?.Icon ?? Icon.FileImage;
             
             if (ButtonWithIcon(defaultId, 
                                asset.FileInfo.Name, 
                                icon, 
-                               defaultColor.Fade(fade),
+                               iconColor.Fade(fade),
                                UiColors.Text.Fade(fade),
                                isSelected
                                ))
@@ -257,7 +257,7 @@ internal sealed partial class AssetLibrary
                                iconPos + iconDim,
                                uvRange.Min,
                                uvRange.Max,
-                               iconColor.Fade(0.5f));
+                               iconColor);
 
         Vector2 textPos = new(iconPos.X + iconDim.X + padding,
                               buttonMin.Y + (buttonSize.Y - textSize.Y) * 0.5f);

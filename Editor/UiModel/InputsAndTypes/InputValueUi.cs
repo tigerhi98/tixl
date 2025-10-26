@@ -194,7 +194,7 @@ public abstract class InputValueUi<T> : IInputUi
                         // TODO: implement with proper SelectionManager
                     }
 
-                    Icons.DrawIconOnLastItem(Icon.ConnectedParameter, typeColor);
+                    Icons.DrawIconOnLastItem(Icon.ConnectedInput, typeColor);
                     ImGui.SameLine();
 
                     ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(1.0f, 0.5f));
@@ -810,7 +810,7 @@ internal static class InputArea
             }
         }
 
-        Icons.DrawIconOnLastItem(Icon.ConnectedParameter, typeColor.Rgba);
+        Icons.DrawIconOnLastItem(Icon.ConnectedInput, typeColor.Rgba);
         ImGui.SameLine();
     }
 

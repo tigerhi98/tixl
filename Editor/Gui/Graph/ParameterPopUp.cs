@@ -247,7 +247,7 @@ internal static class ParameterPopUp
 
     private static readonly List<Icon> _modeIcons = new()
                                                         {
-                                                            Icon.List,
+                                                            Icon.ViewList,
                                                             Icon.Presets,
                                                             Icon.HelpOutline
                                                         };

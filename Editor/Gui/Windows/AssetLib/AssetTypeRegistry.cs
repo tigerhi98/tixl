@@ -40,7 +40,7 @@ public static class AssetTypeRegistry
                     {
                         PrimaryOperators = [new Guid("be52b670-9749-4c0d-89f0-d8b101395227")], // LoadObj
                         Color = UiColors.ColorForGpuData,
-                        Icon = Icon.FileDocument,
+                        Icon = Icon.FileGeometry,
                     },
 
                 new AssetType("Image", [
@@ -66,7 +66,7 @@ public static class AssetTypeRegistry
                                 // TODO: add more
                             ],
                         Color = UiColors.ColorForGpuData,
-                        Icon = Icon.FileDocument,
+                        Icon = Icon.FileShader,
                     },
 
                 new AssetType("Gltf", [
@@ -81,7 +81,7 @@ public static class AssetTypeRegistry
                                 // TODO: add more
                             ],
                         Color = UiColors.ColorForGpuData,
-                        Icon = Icon.FileDocument,
+                        Icon = Icon.FileGeometry,
                     },
             ];
     }

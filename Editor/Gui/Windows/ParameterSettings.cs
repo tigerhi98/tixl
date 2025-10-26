@@ -22,7 +22,7 @@ public sealed class ParameterSettings
         ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 2);
         ImGui.PushStyleColor(ImGuiCol.Button, Color.Transparent.Rgba);
         if (CustomComponents.IconButton(
-                                        Icon.List,
+                                        Icon.ViewList,
                                         new Vector2(w, w),
                                         IsActive
                                             ? CustomComponents.ButtonStates.Activated
