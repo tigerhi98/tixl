@@ -139,9 +139,19 @@ internal sealed partial class AssetLibrary
             var fade = CompatibleExtensionIds.Count == 0
                            ? 0.7f 
                             : !CompatibleExtensionIds.Contains(asset.FileExtensionId) ? 0.2f : 1f;
+
+
+            var defaultColor = asset.AssetType?.Color ?? UiColors.Text;
+            //var iconColor = isSelected ? UiColors.StatusActivated : defaultColor.Fade(fade);
+            var icon = asset.AssetType?.Icon ?? Icon.FileImage;
             
-            if (ButtonWithIcon(defaultId, asset.FileInfo.Name, Icon.FileImage, 
-                               isSelected ? UiColors.StatusActivated : UiColors.Text.Fade(fade)))
+            if (ButtonWithIcon(defaultId, 
+                               asset.FileInfo.Name, 
+                               icon, 
+                               defaultColor.Fade(fade),
+                               UiColors.Text.Fade(fade),
+                               isSelected
+                               ))
             {
                 var stringInput = _activePathInput;
                 if (stringInput != null && !isSelected)
@@ -207,7 +217,7 @@ internal sealed partial class AssetLibrary
     }
 
     // TODO: Clean up and move to custom components
-    private static bool ButtonWithIcon(string id, string label, Icon icon, Color color)
+    private static bool ButtonWithIcon(string id, string label, Icon icon, Color iconColor, Color textColor, bool selected)
     {
         var cursorPos = ImGui.GetCursorScreenPos();
         var frameHeight = ImGui.GetFrameHeight();
@@ -228,23 +238,31 @@ internal sealed partial class AssetLibrary
                                      Math.Max(iconDim.Y + padding * 2, ImGui.GetFrameHeight()));
 
         var pressed = ImGui.InvisibleButton(id, buttonSize);
-
+        
+        var drawList = ImGui.GetWindowDrawList();
         var buttonMin = ImGui.GetItemRectMin();
+        var buttonMax = ImGui.GetItemRectMax();
+        if (selected)
+        {
+            drawList.AddRect(buttonMin, buttonMax, UiColors.StatusActivated, 5);
+        }
+        
+
         var iconPos = new Vector2(buttonMin.X + padding,
                                   (int)(buttonMin.Y + (buttonSize.Y - iconDim.Y) * 0.5f) + 1);
 
         Icons.GetGlyphDefinition(icon, out var uvRange, out _);
-        ImGui.GetWindowDrawList().AddImage(ImGui.GetIO().Fonts.TexID,
-                                           iconPos,
-                                           iconPos + iconDim,
-                                           uvRange.Min,
-                                           uvRange.Max,
-                                           color.Fade(0.5f));
+        drawList.AddImage(ImGui.GetIO().Fonts.TexID,
+                               iconPos,
+                               iconPos + iconDim,
+                               uvRange.Min,
+                               uvRange.Max,
+                               iconColor.Fade(0.5f));
 
         Vector2 textPos = new(iconPos.X + iconDim.X + padding,
                               buttonMin.Y + (buttonSize.Y - textSize.Y) * 0.5f);
 
-        ImGui.GetWindowDrawList().AddText(textPos, color, label);
+        drawList.AddText(textPos, textColor, label);
         return pressed;
     }
 

@@ -137,6 +137,12 @@ internal sealed partial class AssetLibrary : Window
 
                 var fileInfo = new FileInfo(absolutePath);
                 var fileInfoExtension = fileInfo.Extension.Length < 1 ? string.Empty : fileInfo.Extension[1..];
+                var fileExtensionId = FileExtensionRegistry.GetId(fileInfoExtension);
+                if (!AssetTypeRegistry.TryGetFromId(fileExtensionId, out var assetType))
+                {
+                    Log.Warning($"Can't fine file type for: {fileInfoExtension}");
+                }
+                
                 asset = new AssetItem
                             {
                                 FileAliasPath = aliasedPath,
@@ -145,7 +151,9 @@ internal sealed partial class AssetLibrary : Window
                                 PackageName = packageName,
                                 FilePathFolders = folders,
                                 AbsolutePath = absolutePath, // With forward slashes
-                                FileExtensionId = FileExtensionRegistry.GetId(fileInfoExtension)
+                                FileExtensionId = fileExtensionId,
+                                AssetType = assetType,
+                                
                             };
                 _assetCache[aliasedPath] = asset;
             }

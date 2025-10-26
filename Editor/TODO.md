@@ -31,12 +31,12 @@
 
 # Asset-Lib
 - [x] Undo/Do for changing
-- [ ] Indicate hidden file reference for selected op
-- [ ] Reveal hidden
-- [ ] AssetsTypeRegistry
-- [ ] Indicate matching types
+- [x] Indicate hidden file reference for selected op
+- [x] Reveal hidden
+- [x] AssetsTypeRegistry
+- [x] Indicate matching types
 - [ ] Drag and Drop to Graph
-  - [ ] Link Image -> [LoadImage]
+  - [x] Link Image -> [LoadImage]
 - [ ] Toolbar
   - [ ] Collapse all
   - [ ] Context menu
