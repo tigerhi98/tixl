@@ -47,7 +47,7 @@ internal sealed partial class AssetLibrary : Window
 
         // Draw
         ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 10);
-        DrawLibContent(_state);
+        DrawLibContent();
         ImGui.PopStyleVar(1);
     }
 
@@ -62,6 +62,7 @@ internal sealed partial class AssetLibrary : Window
             && !HasObjectChanged(_state.Composition, ref _lastCompositionObjId))
             return;
 
+        _state.TreeHandler.Reset();
         _state.LastFileWatcherState = ResourceFileWatcher.FileStateChangeCounter;
 
         _state.AllAssets.Clear();

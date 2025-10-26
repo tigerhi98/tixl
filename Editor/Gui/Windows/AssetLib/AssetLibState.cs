@@ -65,6 +65,9 @@ internal sealed class AssetLibState
     public int LastFileWatcherState = -1;
     
     public bool OpenedLibFolderOnce;
+    
+    public readonly TreeHandler TreeHandler = new();
+    
     #endregion
     
 }

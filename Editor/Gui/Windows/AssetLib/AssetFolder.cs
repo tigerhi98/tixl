@@ -18,6 +18,7 @@ internal sealed class AssetFolder
     internal string Name { get; private set; }
     internal List<AssetFolder> SubFolders { get; } = [];
     private AssetFolder? Parent { get; }
+    public int HashCode;
 
     /// <summary>
     /// This could later be used for UI to distinguish projects from folders 
@@ -33,6 +34,7 @@ internal sealed class AssetFolder
 
     internal readonly string AbsolutePath;
     internal readonly string AliasPath;
+    
 
     internal AssetFolder(string name, Instance? selectedInstance, AssetFolder? parent = null, FolderTypes type = FolderTypes.Directory)
     {
@@ -45,6 +47,8 @@ internal sealed class AssetFolder
         {
             Log.Warning($"Can't resolve folder path ? {AliasPath}");
         }
+        
+        HashCode = AliasPath.GetHashCode();
     }
 
     // Define an action delegate that takes a Symbol and returns a bool
