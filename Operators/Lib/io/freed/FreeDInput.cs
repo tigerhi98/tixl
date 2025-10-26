@@ -33,7 +33,7 @@ internal sealed class FreeDInput : Instance<FreeDInput>, IStatusProvider, ICusto
             ParseFreeDDataPacket(data);
 
         var shouldListen = Listen.GetValue(context);
-        var localIp = LocalIpAddress.GetValue(context);
+        var localIp = LocalIpAddress.GetValue(context) ?? string.Empty;
         var port = Port.GetValue(context);
 
         var settingsChanged = shouldListen != _lastListenState || localIp != _lastLocalIp || port != _lastPort;
@@ -263,7 +263,7 @@ internal sealed class FreeDInput : Instance<FreeDInput>, IStatusProvider, ICusto
 
     string ICustomDropdownHolder.GetValueForInput(Guid id)
     {
-        return id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+        return id == LocalIpAddress.Id ? LocalIpAddress.Value  ?? string.Empty: string.Empty;
     }
 
     IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id)

@@ -376,7 +376,7 @@ namespace Lib.io.tcp
         }
 
         #region ICustomDropdownHolder Implementation
-        string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+        string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value ?? string.Empty : string.Empty;
         IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id ? GetLocalIPv4Addresses() : [];
 
         void ICustomDropdownHolder.HandleResultForInput(Guid id, string? s, bool i)

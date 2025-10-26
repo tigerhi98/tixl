@@ -69,8 +69,8 @@ namespace Lib.io.posistage
         {
             _printToLog = PrintToLog.GetValue(context);
             var shouldConnect = Connect.GetValue(context);
-            var localIp = LocalIpAddress.GetValue(context);
-            var targetIp = TargetIpAddress.GetValue(context);
+            var localIp = LocalIpAddress.GetValue(context) ?? string.Empty;
+            var targetIp = TargetIpAddress.GetValue(context) ?? string.Empty;
             var targetPort = TargetPort.GetValue(context);
 
             var settingsChanged = shouldConnect != _lastConnectState || localIp != _lastLocalIp;
@@ -131,7 +131,7 @@ namespace Lib.io.posistage
                     return;
 
                 var names = Names.GetCollectedTypedInputs();
-                var serverName = ServerName.GetValue(context);
+                var serverName = ServerName.GetValue(context) ?? string.Empty;
                 var infoPacket = BuildPsnInfoPacket(pointCount, names, context, serverName);
                 try
                 {
@@ -224,7 +224,7 @@ namespace Lib.io.posistage
             for (int i = 0; i < pointCount; i++)
             {
                 var trackerId = (ushort)i; // Start at 0
-                var trackerName = i < names.Count ? names[i].GetValue(context) : $"Tracker_{trackerId}";
+                var trackerName = i < names.Count ? names[i].GetValue(context) ?? string.Empty: $"Tracker_{trackerId}";
                 var trackerNameBytes = Encoding.ASCII.GetBytes(trackerName);
 
                 using var trackerNameStream = new MemoryStream();
@@ -335,7 +335,7 @@ namespace Lib.io.posistage
         }
 
         #region ICustomDropdownHolder
-        string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+        string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value ?? string.Empty : string.Empty;
 
         IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id)
         {

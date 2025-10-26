@@ -45,8 +45,8 @@ namespace Lib.io.posistage
         {
             _printToLog = PrintToLog.GetValue(context);
             var shouldListen = Listen.GetValue(context);
-            var localIp = LocalIpAddress.GetValue(context);
-            var multicastIp = MulticastIpAddress.GetValue(context);
+            var localIp = LocalIpAddress.GetValue(context) ?? string.Empty;
+            var multicastIp = MulticastIpAddress.GetValue(context) ?? string.Empty;
             var port = Port.GetValue(context);
 
             var settingsChanged = shouldListen != _lastListenState || localIp != _lastLocalIp || multicastIp != _lastMulticastIp || port != _lastPort;
@@ -293,7 +293,7 @@ namespace Lib.io.posistage
         }
         
         #region ICustomDropdownHolder implementation
-        string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+        string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value ?? string.Empty : string.Empty;
         IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id) => id == LocalIpAddress.Id 
                                                                                      ? GetLocalIPv4Addresses() 
                                                                                      : [];

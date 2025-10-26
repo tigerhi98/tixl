@@ -261,7 +261,7 @@ namespace Lib.io.dmx
             }
             else
             {
-                Result.Value.Clear();
+                Result.Value?.Clear();
                 VisualizeLights.Value = null;
             }
         }

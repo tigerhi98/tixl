@@ -292,7 +292,7 @@ public abstract class InputValueUi<T> : IInputUi
                 string connectedName;
                 if (typedInputSlot.TryGetFirstConnection(out var connectedSlot))
                 {
-                    connectedName = connectedSlot.Parent.Symbol.Name;
+                    connectedName = connectedSlot?.Parent.Symbol.Name ?? "???";
                 }
                 else
                 {

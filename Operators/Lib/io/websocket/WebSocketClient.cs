@@ -116,7 +116,7 @@ namespace Lib.io.websocket
 
             // New inputs for parsing
             var parsingMode = (MessageParsingMode)ParsingMode.GetValue(context);
-            var delimiter = Delimiter.GetValue(context);
+            var delimiter = Delimiter.GetValue(context) ?? string.Empty;
 
             var settingsChanged = shouldConnect != _lastConnectState || url != _lastUrl;
             if (settingsChanged)

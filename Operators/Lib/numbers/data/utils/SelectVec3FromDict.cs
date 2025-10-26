@@ -20,6 +20,8 @@ public sealed class SelectVec3FromDict : Instance<SelectVec3FromDict>
     private void Update(EvaluationContext context)
     {
         _dict = DictionaryInput.GetValue(context);
+        if (_dict == null)
+            return;
 
         var keyX = SelectX.GetValue(context);
         var needsUpdate = keyX != _lastKeyForX || _dict.Count != _lastDictCount;

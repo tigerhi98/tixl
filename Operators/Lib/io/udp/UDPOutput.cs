@@ -57,7 +57,7 @@ internal sealed class UdpOutput : Instance<UdpOutput>, IStatusProvider, ICustomD
 
     string ICustomDropdownHolder.GetValueForInput(Guid id)
     {
-        return id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+        return id == LocalIpAddress.Id ? LocalIpAddress.Value  ?? string.Empty: string.Empty;
     }
 
     IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id)

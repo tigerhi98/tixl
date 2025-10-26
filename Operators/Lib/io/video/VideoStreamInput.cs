@@ -66,7 +66,7 @@ namespace Lib.io.video
 
         private void Update(EvaluationContext context)
         {
-            var url = Url.GetValue(context);
+            var url = Url.GetValue(context) ?? string.Empty;
             var shouldConnect = Connect.GetValue(context);
             var reconnect = Reconnect.GetValue(context);
             if (reconnect) Reconnect.SetTypedInputValue(false);

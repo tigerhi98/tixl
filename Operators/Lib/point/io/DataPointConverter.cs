@@ -361,17 +361,17 @@ public sealed class DataPointConverter : Instance<DataPointConverter>
     {
         return new Dictionary<string, string>
                    {
-                       { "PosX", CsvPosXMapping.GetValue(context) },
-                       { "PosY", CsvPosYMapping.GetValue(context) },
-                       { "PosZ", CsvPosZMapping.GetValue(context) },
-                       { "RotX", CsvRotXMapping.GetValue(context) },
-                       { "RotY", CsvRotYMapping.GetValue(context) },
-                       { "RotZ", CsvRotZMapping.GetValue(context) },
-                       { "RotW", CsvRotWMapping.GetValue(context) },
-                       { "F1", CsvF1Mapping.GetValue(context) },
-                       { "ScaleX", CsvScaleXMapping.GetValue(context) },
-                       { "ScaleY", CsvScaleYMapping.GetValue(context) },
-                       { "ScaleZ", CsvScaleZMapping.GetValue(context) }
+                       { "PosX", CsvPosXMapping.GetValue(context) ?? "PosX" },
+                       { "PosY", CsvPosYMapping.GetValue(context) ?? "PosY" },
+                       { "PosZ", CsvPosZMapping.GetValue(context) ?? "PosZ" },
+                       { "RotX", CsvRotXMapping.GetValue(context) ?? "RotX" },
+                       { "RotY", CsvRotYMapping.GetValue(context) ?? "RotY" },
+                       { "RotZ", CsvRotZMapping.GetValue(context) ?? "RotZ" },
+                       { "RotW", CsvRotWMapping.GetValue(context) ?? "RotW" },
+                       { "F1", CsvF1Mapping.GetValue(context) ?? "F1"},
+                       { "ScaleX", CsvScaleXMapping.GetValue(context) ?? "ScaleX" },
+                       { "ScaleY", CsvScaleYMapping.GetValue(context) ?? "ScaleY" },
+                       { "ScaleZ", CsvScaleZMapping.GetValue(context) ?? "ScaleZ" }
                    };
     }
 

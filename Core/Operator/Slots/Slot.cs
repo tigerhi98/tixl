@@ -36,7 +36,7 @@ public class Slot<T> : ISlot
     // ReSharper disable once FieldCanBeMadeReadOnly.Local
     private protected DirtyFlag _dirtyFlag = new();
         
-    public T? Value;
+    public T Value;
 
     protected bool _isDisabled;
 
@@ -127,6 +127,8 @@ public class Slot<T> : ISlot
 
     public Slot()
     {
+        Value = default!;  // tells the compiler it's intentionally initialized
+        
         // UpdateAction = Update;
         _valueType = typeof(T);
         _valueIsCommand = _valueType == typeof(Command);
@@ -168,12 +170,12 @@ public class Slot<T> : ISlot
 
     public void ConnectedUpdate(EvaluationContext context)
     {
-        Value = InputConnections[0].GetValue(context);
+        Value = InputConnections[0].GetValue(context)!;
     }
         
     protected void ByPassUpdate(EvaluationContext context)
     {
-        Value = _targetInputForBypass!.GetValue(context);
+        Value = _targetInputForBypass!.GetValue(context)!;
     }
 
     public T? GetValue(EvaluationContext context)

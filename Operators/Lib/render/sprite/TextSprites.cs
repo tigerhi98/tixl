@@ -110,7 +110,7 @@ internal sealed class TextSprites : Instance<TextSprites>
 
     private void UpdateMesh(EvaluationContext context)
     {
-        var text = Text.GetValue(context);
+        var text = Text.GetValue(context) ?? string.Empty;
 
         var bmFont = _bmFont.GetValue(context);
         if (bmFont == null)

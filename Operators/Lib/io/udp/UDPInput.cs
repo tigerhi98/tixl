@@ -206,7 +206,7 @@ internal sealed class UdpInput : Instance<UdpInput>, IStatusProvider, ICustomDro
 
     private void UpdateStatusMessage()
     {
-        var localIpDisplay = LocalIpAddress.Value;
+        var localIpDisplay = LocalIpAddress.Value ?? string.Empty;
         if (!_runListener) SetStatus("Not listening. Enable 'Listen'.", IStatusProvider.StatusLevel.Notice);
         else if (_lastStatusLevel != IStatusProvider.StatusLevel.Error)
             SetStatus($"Listening on {localIpDisplay.Split(' ')[0]}:{Port.Value}", IStatusProvider.StatusLevel.Success);

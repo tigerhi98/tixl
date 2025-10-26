@@ -227,7 +227,7 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
 
     private void UpdateStatusMessage(int numUniverses, int startUniverse)
     {
-        var localIpDisplay = LocalIpAddress.Value;
+        var localIpDisplay = LocalIpAddress.Value ?? string.Empty;
         if (!_wasActive)
         {
             SetStatus("Inactive. Enable 'Active'.", IStatusProvider.StatusLevel.Notice);
@@ -274,7 +274,13 @@ internal sealed class ArtnetInput : Instance<ArtnetInput>, IStatusProvider, ICus
     public IStatusProvider.StatusLevel GetStatusLevel() => _lastStatusLevel;
     public string GetStatusMessage() => _lastStatusMessage;
 
-    string ICustomDropdownHolder.GetValueForInput(Guid id) => id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+    string ICustomDropdownHolder.GetValueForInput(Guid id)
+    {
+        if (LocalIpAddress.Value == null)
+            return string.Empty;
+        
+        return id == LocalIpAddress.Id ? LocalIpAddress.Value : string.Empty;
+    }
 
     IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id)
     {

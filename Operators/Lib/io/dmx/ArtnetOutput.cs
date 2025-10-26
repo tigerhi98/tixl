@@ -60,9 +60,9 @@ internal sealed class ArtnetOutput : Instance<ArtnetOutput>, IStatusProvider, IC
         _printToLog = PrintToLog.GetValue(context);
 
         var settingsChanged = _connectionSettings.Update(
-                                                         LocalIpAddress.GetValue(context),
+                                                         LocalIpAddress.GetValue(context) ?? string.Empty,
                                                          _selectedSubnetMask,
-                                                         TargetIpAddress.GetValue(context),
+                                                         TargetIpAddress.GetValue(context) ?? string.Empty,
                                                          SendUnicast.GetValue(context)
                                                         );
 
@@ -547,8 +547,8 @@ internal sealed class ArtnetOutput : Instance<ArtnetOutput>, IStatusProvider, IC
 
     string ICustomDropdownHolder.GetValueForInput(Guid inputId)
     {
-        if (inputId == LocalIpAddress.Id) return LocalIpAddress.Value;
-        if (inputId == TargetIpAddress.Id) return TargetIpAddress.Value;
+        if (inputId == LocalIpAddress.Id) return LocalIpAddress.Value ?? string.Empty;
+        if (inputId == TargetIpAddress.Id) return TargetIpAddress.Value ?? string.Empty;
         return string.Empty;
     }
 

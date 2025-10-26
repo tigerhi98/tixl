@@ -43,7 +43,15 @@ internal sealed class DmxOutput : Instance<DmxOutput>, IStatusProvider, ICustomD
         IsConnected.UpdateAction = Update;
     }
 
-    string ICustomDropdownHolder.GetValueForInput(Guid id) => id == PortName.Id ? PortName.Value : string.Empty;
+    string ICustomDropdownHolder.GetValueForInput(Guid id)
+    {
+        if (PortName.Value == null)
+            return string.Empty;
+        
+        return id == PortName.Id 
+                   ? PortName.Value 
+                   : string.Empty;
+    }
 
     IEnumerable<string> ICustomDropdownHolder.GetOptionsForInput(Guid id)
     {
@@ -74,7 +82,7 @@ internal sealed class DmxOutput : Instance<DmxOutput>, IStatusProvider, ICustomD
     private void Update(EvaluationContext context)
     {
         var shouldConnect = Connect.GetValue(context);
-        var portName = PortName.GetValue(context);
+        var portName = PortName.GetValue(context) ?? string.Empty;
 
         var settingsChanged = portName != _lastPortName || shouldConnect != _lastConnectState;
         if (settingsChanged)

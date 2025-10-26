@@ -151,7 +151,7 @@ public sealed class StringInputUi : InputValueUi<string>
         {
             var changed = false;
 
-            var currentValue = customValueHolder.GetValueForInput(input.InputDefinition.Id);
+            var currentValue = customValueHolder.GetValueForInput(input.InputDefinition.Id) ?? string.Empty;
                 
             if (InputWithTypeAheadSearch.Draw("##customDropdown", 
                                               customValueHolder.GetOptionsForInput(input.InputDefinition.Id),

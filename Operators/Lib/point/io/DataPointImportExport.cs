@@ -370,6 +370,6 @@ public sealed class DataPointImportExport : Instance<DataPointImportExport>
 
     // ---------- OUTPUT ----------
     [Output(Guid = "c8d9e0f1-a2b3-4c4d-8e5f-6a7b8c9d0e1f")]
-    public readonly Slot<BufferWithViews> PointBufferOut = new();
+    public readonly Slot<BufferWithViews?> PointBufferOut = new();
     #endregion
 }

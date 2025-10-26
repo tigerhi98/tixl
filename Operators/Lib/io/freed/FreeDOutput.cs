@@ -24,8 +24,8 @@ internal sealed class FreeDOutput : Instance<FreeDOutput>, IStatusProvider, ICus
     {
         _printToLog = PrintToLog.GetValue(context);
         var shouldConnect = Connect.GetValue(context);
-        var localIp = LocalIpAddress.GetValue(context);
-        var targetIp = TargetIpAddress.GetValue(context);
+        var localIp = LocalIpAddress.GetValue(context)  ?? string.Empty;
+        var targetIp = TargetIpAddress.GetValue(context) ?? string.Empty;
         var targetPort = TargetPort.GetValue(context);
 
         var settingsChanged = shouldConnect != _lastConnectState || localIp != _lastLocalIp || targetIp != _lastTargetIp || targetPort != _lastTargetPort;

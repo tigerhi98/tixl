@@ -131,7 +131,7 @@ internal sealed class SacnOutput : Instance<SacnOutput>, IStatusProvider, ICusto
                                  {
                                      MaxFps = MaxFps.GetValue(context),
                                      Priority = (byte)Priority.GetValue(context).Clamp(0, 200),
-                                     SourceName = SourceName.GetValue(context),
+                                     SourceName = SourceName.GetValue(context) ?? string.Empty,
                                      EnableSync = EnableSync.GetValue(context),
                                      SyncUniverse = (ushort)SyncUniverse.GetValue(context).Clamp(1, 63999)
                                  };
