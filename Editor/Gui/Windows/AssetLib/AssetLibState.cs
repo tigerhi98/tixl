@@ -30,9 +30,12 @@ internal sealed class AssetLibState
     public Instance? Composition;
     
     /// <summary>
-    /// If a child is selected and shown in the parameter window, we can indicate which items it's supports. 
+    /// If a child is selected and shown in the parameter window, we can indicate which items it supports. 
     /// </summary>
     public Instance? ActiveInstance;
+
+    public bool HasActiveInstanceChanged;
+    public double TimeActiveInstanceChanged;    // Useful for animations
     
     /// <summary>
     /// If this is not null, the ActiveInstance has a string-input with FilePath usage.

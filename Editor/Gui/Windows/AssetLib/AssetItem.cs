@@ -1,7 +1,6 @@
 ﻿#nullable enable
 using System.IO;
 using T3.Core.Resource;
-using T3.Editor.Gui.Windows.Utilities;
 
 namespace T3.Editor.Gui.Windows.AssetLib;
 

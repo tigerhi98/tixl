@@ -302,7 +302,7 @@ internal static class CustomComponents
         var dl = ImGui.GetWindowDrawList();
         dl.AddRectFilled(ImGui.GetItemRectMin(), ImGui.GetItemRectMax(), GetButtonStateBackgroundColor(), 7, corners);
 
-        Icons.DrawIconOnLastItem(icon, iconColor);
+        Icons.DrawIconCenter(icon, iconColor);
         return triggered;
     }
 
@@ -695,13 +695,13 @@ internal static class CustomComponents
         var clicked = ImGui.InvisibleButton(name, new Vector2(17, 17));
         if (!isEnabled)
         {
-            Icons.DrawIconOnLastItem(isSelected ? iconOn : iconOff, isSelected
+            Icons.DrawIconCenter(isSelected ? iconOn : iconOff, isSelected
                                                                         ? (needsAttention ? UiColors.StatusAttention : UiColors.BackgroundActive)
                                                                         : UiColors.TextDisabled.Fade(0.5f));
             return false;
         }
 
-        Icons.DrawIconOnLastItem(isSelected ? iconOn : iconOff,
+        Icons.DrawIconCenter(isSelected ? iconOn : iconOff,
                                  isSelected ? (needsAttention ? UiColors.StatusAttention : UiColors.BackgroundActive) : UiColors.TextMuted);
         if (clicked)
             isSelected = !isSelected;
@@ -712,7 +712,7 @@ internal static class CustomComponents
     public static bool DrawIconToggle(string name, Icon icon, ref bool isSelected, bool needsAttention = false)
     {
         var clicked = ImGui.InvisibleButton(name, new Vector2(17, 17));
-        Icons.DrawIconOnLastItem(icon, isSelected ? (needsAttention ? UiColors.StatusAttention : UiColors.BackgroundActive) : UiColors.TextMuted);
+        Icons.DrawIconCenter(icon, isSelected ? (needsAttention ? UiColors.StatusAttention : UiColors.BackgroundActive) : UiColors.TextMuted);
         if (clicked)
             isSelected = !isSelected;
 

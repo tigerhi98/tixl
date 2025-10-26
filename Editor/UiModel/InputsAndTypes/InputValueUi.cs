@@ -194,7 +194,7 @@ public abstract class InputValueUi<T> : IInputUi
                         // TODO: implement with proper SelectionManager
                     }
 
-                    Icons.DrawIconOnLastItem(Icon.ConnectedInput, typeColor);
+                    Icons.DrawIconCenter(Icon.ConnectedInput, typeColor);
                     ImGui.SameLine();
 
                     ImGui.PushStyleVar(ImGuiStyleVar.ButtonTextAlign, new Vector2(1.0f, 0.5f));
@@ -343,7 +343,7 @@ public abstract class InputValueUi<T> : IInputUi
                 }
             }
 
-            Icons.DrawIconOnLastItem(icon, Color.White);
+            Icons.DrawIconCenter(icon, Color.White);
 
             ImGui.SameLine();
 
@@ -679,7 +679,7 @@ internal static class InputArea
                                _                                 => throw new ArgumentOutOfRangeException()
                            };
 
-            Icons.DrawIconOnLastItem(icon, typeColor);
+            Icons.DrawIconCenter(icon, typeColor);
         }
         else
         {
@@ -810,7 +810,7 @@ internal static class InputArea
             }
         }
 
-        Icons.DrawIconOnLastItem(Icon.ConnectedInput, typeColor.Rgba);
+        Icons.DrawIconCenter(Icon.ConnectedInput, typeColor.Rgba);
         ImGui.SameLine();
     }
 

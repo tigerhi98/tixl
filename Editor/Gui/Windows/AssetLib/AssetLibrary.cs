@@ -4,6 +4,7 @@ using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
 using ImGuiNET;
+using T3.Core.Operator;
 using T3.Core.Operator.Slots;
 using T3.Core.Resource;
 using T3.Editor.Gui.InputUi.SimpleInputUis;
@@ -33,68 +34,23 @@ internal sealed partial class AssetLibrary : Window
     {
         // Init current frame
         UpdateAssetsIfRequired();
+        if (_state.Composition == null)
+            return;
+        
 
-        if (NodeSelection.TryGetSelectedInstanceOrInput(out var selectedInstance, out _, out var selectionChanged))
+        if (!NodeSelection.TryGetSelectedInstanceOrInput(out var selectedInstance, out _, out var selectionChanged))
         {
-            selectionChanged = selectedInstance != _state.ActiveInstance;
-
-            if (selectionChanged)
-            {
-                _state.ActiveInstance = selectedInstance;
-                AssetLibState.CompatibleExtensionIds.Clear();
-                Log.Debug("@@@ Selection changed");
-
-                _state.ActivePathInput = null;
-                _state.ActiveAbsolutePath = null;
-
-                var symbolUi = _state.ActiveInstance.GetSymbolUi();
-
-                foreach (var input in _state.ActiveInstance.Inputs)
-                {
-                    if (input is not InputSlot<string> stringInput)
-                        continue;
-
-                    var inputUi = symbolUi.InputUis[input.Id];
-                    if (inputUi is not StringInputUi { Usage: StringInputUi.UsageType.FilePath } stringInputUi)
-                        continue;
-
-                    // Found a file path input in selected op
-                    _state.ActivePathInput = stringInput;
-
-                    FileExtensionRegistry.IdsFromFileFilter(stringInputUi.FileFilter, ref AssetLibState.CompatibleExtensionIds);
-                    var sb = new StringBuilder();
-                    foreach (var id in AssetLibState.CompatibleExtensionIds)
-                    {
-                        if (FileExtensionRegistry.TryGetExtensionForId(id, out var ext))
-                        {
-                            sb.Append(ext);
-                            sb.Append(", ");
-                        }
-                        else
-                        {
-                            sb.Append($"#{id}");
-                        }
-                    }
-
-                    Log.Debug("matching extensions " + sb);
-
-                    var filePath = _state.ActivePathInput?.GetCurrentValue();
-                    var valid = ResourceManager.TryResolvePath(filePath, _state.ActiveInstance, out _state.ActiveAbsolutePath, out _);
-                    if (!valid)
-                    {
-                        //Log.Debug("Active path: " + _activeAbsolutePath);
-                    }
-
-                    break; // only take first file path
-                }
-            }
+            selectedInstance = _state.Composition;
         }
+
+        UpdateActiveSelection(selectedInstance);
 
         // Draw
         ImGui.PushStyleVar(ImGuiStyleVar.IndentSpacing, 10);
         DrawLibContent(_state);
         ImGui.PopStyleVar(1);
     }
+
 
     private void UpdateAssetsIfRequired()
     {
@@ -164,6 +120,63 @@ internal sealed partial class AssetLibrary : Window
                       : [];
     }
 
+    
+    private void UpdateActiveSelection(Instance selectedInstance)
+    {
+        _state.HasActiveInstanceChanged = selectedInstance != _state.ActiveInstance;
+        if (!_state.HasActiveInstanceChanged)
+            return;
+
+        _state.TimeActiveInstanceChanged = ImGui.GetTime();
+        
+        _state.ActiveInstance = selectedInstance;
+        _state.ActivePathInput = null;
+        _state.ActiveAbsolutePath = null;
+        
+        AssetLibState.CompatibleExtensionIds.Clear();
+        
+        // Check if active instance has asset reference...
+        var symbolUi = _state.ActiveInstance.GetSymbolUi();
+        foreach (var input in _state.ActiveInstance.Inputs)
+        {
+            if (input is not InputSlot<string> stringInput)
+                continue;
+
+            var inputUi = symbolUi.InputUis[input.Id];
+            if (inputUi is not StringInputUi { Usage: StringInputUi.UsageType.FilePath } stringInputUi)
+                continue;
+
+            // Found a file path input in selected op
+            _state.ActivePathInput = stringInput;
+
+            FileExtensionRegistry.IdsFromFileFilter(stringInputUi.FileFilter, ref AssetLibState.CompatibleExtensionIds);
+            var sb = new StringBuilder();
+            foreach (var id in AssetLibState.CompatibleExtensionIds)
+            {
+                if (FileExtensionRegistry.TryGetExtensionForId(id, out var ext))
+                {
+                    sb.Append(ext);
+                    sb.Append(", ");
+                }
+                else
+                {
+                    sb.Append($"#{id}");
+                }
+            }
+
+            Log.Debug("matching extensions " + sb);
+
+            var filePath = _state.ActivePathInput?.GetCurrentValue();
+            var valid = ResourceManager.TryResolvePath(filePath, _state.ActiveInstance, out _state.ActiveAbsolutePath, out _);
+            if (!valid)
+            {
+                //Log.Debug("Active path: " + _activeAbsolutePath);
+            }
+
+            return; // only take first file path
+        }
+    }
+    
     /// <summary>
     /// Useful for checking if a reference has changed without keeping an GC reference. 
     /// </summary>

@@ -4,6 +4,7 @@ using ImGuiNET;
 using T3.Core.DataTypes.Vector;
 using T3.Core.Operator.Slots;
 using T3.Core.SystemUi;
+using T3.Core.Utils;
 using T3.Editor.Gui.Styling;
 using T3.Editor.Gui.UiHelpers;
 using T3.Editor.UiModel.Commands;
@@ -80,8 +81,28 @@ internal sealed partial class AssetLibrary
                 {
                     var h = ImGui.GetFontSize();
                     var x = ImGui.GetContentRegionMax().X - h;
-                    ImGui.SameLine(x); 
-                    if (CustomComponents.IconButton(Icon.Aim, new Vector2(h)))
+                    ImGui.SameLine(x);
+                    
+                    var clicked = ImGui.InvisibleButton("Reveal", new Vector2(h));
+                    if (ImGui.IsItemHovered())
+                    {
+                        CustomComponents.TooltipForLastItem("Reveal selected asset");
+                    }
+
+                    if (state.HasActiveInstanceChanged)
+                    {
+                        ImGui.SetScrollHereY();
+                    }
+
+                    var timeSinceChange = (float)(ImGui.GetTime() - state.TimeActiveInstanceChanged);
+                    var fadeProgress = (timeSinceChange / 0.5f).Clamp(0, 1);
+                    var blinkFade = MathF.Cos(timeSinceChange * 15f) * (1f - fadeProgress) * 0.5f + 0.5f;
+                    var color = UiColors.StatusActivated.Fade(blinkFade);
+                    Icons.DrawIconCenter(Icon.Aim, color);
+                    
+                    
+                    if(clicked)
+                    //if (CustomComponents.IconButton(Icon.Aim, new Vector2(h)))
                     {
                         _expandToFileTriggered = true;
                     }

@@ -82,7 +82,7 @@ internal static class Icons
                           color);
     }
 
-    public static void DrawIconOnLastItem(Icon icon, Color color, float alignment = 0.5f)
+    public static void DrawIconCenter(Icon icon, Color color, float alignment = 0.5f)
     {
         
         var pos = ImGui.GetItemRectMin();
@@ -90,12 +90,6 @@ internal static class Icons
         GetGlyphDefinition(icon, out var uvRange, out var iconSize);
         var centerOffset = MathUtils.Floor((size - iconSize) * new Vector2(alignment, 0.5f));
         var alignedPos = pos + centerOffset;
-        ImGui.GetWindowDrawList().AddImage(ImGui.GetIO().Fonts.TexID,
-                                           alignedPos,
-                                           alignedPos + iconSize,
-                                           uvRange.Min,
-                                           uvRange.Max,
-                                           color);
         ImGui.GetWindowDrawList().AddImage(ImGui.GetIO().Fonts.TexID,
                                            alignedPos,
                                            alignedPos + iconSize,
@@ -132,18 +126,7 @@ internal static class Icons
     {
         return new Vector2(g.X0, g.Y0);
     }
-
-    /// <summary>
-    /// Draws a icon in the center of the current imgui item
-    /// </summary>
-    public static void DrawCentered(Icon icon)
-    {
-        var g = IconFont.FindGlyph((char)icon);
-        var iconSize = new Vector2(g.X1 - g.X0, g.Y1 - g.Y0) / 2;
-        var center = (ImGui.GetItemRectMax() + ImGui.GetItemRectMin()) / 2 - iconSize;
-        Draw(icon, center);
-    }
-
+    
     public sealed class IconSource
     {
         public IconSource(Icon icon, int slotIndex)
