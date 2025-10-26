@@ -17,7 +17,7 @@ internal sealed partial class AssetLibrary
     {
         var iconCount = 1;
 
-        CustomComponents.DrawInputFieldWithPlaceholder("Search symbols...",
+        CustomComponents.DrawInputFieldWithPlaceholder("Search Assets...",
                                                        ref _filter.SearchString,
                                                        -ImGui.GetFrameHeight() * iconCount + 16);
 
@@ -38,7 +38,7 @@ internal sealed partial class AssetLibrary
         }
         else
         {
-            ImGui.PushID(folder.Name);
+            //ImGui.PushID(folder.AbsolutePath);
             ImGui.SetNextItemWidth(10);
             if (folder.Name == "Lib" && !_openedLibFolderOnce)
             {
@@ -50,8 +50,8 @@ internal sealed partial class AssetLibrary
             {
                 ImGui.SetNextItemOpen(true);
             }
-
-            var isOpen = ImGui.TreeNode(folder.Name);
+            
+            bool isOpen = ImGui.TreeNodeEx(folder.Name);
             CustomComponents.ContextMenuForItem(() =>
                                                 {
                                                     if (ImGui.MenuItem("Open in Explorer"))
@@ -69,28 +69,24 @@ internal sealed partial class AssetLibrary
 
             if (isOpen)
             {
-                HandleDropTarget(folder);
+//                HandleDropTarget(folder);
 
                 DrawFolderContent(folder);
-
                 ImGui.TreePop();
             }
             else
             {
-                var containsTargetFile = ContainsTargetFile(folder);
-
-                if (containsTargetFile)
+                if (ContainsTargetFile(folder))
                 {
                     var h = ImGui.GetFontSize();
-                    var x = ImGui.GetContentRegionAvail().X - h;
-
-                    ImGui.SameLine(x); // N pixels gap after the node
-                    if (CustomComponents.IconButton(Icon.Knob, new Vector2(h)))
+                    var x = ImGui.GetContentRegionMax().X - h;
+                    ImGui.SameLine(x); 
+                    if (CustomComponents.IconButton(Icon.Aim, new Vector2(h)))
                     {
                         _expandToFileTriggered = true;
                     }
                 }
-
+            
                 if (DragAndDropHandling.IsDraggingWith(DragAndDropHandling.AssetDraggingId))
                 {
                     ImGui.SameLine();
@@ -101,7 +97,7 @@ internal sealed partial class AssetLibrary
                 }
             }
 
-            ImGui.PopID();
+            //ImGui.PopID();
         }
     }
 
@@ -142,9 +138,8 @@ internal sealed partial class AssetLibrary
 
 
             var iconColor = ColorVariations.OperatorLabel.Apply(asset.AssetType?.Color ?? UiColors.Text);
-            //var iconColor = isSelected ? UiColors.StatusActivated : defaultColor.Fade(fade);
             var icon = asset.AssetType?.Icon ?? Icon.FileImage;
-            
+            ImGui.SetCursorPosX(ImGui.GetCursorPosX() + 5);
             if (ButtonWithIcon(defaultId, 
                                asset.FileInfo.Name, 
                                icon, 
@@ -203,13 +198,13 @@ internal sealed partial class AssetLibrary
             }
 
             // Click
-            if (!ImGui.IsItemDeactivated())
-                return;
-
-            var wasClick = ImGui.GetMouseDragDelta().Length() < 4;
-            if (wasClick)
+            if (ImGui.IsItemDeactivated())
             {
-                // TODO: implement
+                var wasClick = ImGui.GetMouseDragDelta().Length() < 4;
+                if (wasClick)
+                {
+                    // TODO: implement
+                }
             }
         }
 
