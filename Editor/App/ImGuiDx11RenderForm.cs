@@ -16,6 +16,12 @@ public class ImGuiDx11RenderForm : RenderForm
     public ImGuiDx11RenderForm(string title)
         : base(title)
     {
+        AllowDrop = true;
+
+        DragEnter += OnDragEnter;
+        DragDrop  += OnDragDrop;
+        
+        
         MouseMove += (o, e) =>
         {
             if (this != ProgramWindows.Viewer?.Form)  // Ignore mouse updates from Viewer
@@ -55,7 +61,40 @@ public class ImGuiDx11RenderForm : RenderForm
     private const int VK_ALT = 0x12;
     #endregion
 
+    
+    public static event Action<string[], Vector2> FilesDropped;
         
+    
+    private void OnDragEnter(object? s, DragEventArgs e)
+    {
+        if (this == ProgramWindows.Viewer?.Form) { e.Effect = DragDropEffects.None; return; } // optional
+        e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ||
+                   e.Data.GetDataPresent(DataFormats.UnicodeText)
+                       ? DragDropEffects.Copy
+                       : DragDropEffects.None;
+    }
+
+    private void OnDragDrop(object? s, DragEventArgs e)
+    {
+        if (this == ProgramWindows.Viewer?.Form) return; // optional
+
+        var p = PointToClient(new System.Drawing.Point(e.X, e.Y));
+        var pos = new Vector2(p.X, p.Y);
+
+        if (e.Data.GetDataPresent(DataFormats.FileDrop))
+        {
+            var strings = (string[])e.Data.GetData(DataFormats.FileDrop)!;
+            FilesDropped?.Invoke(strings, pos);
+        }
+        else if (e.Data.GetDataPresent(DataFormats.UnicodeText))
+        {
+            var t = ((string)e.Data.GetData(DataFormats.UnicodeText)!).Trim('"');
+            if (System.IO.Path.IsPathRooted(t))
+                FilesDropped?.Invoke(new[] { t }, pos);
+        }
+    }
+    
+    
     protected override void WndProc(ref System.Windows.Forms.Message m)
     {
         try
