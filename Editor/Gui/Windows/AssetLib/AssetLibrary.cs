@@ -1,5 +1,6 @@
 ﻿#nullable enable
 
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -36,7 +37,6 @@ internal sealed partial class AssetLibrary : Window
         UpdateAssetsIfRequired();
         if (_state.Composition == null)
             return;
-        
 
         if (!NodeSelection.TryGetSelectedInstanceOrInput(out var selectedInstance, out _, out var selectionChanged))
         {
@@ -50,7 +50,6 @@ internal sealed partial class AssetLibrary : Window
         DrawLibContent();
         ImGui.PopStyleVar(1);
     }
-
 
     private void UpdateAssetsIfRequired()
     {
@@ -121,63 +120,81 @@ internal sealed partial class AssetLibrary : Window
                       : [];
     }
 
-    
-    private void UpdateActiveSelection(Instance selectedInstance)
+    private static void UpdateActiveSelection(Instance selectedInstance)
     {
         _state.HasActiveInstanceChanged = selectedInstance != _state.ActiveInstance;
         if (!_state.HasActiveInstanceChanged)
             return;
 
         _state.TimeActiveInstanceChanged = ImGui.GetTime();
-        
+
         _state.ActiveInstance = selectedInstance;
         _state.ActivePathInput = null;
         _state.ActiveAbsolutePath = null;
-        
-        AssetLibState.CompatibleExtensionIds.Clear();
-        
+        _state.CompatibleExtensionIds.Clear();
+
         // Check if active instance has asset reference...
-        var symbolUi = _state.ActiveInstance.GetSymbolUi();
-        foreach (var input in _state.ActiveInstance.Inputs)
+        var instance = _state.ActiveInstance;
+
+        if (TryGetFileInputFromInstance(instance, out _state.ActivePathInput, out var stringInputUi))
         {
-            if (input is not InputSlot<string> stringInput)
-                continue;
-
-            var inputUi = symbolUi.InputUis[input.Id];
-            if (inputUi is not StringInputUi { Usage: StringInputUi.UsageType.FilePath } stringInputUi)
-                continue;
-
-            // Found a file path input in selected op
-            _state.ActivePathInput = stringInput;
-
-            FileExtensionRegistry.IdsFromFileFilter(stringInputUi.FileFilter, ref AssetLibState.CompatibleExtensionIds);
-            var sb = new StringBuilder();
-            foreach (var id in AssetLibState.CompatibleExtensionIds)
-            {
-                if (FileExtensionRegistry.TryGetExtensionForId(id, out var ext))
-                {
-                    sb.Append(ext);
-                    sb.Append(", ");
-                }
-                else
-                {
-                    sb.Append($"#{id}");
-                }
-            }
-
-            Log.Debug("matching extensions " + sb);
-
-            var filePath = _state.ActivePathInput?.GetCurrentValue();
-            var valid = ResourceManager.TryResolvePath(filePath, _state.ActiveInstance, out _state.ActiveAbsolutePath, out _);
-            if (!valid)
-            {
-                //Log.Debug("Active path: " + _activeAbsolutePath);
-            }
-
-            return; // only take first file path
+            var filePath = _state.ActivePathInput.GetCurrentValue();
+            ResourceManager.TryResolvePath(filePath, instance, out _state.ActiveAbsolutePath, out _);
+            FileExtensionRegistry.IdsFromFileFilter(stringInputUi.FileFilter, ref _state.CompatibleExtensionIds);
+        }
+        else
+        {
+            _state.ActiveAbsolutePath = null;
         }
     }
-    
+
+    // TODO: move to separate op utils helper class
+    public static bool TryGetFileInputFromInstance(Instance instance,
+                                                   [NotNullWhen(true)] out InputSlot<string>? stringInput,
+                                                   [NotNullWhen(true)] out StringInputUi? stringInputUi)
+    {
+        stringInput = null;
+        stringInputUi = null;
+
+        var symbolUi = instance.GetSymbolUi();
+        foreach (var input in instance.Inputs)
+        {
+            if (input is not InputSlot<string> tmpStringInput)
+                continue;
+
+            stringInput = tmpStringInput;
+
+            var inputUi = symbolUi.InputUis[input.Id];
+            if (inputUi is not StringInputUi { Usage: StringInputUi.UsageType.FilePath } tmpStringInputUi)
+                continue;
+
+            stringInputUi = tmpStringInputUi;
+
+            // Found a file path input in selected op
+            //_state.ActivePathInput = tmpStringInput;
+
+            // var sb = new StringBuilder();
+            // foreach (var id in AssetLibState.CompatibleExtensionIds)
+            // {
+            //     if (FileExtensionRegistry.TryGetExtensionForId(id, out var ext))
+            //     {
+            //         sb.Append(ext);
+            //         sb.Append(", ");
+            //     }
+            //     else
+            //     {
+            //         sb.Append($"#{id}");
+            //     }
+            // }
+            //
+            // Log.Debug("matching extensions " + sb);
+
+            return true;
+        }
+
+        return false;
+    }
+
     /// <summary>
     /// Useful for checking if a reference has changed without keeping an GC reference. 
     /// </summary>
@@ -191,7 +208,12 @@ internal sealed partial class AssetLibrary : Window
         return true;
     }
 
+    internal static bool GetAssetFromAliasPath(string aliasPath, [NotNullWhen(true)] out AssetItem? asset)
+    {
+        return _state.AssetCache.TryGetValue(aliasPath, out asset);
+    }
+
     private int? _lastCompositionObjId = 0;
 
-    private AssetLibState _state = new();
+    private static readonly AssetLibState _state = new();
 }

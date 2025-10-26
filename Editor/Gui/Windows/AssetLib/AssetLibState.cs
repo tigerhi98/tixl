@@ -49,9 +49,9 @@ internal sealed class AssetLibState
     public string? ActiveAbsolutePath;
     
     /// <summary>
-    /// List of extensions than can be opened by selected operator
+    /// List of extensions than can be opened by <see cref="ActiveInstance"/> operator
     /// </summary>
-    internal static List<int> CompatibleExtensionIds = [];
+    internal List<int> CompatibleExtensionIds = [];
     
     public readonly AssetFolder RootFolder = new(AssetFolder.RootNodeId, null);
     

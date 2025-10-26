@@ -35,10 +35,10 @@
 - [x] Reveal hidden
 - [x] AssetsTypeRegistry
 - [x] Indicate matching types
-- [ ] Drag and Drop to Graph
+- [x] Drag and Drop to Graph
   - [x] Link Image -> [LoadImage]
 - [ ] Toolbar
-  - [ ] Collapse all
+  - [x] Collapse all
   - [ ] Context menu
     - [ ] Action...
       - [ ] Review in Explorer

@@ -1,5 +1,6 @@
 ﻿#nullable enable
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using ImGuiNET;
 using T3.Core.Operator;
 using T3.Core.Operator.Slots;
@@ -9,6 +10,7 @@ using T3.Editor.Gui.MagGraph.Interaction;
 using T3.Editor.Gui.MagGraph.Model;
 using T3.Editor.Gui.MagGraph.States;
 using T3.Editor.Gui.UiHelpers;
+using T3.Editor.Gui.Windows.AssetLib;
 using T3.Editor.UiModel;
 using T3.Editor.UiModel.Modification;
 using T3.Editor.UiModel.ProjectHandling;
@@ -216,16 +218,64 @@ internal sealed partial class MagGraphView : ScalableCanvas, IGraphView
 
         ImGui.SetCursorPos(Vector2.Zero);
         ImGui.InvisibleButton("## drop", ImGui.GetWindowSize());
-
-        if (!DragAndDropHandling.TryGetDataDroppedLastItem(DragAndDropHandling.SymbolDraggingId, out var data))
-            return;
-
-        if (!Guid.TryParse(data, out var guid))
+        
+        if (DragAndDropHandling.IsDraggingWith(DragAndDropHandling.SymbolDraggingId))
         {
-            Log.Warning("Invalid data format for drop? " + data);
-            return;
-        }
+            if (!DragAndDropHandling.TryGetDataDroppedLastItem(DragAndDropHandling.SymbolDraggingId, out var data))
+                return;
 
+            if (!Guid.TryParse(data, out var symbolId))
+            {
+                Log.Warning("Invalid data format for drop? " + data);
+                return;
+            }
+
+            TryCreateSymbolInstanceOnGraph(context, symbolId, out _);
+        }
+        else if (DragAndDropHandling.IsDraggingWith(DragAndDropHandling.AssetDraggingId))
+        {
+            if (!DragAndDropHandling.TryGetDataDroppedLastItem(DragAndDropHandling.AssetDraggingId, out var aliasPath))
+                return;
+
+            if (!AssetLibrary.GetAssetFromAliasPath(aliasPath, out var asset))
+            {
+                Log.Warning($"Can't get asset for {aliasPath}");
+                return;
+            }
+
+            if (asset.AssetType == null)
+            {
+                Log.Warning($"{aliasPath} has no asset type");
+                return;
+            }
+            
+            if (asset.AssetType.PrimaryOperators.Count == 0)
+            {
+                Log.Warning($"{aliasPath} of type {asset.AssetType} has no matching operator symbols");
+                return;
+            }
+
+            if (TryCreateSymbolInstanceOnGraph(context, asset.AssetType.PrimaryOperators[0], out var newInstance))
+            {
+                if (!AssetLibrary.TryGetFileInputFromInstance(newInstance, out var stringInput, out _))
+                {
+                    Log.Warning("Failed to get file path parameter from op");
+                    return;
+                }
+                
+                Log.Debug($"Created {newInstance} with {aliasPath}", newInstance);
+                
+                stringInput.TypedInputValue.Assign(new InputValue<string>(aliasPath));
+                stringInput.DirtyFlag.ForceInvalidate();
+                stringInput.Parent.Parent?.Symbol.InvalidateInputInAllChildInstances(stringInput);
+                stringInput.Input.IsDefault = false;
+            }
+        }
+    }
+
+    private bool TryCreateSymbolInstanceOnGraph(GraphUiContext context, Guid guid, [NotNullWhen(true)] out Instance? newInstance)
+    {
+        newInstance = null;
         if (SymbolUiRegistry.TryGetSymbolUi(guid, out var symbolUi))
         {
             var symbol = symbolUi.Symbol;
@@ -233,18 +283,18 @@ internal sealed partial class MagGraphView : ScalableCanvas, IGraphView
             if (!SymbolUiRegistry.TryGetSymbolUi(context.CompositionInstance.Symbol.Id, out var compositionOpSymbolUi))
             {
                 Log.Warning("Failed to get symbol id for " + context.CompositionInstance.SymbolChildId);
-                return;
+                return false;
             }
 
             var childUi = GraphOperations.AddSymbolChild(symbol, compositionOpSymbolUi, posOnCanvas);
-            var instance = context.CompositionInstance.Children[childUi.Id];
-            context.Selector.SetSelection(childUi, instance);
+            newInstance = context.CompositionInstance.Children[childUi.Id];
+            context.Selector.SetSelection(childUi, newInstance);
             context.Layout.FlagStructureAsChanged();
+            return true;
         }
-        else
-        {
-            Log.Warning($"Symbol {guid} not found in registry");
-        }
+
+        Log.Warning($"Symbol {guid} not found in registry");
+        return false;
     }
 
     private void HandleFenceSelection(GraphUiContext context, SelectionFence selectionFence)
