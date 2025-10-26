@@ -13,40 +13,40 @@ namespace T3.Editor.Gui.Windows.AssetLib;
 
 internal sealed partial class AssetLibrary
 {
-    private void DrawLibContent()
+    private void DrawLibContent(AssetLibState state)
     {
         var iconCount = 1;
 
         CustomComponents.DrawInputFieldWithPlaceholder("Search Assets...",
-                                                       ref _filter.SearchString,
+                                                       ref state.Filter.SearchString,
                                                        -ImGui.GetFrameHeight() * iconCount + 16);
 
         ImGui.BeginChild("scrolling", Vector2.Zero, false, ImGuiWindowFlags.NoBackground);
         {
-            DrawFolder(_rootNode);
+            DrawFolder(state.RootFolder, state);
         }
         ImGui.EndChild();
     }
 
     private bool _expandToFileTriggered;
 
-    private void DrawFolder(AssetFolder folder)
+    private void DrawFolder(AssetFolder folder, AssetLibState state)
     {
         if (folder.Name == AssetFolder.RootNodeId)
         {
-            DrawFolderContent(folder);
+            DrawFolderContent(folder,state);
         }
         else
         {
             //ImGui.PushID(folder.AbsolutePath);
             ImGui.SetNextItemWidth(10);
-            if (folder.Name == "Lib" && !_openedLibFolderOnce)
+            if (folder.Name == "Lib" && !state.OpenedLibFolderOnce)
             {
                 ImGui.SetNextItemOpen(true);
-                _openedLibFolderOnce = true;
+                state.OpenedLibFolderOnce = true;
             }
 
-            if (_expandToFileTriggered && ContainsTargetFile(folder))
+            if (_expandToFileTriggered && ContainsTargetFile(folder,state))
             {
                 ImGui.SetNextItemOpen(true);
             }
@@ -71,12 +71,12 @@ internal sealed partial class AssetLibrary
             {
 //                HandleDropTarget(folder);
 
-                DrawFolderContent(folder);
+                DrawFolderContent(folder,state);
                 ImGui.TreePop();
             }
             else
             {
-                if (ContainsTargetFile(folder))
+                if (ContainsTargetFile(folder, state))
                 {
                     var h = ImGui.GetFontSize();
                     var x = ImGui.GetContentRegionMax().X - h;
@@ -101,40 +101,40 @@ internal sealed partial class AssetLibrary
         }
     }
 
-    private bool ContainsTargetFile(AssetFolder folder)
+    private bool ContainsTargetFile(AssetFolder folder, AssetLibState state)
     {
-        var containsTargetFile = _activePathInput != null
+        var containsTargetFile = state.ActivePathInput != null
                                  && !string.IsNullOrEmpty(folder.AbsolutePath)
-                                 && !string.IsNullOrEmpty(_activeAbsolutePath) 
-                                 && _activeAbsolutePath.StartsWith(folder.AbsolutePath);
+                                 && !string.IsNullOrEmpty(state.ActiveAbsolutePath) 
+                                 && state.ActiveAbsolutePath.StartsWith(folder.AbsolutePath);
         return containsTargetFile;
     }
 
-    private void DrawFolderContent(AssetFolder folder)
+    private void DrawFolderContent(AssetFolder folder, AssetLibState state)
     {
         // Using a for loop to prevent modification during iteration exception
         for (var index = 0; index < folder.SubFolders.Count; index++)
         {
             var subspace = folder.SubFolders[index];
-            DrawFolder(subspace);
+            DrawFolder(subspace, state);
         }
 
         for (var index = 0; index < folder.FolderAssets.ToList().Count; index++)
         {
-            DrawAssetItem(folder.FolderAssets.ToList()[index]);
+            DrawAssetItem(folder.FolderAssets.ToList()[index], state);
         }
     }
 
-    private void DrawAssetItem(AssetItem asset)
+    private void DrawAssetItem(AssetItem asset, AssetLibState state)
     {
         ImGui.PushID(RuntimeHelpers.GetHashCode(asset));
         {
             var defaultId = string.Empty;
-            var isSelected = asset.AbsolutePath == _activeAbsolutePath;
+            var isSelected = asset.AbsolutePath == state.ActiveAbsolutePath;
 
-            var fade = CompatibleExtensionIds.Count == 0
+            var fade = AssetLibState.CompatibleExtensionIds.Count == 0
                            ? 0.8f 
-                            : !CompatibleExtensionIds.Contains(asset.FileExtensionId) ? 0.2f : 1f;
+                            : !AssetLibState.CompatibleExtensionIds.Contains(asset.FileExtensionId) ? 0.2f : 1f;
 
 
             var iconColor = ColorVariations.OperatorLabel.Apply(asset.AssetType?.Color ?? UiColors.Text);
@@ -148,10 +148,10 @@ internal sealed partial class AssetLibrary
                                isSelected
                                ))
             {
-                var stringInput = _activePathInput;
+                var stringInput = state.ActivePathInput;
                 if (stringInput != null && !isSelected)
                 {
-                    _activeAbsolutePath = asset.AbsolutePath;
+                    state.ActiveAbsolutePath = asset.AbsolutePath;
 
                     ApplyResourcePath(asset, stringInput);
                 }

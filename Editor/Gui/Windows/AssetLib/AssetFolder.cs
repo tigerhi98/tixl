@@ -48,21 +48,21 @@ internal sealed class AssetFolder
     }
 
     // Define an action delegate that takes a Symbol and returns a bool
-    internal static void PopulateCompleteTree(AssetFolder root, Instance? composition, Predicate<AssetItem>? filterAction, List<AssetItem> allAssetsOrdered)
+    internal static void PopulateCompleteTree(AssetLibState state, Predicate<AssetItem>? filterAction)
     {
-        if (composition == null)
+        if (state.Composition == null)
             return;
 
-        root.Name = RootNodeId;
-        root.Clear();
+        state.RootFolder.Name = RootNodeId;
+        state.RootFolder.Clear();
 
-        foreach (var file in allAssetsOrdered)
+        foreach (var file in state.AllAssets)
         {
             var keep = filterAction == null || filterAction(file);
             if (!keep)
                 continue;
 
-            root.SortInAssets(file, composition);
+            state.RootFolder.SortInAssets(file, state.Composition);
         }
     }
 
