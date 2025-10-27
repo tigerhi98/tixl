@@ -65,9 +65,20 @@ public class ImGuiDx11RenderForm : RenderForm
     public static event Action<string[], Vector2> FilesDropped;
         
     
-    private void OnDragEnter(object? s, DragEventArgs e)
+    private void OnDragEnter(object s, DragEventArgs e)
     {
-        if (this == ProgramWindows.Viewer?.Form) { e.Effect = DragDropEffects.None; return; } // optional
+        
+        if (this == ProgramWindows.Viewer?.Form)
+        {
+            e.Effect = DragDropEffects.None; return; 
+            
+        } // optional
+
+        if (e.Data == null)
+        {
+            return;
+        }
+        
         e.Effect = e.Data.GetDataPresent(DataFormats.FileDrop) ||
                    e.Data.GetDataPresent(DataFormats.UnicodeText)
                        ? DragDropEffects.Copy
