@@ -10,14 +10,17 @@ internal sealed class TransformMatrix : Instance<TransformMatrix>
     [Output(Guid = "751E97DE-C418-48C7-823E-D4660073A559")]
     public readonly Slot<Vector4[]> Result = new();
         
-
     [Output(Guid = "ECA8121B-2A7F-4ECC-9143-556DCF78BA33")]
     public readonly Slot<Vector4[]> ResultInverted = new();
         
+    [Output(Guid = "6ED9317B-69B7-4041-9938-AEF2A68CA91F")]
+    public readonly Slot<Matrix4x4> Matrix = new();
+    
     public TransformMatrix()
     {
         Result.UpdateAction += Update;
         ResultInverted.UpdateAction += Update;
+        Matrix.UpdateAction += Update;
     }
 
     private void Update(EvaluationContext context)
@@ -49,9 +52,7 @@ internal sealed class TransformMatrix : Instance<TransformMatrix>
                                                                            translation: new Vector3(t.X, t.Y, t.Z));
 
         var shearing = Shear.GetValue(context);
-            
-              
-            
+        
         Matrix4x4 m = Matrix4x4.Identity;
         m.M12=shearing.Y; 
         m.M21=shearing.X; 
@@ -79,7 +80,8 @@ internal sealed class TransformMatrix : Instance<TransformMatrix>
         _invertedMatrix[2] = invertedMatrix.Row3();
         _invertedMatrix[3] = invertedMatrix.Row4();
         ResultInverted.Value = _invertedMatrix;
-            
+
+        Matrix.Value = objectToParentObject;
     }
 
     private Vector4[] _matrix = new Vector4[4];

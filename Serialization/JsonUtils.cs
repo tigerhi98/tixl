@@ -155,6 +155,18 @@ public static class JsonUtils
 
         return Enum.TryParse<T>(s, out var result) ? result : fallback;
     }
+    
+    public static float SafeFloatFromArray(JArray arr, int i)
+    {
+        if ( arr.Count <= i)
+            return 0f;
+        
+        var t = arr[i];
+        return  t.Type is JTokenType.Float or JTokenType.Integer
+                   ? t.Value<float>()
+                   : 0f;
+    }
+    
 }
 
 public sealed class SafeEnumConverter<T> : JsonConverter<T> where T : struct, Enum
